@@ -13,6 +13,7 @@ using namespace std;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
+
 struct GameWorldData {
 	int x;
 	int y;
@@ -30,13 +31,39 @@ int numLoops;
 long tickCountAtLastCall,newTime;
 SDL_Texture* texture = NULL;
 
-SDL_Rect renderRectangle(const int x, const int y, const int w, const int h, struct GameWorldData *gameWorldData);
+SDL_Rect renderRectangle(const int x, const int y, const int w, const int h);
 void renderLine(SDL_Renderer* toRenderer);
+
+GameWorldData* g_pGameWorldData = NULL;
+
+void drawtexttureTopLeft(const int SCREEN_WIDTH, const int SCREEN_HEIGHT, SDL_Texture* texture)
+{
+	//Top left corner viewport
+	SDL_Rect topLeftViewport;
+	topLeftViewport.x = 0;
+	topLeftViewport.y = 0;
+	topLeftViewport.w = SCREEN_WIDTH / 2;
+	topLeftViewport.h = SCREEN_HEIGHT / 2;
+	SDL_RenderSetViewport(g_pGameWorldData->windowRenderer, &topLeftViewport);
+	//Render texture to screen
+
+	SDL_RenderCopy(g_pGameWorldData->windowRenderer, texture, NULL, NULL);
+}
+
+void ResetViewport(const int SCREEN_WIDTH, const int SCREEN_HEIGHT)
+{
+	SDL_Rect whole_screen;
+	whole_screen.x = 0;
+	whole_screen.y = 0;
+	whole_screen.w = SCREEN_WIDTH;
+	whole_screen.h = SCREEN_HEIGHT;
+	SDL_RenderSetViewport(g_pGameWorldData->windowRenderer, &whole_screen);
+}
 
 /***
  * Check for interaction requests from controllers
  */
-void sense_player_input(struct GameWorldData *gameWorldData)
+void sense_player_input()
 {
 	//Map controller actions to meanings for the game:
 	// left button was pushed and button A was pressed MEANS -> request to move character left
@@ -49,28 +76,28 @@ void sense_player_input(struct GameWorldData *gameWorldData)
 
 		if(e.type == SDL_QUIT)
 		{
-			gameWorldData->bGameDone = 1;
+			g_pGameWorldData->bGameDone = 1;
 		} else if( e.type == SDL_KEYDOWN ) {
 			switch( e.key.keysym.sym )
 			{
 				case SDLK_UP:
 					std::cout << "up!" << std::endl;	
-					gameWorldData->y -= 20;
+					g_pGameWorldData->y -= 20;
 				break;
 
 				case SDLK_DOWN:
 					std::cout << "down!" << std::endl;		
-					gameWorldData->y += 20;
+					g_pGameWorldData->y += 20;
 				break;
 
 				case SDLK_LEFT:
 					std::cout << "left!" << std::endl;					
-					gameWorldData->x -= 20;
+					g_pGameWorldData->x -= 20;
 				break;
 
 				case SDLK_RIGHT:
 					std::cout << "right!" << std::endl;	
-					gameWorldData->x += 20;
+					g_pGameWorldData->x += 20;
 				break;
 
 				default:
@@ -84,7 +111,7 @@ void sense_player_input(struct GameWorldData *gameWorldData)
 /***
  * Collision detection, no key for door etc...
  */
-void determine_restrictions(struct GameWorldData* data)
+void determine_restrictions()
 {
 	// check for geometric restrictions via the gameworld data to determine whats around the character physically
 	// ie. collision detection
@@ -121,12 +148,12 @@ void update_player_state()
 /***
  * Keeps and updated snapshot of the player state
  */
-void player_update(struct GameWorldData *gameWorldData)
+void player_update()
 {
 	// read from game controller
-	sense_player_input(gameWorldData);
+	sense_player_input();
 	// First see if we can perform what the payer wants us to do (we might be unable to, next to wall ie. cant move forward)
-	determine_restrictions(gameWorldData);
+	determine_restrictions();
 	// Do what we can to update the players state based on the above and what the player tied to do
 	// so move the player's position if he asked to move and there was no obstacle etc.
 	update_player_state();
@@ -253,10 +280,10 @@ void world_update()
 
 // This is basically the update functions which is run x FPS to maintain a timed series on constant updates 
 // that simulates constant movement for example or time intervals in a non-time related game (turn based game eg)
-void Update(struct GameWorldData *gameWorldData)
+void Update()
 {
 	// This game logic keeps the world simulator running:
-	player_update(gameWorldData);
+	player_update();
 	
 	// make the game do something now...show game activity that the user will then respond to
 	// this generates gameplay
@@ -406,7 +433,17 @@ void world_pack_geometry()
  */
 void world_render_geometry()
 {
+	//Custom SDL drawing...
 
+	// renderTextture(windowRenderer, texture);
+
+	SDL_Rect fillRect = renderRectangle(g_pGameWorldData->x, g_pGameWorldData->y, 100,100);
+	//renderLine(g_pGameWorldData->windowRenderer);
+	//drawVerticalLineOfDots(SCREEN_HEIGHT, SCREEN_WIDTH, g_pGameWorldData);
+
+	drawtexttureTopLeft(SCREEN_WIDTH, SCREEN_HEIGHT, texture);
+	ResetViewport(SCREEN_WIDTH, SCREEN_HEIGHT);
+	SDL_RenderPresent(g_pGameWorldData->windowRenderer);
 }
 
 // chop off items outside of the players view
@@ -478,57 +515,23 @@ void World_Presentation()
 	send_audio_to_hardware(); 
 }
 
-void drawVerticalLineOfDots(const int SCREEN_HEIGHT, const int SCREEN_WIDTH,struct GameWorldData *gameWorldData)
+void drawVerticalLineOfDots(const int SCREEN_HEIGHT, const int SCREEN_WIDTH)
 {
 	//Draw vertical line of yellow dots
-	SDL_SetRenderDrawColor(gameWorldData->windowRenderer, 0x00, 0x00, 0xFF, 0x00);
+	SDL_SetRenderDrawColor(g_pGameWorldData->windowRenderer, 0x00, 0x00, 0xFF, 0x00);
 	for (int i = 0; i < SCREEN_HEIGHT; i += 4) {
-		SDL_RenderDrawPoint(gameWorldData->windowRenderer, SCREEN_WIDTH / 2, i);
+		SDL_RenderDrawPoint(g_pGameWorldData->windowRenderer, SCREEN_WIDTH / 2, i);
 	}
 }
 
-void drawtexttureTopLeft(const int SCREEN_WIDTH, const int SCREEN_HEIGHT, struct GameWorldData* gameWorldData, SDL_Texture* texture)
-{
-	//Top left corner viewport
-	SDL_Rect topLeftViewport;
-	topLeftViewport.x = 0;
-	topLeftViewport.y = 0;
-	topLeftViewport.w = SCREEN_WIDTH / 2;
-	topLeftViewport.h = SCREEN_HEIGHT / 2;
-	SDL_RenderSetViewport(gameWorldData->windowRenderer, &topLeftViewport);
-	//Render texture to screen
 
-	SDL_RenderCopy(gameWorldData->windowRenderer, texture, NULL, NULL);
-}
-
-void ResetViewport(const int SCREEN_WIDTH, const int SCREEN_HEIGHT, struct GameWorldData* gameWorldData)
-{
-	SDL_Rect whole_screen;
-	whole_screen.x = 0;
-	whole_screen.y = 0;
-	whole_screen.w = SCREEN_WIDTH;
-	whole_screen.h = SCREEN_HEIGHT;
-	SDL_RenderSetViewport(gameWorldData->windowRenderer, &whole_screen);
-}
 
 /***
  * Render the game world (Presentation) ie represent changes in the gameworld data
  * @param percentWithinTick
  */
-void Render(float percentWithinTick, struct GameWorldData *gameWorldData)
-{
-	//Custom SDL drawing...
-
-	// renderTextture(windowRenderer, texture);
-
-	SDL_Rect fillRect = renderRectangle(gameWorldData->x, gameWorldData->y, 100,100, gameWorldData);
-	//renderLine(gameWorldData->windowRenderer);
-	//drawVerticalLineOfDots(SCREEN_HEIGHT, SCREEN_WIDTH, gameWorldData);
-
-	drawtexttureTopLeft(SCREEN_WIDTH, SCREEN_HEIGHT, gameWorldData, texture);
-	ResetViewport(SCREEN_WIDTH, SCREEN_HEIGHT, gameWorldData);
-	SDL_RenderPresent(gameWorldData->windowRenderer);
-
+void Render(float percentWithinTick)
+{	
 	// Render the game work visually and sonically
 	World_Presentation();
 	
@@ -539,9 +542,9 @@ void Render(float percentWithinTick, struct GameWorldData *gameWorldData)
 	Player_Presentation();
 }
 
-SDL_Rect renderRectangle(const int x, const int y, const int w, const int h, struct GameWorldData *gameWorldData)
+SDL_Rect renderRectangle(const int x, const int y, const int w, const int h)
 {
-	SDL_Renderer *toRenderer = gameWorldData->windowRenderer;
+	SDL_Renderer *toRenderer = g_pGameWorldData->windowRenderer;
 	SDL_SetRenderDrawColor(toRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(toRenderer);
 
@@ -645,53 +648,53 @@ void InitSDL()
 	}
 }
 
-void CleanupResources(struct GameWorldData* gameWorldData)
+void CleanupResources()
 {
-	SDL_DestroyRenderer(gameWorldData->windowRenderer);
-	SDL_DestroyWindow(gameWorldData->window);
+	SDL_DestroyRenderer(g_pGameWorldData->windowRenderer);
+	SDL_DestroyWindow(g_pGameWorldData->window);
 
-	gameWorldData->window = NULL;
-	gameWorldData->windowRenderer = NULL;
+	g_pGameWorldData->window = NULL;
+	g_pGameWorldData->windowRenderer = NULL;
 
 	IMG_Quit();
 	SDL_Quit();
 
-	delete gameWorldData;
+	delete g_pGameWorldData;
 }
 
-struct GameWorldData* InitGameWorldData()
+void Initg_pGameWorldData()
 {
-	struct GameWorldData* gameWorldData = new GameWorldData;
-	if(gameWorldData == NULL) {
+	g_pGameWorldData = new GameWorldData;
+	if(g_pGameWorldData == NULL) {
 		std::cout << "malloc failed creating gameworld data" << std::endl;
 	}	
 
-	gameWorldData->x = 0;
-	gameWorldData->y = 0;
-	gameWorldData->w = 100;
-	gameWorldData->h = 100;
-	gameWorldData->window = NULL;
-	gameWorldData->windowRenderer = NULL;
-	gameWorldData->bGameDone = 0;
-	gameWorldData->bNetworkGame = 0;
-	gameWorldData->bCanRender = 1;
-	return gameWorldData;
+	g_pGameWorldData->x = 0;
+	g_pGameWorldData->y = 0;
+	g_pGameWorldData->w = 100;
+	g_pGameWorldData->h = 100;
+	g_pGameWorldData->window = NULL;
+	g_pGameWorldData->windowRenderer = NULL;
+	g_pGameWorldData->bGameDone = 0;
+	g_pGameWorldData->bNetworkGame = 0;
+	g_pGameWorldData->bCanRender = 1;
+	
 }
 
 int main(int argc, char *args[])
 {
-	GameWorldData* gameWorldData = InitGameWorldData();
+	Initg_pGameWorldData();
 	
 	InitSDL();
 
-	gameWorldData->window = GetSDLWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
-	gameWorldData->windowRenderer = GetSDLWindowRenderer(gameWorldData->window);
+	g_pGameWorldData->window = GetSDLWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_pGameWorldData->windowRenderer = GetSDLWindowRenderer(g_pGameWorldData->window);
 
-	//texture = GetSDLTexture("texture.png", gameWorldData->windowRenderer);
+	//texture = GetSDLTexture("texture.png", g_pGameWorldData->windowRenderer);
 
 	tickCountAtLastCall = ticks();
 
-	while(!gameWorldData->bGameDone) {
+	while(!g_pGameWorldData->bGameDone) {
 		newTime = ticks();
 		frameTicks = 0;
 		numLoops = 0;
@@ -701,7 +704,7 @@ int main(int argc, char *args[])
 		// 20 times a second = 50 milliseconds
 		// 1 second is 20*50 = 1000 milliseconds
 		while((ticksSince) > TICK_TIME && numLoops < MAX_LOOPS ) {
-			Update(gameWorldData); // logic/update
+			Update(); // logic/update
 
 			// tickCountAtLastCall is now been +TICK_TIME more since the last time. update it
 			tickCountAtLastCall += TICK_TIME;
@@ -712,14 +715,14 @@ int main(int argc, char *args[])
 
 		IndependantTickRun(frameTicks); // handle player input, general housekeeping
 
-		if(!gameWorldData->bNetworkGame && (ticksSince > TICK_TIME)) {
+		if(!g_pGameWorldData->bNetworkGame && (ticksSince > TICK_TIME)) {
 			tickCountAtLastCall = newTime - TICK_TIME;
-		} else if(gameWorldData->bCanRender) {
+		} else if(g_pGameWorldData->bCanRender) {
 			float percentOutsideFrame = (ticksSince/TICK_TIME)*100;
-			Render(percentOutsideFrame,gameWorldData);
+			Render(percentOutsideFrame);
 		}
 	}
 	std::cout << "Game done" << std::endl;
-	CleanupResources(gameWorldData);
+	CleanupResources();
 	return 0;
 }
