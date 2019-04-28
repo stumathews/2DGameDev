@@ -255,7 +255,7 @@ void world_update()
 
 // This is basically the update functions which is run x FPS to maintain a timed series on constant updates 
 // that simulates constant movement for example or time intervals in a non-time related game (turn based game eg)
-void GameTickRun(struct GameWorldData *gameWorldData)
+void Update(struct GameWorldData *gameWorldData)
 {
 	// This game logic keeps the world simulator running:
 	player_update(gameWorldData);
@@ -517,7 +517,7 @@ void ResetViewport(const int SCREEN_WIDTH, const int SCREEN_HEIGHT, struct GameW
  * Render the game world (Presentation)
  * @param percentWithinTick
  */
-void GameDrawWithInterpolation(float percentWithinTick, struct GameWorldData *gameWorldData)
+void Render(float percentWithinTick, struct GameWorldData *gameWorldData)
 {
 	//Custom SDL drawing...
 
@@ -714,7 +714,7 @@ int main(int argc, char *args[])
 		// 20 times a second = 50 milliseconds
 		// 1 second is 20*50 = 1000 milliseconds
 		while((ticksSince) > TICK_TIME && numLoops < MAX_LOOPS ) {
-			GameTickRun(gameWorldData); // logic/update
+			Update(gameWorldData); // logic/update
 
 			// tickCountAtLastCall is now been +TICK_TIME more since the last time. update it
 			tickCountAtLastCall += TICK_TIME;
@@ -729,7 +729,7 @@ int main(int argc, char *args[])
 			tickCountAtLastCall = newTime - TICK_TIME;
 		} else if(gameWorldData->bCanRender) {
 			float percentOutsideFrame = (ticksSince/TICK_TIME)*100;
-			GameDrawWithInterpolation(percentOutsideFrame,gameWorldData);
+			Render(percentOutsideFrame,gameWorldData);
 		}
 	}
 	puts("Game done");
