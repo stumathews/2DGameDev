@@ -1,8 +1,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
-#include <memory.h>
 #include <Windows.h>
 #include <iostream>
+using namespace std;
 
 
 // 20 times a second = 50 milliseconds
@@ -12,7 +12,6 @@
 #define MAX_LOOPS 4
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
-
 
 struct GameWorldData {
 	int x;
@@ -24,8 +23,7 @@ struct GameWorldData {
 	bool bGameDone;
 	bool bNetworkGame;
 	bool bCanRender;
-} *gameworld_data;
-typedef struct GameWorldData GameWorldData;
+};
 
 int frameTicks;
 int numLoops;
@@ -36,7 +34,7 @@ SDL_Rect renderRectangle(const int x, const int y, const int w, const int h, str
 void renderLine(SDL_Renderer* toRenderer);
 
 /***
- * Check for interactoon requests from controllers
+ * Check for interaction requests from controllers
  */
 void sense_player_input(struct GameWorldData *gameWorldData)
 {
@@ -56,27 +54,27 @@ void sense_player_input(struct GameWorldData *gameWorldData)
 			switch( e.key.keysym.sym )
 			{
 				case SDLK_UP:
-					puts("up!");
+					std::cout << "up!" << std::endl;	
 					gameWorldData->y -= 20;
 				break;
 
 				case SDLK_DOWN:
-					puts("down!");
+					std::cout << "down!" << std::endl;		
 					gameWorldData->y += 20;
 				break;
 
 				case SDLK_LEFT:
-					puts("left!");
+					std::cout << "left!" << std::endl;					
 					gameWorldData->x -= 20;
 				break;
 
 				case SDLK_RIGHT:
-					puts("right!");
+					std::cout << "right!" << std::endl;	
 					gameWorldData->x += 20;
 				break;
 
 				default:
-					puts("something else!");
+					std::cout << "Unknown control key" << std::endl;	
 				break;
 			}
 		}
@@ -128,7 +126,7 @@ void player_update(struct GameWorldData *gameWorldData)
 	// read from game controller
 	sense_player_input(gameWorldData);
 	// First see if we can perform what the payer wants us to do (we might be unable to, next to wall ie. cant move forward)
-	determine_restrictions(gameworld_data);
+	determine_restrictions(gameWorldData);
 	// Do what we can to update the players state based on the above and what the player tied to do
 	// so move the player's position if he asked to move and there was no obstacle etc.
 	update_player_state();
@@ -514,7 +512,7 @@ void ResetViewport(const int SCREEN_WIDTH, const int SCREEN_HEIGHT, struct GameW
 }
 
 /***
- * Render the game world (Presentation)
+ * Render the game world (Presentation) ie represent changes in the gameworld data
  * @param percentWithinTick
  */
 void Render(float percentWithinTick, struct GameWorldData *gameWorldData)
@@ -524,8 +522,8 @@ void Render(float percentWithinTick, struct GameWorldData *gameWorldData)
 	// renderTextture(windowRenderer, texture);
 
 	SDL_Rect fillRect = renderRectangle(gameWorldData->x, gameWorldData->y, 100,100, gameWorldData);
-	renderLine(gameWorldData->windowRenderer);
-	drawVerticalLineOfDots(SCREEN_HEIGHT, SCREEN_WIDTH, gameWorldData);
+	//renderLine(gameWorldData->windowRenderer);
+	//drawVerticalLineOfDots(SCREEN_HEIGHT, SCREEN_WIDTH, gameWorldData);
 
 	drawtexttureTopLeft(SCREEN_WIDTH, SCREEN_HEIGHT, gameWorldData, texture);
 	ResetViewport(SCREEN_WIDTH, SCREEN_HEIGHT, gameWorldData);
@@ -560,16 +558,14 @@ SDL_Texture* loadCreateTexture(char* texturePath, SDL_Renderer* renderer)
 	SDL_Surface* imageSurface = IMG_Load(texturePath);
 	if(imageSurface == NULL)
 	{
-		std::cout << "SDL could not load image" << std::endl;
+		std::cout << "SDL could not load image: " << (char*)IMG_GetError() << std::endl;
 	}
-	//CHK_ExitIf(imageSurface == NULL,"SDL could not load image!",(char*)IMG_GetError());
 
 	//Create texture from surface pixels
-	newTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);
-	//CHK_ExitIf(newTexture == NULL,"Unable to create texture!",(char*)SDL_GetError());
+	newTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);	
 	if(newTexture == NULL)
 	{
-		std::cout << "Unable to create texture!" << std::endl;
+		std::cout << "Unable to create texture: " << (char*)IMG_GetError() << std::endl;
 	}
 
 	//Get rid of old loaded surface
@@ -582,10 +578,9 @@ SDL_Window* GetSDLWindow(const int SCREEN_WIDTH, const int SCREEN_HEIGHT)
 	SDL_Window* outWindow = SDL_CreateWindow("Game Window", SDL_WINDOWPOS_UNDEFINED,
 				SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
 				SDL_WINDOW_SHOWN);
-	//CHK_ExitIf(outWindow == NULL, "Window could not be created!",(char*)SDL_GetError());
 	if(outWindow == NULL)
 	{
-		std::cout << "Window could not be created!" << std::endl;
+		std::cout << "Window could not be created:" << (char*)SDL_GetError() << std::endl;
 	}
 	return outWindow;
 }
@@ -593,27 +588,24 @@ SDL_Window* GetSDLWindow(const int SCREEN_WIDTH, const int SCREEN_HEIGHT)
 SDL_Renderer* GetSDLWindowRenderer(SDL_Window* window)
 {
 	SDL_Renderer* outRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	//CHK_ExitIf(outRenderer == NULL, "Renderer could not be created!", (char*)SDL_GetError());
 	if(outRenderer == NULL)
 	{
-		std::cout << "Renderer could not be created!" << std::endl;
+		std::cout << "Renderer could not be created: " << (char*)SDL_GetError() << std::endl;
 	}
 	SDL_SetRenderDrawColor(outRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	return outRenderer;
 }
 
 SDL_Texture* GetSDLTexture(char* path, SDL_Renderer* windowRenderer)
-{
-	//CHK_ExitIf(path == NULL, "textture path cant be empty!", "no path given");
+{	
 	if(path == NULL)
 	{
-		std::cout << "textture path cant be empty!" << std::endl;
+		std::cout << "Texture path cant be empty!" << std::endl;
 	}
-	SDL_Texture* outTexture = loadCreateTexture(path, windowRenderer);
-	//CHK_ExitIf(outTexture == NULL, "could not load textture", "outTexture");
+	SDL_Texture* outTexture = loadCreateTexture(path, windowRenderer);	
 	if(outTexture == NULL)
 	{
-		std::cout << "could not load textture" << std::endl;
+		std::cout << "Could not load textture" << std::endl;
 	}
 	return outTexture;
 }
@@ -640,15 +632,13 @@ void renderTextture(SDL_Renderer* toRenderer, SDL_Texture* texture)
 
 void InitSDL()
 {
-	// Initialise SDL
-	//CHK_ExitIf(SDL_Init(SDL_INIT_VIDEO) < 0, "SDL could not initialize!", (char*)SDL_GetError());
+	// Initialise SDL	
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		std::cout << "SDL could not initialize!" << (char*)SDL_GetError() << std::endl;
 	}
 
-	// Initialize SDL Image extension
-	//CHK_ExitIf(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG), "SDL_image could not initialize!", (char*)IMG_GetError());
+	// Initialize SDL Image extension	
 	if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
 	{
 		std::cout << "SDL_image could not initialize!" << (char*)SDL_GetError() << std::endl;
@@ -666,16 +656,15 @@ void CleanupResources(struct GameWorldData* gameWorldData)
 	IMG_Quit();
 	SDL_Quit();
 
-	free(gameWorldData);
+	delete gameWorldData;
 }
 
 struct GameWorldData* InitGameWorldData()
 {
-	struct GameWorldData* gameWorldData = (GameWorldData*)malloc(sizeof(struct GameWorldData));
+	struct GameWorldData* gameWorldData = new GameWorldData;
 	if(gameWorldData == NULL) {
-		std::cout << "malloc failed" << std::endl;
-	}
-	//CHK_ExitIf(gameWorldData == NULL,"malloc failed","creatiung gameworld data");
+		std::cout << "malloc failed creating gameworld data" << std::endl;
+	}	
 
 	gameWorldData->x = 0;
 	gameWorldData->y = 0;
@@ -692,9 +681,7 @@ struct GameWorldData* InitGameWorldData()
 int main(int argc, char *args[])
 {
 	GameWorldData* gameWorldData = InitGameWorldData();
-
-
-
+	
 	InitSDL();
 
 	gameWorldData->window = GetSDLWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -732,7 +719,7 @@ int main(int argc, char *args[])
 			Render(percentOutsideFrame,gameWorldData);
 		}
 	}
-	puts("Game done");
+	std::cout << "Game done" << std::endl;
 	CleanupResources(gameWorldData);
 	return 0;
 }
