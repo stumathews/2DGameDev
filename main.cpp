@@ -100,6 +100,11 @@ void sense_player_input()
 					g_pGameWorldData->x += 20;
 				break;
 
+				case SDLK_q:
+					std::cout << "Quit key detected!" << std::endl;
+					g_pGameWorldData->bGameDone = 1;
+					break;
+
 				default:
 					std::cout << "Unknown control key" << std::endl;	
 				break;
@@ -300,11 +305,6 @@ void IndependantTickRun(long frameTime)
 {
 }
 
-
-
-
-
-
 /***
  * Main graphics pipe line for NPC rendering.
  * Send packed NPC geometry to hardware.
@@ -342,9 +342,9 @@ void npc_select_visible_subset()
 
 }
 
-/***
- * Render characters (Non player Characters)
- * These are animated active elements, usually characters such as enemies
+/*
+  Render characters (Non player Characters)
+  These are animated active elements, usually characters such as enemies
  */
 void NPC_Presentation()
 {
@@ -356,8 +356,8 @@ void NPC_Presentation()
 	npc_render_data();
 }
 
-/***
- * Send player's geometry to the hardware for processing
+/*
+ Send player's geometry to the hardware for processing
  */
 void player_render_data()
 {
@@ -462,10 +462,7 @@ void world_elements_occulude()
 
 }
 
-/***
- * filter away invisible or irrelevant elements to reduce render overhead.
- * Main graphics pipeline.
- */
+// filter away invisible or irrelevant elements to reduce render overhead. Main graphics pipeline.
 void world_select_visible_graphic_elements()
 {
 	world_elements_clip();
@@ -474,9 +471,7 @@ void world_select_visible_graphic_elements()
 }
 
 
-/***
- * Determine from elements'd chacracteristics (distance etc) the LOD to be used
- */
+//Determine from elements'd chacracteristics (distance etc) the LOD to be used 
 void world_select_resolution()
 {
 
@@ -620,7 +615,7 @@ void renderLine(SDL_Renderer* toRenderer)
 	SDL_RenderDrawLine( toRenderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 );
 }
 
-void renderTextture(SDL_Renderer* toRenderer, SDL_Texture* texture)
+void renderTexture(SDL_Renderer* toRenderer, SDL_Texture* texture)
 {
 	SDL_RenderClear(toRenderer);
 
