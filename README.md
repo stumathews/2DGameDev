@@ -7,3 +7,7 @@ https://www.libsdl.org/projects/SDL_image/
 
 Hook up the include and bin directories in Visual studio and you're good to go.
 BTW use the x86 versions of everything - even though it comes with x64 additionally
+
+## Contents
+So far this project has a game loop and skeletal structure for the rest of the game. 
+See main.cpp for gameloop mechanics and the handling of input via SDL in sense_player_input() function
