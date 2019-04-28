@@ -281,7 +281,7 @@ void world_update()
 // This is basically the update functions which is run x FPS to maintain a timed series on constant updates 
 // that simulates constant movement for example or time intervals in a non-time related game (turn based game eg)
 void Update()
-{
+{	
 	// This game logic keeps the world simulator running:
 	player_update();
 	
@@ -633,19 +633,22 @@ void renderTextture(SDL_Renderer* toRenderer, SDL_Texture* texture)
 
 
 
-void InitSDL()
+bool InitSDL()
 {
 	// Initialise SDL	
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		std::cout << "SDL could not initialize!" << (char*)SDL_GetError() << std::endl;
+		return false;
 	}
 
 	// Initialize SDL Image extension	
 	if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
 	{
 		std::cout << "SDL_image could not initialize!" << (char*)SDL_GetError() << std::endl;
+		return false;
 	}
+	return true;
 }
 
 void CleanupResources()
@@ -662,13 +665,18 @@ void CleanupResources()
 	delete g_pGameWorldData;
 }
 
-void Initg_pGameWorldData()
+bool InitGameWorldData()
 {
-	g_pGameWorldData = new GameWorldData;
+	// Create our global copy of the game data
+	g_pGameWorldData = new GameWorldData();
+
 	if(g_pGameWorldData == NULL) {
 		std::cout << "malloc failed creating gameworld data" << std::endl;
+		return false;
 	}	
 
+	// Our game data is basically keeping track of x,y position of a 100x100 square and 
+	// updating that data when the user presses up, down,left, right
 	g_pGameWorldData->x = 0;
 	g_pGameWorldData->y = 0;
 	g_pGameWorldData->w = 100;
@@ -678,22 +686,34 @@ void Initg_pGameWorldData()
 	g_pGameWorldData->bGameDone = 0;
 	g_pGameWorldData->bNetworkGame = 0;
 	g_pGameWorldData->bCanRender = 1;
+
+	return true;
 	
 }
 
 int main(int argc, char *args[])
 {
-	Initg_pGameWorldData();
+	if(!InitGameWorldData())
+	{
+		std::cout << "Could not initailize game data, aborting." << std::endl;
+		return -1;
+	}
 	
-	InitSDL();
+	if(!InitSDL())
+	{
+		std::cout << "Could not initailize SDL, aborting." << std::endl;
+		return -1;
+	}
 
 	g_pGameWorldData->window = GetSDLWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
 	g_pGameWorldData->windowRenderer = GetSDLWindowRenderer(g_pGameWorldData->window);
+	string str("pacman.png");
 
-	//texture = GetSDLTexture("texture.png", g_pGameWorldData->windowRenderer);
+	texture = GetSDLTexture((char*)str.c_str(), g_pGameWorldData->windowRenderer);
 
 	tickCountAtLastCall = ticks();
 
+	// MAIN GAME LOOP!!
 	while(!g_pGameWorldData->bGameDone) {
 		newTime = ticks();
 		frameTicks = 0;
