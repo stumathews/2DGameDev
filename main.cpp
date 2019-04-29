@@ -11,7 +11,7 @@ using namespace std;
 #define TICK_TIME 50
 #define MAX_LOOPS 4
 const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_HEIGHT = 640;
 
 
 struct GameWorldData {
@@ -21,6 +21,7 @@ struct GameWorldData {
 	int h;
 	SDL_Window* window;
 	SDL_Renderer* windowRenderer;
+	SDL_Surface* windowImageSurface;
 	bool bGameDone;
 	bool bNetworkGame;
 	bool bCanRender;
@@ -29,36 +30,22 @@ struct GameWorldData {
 int frameTicks;
 int numLoops;
 long tickCountAtLastCall,newTime;
-SDL_Texture* texture = NULL;
+SDL_Texture* backgroundTexture = NULL;
+string backgroundImageFilename("maze1r.png");
+SDL_Surface* g_pBackgroundSurface = NULL;
+SDL_Texture* TryMakeTexture(char* path, SDL_Renderer* windowRenderer);
 
-SDL_Rect renderRectangle(const int x, const int y, const int w, const int h);
+// Draw Rectangle on Renderer
+void DrawRectangle(const int x, const int y, const int w, const int h,  SDL_Renderer *toRenderer);
 void renderLine(SDL_Renderer* toRenderer);
 
 GameWorldData* g_pGameWorldData = NULL;
 
-void drawtexttureTopLeft(const int SCREEN_WIDTH, const int SCREEN_HEIGHT, SDL_Texture* texture)
+void DrawTextureTopLeft(const int SCREEN_WIDTH, const int SCREEN_HEIGHT, SDL_Texture* texture)
 {
-	//Top left corner viewport
-	SDL_Rect topLeftViewport;
-	topLeftViewport.x = 0;
-	topLeftViewport.y = 0;
-	topLeftViewport.w = SCREEN_WIDTH / 2;
-	topLeftViewport.h = SCREEN_HEIGHT / 2;
-	SDL_RenderSetViewport(g_pGameWorldData->windowRenderer, &topLeftViewport);
-	//Render texture to screen
-
 	SDL_RenderCopy(g_pGameWorldData->windowRenderer, texture, NULL, NULL);
 }
 
-void ResetViewport(const int SCREEN_WIDTH, const int SCREEN_HEIGHT)
-{
-	SDL_Rect whole_screen;
-	whole_screen.x = 0;
-	whole_screen.y = 0;
-	whole_screen.w = SCREEN_WIDTH;
-	whole_screen.h = SCREEN_HEIGHT;
-	SDL_RenderSetViewport(g_pGameWorldData->windowRenderer, &whole_screen);
-}
 
 /***
  * Check for interaction requests from controllers
@@ -70,6 +57,7 @@ void sense_player_input()
 	// while shooting active weapon.
 
 	//Event handler
+	int interval = 10;
 	SDL_Event e;
 	while(SDL_PollEvent(&e) != 0)
 	{
@@ -82,22 +70,22 @@ void sense_player_input()
 			{
 				case SDLK_UP:
 					std::cout << "up!" << std::endl;	
-					g_pGameWorldData->y -= 20;
+					g_pGameWorldData->y -= interval;
 				break;
 
 				case SDLK_DOWN:
 					std::cout << "down!" << std::endl;		
-					g_pGameWorldData->y += 20;
+					g_pGameWorldData->y += interval;
 				break;
 
 				case SDLK_LEFT:
 					std::cout << "left!" << std::endl;					
-					g_pGameWorldData->x -= 20;
+					g_pGameWorldData->x -= interval;
 				break;
 
 				case SDLK_RIGHT:
 					std::cout << "right!" << std::endl;	
-					g_pGameWorldData->x += 20;
+					g_pGameWorldData->x += interval;
 				break;
 
 				case SDLK_q:
@@ -106,6 +94,10 @@ void sense_player_input()
 					break;
 
 				default:
+					SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                         "Unkown control key",
+                         "press up, down, left, right or 'q' to quit",
+                         NULL);
 					std::cout << "Unknown control key" << std::endl;	
 				break;
 			}
@@ -432,17 +424,41 @@ void world_pack_geometry()
  * Eg. OpenGL,Direct3D
  */
 void world_render_geometry()
-{
-	//Custom SDL drawing...
+{	
+	SDL_RenderClear(g_pGameWorldData->windowRenderer);
+	int w, h;
+	if(backgroundImageFilename != "maze1r.png")
+	{
+		SDL_QueryTexture(backgroundTexture, NULL, NULL, &w, &h);
+	}
+	else
+	{
+		w = h = 640;
+	}
 
-	// renderTextture(windowRenderer, texture);
+	SDL_Rect SrcR;
+	SDL_Rect DestR;
 
-	SDL_Rect fillRect = renderRectangle(g_pGameWorldData->x, g_pGameWorldData->y, 100,100);
-	//renderLine(g_pGameWorldData->windowRenderer);
-	//drawVerticalLineOfDots(SCREEN_HEIGHT, SCREEN_WIDTH, g_pGameWorldData);
+	SrcR.x = 0;
+	SrcR.y = 0;
+	SrcR.w = w;
+	SrcR.h = h;
 
-	drawtexttureTopLeft(SCREEN_WIDTH, SCREEN_HEIGHT, texture);
-	ResetViewport(SCREEN_WIDTH, SCREEN_HEIGHT);
+	DestR.x = 0;
+	DestR.y = 0;
+	DestR.w = SCREEN_WIDTH;
+	DestR.h = SCREEN_HEIGHT;
+
+	
+
+	//draw background
+	
+	SDL_RenderCopy(g_pGameWorldData->windowRenderer, backgroundTexture, &SrcR, &DestR);
+
+	// draw rectangle over it
+	DrawRectangle(g_pGameWorldData->x, g_pGameWorldData->y, 17,14,  g_pGameWorldData->windowRenderer);
+
+	// show our masterpiece to the world
 	SDL_RenderPresent(g_pGameWorldData->windowRenderer);
 }
 
@@ -537,30 +553,44 @@ void Render(float percentWithinTick)
 	Player_Presentation();
 }
 
-SDL_Rect renderRectangle(const int x, const int y, const int w, const int h)
+void DrawRectangle(const int x, const int y, const int w, const int h, SDL_Renderer *onRenderer)
 {
-	SDL_Renderer *toRenderer = g_pGameWorldData->windowRenderer;
-	SDL_SetRenderDrawColor(toRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	SDL_RenderClear(toRenderer);
 
-	SDL_Rect fillRect = { x , y , w, h };
-	SDL_SetRenderDrawColor(toRenderer, 0xFF, 0x00, 0x00, 0xFF);
-	SDL_RenderFillRect(toRenderer, &fillRect);
+	// define a rectangle
+	SDL_Rect fillRect = { 
+		x == 0 ? 3 : x 
+		, y == 0 ? 4 : y 
+		, w,
+		h };
+	
+	// set draw colour on renderer
+	SDL_SetRenderDrawColor(onRenderer, 0xFF, 0x00, 0x00, 0xFF);
 
-	return fillRect;
+	// send to senderer
+	SDL_RenderFillRect(onRenderer, &fillRect);
+
+	
 }
 
-SDL_Texture* loadCreateTexture(char* texturePath, SDL_Renderer* renderer)
+SDL_Texture* MakeTexture(char* texturePath, SDL_Renderer* renderer)
 {
 	SDL_Texture* newTexture = NULL;
 	SDL_Surface* imageSurface = IMG_Load(texturePath);
+
 	if(imageSurface == NULL)
 	{
 		std::cout << "SDL could not load image: " << (char*)IMG_GetError() << std::endl;
 	}
 
+	auto optimisedSurface = SDL_ConvertSurface(imageSurface, g_pGameWorldData->windowImageSurface->format, NULL);
+	
+	if(optimisedSurface == NULL)
+	{
+		std::cout << "Unable to optimize image " <<  texturePath << " SDL Error: " << SDL_GetError() << std::endl;
+	}
+	
 	//Create texture from surface pixels
-	newTexture = SDL_CreateTextureFromSurface(renderer, imageSurface);	
+	newTexture = SDL_CreateTextureFromSurface(renderer, optimisedSurface);	
 	if(newTexture == NULL)
 	{
 		std::cout << "Unable to create texture: " << (char*)IMG_GetError() << std::endl;
@@ -594,13 +624,15 @@ SDL_Renderer* GetSDLWindowRenderer(SDL_Window* window)
 	return outRenderer;
 }
 
-SDL_Texture* GetSDLTexture(char* path, SDL_Renderer* windowRenderer)
+SDL_Texture* TryMakeTexture(char* path, SDL_Renderer* windowRenderer)
 {	
 	if(path == NULL)
 	{
 		std::cout << "Texture path cant be empty!" << std::endl;
 	}
-	SDL_Texture* outTexture = loadCreateTexture(path, windowRenderer);	
+
+	SDL_Texture* outTexture = MakeTexture(path, windowRenderer);	
+
 	if(outTexture == NULL)
 	{
 		std::cout << "Could not load textture" << std::endl;
@@ -614,19 +646,6 @@ void renderLine(SDL_Renderer* toRenderer)
 	SDL_SetRenderDrawColor( toRenderer, 0x00, 0x00, 0xFF, 0xFF );
 	SDL_RenderDrawLine( toRenderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 );
 }
-
-void renderTexture(SDL_Renderer* toRenderer, SDL_Texture* texture)
-{
-	SDL_RenderClear(toRenderer);
-
-	//Render texture to renderer
-	SDL_RenderCopy(toRenderer, texture, NULL, NULL);
-
-	//Update rendrer
-	SDL_RenderPresent(toRenderer);
-}
-
-
 
 bool InitSDL()
 {
@@ -648,11 +667,16 @@ bool InitSDL()
 
 void CleanupResources()
 {
-	SDL_DestroyRenderer(g_pGameWorldData->windowRenderer);
+	// get rid of renderer
+	SDL_DestroyRenderer(g_pGameWorldData->windowRenderer);	
+	
+	// get rid of window and this will also cleanup the screen surface
 	SDL_DestroyWindow(g_pGameWorldData->window);
+	
 
 	g_pGameWorldData->window = NULL;
 	g_pGameWorldData->windowRenderer = NULL;
+	g_pGameWorldData->windowImageSurface = NULL;
 
 	IMG_Quit();
 	SDL_Quit();
@@ -678,6 +702,7 @@ bool InitGameWorldData()
 	g_pGameWorldData->h = 100;
 	g_pGameWorldData->window = NULL;
 	g_pGameWorldData->windowRenderer = NULL;
+	g_pGameWorldData->windowImageSurface = NULL;
 	g_pGameWorldData->bGameDone = 0;
 	g_pGameWorldData->bNetworkGame = 0;
 	g_pGameWorldData->bCanRender = 1;
@@ -701,10 +726,12 @@ int main(int argc, char *args[])
 	}
 
 	g_pGameWorldData->window = GetSDLWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_pGameWorldData->windowImageSurface = SDL_GetWindowSurface(g_pGameWorldData->window);
 	g_pGameWorldData->windowRenderer = GetSDLWindowRenderer(g_pGameWorldData->window);
-	string str("pacman.png");
+	
+	
 
-	texture = GetSDLTexture((char*)str.c_str(), g_pGameWorldData->windowRenderer);
+	backgroundTexture = TryMakeTexture((char*)backgroundImageFilename.c_str(), g_pGameWorldData->windowRenderer);
 
 	tickCountAtLastCall = ticks();
 
