@@ -2,6 +2,10 @@
 #include <SDL_image.h>
 #include <Windows.h>
 #include <iostream>
+#include "Common.h"
+#include "ball.h"
+#include "Drawing.h"
+#include <vector>
 using namespace std;
 
 
@@ -10,22 +14,11 @@ using namespace std;
 
 #define TICK_TIME 50
 #define MAX_LOOPS 4
+	
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 640;
 
 
-struct GameWorldData {
-	int x;
-	int y;
-	int w;
-	int h;
-	SDL_Window* window;
-	SDL_Renderer* windowRenderer;
-	SDL_Surface* windowImageSurface;
-	bool bGameDone;
-	bool bNetworkGame;
-	bool bCanRender;
-};
 
 int frameTicks;
 int numLoops;
@@ -36,7 +29,7 @@ SDL_Surface* g_pBackgroundSurface = NULL;
 SDL_Texture* TryMakeTexture(char* path, SDL_Renderer* windowRenderer);
 
 // Draw Rectangle on Renderer
-void DrawRectangle(const int x, const int y, const int w, const int h,  SDL_Renderer *toRenderer);
+
 void renderLine(SDL_Renderer* toRenderer);
 
 GameWorldData* g_pGameWorldData = NULL;
@@ -180,7 +173,13 @@ void update_passive_elements()
 
 void logic_sort_according_to_relevance(){}
 void execute_control_mechanism(){}
-void update_state(){}
+void update_state()
+{
+	for( auto actor : g_pGameWorldData->actors)
+	{
+		actor->DoLogic();
+	}
+}
 
 /***
  * Update simple logical elements such as doors, elevators or moving platforms
@@ -456,7 +455,13 @@ void world_render_geometry()
 	SDL_RenderCopy(g_pGameWorldData->windowRenderer, backgroundTexture, &SrcR, &DestR);
 
 	// draw rectangle over it
-	DrawRectangle(g_pGameWorldData->x, g_pGameWorldData->y, 17,14,  g_pGameWorldData->windowRenderer);
+	
+	// render our actors
+	
+	for( auto actor : g_pGameWorldData->actors)
+	{
+		actor->Draw(g_pGameWorldData->windowRenderer);
+	}
 
 	// show our masterpiece to the world
 	SDL_RenderPresent(g_pGameWorldData->windowRenderer);
@@ -553,24 +558,7 @@ void Render(float percentWithinTick)
 	Player_Presentation();
 }
 
-void DrawRectangle(const int x, const int y, const int w, const int h, SDL_Renderer *onRenderer)
-{
 
-	// define a rectangle
-	SDL_Rect fillRect = { 
-		x == 0 ? 3 : x 
-		, y == 0 ? 4 : y 
-		, w,
-		h };
-	
-	// set draw colour on renderer
-	SDL_SetRenderDrawColor(onRenderer, 0xFF, 0x00, 0x00, 0xFF);
-
-	// send to senderer
-	SDL_RenderFillRect(onRenderer, &fillRect);
-
-	
-}
 
 SDL_Texture* MakeTexture(char* texturePath, SDL_Renderer* renderer)
 {
@@ -705,8 +693,11 @@ bool InitGameWorldData()
 	g_pGameWorldData->windowImageSurface = NULL;
 	g_pGameWorldData->bGameDone = 0;
 	g_pGameWorldData->bNetworkGame = 0;
-	g_pGameWorldData->bCanRender = 1;
-
+	g_pGameWorldData->bCanRender = 1;	
+	g_pGameWorldData->actors.push_back(new Ball( SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 10, 10, 10, SCREEN_HEIGHT / 2  ));
+	g_pGameWorldData->actors.push_back(new Ball( SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, 10, 10, 50, SCREEN_HEIGHT / 2  ));
+	g_pGameWorldData->actors.push_back(new Ball( SCREEN_WIDTH / 8, SCREEN_HEIGHT / 5, 10, 10, 100, SCREEN_HEIGHT / 2  ));
+	
 	return true;
 	
 }
