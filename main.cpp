@@ -6,8 +6,11 @@
 #include "ball.h"
 #include "Drawing.h"
 #include <vector>
-using namespace std;
+#include <SDL.h>
+#include <SDL_mixer.h>
+#include "Events.h"
 
+using namespace std;
 
 // 20 times a second = 50 milliseconds
 // 1 second is 20*50 = 1000 milliseconds
@@ -17,26 +20,32 @@ using namespace std;
 	
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 640;
-
-
-
-int frameTicks;
-int numLoops;
-long tickCountAtLastCall,newTime;
-SDL_Texture* backgroundTexture = NULL;
+SDL_Texture* pBackgroundTexture = NULL;
 string backgroundImageFilename("maze1r.png");
 SDL_Surface* g_pBackgroundSurface = NULL;
 SDL_Texture* TryMakeTexture(char* path, SDL_Renderer* windowRenderer);
 
-// Draw Rectangle on Renderer
 
+//The music that will be played
+Mix_Music *gMusic = NULL;
+
+//The sound effects that will be used
+Mix_Chunk *gScratch = NULL;
+Mix_Chunk *gHigh = NULL;
+Mix_Chunk *gMedium = NULL;
+Mix_Chunk *gLow = NULL;
+
+// Draw Rectangle on Renderer
 void renderLine(SDL_Renderer* toRenderer);
 
-GameWorldData* g_pGameWorldData = NULL;
+int main(int argc, char * args[]);
+
+// Create our global copy of the game data
+std::shared_ptr<GameWorldData> g_pGameWorldData = std::shared_ptr<GameWorldData>(new GameWorldData());
 
 void DrawTextureTopLeft(const int SCREEN_WIDTH, const int SCREEN_HEIGHT, SDL_Texture* texture)
 {
-	SDL_RenderCopy(g_pGameWorldData->windowRenderer, texture, NULL, NULL);
+	SDL_RenderCopy(g_pGameWorldData->pWindowRenderer, texture, NULL, NULL);
 }
 
 
@@ -48,6 +57,8 @@ void sense_player_input()
 	//Map controller actions to meanings for the game:
 	// left button was pushed and button A was pressed MEANS -> request to move character left
 	// while shooting active weapon.
+
+
 
 	//Event handler
 	int interval = 10;
@@ -62,29 +73,82 @@ void sense_player_input()
 			switch( e.key.keysym.sym )
 			{
 				case SDLK_UP:
-					std::cout << "up!" << std::endl;	
-					g_pGameWorldData->y -= interval;
+					std::cout << "Player pressed up!" << std::endl;	
+					//g_pGameWorldData->y -= interval;
+					g_pGameWorldData->eventManager.get()->RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Up)));
 				break;
 
 				case SDLK_DOWN:
-					std::cout << "down!" << std::endl;		
-					g_pGameWorldData->y += interval;
+					std::cout << "Player pressed down!" << std::endl;		
+					//g_pGameWorldData->y += interval;
+					g_pGameWorldData->eventManager.get()->RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Down)));
 				break;
 
 				case SDLK_LEFT:
-					std::cout << "left!" << std::endl;					
-					g_pGameWorldData->x -= interval;
+					std::cout << "Player pressed left!" << std::endl;					
+					//g_pGameWorldData->x -= interval;
+					g_pGameWorldData->eventManager.get()->RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Left)));
 				break;
 
 				case SDLK_RIGHT:
-					std::cout << "right!" << std::endl;	
-					g_pGameWorldData->x += interval;
+					std::cout << "Player pressed right!" << std::endl;	
+					//g_pGameWorldData->x += interval;
+					g_pGameWorldData->eventManager.get()->RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Right)));
 				break;
 
 				case SDLK_q:
-					std::cout << "Quit key detected!" << std::endl;
+					std::cout << "Player pressed Quit key !" << std::endl;
 					g_pGameWorldData->bGameDone = 1;
 					break;
+
+				 //Play high sound effect
+                case SDLK_1:
+                Mix_PlayChannel( -1, gHigh, 0 );
+                break;
+                            
+                //Play medium sound effect
+                case SDLK_2:
+                Mix_PlayChannel( -1, gMedium, 0 );
+                break;
+                            
+                //Play low sound effect
+                case SDLK_3:
+                Mix_PlayChannel( -1, gLow, 0 );
+                break;
+                            
+                //Play scratch sound effect
+                case SDLK_4:
+                Mix_PlayChannel( -1, gScratch, 0 );
+                break;
+				case SDLK_9:
+				//If there is no music playing
+				if( Mix_PlayingMusic() == 0 )
+				{
+					//Play the music
+					Mix_PlayMusic( gMusic, -1 );
+				}
+				//If music is being played
+				else
+				{
+					//If the music is paused
+					if( Mix_PausedMusic() == 1 )
+					{
+						//Resume the music
+						Mix_ResumeMusic();
+					}
+					//If the music is playing
+					else
+					{
+						//Pause the music
+						Mix_PauseMusic();
+					}
+				}
+				break;
+				case SDLK_0:
+                //Stop the music
+                Mix_HaltMusic();
+                break;
+
 
 				default:
 					SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
@@ -140,10 +204,12 @@ void update_player_state()
  */
 void player_update()
 {
-	// read from game controller
+	// Read from game controller
 	sense_player_input();
+	
 	// First see if we can perform what the payer wants us to do (we might be unable to, next to wall ie. cant move forward)
 	determine_restrictions();
+	
 	// Do what we can to update the players state based on the above and what the player tied to do
 	// so move the player's position if he asked to move and there was no obstacle etc.
 	update_player_state();
@@ -175,10 +241,13 @@ void logic_sort_according_to_relevance(){}
 void execute_control_mechanism(){}
 void update_state()
 {
+	g_pGameWorldData->eventManager.get()->ProcessEvents();
 	for( auto actor : g_pGameWorldData->actors)
 	{
-		actor->DoLogic();
+		actor.get()->DoLogic();
 	}
+
+	
 }
 
 /***
@@ -276,6 +345,7 @@ void world_update()
 
 // This is basically the update functions which is run x FPS to maintain a timed series on constant updates 
 // that simulates constant movement for example or time intervals in a non-time related game (turn based game eg)
+// This is where you would make state changes in the game such as decreasing ammo etc
 void Update()
 {	
 	// This game logic keeps the world simulator running:
@@ -392,7 +462,7 @@ void Player_Presentation()
  */
 void world_send_audio_data_to_audio_hardware()
 {
-
+	
 }
 
 /***
@@ -424,11 +494,11 @@ void world_pack_geometry()
  */
 void world_render_geometry()
 {	
-	SDL_RenderClear(g_pGameWorldData->windowRenderer);
+	SDL_RenderClear(g_pGameWorldData->pWindowRenderer);
 	int w, h;
 	if(backgroundImageFilename != "maze1r.png")
 	{
-		SDL_QueryTexture(backgroundTexture, NULL, NULL, &w, &h);
+		SDL_QueryTexture(pBackgroundTexture, NULL, NULL, &w, &h);
 	}
 	else
 	{
@@ -452,7 +522,7 @@ void world_render_geometry()
 
 	//draw background
 	
-	SDL_RenderCopy(g_pGameWorldData->windowRenderer, backgroundTexture, &SrcR, &DestR);
+	SDL_RenderCopy(g_pGameWorldData->pWindowRenderer, pBackgroundTexture, &SrcR, &DestR);
 
 	// draw rectangle over it
 	
@@ -460,11 +530,11 @@ void world_render_geometry()
 	
 	for( auto actor : g_pGameWorldData->actors)
 	{
-		actor->Draw(g_pGameWorldData->windowRenderer);
+		actor->Draw(g_pGameWorldData->pWindowRenderer);
 	}
 
 	// show our masterpiece to the world
-	SDL_RenderPresent(g_pGameWorldData->windowRenderer);
+	SDL_RenderPresent(g_pGameWorldData->pWindowRenderer);
 }
 
 // chop off items outside of the players view
@@ -534,9 +604,9 @@ void World_Presentation()
 void drawVerticalLineOfDots(const int SCREEN_HEIGHT, const int SCREEN_WIDTH)
 {
 	//Draw vertical line of yellow dots
-	SDL_SetRenderDrawColor(g_pGameWorldData->windowRenderer, 0x00, 0x00, 0xFF, 0x00);
+	SDL_SetRenderDrawColor(g_pGameWorldData->pWindowRenderer, 0x00, 0x00, 0xFF, 0x00);
 	for (int i = 0; i < SCREEN_HEIGHT; i += 4) {
-		SDL_RenderDrawPoint(g_pGameWorldData->windowRenderer, SCREEN_WIDTH / 2, i);
+		SDL_RenderDrawPoint(g_pGameWorldData->pWindowRenderer, SCREEN_WIDTH / 2, i);
 	}
 }
 
@@ -570,7 +640,7 @@ SDL_Texture* MakeTexture(char* texturePath, SDL_Renderer* renderer)
 		std::cout << "SDL could not load image: " << (char*)IMG_GetError() << std::endl;
 	}
 
-	auto optimisedSurface = SDL_ConvertSurface(imageSurface, g_pGameWorldData->windowImageSurface->format, NULL);
+	auto optimisedSurface = SDL_ConvertSurface(imageSurface, g_pGameWorldData->pWindowImageSurface->format, NULL);
 	
 	if(optimisedSurface == NULL)
 	{
@@ -638,7 +708,7 @@ void renderLine(SDL_Renderer* toRenderer)
 bool InitSDL()
 {
 	// Initialise SDL	
-	if(SDL_Init(SDL_INIT_VIDEO) < 0)
+	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0)
 	{
 		std::cout << "SDL could not initialize!" << (char*)SDL_GetError() << std::endl;
 		return false;
@@ -650,60 +720,127 @@ bool InitSDL()
 		std::cout << "SDL_image could not initialize!" << (char*)SDL_GetError() << std::endl;
 		return false;
 	}
+
+	//Initialize SDL_mixer 
+    if( Mix_OpenAudio( 44100 /*sound frequency*/, MIX_DEFAULT_FORMAT/*sample format*/, 2 /*hardware channels*/, 2048 /*sample size*/ ) < 0 )
+    {
+		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << (char*)Mix_GetError() << std::endl;
+        return false;
+    }
 	return true;
 }
 
 void CleanupResources()
 {
+	Mix_FreeChunk( gScratch );
+    Mix_FreeChunk( gHigh );
+    Mix_FreeChunk( gMedium );
+    Mix_FreeChunk( gLow );
+    gScratch = NULL;
+    gHigh = NULL;
+    gMedium = NULL;
+    gLow = NULL;
+    
+    //Free the music
+    Mix_FreeMusic( gMusic );
+    gMusic = NULL;
+
 	// get rid of renderer
-	SDL_DestroyRenderer(g_pGameWorldData->windowRenderer);	
+	SDL_DestroyRenderer(g_pGameWorldData->pWindowRenderer);	
 	
 	// get rid of window and this will also cleanup the screen surface
-	SDL_DestroyWindow(g_pGameWorldData->window);
+	SDL_DestroyWindow(g_pGameWorldData->pWindow);
 	
-
-	g_pGameWorldData->window = NULL;
-	g_pGameWorldData->windowRenderer = NULL;
-	g_pGameWorldData->windowImageSurface = NULL;
 
 	IMG_Quit();
 	SDL_Quit();
 
-	delete g_pGameWorldData;
+	
 }
 
 bool InitGameWorldData()
 {
-	// Create our global copy of the game data
-	g_pGameWorldData = new GameWorldData();
-
-	if(g_pGameWorldData == NULL) {
-		std::cout << "malloc failed creating gameworld data" << std::endl;
-		return false;
-	}	
-
 	// Our game data is basically keeping track of x,y position of a 100x100 square and 
 	// updating that data when the user presses up, down,left, right
+
+	shared_ptr<Actor> ball1(new Ball( SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 10, 10, 10, SCREEN_HEIGHT / 2  ));
+	shared_ptr<Actor> ball2(new Ball( SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, 10, 10, 50, SCREEN_HEIGHT / 2  ));
+	shared_ptr<Actor> ball3(new Ball( SCREEN_WIDTH / 8, SCREEN_HEIGHT / 5, 10, 10, 100, SCREEN_HEIGHT / 2  ));
+		
+	
+
 	g_pGameWorldData->x = 0;
 	g_pGameWorldData->y = 0;
 	g_pGameWorldData->w = 100;
 	g_pGameWorldData->h = 100;
-	g_pGameWorldData->window = NULL;
-	g_pGameWorldData->windowRenderer = NULL;
-	g_pGameWorldData->windowImageSurface = NULL;
+	g_pGameWorldData->pWindow = NULL;
+	g_pGameWorldData->pWindowRenderer = NULL;
+	g_pGameWorldData->pWindowImageSurface = NULL;
 	g_pGameWorldData->bGameDone = 0;
 	g_pGameWorldData->bNetworkGame = 0;
-	g_pGameWorldData->bCanRender = 1;	
-	g_pGameWorldData->actors.push_back(new Ball( SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 10, 10, 10, SCREEN_HEIGHT / 2  ));
-	g_pGameWorldData->actors.push_back(new Ball( SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, 10, 10, 50, SCREEN_HEIGHT / 2  ));
-	g_pGameWorldData->actors.push_back(new Ball( SCREEN_WIDTH / 8, SCREEN_HEIGHT / 5, 10, 10, 100, SCREEN_HEIGHT / 2  ));
+	g_pGameWorldData->bCanRender = 1;		
+	g_pGameWorldData->eventManager = shared_ptr<EventManager>(new EventManager());
+	g_pGameWorldData->actors.push_back(ball1);
+	g_pGameWorldData->actors.push_back(ball2);
+	g_pGameWorldData->actors.push_back(ball3);
+
+	g_pGameWorldData->eventManager->SubscribeToEvent(PositionChangeEventType, ball1.get());
+	g_pGameWorldData->eventManager->SubscribeToEvent(PositionChangeEventType, ball2.get());
+	g_pGameWorldData->eventManager->SubscribeToEvent(PositionChangeEventType, ball3.get());
 	
+
 	return true;
 	
 }
 
+bool loadMedia()
+{
+	//Load music
+    gMusic = Mix_LoadMUS( "Music/MainTheme.wav" );
+    if( gMusic == NULL )
+    {
+        printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
+        return false;
+    }
+    
+    //Load sound effects
+    gScratch = Mix_LoadWAV( "scratch.wav" );
+    if( gScratch == NULL )
+    {
+        printf( "Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        return false;
+    }
+    
+    gHigh = Mix_LoadWAV( "high.wav" );
+    if( gHigh == NULL )
+    {
+        printf( "Failed to load high sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        return false;
+    }
+
+    gMedium = Mix_LoadWAV( "medium.wav" );
+    if( gMedium == NULL )
+    {
+        printf( "Failed to load medium sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        return false;
+    }
+
+    gLow = Mix_LoadWAV( "low.wav" );
+    if( gLow == NULL )
+    {
+        printf( "Failed to load low sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+        return false;
+    }
+}
+
 int main(int argc, char *args[])
 {
+	// Number of ticks in the update call
+	int frameTicks;
+	// Number of loops ??
+	int numLoops;
+	long tickCountAtLastCall, newTime;
+
 	if(!InitGameWorldData())
 	{
 		std::cout << "Could not initailize game data, aborting." << std::endl;
@@ -716,13 +853,18 @@ int main(int argc, char *args[])
 		return -1;
 	}
 
-	g_pGameWorldData->window = GetSDLWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
-	g_pGameWorldData->windowImageSurface = SDL_GetWindowSurface(g_pGameWorldData->window);
-	g_pGameWorldData->windowRenderer = GetSDLWindowRenderer(g_pGameWorldData->window);
-	
-	
+	if(!loadMedia())
+	{
+	}
 
-	backgroundTexture = TryMakeTexture((char*)backgroundImageFilename.c_str(), g_pGameWorldData->windowRenderer);
+	// Load up the SDL constructs into our global gameworld data object
+	g_pGameWorldData->pWindow = GetSDLWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_pGameWorldData->pWindowImageSurface = SDL_GetWindowSurface(g_pGameWorldData->pWindow);
+	g_pGameWorldData->pWindowRenderer = GetSDLWindowRenderer(g_pGameWorldData->pWindow);
+		
+	// Load up the background into a texture 
+	pBackgroundTexture = TryMakeTexture((char*)backgroundImageFilename.c_str(), g_pGameWorldData->pWindowRenderer);
+	
 
 	tickCountAtLastCall = ticks();
 

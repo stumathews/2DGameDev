@@ -1,7 +1,8 @@
 #pragma once
 #include <SDL.h>
+#include "EventSubscriber.h"
 
-class Actor
+class Actor : public EventSubscriber
 {
 public:
 	Actor(){}

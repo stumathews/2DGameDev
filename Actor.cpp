@@ -1,4 +1,5 @@
 #include "Actor.h"
+#include <iostream>
 
 //
 //
@@ -8,4 +9,5 @@
 
 Actor::~Actor()
 {
+	std::cout << "Deleting actor!" << std::endl;
 }

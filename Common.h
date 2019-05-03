@@ -3,18 +3,29 @@
 #include <SDL.h>
 #include "Ball.h"
 #include <vector>
+#include <memory>
+#include "EventManager.h"
 
-struct GameWorldData {
+struct GameWorldData 
+{
 	int x;
 	int y;
 	int w;
 	int h;
-	SDL_Window* window;
-	SDL_Renderer* windowRenderer;
-	SDL_Surface* windowImageSurface;
+	SDL_Window* pWindow;
+	SDL_Renderer* pWindowRenderer;
+	SDL_Surface* pWindowImageSurface;
 	bool bGameDone;
 	bool bNetworkGame;
-	bool bCanRender;	
-	std::vector<Actor*> actors;	
+	bool bCanRender;
+	std::shared_ptr<EventManager> eventManager;
+	
+	// List of game objects
+	std::vector<std::shared_ptr<Actor>> actors;
+
+	~GameWorldData()
+	{
+		std::cout << "Deleting game world data!" << std::endl;
+	}
 };
 
