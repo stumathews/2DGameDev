@@ -3,12 +3,13 @@
 #include <Windows.h>
 #include <iostream>
 #include "Common.h"
-#include "ball.h"
+#include "Actors/Ball.h"
 #include "Drawing.h"
 #include <vector>
 #include <SDL.h>
 #include <SDL_mixer.h>
 #include "Events.h"
+#include "ResourceManager.h"
 
 using namespace std;
 
@@ -21,10 +22,9 @@ using namespace std;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 640;
 SDL_Texture* pBackgroundTexture = NULL;
-string backgroundImageFilename("maze1r.png");
+string backgroundImageFilename(	ResourceManager::getInstance().GetResource("maze1r.png")->m_path.c_str());
 SDL_Surface* g_pBackgroundSurface = NULL;
 SDL_Texture* TryMakeTexture(char* path, SDL_Renderer* windowRenderer);
-
 
 //The music that will be played
 Mix_Music *gMusic = NULL;
@@ -65,7 +65,6 @@ void sense_player_input()
 	SDL_Event e;
 	while(SDL_PollEvent(&e) != 0)
 	{
-
 		if(e.type == SDL_QUIT)
 		{
 			g_pGameWorldData->bGameDone = 1;
@@ -74,26 +73,22 @@ void sense_player_input()
 			{
 				case SDLK_UP:
 					std::cout << "Player pressed up!" << std::endl;	
-					//g_pGameWorldData->y -= interval;
-					g_pGameWorldData->eventManager.get()->RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Up)));
+					EventManager::getInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Up)));
 				break;
 
 				case SDLK_DOWN:
 					std::cout << "Player pressed down!" << std::endl;		
-					//g_pGameWorldData->y += interval;
-					g_pGameWorldData->eventManager.get()->RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Down)));
+					EventManager::getInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Down)));
 				break;
 
 				case SDLK_LEFT:
 					std::cout << "Player pressed left!" << std::endl;					
-					//g_pGameWorldData->x -= interval;
-					g_pGameWorldData->eventManager.get()->RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Left)));
+					EventManager::getInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Left)));
 				break;
 
 				case SDLK_RIGHT:
 					std::cout << "Player pressed right!" << std::endl;	
-					//g_pGameWorldData->x += interval;
-					g_pGameWorldData->eventManager.get()->RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Right)));
+					EventManager::getInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Right)));
 				break;
 
 				case SDLK_q:
@@ -241,7 +236,10 @@ void logic_sort_according_to_relevance(){}
 void execute_control_mechanism(){}
 void update_state()
 {
-	g_pGameWorldData->eventManager.get()->ProcessEvents();
+	// Ask the event manager to notify event subscribers
+	EventManager::getInstance().ProcessEvents();
+
+	// Have all the actors calculate their data
 	for( auto actor : g_pGameWorldData->actors)
 	{
 		actor.get()->DoLogic();
@@ -496,7 +494,8 @@ void world_render_geometry()
 {	
 	SDL_RenderClear(g_pGameWorldData->pWindowRenderer);
 	int w, h;
-	if(backgroundImageFilename != "maze1r.png")
+		
+	if(backgroundImageFilename != ResourceManager::getInstance().GetResource("maze1r.png")->m_path.c_str())
 	{
 		SDL_QueryTexture(pBackgroundTexture, NULL, NULL, &w, &h);
 	}
@@ -768,7 +767,6 @@ bool InitGameWorldData()
 	shared_ptr<Actor> ball3(new Ball( SCREEN_WIDTH / 8, SCREEN_HEIGHT / 5, 10, 10, 100, SCREEN_HEIGHT / 2  ));
 		
 	
-
 	g_pGameWorldData->x = 0;
 	g_pGameWorldData->y = 0;
 	g_pGameWorldData->w = 100;
@@ -779,14 +777,14 @@ bool InitGameWorldData()
 	g_pGameWorldData->bGameDone = 0;
 	g_pGameWorldData->bNetworkGame = 0;
 	g_pGameWorldData->bCanRender = 1;		
-	g_pGameWorldData->eventManager = shared_ptr<EventManager>(new EventManager());
+	
 	g_pGameWorldData->actors.push_back(ball1);
 	g_pGameWorldData->actors.push_back(ball2);
 	g_pGameWorldData->actors.push_back(ball3);
 
-	g_pGameWorldData->eventManager->SubscribeToEvent(PositionChangeEventType, ball1.get());
-	g_pGameWorldData->eventManager->SubscribeToEvent(PositionChangeEventType, ball2.get());
-	g_pGameWorldData->eventManager->SubscribeToEvent(PositionChangeEventType, ball3.get());
+	EventManager::getInstance().SubscribeToEvent(PositionChangeEventType, ball1.get());
+	EventManager::getInstance().SubscribeToEvent(PositionChangeEventType, ball2.get());
+	EventManager::getInstance().SubscribeToEvent(PositionChangeEventType, ball3.get());
 	
 
 	return true;
@@ -796,7 +794,7 @@ bool InitGameWorldData()
 bool loadMedia()
 {
 	//Load music
-    gMusic = Mix_LoadMUS( "Music/MainTheme.wav" );
+    gMusic = Mix_LoadMUS( ResourceManager::getInstance().GetResource("MainTheme.wav")->m_path.c_str() );
     if( gMusic == NULL )
     {
         printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
@@ -804,33 +802,34 @@ bool loadMedia()
     }
     
     //Load sound effects
-    gScratch = Mix_LoadWAV( "scratch.wav" );
+    gScratch = Mix_LoadWAV( ResourceManager::getInstance().GetResource("scratch.wav")->m_path.c_str() );
     if( gScratch == NULL )
     {
         printf( "Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
     
-    gHigh = Mix_LoadWAV( "high.wav" );
+    gHigh = Mix_LoadWAV( ResourceManager::getInstance().GetResource("high.wav")->m_path.c_str() );
     if( gHigh == NULL )
     {
         printf( "Failed to load high sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
 
-    gMedium = Mix_LoadWAV( "medium.wav" );
+    gMedium = Mix_LoadWAV( ResourceManager::getInstance().GetResource("medium.wav")->m_path.c_str() );
     if( gMedium == NULL )
     {
         printf( "Failed to load medium sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
 
-    gLow = Mix_LoadWAV( "low.wav" );
+    gLow = Mix_LoadWAV( ResourceManager::getInstance().GetResource("low.wav")->m_path.c_str() );
     if( gLow == NULL )
     {
         printf( "Failed to load low sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
+	return true;
 }
 
 int main(int argc, char *args[])
@@ -893,7 +892,7 @@ int main(int argc, char *args[])
 		if(!g_pGameWorldData->bNetworkGame && (ticksSince > TICK_TIME)) {
 			tickCountAtLastCall = newTime - TICK_TIME;
 		} else if(g_pGameWorldData->bCanRender) {
-			float percentOutsideFrame = (ticksSince/TICK_TIME)*100;
+			float percentOutsideFrame = (float)(ticksSince/TICK_TIME)*100;
 			Render(percentOutsideFrame);
 		}
 	}

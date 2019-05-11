@@ -79,7 +79,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\SDL\SDL2\include;C:\SDL\SDL2_image-2.0.4\include;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\SDL\SDL2\include;C:\SDL\SDL2_image-2.0.4\include;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;$(MSBuildProjectDirectory)\Actors;$(MSBuildProjectDirectory)\EventManagment;$(MSBuildProjectDirectory)\Rendering;$(MSBuildProjectDirectory)\ResourceManagement;$(MSBuildProjectDirectory)\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Winmm.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -130,25 +130,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Actor.cpp" />
-    <ClCompile Include="Ball.cpp" />
-    <ClCompile Include="Drawing.cpp" />
-    <ClCompile Include="Event.cpp" />
-    <ClCompile Include="EventManager.cpp" />
-    <ClCompile Include="EventSubscriber.cpp" />
+    <ClCompile Include="Actors\Actor.cpp" />
+    <ClCompile Include="Actors\Ball.cpp" />
+    <ClCompile Include="EventManagment\Event.cpp" />
+    <ClCompile Include="EventManagment\EventManager.cpp" />
+    <ClCompile Include="EventManagment\EventSubscriber.cpp" />
+    <ClCompile Include="EventManagment\PositionChangeEvent.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PositionChangeEvent.cpp" />
+    <ClCompile Include="Rendering\Drawing.cpp" />
+    <ClCompile Include="ResourceManagement\Resource.cpp" />
+    <ClCompile Include="ResourceManagement\tinyxml2.cpp" />
+    <ClCompile Include="ResourceManagement\ResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Actor.h" />
-    <ClInclude Include="Ball.h" />
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="Drawing.h" />
-    <ClInclude Include="Event.h" />
-    <ClInclude Include="EventManager.h" />
-    <ClInclude Include="Events.h" />
-    <ClInclude Include="EventSubscriber.h" />
-    <ClInclude Include="PositionChangeEvent.h" />
+    <ClInclude Include="Common\Common.h" />
+    <ClInclude Include="EventManagment\Event.h" />
+    <ClInclude Include="EventManagment\EventManager.h" />
+    <ClInclude Include="EventManagment\Events.h" />
+    <ClInclude Include="EventManagment\EventSubscriber.h" />
+    <ClInclude Include="EventManagment\PositionChangeEvent.h" />
+    <ClInclude Include="Rendering\Drawing.h" />
+    <ClInclude Include="ResourceManagement\Resource.h" />
+    <ClInclude Include="ResourceManagement\tinyxml2.h" />
+    <ClInclude Include="ResourceManagement\ResourceManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="Resources.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
