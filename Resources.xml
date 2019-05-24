@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Assets>
   <Asset uid="1" level="1" name="MainTheme.wav" type="fx" filename="Assets/Music/MainTheme.wav"></Asset>
-  <Asset uid="2" level="2" name="scratch.wav" type="fx" filename="Assets/scratch.wav"></Asset>
-  <Asset uid="3" level="3" name="high.wav" type="fx" filename="Assets/high.wav"></Asset>
-  <Asset uid="4" level="4" name="medium.wav" type="fx" filename="Assets/medium.wav"></Asset>
-  <Asset uid="5" level="5" name="low.wav" type="fx" filename="Assets/low.wav"></Asset>
-  <Asset uid="6" level="6" name="maze1r.png" type="graphic" filename="Assets/maze1r.png"></Asset>
+  <Asset uid="2" level="1" name="scratch.wav" type="fx" filename="Assets/scratch.wav"></Asset>
+  <Asset uid="3" level="1" name="high.wav" type="fx" filename="Assets/high.wav"></Asset>
+  <Asset uid="4" level="1" name="medium.wav" type="fx" filename="Assets/medium.wav"></Asset>
+  <Asset uid="5" level="1" name="low.wav" type="fx" filename="Assets/low.wav"></Asset>
+  <Asset uid="6" level="1" name="maze1r.png" type="graphic" filename="Assets/maze1r.png"></Asset>
 </Assets>

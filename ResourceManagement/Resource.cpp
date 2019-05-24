@@ -8,6 +8,3 @@ Resource::Resource(int uid, string name, string path, string type, int level)
 {
 }
 
-Resource::~Resource()
-{
-}

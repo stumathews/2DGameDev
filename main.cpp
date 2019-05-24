@@ -22,7 +22,7 @@ using namespace std;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 640;
 SDL_Texture* pBackgroundTexture = NULL;
-string backgroundImageFilename(	ResourceManager::getInstance().GetResource("maze1r.png")->m_path.c_str());
+string backgroundImageFilename(	ResourceManager::getInstance().GetResourceByName("maze1r.png")->m_path.c_str());
 SDL_Surface* g_pBackgroundSurface = NULL;
 SDL_Texture* TryMakeTexture(char* path, SDL_Renderer* windowRenderer);
 
@@ -495,7 +495,7 @@ void world_render_geometry()
 	SDL_RenderClear(g_pGameWorldData->pWindowRenderer);
 	int w, h;
 		
-	if(backgroundImageFilename != ResourceManager::getInstance().GetResource("maze1r.png")->m_path.c_str())
+	if(backgroundImageFilename != ResourceManager::getInstance().GetResourceByName("maze1r.png")->m_path.c_str())
 	{
 		SDL_QueryTexture(pBackgroundTexture, NULL, NULL, &w, &h);
 	}
@@ -794,7 +794,7 @@ bool InitGameWorldData()
 bool loadMedia()
 {
 	//Load music
-    gMusic = Mix_LoadMUS( ResourceManager::getInstance().GetResource("MainTheme.wav")->m_path.c_str() );
+    gMusic = Mix_LoadMUS( ResourceManager::getInstance().GetResourceByName("MainTheme.wav")->m_path.c_str() );
     if( gMusic == NULL )
     {
         printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
@@ -802,28 +802,28 @@ bool loadMedia()
     }
     
     //Load sound effects
-    gScratch = Mix_LoadWAV( ResourceManager::getInstance().GetResource("scratch.wav")->m_path.c_str() );
+    gScratch = Mix_LoadWAV( ResourceManager::getInstance().GetResourceByName("scratch.wav")->m_path.c_str() );
     if( gScratch == NULL )
     {
         printf( "Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
     
-    gHigh = Mix_LoadWAV( ResourceManager::getInstance().GetResource("high.wav")->m_path.c_str() );
+    gHigh = Mix_LoadWAV( ResourceManager::getInstance().GetResourceByName("high.wav")->m_path.c_str() );
     if( gHigh == NULL )
     {
         printf( "Failed to load high sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
 
-    gMedium = Mix_LoadWAV( ResourceManager::getInstance().GetResource("medium.wav")->m_path.c_str() );
+    gMedium = Mix_LoadWAV( ResourceManager::getInstance().GetResourceByName("medium.wav")->m_path.c_str() );
     if( gMedium == NULL )
     {
         printf( "Failed to load medium sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
 
-    gLow = Mix_LoadWAV( ResourceManager::getInstance().GetResource("low.wav")->m_path.c_str() );
+    gLow = Mix_LoadWAV( ResourceManager::getInstance().GetResourceByName("low.wav")->m_path.c_str() );
     if( gLow == NULL )
     {
         printf( "Failed to load low sound effect! SDL_mixer Error: %s\n", Mix_GetError() );

@@ -132,24 +132,34 @@
   <ItemGroup>
     <ClCompile Include="Actors\Actor.cpp" />
     <ClCompile Include="Actors\Ball.cpp" />
+    <ClCompile Include="Actors\AnimatedActor.cpp" />
+    <ClCompile Include="ResourceManagement\AudioResource.cpp" />
     <ClCompile Include="EventManagment\Event.cpp" />
     <ClCompile Include="EventManagment\EventManager.cpp" />
     <ClCompile Include="EventManagment\EventSubscriber.cpp" />
     <ClCompile Include="EventManagment\PositionChangeEvent.cpp" />
+    <ClCompile Include="ResourceManagement\AudioResourceManager.cpp" />
+    <ClCompile Include="ResourceManagement\GraphicsResourceManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Rendering\Drawing.cpp" />
+    <ClCompile Include="ResourceManagement\GraphicsResource.cpp" />
     <ClCompile Include="ResourceManagement\Resource.cpp" />
     <ClCompile Include="ResourceManagement\tinyxml2.cpp" />
     <ClCompile Include="ResourceManagement\ResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Actors\AnimatedActor.h" />
+    <ClInclude Include="ResourceManagement\AudioResource.h" />
     <ClInclude Include="Common\Common.h" />
     <ClInclude Include="EventManagment\Event.h" />
     <ClInclude Include="EventManagment\EventManager.h" />
     <ClInclude Include="EventManagment\Events.h" />
     <ClInclude Include="EventManagment\EventSubscriber.h" />
     <ClInclude Include="EventManagment\PositionChangeEvent.h" />
+    <ClInclude Include="ResourceManagement\AudioResourceManager.h" />
+    <ClInclude Include="ResourceManagement\GraphicsResourceManager.h" />
     <ClInclude Include="Rendering\Drawing.h" />
+    <ClInclude Include="ResourceManagement\GraphicsResource.h" />
     <ClInclude Include="ResourceManagement\Resource.h" />
     <ClInclude Include="ResourceManagement\tinyxml2.h" />
     <ClInclude Include="ResourceManagement\ResourceManager.h" />

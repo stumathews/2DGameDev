@@ -3,61 +3,73 @@
 #include <iostream>
 #include <map>
 #include "Resource.h"
+#include "GraphicsResourceManager.h"
+#include <memory>
+#include "AudioResourceManager.h"
+
 using namespace tinyxml2;
 using namespace std;
 
-std::shared_ptr<Resource> ResourceManager::GetResource(string name)
+std::shared_ptr<Resource> ResourceManager::GetResourceByName(string name)
 {
-	auto resource = m_resources[name];
+	auto resource = m_ResourcesByName[name];	
 	return resource;
 }
 
-void ResourceManager::LoadResources()
+void ResourceManager::SetCurrentLevel(int level)
+{
+	// call the load() function on all the resources that are in specified for the current level
+	auto levelResources = m_ResourcesByLevel[level];
+	for(auto resource : levelResources)
+	{
+		resource->VLoad(); // Loads the resource in memory
+	}
+}
+
+void ResourceManager::ReadInResources()
 {	
 	std::cout << "Loading all the resources from the Resources.xml ..." << std::endl;;
 	
-	XMLDocument resourceFile;
+	XMLDocument doc;
 
 	// Load the resource file into memory
-	resourceFile.LoadFile( "resources.xml" );		
-	
-	// Get first Asset
-	auto pRoot = resourceFile.FirstChildElement();
-	auto pFirstAssetElement = pRoot->FirstChildElement("Asset");
-			
-	RecordAsset(pFirstAssetElement);
-
-	// Get remaining assets elements
-	auto pNextAsset = pFirstAssetElement->NextSiblingElement();
-	do
+	doc.LoadFile( "resources.xml" );
+	if(doc.ErrorID() == 0)
 	{		
-		RecordAsset(pNextAsset);
+		XMLNode* pResourceTree = doc.FirstChildElement("Assets");
+			
+		if(pResourceTree)
+		{
+			for(tinyxml2::XMLNode* child = pResourceTree->FirstChild(); child; child = child->NextSibling())
+			{
+				XMLElement* element = child->ToElement();
+				if(element)
+				{
+					shared_ptr<Resource> resource = NULL;
+					const char* type;
+
+					element->QueryStringAttribute("type", &type);			
+
+					if(strcmp(type, "graphic") == 0)
+					{
+						resource = GraphicsResourceManager::getInstance().MakeResource(element);						
+					}
+					if(strcmp(type, "fx") == 0)
+					{					
+						resource = AudioResourceManager::getInstance().MakeResource(element);						
+					}						
+						
+					if(resource)
+					{
+						StoreResource(resource);
+						continue;
+					}
+				}
+			}
+		}
 	}
-	while ((pNextAsset = pNextAsset->NextSiblingElement()) != nullptr);
+
+	// artificiall load of first level
+
+	SetCurrentLevel(1);
 }
-
-void ResourceManager::RecordAsset(tinyxml2::XMLElement * pNextAsset)
-{
-	auto nextAsset = GetAsset(pNextAsset);
-	m_resources.insert(std::pair<string, std::shared_ptr<Resource>>(nextAsset->m_name, nextAsset));
-}
-
-std::shared_ptr<Resource> ResourceManager::GetAsset(XMLElement* element)
-{
-	int uuid;
-	const char* type;
-	const char* path;
-	const char* name;
-	int level;
-
-	element->QueryIntAttribute("uid", &uuid);
-	element->QueryStringAttribute("type", &type);
-	element->QueryStringAttribute("filename", &path);
-	element->QueryStringAttribute("name", &name);
-	element->QueryIntAttribute("level", &level);
-	auto asset = std::shared_ptr<Resource>(new Resource(uuid, name, path, type, level));
-
-	std::cout << "Fetched Asset " << asset->m_name << "of type " << asset->m_type << std::endl;
-	return asset;
-}
-
