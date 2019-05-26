@@ -1,20 +1,25 @@
-#include "GraphicsResourceManager.h"
+#include "GraphicsManager.h"
 #include "ResourceManager.h"
 #include "Resource.h"
 #include <memory>
 using namespace std;
 
 
-GraphicsResourceManager::GraphicsResourceManager()
+GraphicsManager::GraphicsManager()
 {
 }
 
 
-GraphicsResourceManager::~GraphicsResourceManager()
+GraphicsManager::~GraphicsManager()
 {
 }
 
-std::shared_ptr<Resource> GraphicsResourceManager::MakeResource(tinyxml2::XMLElement * element)
+bool GraphicsManager::Init(unsigned width, unsigned height, char * windowTitle)
+{
+	return false;
+}
+
+std::shared_ptr<Resource> GraphicsManager::MakeResource(tinyxml2::XMLElement * element)
 {
 	
 	int uuid;
@@ -34,7 +39,17 @@ std::shared_ptr<Resource> GraphicsResourceManager::MakeResource(tinyxml2::XMLEle
 
 	auto graphicsResource = shared_ptr<GraphicsResource>(new GraphicsResource(uuid, name, path, type, level));
 	
-	// collect a list of grap
-	m_GraphicsResources.push_back(graphicsResource);
 	return graphicsResource;
+}
+
+void GraphicsManager::DrawAllActors()
+{
+	for(auto actor : m_Actors)
+	{
+		if(actor->m_Visible)
+		{
+			// Ask the actors to draw themselves please
+			actor->VDraw(m_MainWindow);
+		}
+	}
 }

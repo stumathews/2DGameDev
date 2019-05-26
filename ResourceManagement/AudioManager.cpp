@@ -1,19 +1,20 @@
-#include "AudioResourceManager.h"
+#include "AudioManager.h"
 #include <vector>
 #include <memory>
+#include "Resource.h"
 
 
 
-AudioResourceManager::AudioResourceManager()
+AudioManager::AudioManager()
 {
 }
 
 
-AudioResourceManager::~AudioResourceManager()
+AudioManager::~AudioManager()
 {
 }
 
-std::shared_ptr<Resource> AudioResourceManager::MakeResource(tinyxml2::XMLElement * element)
+std::shared_ptr<Resource> AudioManager::MakeResource(tinyxml2::XMLElement * element)
 {
 	int uuid;
 	const char* type;

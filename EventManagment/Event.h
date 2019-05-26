@@ -1,6 +1,6 @@
 #pragma once
 #include <map>
-enum EventType { PositionChangeEventType };
+enum EventType { PositionChangeEventType, LevelChangedEventType };
 
 class Event
 {

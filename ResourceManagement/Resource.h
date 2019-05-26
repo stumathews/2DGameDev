@@ -11,6 +11,7 @@ public:
 	string m_path;
 	string m_type;
 	int m_level;
+	bool m_IsLoaded;
 	
 
 	// All resources can load themselves

@@ -7,24 +7,24 @@
 
 
 // Managest a set of audio resources
-class AudioResourceManager
+class AudioManager
 {
 public:
-	 static AudioResourceManager& getInstance()
+	 static AudioManager& getInstance()
         {
-            static AudioResourceManager instance;			
+            static AudioManager instance;			
             return instance;
         }
-		AudioResourceManager(AudioResourceManager const&)  = delete;
-        void operator=(AudioResourceManager const&)  = delete;
+		AudioManager(AudioManager const&)  = delete;
+        void operator=(AudioManager const&)  = delete;
 		
 		// Creates an audio Resource
 		std::shared_ptr<Resource> MakeResource(tinyxml2::XMLElement * assetXmlElement);
 private:	
 
 	std::vector<shared_ptr<AudioResource>> m_AudioResources;
-	AudioResourceManager();
-	~AudioResourceManager();
+	AudioManager();
+	~AudioManager();
 
 };
 

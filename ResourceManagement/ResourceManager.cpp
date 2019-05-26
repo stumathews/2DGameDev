@@ -3,9 +3,10 @@
 #include <iostream>
 #include <map>
 #include "Resource.h"
-#include "GraphicsResourceManager.h"
+#include "GraphicsManager.h"
 #include <memory>
-#include "AudioResourceManager.h"
+#include "AudioManager.h"
+#include "LevelChangedEvent.h"
 
 using namespace tinyxml2;
 using namespace std;
@@ -16,13 +17,48 @@ std::shared_ptr<Resource> ResourceManager::GetResourceByName(string name)
 	return resource;
 }
 
-void ResourceManager::SetCurrentLevel(int level)
+std::shared_ptr<Resource> ResourceManager::GetResourceByUuid(int uuid)
 {
-	// call the load() function on all the resources that are in specified for the current level
-	auto levelResources = m_ResourcesByLevel[level];
-	for(auto resource : levelResources)
+	auto resource = m_ResourcesByUuid[uuid];
+	return resource;
+}
+
+void ResourceManager::SetCurrentLevel(int newLevel)
+{
+	cout << "Setting current level to " << newLevel << endl;
+	// Load all the resources required by the level
+	// and unload all those that don't
+	for(auto levelResources : m_ResourcesByLevel)
 	{
-		resource->VLoad(); // Loads the resource in memory
+		auto level = levelResources.first;
+		auto resources = levelResources.second;
+		
+		for( auto resource : resources )
+		{
+			if((resource->m_level == newLevel || resource->m_level == 0) && !resource->m_IsLoaded){
+				resource->VLoad();
+				m_CountLoadedResources++;
+				m_CountUnloadedResources--;
+			} 
+			// Don't unload level 0 resources - they are always needed irrespective of the level
+			else if(resource->m_IsLoaded && resource->m_level != 0 && resource->m_level != newLevel)
+			{
+				resource->VUnload();
+				m_CountUnloadedResources++;
+				m_CountLoadedResources--;
+			}
+		}		
+	}
+}
+
+void ResourceManager::ProcessEvent(std::shared_ptr<Event> evt)
+{
+	switch(evt->m_eventType)
+	{
+		case LevelChangedEventType:
+			auto cpe = std::dynamic_pointer_cast<LevelChangedEvent>(evt);
+			SetCurrentLevel(cpe->m_Level);
+			break;
 	}
 }
 
@@ -52,11 +88,11 @@ void ResourceManager::ReadInResources()
 
 					if(strcmp(type, "graphic") == 0)
 					{
-						resource = GraphicsResourceManager::getInstance().MakeResource(element);						
+						resource = GraphicsManager::getInstance().MakeResource(element);						
 					}
 					if(strcmp(type, "fx") == 0)
 					{					
-						resource = AudioResourceManager::getInstance().MakeResource(element);						
+						resource = AudioManager::getInstance().MakeResource(element);						
 					}						
 						
 					if(resource)
@@ -69,7 +105,7 @@ void ResourceManager::ReadInResources()
 		}
 	}
 
-	// artificiall load of first level
+	// artificially load of first level
 
 	SetCurrentLevel(1);
 }

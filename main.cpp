@@ -10,6 +10,7 @@
 #include <SDL_mixer.h>
 #include "Events.h"
 #include "ResourceManager.h"
+#include <LevelChangedEvent.h>
 
 using namespace std;
 
@@ -94,6 +95,11 @@ void sense_player_input()
 				case SDLK_q:
 					std::cout << "Player pressed Quit key !" << std::endl;
 					g_pGameWorldData->bGameDone = 1;
+					break;
+				case SDLK_l:
+					// simluate a level change
+					std::cout << "Level change to 1" << std::endl;
+					EventManager::getInstance().RegisterEvent( shared_ptr<LevelChangedEvent>(new LevelChangedEvent(1)));
 					break;
 
 				 //Play high sound effect
@@ -242,7 +248,7 @@ void update_state()
 	// Have all the actors calculate their data
 	for( auto actor : g_pGameWorldData->actors)
 	{
-		actor.get()->DoLogic();
+		actor.get()->VDoLogic();
 	}
 
 	
@@ -527,9 +533,11 @@ void world_render_geometry()
 	
 	// render our actors
 	
+	//GraphicsManager::getInstance().DrawAllActors();
+
 	for( auto actor : g_pGameWorldData->actors)
 	{
-		actor->Draw(g_pGameWorldData->pWindowRenderer);
+		actor->VDraw(g_pGameWorldData->pWindowRenderer);
 	}
 
 	// show our masterpiece to the world
@@ -781,6 +789,8 @@ bool InitGameWorldData()
 	g_pGameWorldData->actors.push_back(ball1);
 	g_pGameWorldData->actors.push_back(ball2);
 	g_pGameWorldData->actors.push_back(ball3);
+
+	// We should add these Actors to the GraphicsManager
 
 	EventManager::getInstance().SubscribeToEvent(PositionChangeEventType, ball1.get());
 	EventManager::getInstance().SubscribeToEvent(PositionChangeEventType, ball2.get());

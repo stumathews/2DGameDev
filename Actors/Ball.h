@@ -29,13 +29,13 @@ public:
 
 	void ProcessEvent(std::shared_ptr<Event> event);
 	
-	void Draw(SDL_Renderer* renderer)
+	void VDraw(SDL_Renderer* renderer)
 	{
 		Drawing::DrawRectangle(posX, posY,mBounds.w,mBounds.h, renderer, red, blue, green);
 	}
 		
 
-	void DoLogic()
+	void VDoLogic()
 	{		
 		if(isTravelingLeft)
 		{
