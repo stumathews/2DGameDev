@@ -10,4 +10,5 @@ BTW use the x86 versions of everything - even though it comes with x64 additiona
 
 ## Contents
 So far this project has a game loop and skeletal structure for the rest of the game. 
+it also implements a Graphics Manager, Scene managment, and Resource manager
 See main.cpp for gameloop mechanics and the handling of input via SDL in sense_player_input() function
