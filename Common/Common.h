@@ -15,9 +15,7 @@ struct GameWorldData
 	int y;
 	int w;
 	int h;
-	SDL_Window* pWindow;
-	SDL_Renderer* pWindowRenderer;
-	SDL_Surface* pWindowImageSurface;
+	
 	bool bGameDone;
 	bool bNetworkGame;
 	bool bCanRender;

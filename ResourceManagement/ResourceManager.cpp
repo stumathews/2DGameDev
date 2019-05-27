@@ -6,7 +6,7 @@
 #include "GraphicsManager.h"
 #include <memory>
 #include "AudioManager.h"
-#include "LevelChangedEvent.h"
+#include "SceneChangedEvent.h"
 
 using namespace tinyxml2;
 using namespace std;
@@ -23,10 +23,10 @@ std::shared_ptr<Resource> ResourceManager::GetResourceByUuid(int uuid)
 	return resource;
 }
 
-void ResourceManager::SetCurrentLevel(int newLevel)
+void ResourceManager::SetCurrentScene(int newLevel)
 {
-	cout << "Setting current level to " << newLevel << endl;
-	// Load all the resources required by the level
+	cout << "Setting current scene to " << newLevel << endl;
+	// Load all the resources required by the scene
 	// and unload all those that don't
 	for(auto levelResources : m_ResourcesByLevel)
 	{
@@ -35,13 +35,13 @@ void ResourceManager::SetCurrentLevel(int newLevel)
 		
 		for( auto resource : resources )
 		{
-			if((resource->m_level == newLevel || resource->m_level == 0) && !resource->m_IsLoaded){
+			if((resource->m_scene == newLevel || resource->m_scene == 0) && !resource->m_IsLoaded){
 				resource->VLoad();
 				m_CountLoadedResources++;
 				m_CountUnloadedResources--;
 			} 
 			// Don't unload level 0 resources - they are always needed irrespective of the level
-			else if(resource->m_IsLoaded && resource->m_level != 0 && resource->m_level != newLevel)
+			else if(resource->m_IsLoaded && resource->m_scene != 0 && resource->m_scene != newLevel)
 			{
 				resource->VUnload();
 				m_CountUnloadedResources++;
@@ -56,11 +56,12 @@ void ResourceManager::ProcessEvent(std::shared_ptr<Event> evt)
 	switch(evt->m_eventType)
 	{
 		case LevelChangedEventType:
-			auto cpe = std::dynamic_pointer_cast<LevelChangedEvent>(evt);
-			SetCurrentLevel(cpe->m_Level);
+			auto cpe = std::dynamic_pointer_cast<SceneChangedEvent>(evt);
+			
 			break;
 	}
 }
+
 
 void ResourceManager::ReadInResources()
 {	
@@ -104,8 +105,4 @@ void ResourceManager::ReadInResources()
 			}
 		}
 	}
-
-	// artificially load of first level
-
-	SetCurrentLevel(1);
 }

@@ -27,6 +27,10 @@ void Ball::ProcessEvent(std::shared_ptr<Event> evt)
 			std::cout << "Move right event processed" << std::endl;
 		}
 	}
+	if(evt->m_eventType == DoLogicUpdateEventType)
+	{
+		VDoLogic();
+	}
 }
 
 Ball::~Ball()

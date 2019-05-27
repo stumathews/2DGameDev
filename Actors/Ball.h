@@ -6,9 +6,8 @@
 #include <SDL_mixer.h>
 #include "Events.h"
 #include "Event.h"
-	
-extern const int SCREEN_WIDTH;
-extern const int SCREEN_HEIGHT;
+#include "GraphicsManager.h"
+
 extern Mix_Chunk *gScratch;
 extern Mix_Chunk *gHigh;
 extern Mix_Chunk *gMedium;
@@ -21,10 +20,10 @@ public:
 	Ball(int x, int y, int w, int h, int posX, int posY)
 		: Actor(x, y, w, h, posX, posY)
 	{
-		red = 0xFF;
-		blue = 0x00;
+		red = 0x00;
+		blue = 0xFF;
 		green = 0x00;
-		isTravelingLeft = false; // its traveling right
+		isTravelingLeft = false; // its traveling right		
 	}
 
 	void ProcessEvent(std::shared_ptr<Event> event);
@@ -48,7 +47,7 @@ public:
 		}
 		else
 		{
-			if(posX == SCREEN_WIDTH)
+			if(posX == GraphicsManager::getInstance().GetScreenWidth())
 			{		
 				Mix_PlayChannel( -1, gLow, 0 );
 				isTravelingLeft = true;

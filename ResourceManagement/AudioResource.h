@@ -5,7 +5,7 @@
 class AudioResource : public Resource
 {
 public:
-	AudioResource(int uid, string name, string path, string type, int level);
+	AudioResource(int uid, string name, string path, string type, int scene);
 	
 	~AudioResource();
 	//Load the resource onto the surface

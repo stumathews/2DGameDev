@@ -1,16 +1,16 @@
 #pragma once
 #include <string>
 using namespace std;
-// Meta data about a resource (uid, name, path, type, level etc)
+// Meta data about a resource (uid, name, path, type, scene etc)
 class Resource
 {
 public:	
-	Resource(int uid, string name, string path, string type, int level);
+	Resource(int uid, string name, string path, string type, int scene);
 	int m_uid;
 	string m_name;
 	string m_path;
 	string m_type;
-	int m_level;
+	int m_scene;
 	bool m_IsLoaded;
 	
 

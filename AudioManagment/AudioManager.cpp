@@ -20,17 +20,17 @@ std::shared_ptr<Resource> AudioManager::MakeResource(tinyxml2::XMLElement * elem
 	const char* type;
 	const char* path;
 	const char* name;
-	int level;
+	int scene;
 
 	element->QueryIntAttribute("uid", &uuid);
 	element->QueryStringAttribute("type", &type);
 	element->QueryStringAttribute("filename", &path);
 	element->QueryStringAttribute("name", &name);
-	element->QueryIntAttribute("level", &level);
+	element->QueryIntAttribute("scene", &scene);
 
 	// Read anything specific to audio in the element here...
 
-	auto audioResource = std::shared_ptr<AudioResource>(new AudioResource(uuid, name, path, type, level));
+	auto audioResource = std::shared_ptr<AudioResource>(new AudioResource(uuid, name, path, type, scene));
 	
 	m_AudioResources.push_back(audioResource);
 	return audioResource;

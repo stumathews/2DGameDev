@@ -10,7 +10,9 @@
 #include <SDL_mixer.h>
 #include "Events.h"
 #include "ResourceManager.h"
-#include <LevelChangedEvent.h>
+#include <SceneChangedEvent.h>
+#include "SceneManager.h"
+#include <DoLogicUpdateEvent.h>
 
 using namespace std;
 
@@ -19,13 +21,6 @@ using namespace std;
 
 #define TICK_TIME 50
 #define MAX_LOOPS 4
-	
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 640;
-SDL_Texture* pBackgroundTexture = NULL;
-string backgroundImageFilename(	ResourceManager::getInstance().GetResourceByName("maze1r.png")->m_path.c_str());
-SDL_Surface* g_pBackgroundSurface = NULL;
-SDL_Texture* TryMakeTexture(char* path, SDL_Renderer* windowRenderer);
 
 //The music that will be played
 Mix_Music *gMusic = NULL;
@@ -36,18 +31,10 @@ Mix_Chunk *gHigh = NULL;
 Mix_Chunk *gMedium = NULL;
 Mix_Chunk *gLow = NULL;
 
-// Draw Rectangle on Renderer
-void renderLine(SDL_Renderer* toRenderer);
-
 int main(int argc, char * args[]);
 
 // Create our global copy of the game data
 std::shared_ptr<GameWorldData> g_pGameWorldData = std::shared_ptr<GameWorldData>(new GameWorldData());
-
-void DrawTextureTopLeft(const int SCREEN_WIDTH, const int SCREEN_HEIGHT, SDL_Texture* texture)
-{
-	SDL_RenderCopy(g_pGameWorldData->pWindowRenderer, texture, NULL, NULL);
-}
 
 
 /***
@@ -99,7 +86,7 @@ void sense_player_input()
 				case SDLK_l:
 					// simluate a level change
 					std::cout << "Level change to 1" << std::endl;
-					EventManager::getInstance().RegisterEvent( shared_ptr<LevelChangedEvent>(new LevelChangedEvent(1)));
+					EventManager::getInstance().RegisterEvent( shared_ptr<SceneChangedEvent>(new SceneChangedEvent(1)));
 					break;
 
 				 //Play high sound effect
@@ -242,16 +229,8 @@ void logic_sort_according_to_relevance(){}
 void execute_control_mechanism(){}
 void update_state()
 {
-	// Ask the event manager to notify event subscribers
-	EventManager::getInstance().ProcessEvents();
-
-	// Have all the actors calculate their data
-	for( auto actor : g_pGameWorldData->actors)
-	{
-		actor.get()->VDoLogic();
-	}
-
-	
+	// Ask the event manager to notify event subscribers to update their logic now
+	EventManager::getInstance().RegisterEvent(shared_ptr<DoLogicUpdateEvent>(new DoLogicUpdateEvent()));
 }
 
 /***
@@ -259,7 +238,9 @@ void update_state()
  */
 void update_logic_based_elements()
 {
+	//not used yet
 	logic_sort_according_to_relevance(); // only select elements that are important to the gameplay
+	// not used yet
 	execute_control_mechanism();
 	update_state();
 }
@@ -342,6 +323,7 @@ void update_active_elements()
  */
 void world_update()
 {
+	// not used yet
 	update_passive_elements(); //walls and most scenario items - have no attached behavior but play a key role in player restrictions
 	update_active_elements(); // flying birds, doors that open and close - must be checked to keep consistent, meaningful experiance
 
@@ -368,6 +350,7 @@ long ticks()
 
 void IndependantTickRun(long frameTime)
 {
+	EventManager::getInstance().ProcessEvents();
 }
 
 /***
@@ -498,50 +481,21 @@ void world_pack_geometry()
  */
 void world_render_geometry()
 {	
-	SDL_RenderClear(g_pGameWorldData->pWindowRenderer);
-	int w, h;
-		
-	if(backgroundImageFilename != ResourceManager::getInstance().GetResourceByName("maze1r.png")->m_path.c_str())
-	{
-		SDL_QueryTexture(pBackgroundTexture, NULL, NULL, &w, &h);
-	}
-	else
-	{
-		w = h = 640;
-	}
-
-	SDL_Rect SrcR;
-	SDL_Rect DestR;
-
-	SrcR.x = 0;
-	SrcR.y = 0;
-	SrcR.w = w;
-	SrcR.h = h;
-
-	DestR.x = 0;
-	DestR.y = 0;
-	DestR.w = SCREEN_WIDTH;
-	DestR.h = SCREEN_HEIGHT;
-
 	
 
 	//draw background
 	
-	SDL_RenderCopy(g_pGameWorldData->pWindowRenderer, pBackgroundTexture, &SrcR, &DestR);
+	//SDL_RenderCopy(g_pGameWorldData->pWindowRenderer, pBackgroundTexture, &SrcR, &DestR);
 
 	// draw rectangle over it
 	
 	// render our actors
 	
-	//GraphicsManager::getInstance().DrawAllActors();
-
-	for( auto actor : g_pGameWorldData->actors)
-	{
-		actor->VDraw(g_pGameWorldData->pWindowRenderer);
-	}
+	GraphicsManager::getInstance().DrawScene();
+		
 
 	// show our masterpiece to the world
-	SDL_RenderPresent(g_pGameWorldData->pWindowRenderer);
+	//SDL_RenderPresent(g_pGameWorldData->pWindowRenderer);
 }
 
 // chop off items outside of the players view
@@ -591,7 +545,7 @@ void send_audio_to_hardware()
  */
 void send_geometry_to_hardware()
 {
-	world_pack_geometry(); // vertexes are packed into memory
+	/* not used yet */ world_pack_geometry(); // vertexes are packed into memory
 	world_render_geometry(); //  send to card via OpenGL or DirectX
 }
 
@@ -601,21 +555,14 @@ void send_geometry_to_hardware()
 void World_Presentation()
 {
 	// show just the visible part of the gameworld from the player's perspective
-	world_select_visible_graphic_elements(); // This will contain the 3d Rendering pipeline!
-	world_select_resolution(); // Choose suitable level of detail
+	/* not used yet */ world_select_visible_graphic_elements(); // This will contain the 3d Rendering pipeline!
+	/* not used yet */world_select_resolution(); // Choose suitable level of detail
 
 	send_geometry_to_hardware();  //paint it onto the screen
-	send_audio_to_hardware(); 
+	/* not used yet */send_audio_to_hardware(); 
 }
 
-void drawVerticalLineOfDots(const int SCREEN_HEIGHT, const int SCREEN_WIDTH)
-{
-	//Draw vertical line of yellow dots
-	SDL_SetRenderDrawColor(g_pGameWorldData->pWindowRenderer, 0x00, 0x00, 0xFF, 0x00);
-	for (int i = 0; i < SCREEN_HEIGHT; i += 4) {
-		SDL_RenderDrawPoint(g_pGameWorldData->pWindowRenderer, SCREEN_WIDTH / 2, i);
-	}
-}
+
 
 
 
@@ -628,107 +575,23 @@ void Render(float percentWithinTick)
 	// Render the game work visually and sonically
 	World_Presentation();
 	
-	// Render non player characters next
+	// Render non player characters next (not used yet)
 	NPC_Presentation();
 
-	// Render the player
+	// Render the player (not used yet)
 	Player_Presentation();
 }
 
 
 
-SDL_Texture* MakeTexture(char* texturePath, SDL_Renderer* renderer)
-{
-	SDL_Texture* newTexture = NULL;
-	SDL_Surface* imageSurface = IMG_Load(texturePath);
-
-	if(imageSurface == NULL)
-	{
-		std::cout << "SDL could not load image: " << (char*)IMG_GetError() << std::endl;
-	}
-
-	auto optimisedSurface = SDL_ConvertSurface(imageSurface, g_pGameWorldData->pWindowImageSurface->format, NULL);
-	
-	if(optimisedSurface == NULL)
-	{
-		std::cout << "Unable to optimize image " <<  texturePath << " SDL Error: " << SDL_GetError() << std::endl;
-	}
-	
-	//Create texture from surface pixels
-	newTexture = SDL_CreateTextureFromSurface(renderer, optimisedSurface);	
-	if(newTexture == NULL)
-	{
-		std::cout << "Unable to create texture: " << (char*)IMG_GetError() << std::endl;
-	}
-
-	//Get rid of old loaded surface
-	SDL_FreeSurface(imageSurface);
-	return newTexture;
-}
-
-SDL_Window* GetSDLWindow(const int SCREEN_WIDTH, const int SCREEN_HEIGHT)
-{
-	SDL_Window* outWindow = SDL_CreateWindow("Game Window", SDL_WINDOWPOS_UNDEFINED,
-				SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
-				SDL_WINDOW_SHOWN);
-	if(outWindow == NULL)
-	{
-		std::cout << "Window could not be created:" << (char*)SDL_GetError() << std::endl;
-	}
-	return outWindow;
-}
-
-SDL_Renderer* GetSDLWindowRenderer(SDL_Window* window)
-{
-	SDL_Renderer* outRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	if(outRenderer == NULL)
-	{
-		std::cout << "Renderer could not be created: " << (char*)SDL_GetError() << std::endl;
-	}
-	SDL_SetRenderDrawColor(outRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	return outRenderer;
-}
-
-SDL_Texture* TryMakeTexture(char* path, SDL_Renderer* windowRenderer)
-{	
-	if(path == NULL)
-	{
-		std::cout << "Texture path cant be empty!" << std::endl;
-	}
-
-	SDL_Texture* outTexture = MakeTexture(path, windowRenderer);	
-
-	if(outTexture == NULL)
-	{
-		std::cout << "Could not load textture" << std::endl;
-	}
-	return outTexture;
-}
-
-void renderLine(SDL_Renderer* toRenderer)
-{
-	 //Draw blue horizontal line
-	SDL_SetRenderDrawColor( toRenderer, 0x00, 0x00, 0xFF, 0xFF );
-	SDL_RenderDrawLine( toRenderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 );
-}
-
 bool InitSDL()
 {
 	// Initialise SDL	
-	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0)
-	{
-		std::cout << "SDL could not initialize!" << (char*)SDL_GetError() << std::endl;
+	if(!GraphicsManager::getInstance().Init())
 		return false;
-	}
 
-	// Initialize SDL Image extension	
-	if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
-	{
-		std::cout << "SDL_image could not initialize!" << (char*)SDL_GetError() << std::endl;
-		return false;
-	}
 
-	//Initialize SDL_mixer 
+	// Initialize SDL_mixer 
     if( Mix_OpenAudio( 44100 /*sound frequency*/, MIX_DEFAULT_FORMAT/*sample format*/, 2 /*hardware channels*/, 2048 /*sample size*/ ) < 0 )
     {
 		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << (char*)Mix_GetError() << std::endl;
@@ -751,12 +614,7 @@ void CleanupResources()
     //Free the music
     Mix_FreeMusic( gMusic );
     gMusic = NULL;
-
-	// get rid of renderer
-	SDL_DestroyRenderer(g_pGameWorldData->pWindowRenderer);	
 	
-	// get rid of window and this will also cleanup the screen surface
-	SDL_DestroyWindow(g_pGameWorldData->pWindow);
 	
 
 	IMG_Quit();
@@ -765,41 +623,6 @@ void CleanupResources()
 	
 }
 
-bool InitGameWorldData()
-{
-	// Our game data is basically keeping track of x,y position of a 100x100 square and 
-	// updating that data when the user presses up, down,left, right
-
-	shared_ptr<Actor> ball1(new Ball( SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 10, 10, 10, SCREEN_HEIGHT / 2  ));
-	shared_ptr<Actor> ball2(new Ball( SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, 10, 10, 50, SCREEN_HEIGHT / 2  ));
-	shared_ptr<Actor> ball3(new Ball( SCREEN_WIDTH / 8, SCREEN_HEIGHT / 5, 10, 10, 100, SCREEN_HEIGHT / 2  ));
-		
-	
-	g_pGameWorldData->x = 0;
-	g_pGameWorldData->y = 0;
-	g_pGameWorldData->w = 100;
-	g_pGameWorldData->h = 100;
-	g_pGameWorldData->pWindow = NULL;
-	g_pGameWorldData->pWindowRenderer = NULL;
-	g_pGameWorldData->pWindowImageSurface = NULL;
-	g_pGameWorldData->bGameDone = 0;
-	g_pGameWorldData->bNetworkGame = 0;
-	g_pGameWorldData->bCanRender = 1;		
-	
-	g_pGameWorldData->actors.push_back(ball1);
-	g_pGameWorldData->actors.push_back(ball2);
-	g_pGameWorldData->actors.push_back(ball3);
-
-	// We should add these Actors to the GraphicsManager
-
-	EventManager::getInstance().SubscribeToEvent(PositionChangeEventType, ball1.get());
-	EventManager::getInstance().SubscribeToEvent(PositionChangeEventType, ball2.get());
-	EventManager::getInstance().SubscribeToEvent(PositionChangeEventType, ball3.get());
-	
-
-	return true;
-	
-}
 
 bool loadMedia()
 {
@@ -850,11 +673,15 @@ int main(int argc, char *args[])
 	int numLoops;
 	long tickCountAtLastCall, newTime;
 
-	if(!InitGameWorldData())
-	{
-		std::cout << "Could not initailize game data, aborting." << std::endl;
-		return -1;
-	}
+	// Our game data is basically keeping track of x,y position of a 100x100 square and 
+	// updating that data when the user presses up, down,left, right
+
+	// Initialize the scene manager to handle scene1
+	SceneManager::getInstance().loadSceneFromXml("scene1.xml");	
+		
+	g_pGameWorldData->bGameDone = 0;
+	g_pGameWorldData->bNetworkGame = 0;
+	g_pGameWorldData->bCanRender = true;
 	
 	if(!InitSDL())
 	{
@@ -866,13 +693,11 @@ int main(int argc, char *args[])
 	{
 	}
 
-	// Load up the SDL constructs into our global gameworld data object
-	g_pGameWorldData->pWindow = GetSDLWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
-	g_pGameWorldData->pWindowImageSurface = SDL_GetWindowSurface(g_pGameWorldData->pWindow);
-	g_pGameWorldData->pWindowRenderer = GetSDLWindowRenderer(g_pGameWorldData->pWindow);
+	
+	
 		
 	// Load up the background into a texture 
-	pBackgroundTexture = TryMakeTexture((char*)backgroundImageFilename.c_str(), g_pGameWorldData->pWindowRenderer);
+	//pBackgroundTexture = TryMakeTexture((char*)backgroundImageFilename.c_str(), g_pGameWorldData->pWindowRenderer);
 	
 
 	tickCountAtLastCall = ticks();
@@ -897,7 +722,7 @@ int main(int argc, char *args[])
 			ticksSince = newTime - tickCountAtLastCall;
 		}
 
-		IndependantTickRun(frameTicks); // handle player input, general housekeeping
+		IndependantTickRun(frameTicks); // handle player input, general housekeeping (Event Manager processing)
 
 		if(!g_pGameWorldData->bNetworkGame && (ticksSince > TICK_TIME)) {
 			tickCountAtLastCall = newTime - TICK_TIME;

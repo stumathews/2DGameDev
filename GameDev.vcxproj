@@ -79,7 +79,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\SDL\SDL2\include;C:\SDL\SDL2_image-2.0.4\include;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;$(MSBuildProjectDirectory)\Actors;$(MSBuildProjectDirectory)\EventManagment;$(MSBuildProjectDirectory)\Rendering;$(MSBuildProjectDirectory)\ResourceManagement;$(MSBuildProjectDirectory)\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\SDL\SDL2\include;C:\SDL\SDL2_image-2.0.4\include;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;$(MSBuildProjectDirectory)\Actors;$(MSBuildProjectDirectory)\EventManagment;$(MSBuildProjectDirectory)\Rendering;$(MSBuildProjectDirectory)\ResourceManagement;$(MSBuildProjectDirectory)\Common;$(MSBuildProjectDirectory)\AudioManagment;$(MSBuildProjectDirectory)\SceneManagment;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Winmm.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -133,13 +133,15 @@
     <ClCompile Include="Actors\Actor.cpp" />
     <ClCompile Include="Actors\Ball.cpp" />
     <ClCompile Include="Actors\AnimatedActor.cpp" />
-    <ClCompile Include="EventManagment\LevelChangedEvent.cpp" />
+    <ClCompile Include="EventManagment\SceneChangedEvent.cpp" />
+    <ClCompile Include="EventManagment\DoLogicUpdateEvent.cpp" />
+    <ClCompile Include="SceneManagment\Layer.cpp" />
     <ClCompile Include="ResourceManagement\AudioResource.cpp" />
     <ClCompile Include="EventManagment\Event.cpp" />
     <ClCompile Include="EventManagment\EventManager.cpp" />
     <ClCompile Include="EventManagment\EventSubscriber.cpp" />
     <ClCompile Include="EventManagment\PositionChangeEvent.cpp" />
-    <ClCompile Include="ResourceManagement\AudioManager.cpp" />
+    <ClCompile Include="AudioManagment\AudioManager.cpp" />
     <ClCompile Include="ResourceManagement\GraphicsManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Rendering\Drawing.cpp" />
@@ -147,10 +149,15 @@
     <ClCompile Include="ResourceManagement\Resource.cpp" />
     <ClCompile Include="ResourceManagement\tinyxml2.cpp" />
     <ClCompile Include="ResourceManagement\ResourceManager.cpp" />
+    <ClCompile Include="SceneManagment\SceneItem.cpp" />
+    <ClCompile Include="SceneManagment\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actors\AnimatedActor.h" />
-    <ClInclude Include="EventManagment\LevelChangedEvent.h" />
+    <ClInclude Include="EventManagment\SceneChangedEvent.h" />
+    <ClInclude Include="EventManagment\DoLogicUpdateEvent.h" />
+    <ClInclude Include="scene1.xml" />
+    <ClInclude Include="SceneManagment\Layer.h" />
     <ClInclude Include="ResourceManagement\AudioResource.h" />
     <ClInclude Include="Common\Common.h" />
     <ClInclude Include="EventManagment\Event.h" />
@@ -158,13 +165,15 @@
     <ClInclude Include="EventManagment\Events.h" />
     <ClInclude Include="EventManagment\EventSubscriber.h" />
     <ClInclude Include="EventManagment\PositionChangeEvent.h" />
-    <ClInclude Include="ResourceManagement\AudioManager.h" />
+    <ClInclude Include="AudioManagment\AudioManager.h" />
     <ClInclude Include="ResourceManagement\GraphicsManager.h" />
     <ClInclude Include="Rendering\Drawing.h" />
     <ClInclude Include="ResourceManagement\GraphicsResource.h" />
     <ClInclude Include="ResourceManagement\Resource.h" />
     <ClInclude Include="ResourceManagement\tinyxml2.h" />
     <ClInclude Include="ResourceManagement\ResourceManager.h" />
+    <ClInclude Include="SceneManagment\SceneItem.h" />
+    <ClInclude Include="SceneManagment\SceneManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="Resources.xml" />

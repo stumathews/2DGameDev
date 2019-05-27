@@ -4,6 +4,7 @@
 #include "tinyxml2.h"
 #include <memory>
 #include "Actor.h"
+#include "SDL.h"
 
 
 
@@ -21,19 +22,27 @@ public:
 		GraphicsManager(GraphicsManager const&)  = delete;
         void operator=(GraphicsManager const&)  = delete;
 		
-		SDL_Renderer* m_MainWindow;
+		SDL_Window* m_Window;
+		SDL_Renderer* m_Renderer;
+		SDL_Surface* m_WindowSurface;
 		// Initializes the mainWindow
-		bool Init(unsigned width = 800, unsigned height=600, char* windowTitle=0);
+		bool Init(unsigned int width = 800, unsigned int height=600, const char* windowTitle=0);
 		// Creates a graphics Resource
 		std::shared_ptr<Resource> MakeResource(tinyxml2::XMLElement * assetXmlElement);
 		
 		// Draw all the Actors we know about onto the surface
 		void DrawAllActors();
+
+		void DrawScene();
+		unsigned int GetScreenWidth() { return  m_ScreenWidth;}
+		unsigned int GetScreenhEIGHT() { return  m_ScreenHeight;}
 private:	
 
 	std::vector<shared_ptr<Actor>> m_Actors;
 	GraphicsManager();
 	~GraphicsManager();
+	unsigned int m_ScreenWidth;
+	unsigned int m_ScreenHeight;
 
 };
 
