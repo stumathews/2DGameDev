@@ -18,6 +18,57 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="AnimatedActor.cpp" />
+    <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="AudioResource.cpp" />
+    <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="DoLogicUpdateEvent.cpp" />
+    <ClCompile Include="Drawing.cpp" />
+    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="EventManager.cpp" />
+    <ClCompile Include="EventSubscriber.cpp" />
+    <ClCompile Include="GameStructure.cpp" />
+    <ClCompile Include="GraphicsManager.cpp" />
+    <ClCompile Include="GraphicsResource.cpp" />
+    <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="PositionChangeEvent.cpp" />
+    <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="SceneChangedEvent.cpp" />
+    <ClCompile Include="SceneItem.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="tinyxml2-master\tinyxml2.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Actor.h" />
+    <ClInclude Include="AnimatedActor.h" />
+    <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="AudioResource.h" />
+    <ClInclude Include="Ball.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="DoLogicUpdateEvent.h" />
+    <ClInclude Include="Drawing.h" />
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="EventManager.h" />
+    <ClInclude Include="Events.h" />
+    <ClInclude Include="EventSubscriber.h" />
+    <ClInclude Include="GraphicsManager.h" />
+    <ClInclude Include="GraphicsResource.h" />
+    <ClInclude Include="Layer.h" />
+    <ClInclude Include="PositionChangeEvent.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="SceneChangedEvent.h" />
+    <ClInclude Include="SceneItem.h" />
+    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="tinyxml2-master\tinyxml2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="scene2.xml" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{A335C1BA-CFDA-41FD-A0E3-307EBDF715CC}</ProjectGuid>
@@ -129,55 +180,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Actors\Actor.cpp" />
-    <ClCompile Include="Actors\Ball.cpp" />
-    <ClCompile Include="Actors\AnimatedActor.cpp" />
-    <ClCompile Include="EventManagment\SceneChangedEvent.cpp" />
-    <ClCompile Include="EventManagment\DoLogicUpdateEvent.cpp" />
-    <ClCompile Include="SceneManagment\Layer.cpp" />
-    <ClCompile Include="ResourceManagement\AudioResource.cpp" />
-    <ClCompile Include="EventManagment\Event.cpp" />
-    <ClCompile Include="EventManagment\EventManager.cpp" />
-    <ClCompile Include="EventManagment\EventSubscriber.cpp" />
-    <ClCompile Include="EventManagment\PositionChangeEvent.cpp" />
-    <ClCompile Include="AudioManagment\AudioManager.cpp" />
-    <ClCompile Include="ResourceManagement\GraphicsManager.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Rendering\Drawing.cpp" />
-    <ClCompile Include="ResourceManagement\GraphicsResource.cpp" />
-    <ClCompile Include="ResourceManagement\Resource.cpp" />
-    <ClCompile Include="ResourceManagement\tinyxml2.cpp" />
-    <ClCompile Include="ResourceManagement\ResourceManager.cpp" />
-    <ClCompile Include="SceneManagment\SceneItem.cpp" />
-    <ClCompile Include="SceneManagment\SceneManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Actors\AnimatedActor.h" />
-    <ClInclude Include="EventManagment\SceneChangedEvent.h" />
-    <ClInclude Include="EventManagment\DoLogicUpdateEvent.h" />
-    <ClInclude Include="scene1.xml" />
-    <ClInclude Include="SceneManagment\Layer.h" />
-    <ClInclude Include="ResourceManagement\AudioResource.h" />
-    <ClInclude Include="Common\Common.h" />
-    <ClInclude Include="EventManagment\Event.h" />
-    <ClInclude Include="EventManagment\EventManager.h" />
-    <ClInclude Include="EventManagment\Events.h" />
-    <ClInclude Include="EventManagment\EventSubscriber.h" />
-    <ClInclude Include="EventManagment\PositionChangeEvent.h" />
-    <ClInclude Include="AudioManagment\AudioManager.h" />
-    <ClInclude Include="ResourceManagement\GraphicsManager.h" />
-    <ClInclude Include="Rendering\Drawing.h" />
-    <ClInclude Include="ResourceManagement\GraphicsResource.h" />
-    <ClInclude Include="ResourceManagement\Resource.h" />
-    <ClInclude Include="ResourceManagement\tinyxml2.h" />
-    <ClInclude Include="ResourceManagement\ResourceManager.h" />
-    <ClInclude Include="SceneManagment\SceneItem.h" />
-    <ClInclude Include="SceneManagment\SceneManager.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="Resources.xml" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

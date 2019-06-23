@@ -3,6 +3,7 @@
 #include "EventSubscriber.h"
 #include "GraphicsResource.h"
 
+
 // Drawable object
 class Actor : public EventSubscriber
 {
@@ -53,6 +54,7 @@ public:
 	}
 	int posX;
 	int posY;
+	shared_ptr<GraphicsResource> GetResource() { return m_GraphicsResource;}
 protected:
 	// Graphics resource associated with the actor, usually used during the Draw()ing peration when the Actor wishes to draw itself
 	// usually in response to the something asking it to draw itself like the GraphicsManager
@@ -61,7 +63,7 @@ protected:
 	
 	
 	SDL_Color m_ColorKey;
-	int moveInterval = 10; // move by intervals of 10 pixels
+	int moveInterval = 50; // move by intervals of 10 pixels
 
 };
 

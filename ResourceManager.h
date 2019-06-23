@@ -9,6 +9,7 @@
 #include "EventSubscriber.h"
 #include "EventManager.h"
 #include "Events.h"
+#include <iostream>
 using namespace std;
 using namespace tinyxml2;
 
@@ -16,7 +17,7 @@ using namespace tinyxml2;
 class ResourceManager : EventSubscriber
 {
     public:
-        static ResourceManager& getInstance()
+        static ResourceManager& GetInstance()
         {
             static ResourceManager instance;			
             return instance;
@@ -33,17 +34,17 @@ class ResourceManager : EventSubscriber
 		// Get the number of resources available
 		int GetResourceCount(){ return m_ResourceCount; }
 		// Load all the resources in the current level and unload those not in the current level
-		void SetCurrentScene(int level);
+		void LoadCurrentSceneResources(int level);
 
 		// Process an incoming event
 		void ProcessEvent(std::shared_ptr<Event> evt);
-
+		void Initialize(){}
     private:
 		
 		ResourceManager()
 		{
 			// Subscribe to scene changed Event
-			EventManager::getInstance().SubscribeToEvent(LevelChangedEventType, this);
+			EventManager::GetInstance().SubscribeToEvent(LevelChangedEventType, this);
 			
 			m_ResourceCount, m_CountLoadedResources, m_CountUnloadedResources = 0;
 			// Load the resources on creation of the Resource Manager
@@ -52,6 +53,7 @@ class ResourceManager : EventSubscriber
 			
 		}
 		void ReadInResources();
+		
 				
 		void StoreResource(std::shared_ptr<Resource> resource)
 		{	

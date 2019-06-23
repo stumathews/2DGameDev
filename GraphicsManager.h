@@ -14,7 +14,7 @@
 class GraphicsManager
 {
 public:
-	 static GraphicsManager& getInstance()
+	 static GraphicsManager& GetInstance()
         {
             static GraphicsManager instance;			
             return instance;
@@ -26,20 +26,20 @@ public:
 		SDL_Renderer* m_Renderer;
 		SDL_Surface* m_WindowSurface;
 		// Initializes the mainWindow
-		bool Init(unsigned int width = 800, unsigned int height=600, const char* windowTitle=0);
+		bool Initialize(unsigned int width = 800, unsigned int height=600, const char* windowTitle=0);
 		// Creates a graphics Resource
 		std::shared_ptr<Resource> MakeResource(tinyxml2::XMLElement * assetXmlElement);
 		
 		// Draw all the Actors we know about onto the surface
 		void DrawAllActors();
 
-		void DrawScene();
+		void DrawCurrentScene();
 		unsigned int GetScreenWidth() { return  m_ScreenWidth;}
 		unsigned int GetScreenhEIGHT() { return  m_ScreenHeight;}
 private:	
 
 	std::vector<shared_ptr<Actor>> m_Actors;
-	GraphicsManager();
+	GraphicsManager(){}
 	~GraphicsManager();
 	unsigned int m_ScreenWidth;
 	unsigned int m_ScreenHeight;

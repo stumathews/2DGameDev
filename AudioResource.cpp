@@ -12,13 +12,14 @@ AudioResource::AudioResource(int uid, string name, string path, string type, int
 
 void AudioResource::VLoad()
 {
-		std::cout << "Loading audio resource into memory: " << m_name << std::endl;
+
+	m_IsLoaded = true;
 }
 
 
 void AudioResource::VUnload()
 {
-		std::cout << "Unloading audio resource out of memory: " << m_name << std::endl;
+	m_IsLoaded = false;
 }
 
 AudioResource::~AudioResource()

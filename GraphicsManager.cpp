@@ -5,13 +5,14 @@
 #include "SceneManager.h"
 #include "SceneItem.h"
 #include "SDL_image.h"
+#include "GraphicsResource.h"
 #include <iostream>
-
+#include <SDL.h>
 using namespace std;
 
-
-GraphicsManager::GraphicsManager()
+GraphicsManager::~GraphicsManager()
 {
+	
 	// get rid of renderer
 	SDL_DestroyRenderer(m_Renderer);	
 	
@@ -19,16 +20,11 @@ GraphicsManager::GraphicsManager()
 	SDL_DestroyWindow(m_Window);
 }
 
-
-GraphicsManager::~GraphicsManager()
-{
-}
-
 SDL_Window* GetSDLWindow(const int SCREEN_WIDTH, const int SCREEN_HEIGHT, const char* title)
 {
 	SDL_Window* outWindow = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
 				SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
-				SDL_WINDOW_SHOWN);
+				SDL_WINDOW_SHOWN);	
 	if(outWindow == NULL)
 	{
 		std::cout << "Window could not be created:" << (char*)SDL_GetError() << std::endl;
@@ -49,8 +45,9 @@ SDL_Renderer* GetSDLWindowRenderer(SDL_Window* window)
 
 
 
-bool GraphicsManager::Init(unsigned int width, unsigned int height, const char * windowTitle)
+bool GraphicsManager::Initialize(unsigned int width, unsigned int height, const char * windowTitle)
 {
+	std::cout << "Initalizing Graphics" << std::endl;
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0)
 	{
 		std::cout << "SDL could not initialize!" << (char*)SDL_GetError() << std::endl;
@@ -65,11 +62,14 @@ bool GraphicsManager::Init(unsigned int width, unsigned int height, const char *
 	}
 
 	m_Window = GetSDLWindow(width, height, windowTitle);
+	
 	m_WindowSurface = SDL_GetWindowSurface(m_Window);
 	m_Renderer = GetSDLWindowRenderer(m_Window);
 
 	m_ScreenHeight = height;
 	m_ScreenWidth = width;
+
+	
 
 }
 
@@ -81,6 +81,8 @@ std::shared_ptr<Resource> GraphicsManager::MakeResource(tinyxml2::XMLElement * e
 	const char* path;
 	const char* name;
 	int level;
+	bool isAnimated = false;
+	int numKeyFrames = 1;
 
 	element->QueryIntAttribute("uid", &uuid);
 	element->QueryStringAttribute("type", &type);
@@ -88,10 +90,35 @@ std::shared_ptr<Resource> GraphicsManager::MakeResource(tinyxml2::XMLElement * e
 	element->QueryStringAttribute("name", &name);
 	element->QueryIntAttribute("scene", &level);
 	
-	// Read anything specific to graphics in the element here...
+	for(const XMLAttribute* elementAttr = element->FirstAttribute(); elementAttr; elementAttr = elementAttr->Next())
+	{
+		std::string name = elementAttr->Name();
+		std::string value = elementAttr->Value();
 
+		if(name == "isAnimated")
+		{
+			isAnimated = name == "true" ? true : false;
+ 		}
+		if(name == "numKeyFrames")
+		{
+			numKeyFrames = atoi(value.c_str());
+		}
+		if(name == "keyFrameHeight")
+		{
+			numKeyFrames = atoi(value.c_str());
+		}
+		if(name == "keyFrameWidth")
+		{
+			numKeyFrames = atoi(value.c_str());
+		}
+	}
+	
+	
 
-	auto graphicsResource = shared_ptr<GraphicsResource>(new GraphicsResource(uuid, name, path, type, level));
+	auto graphicsResource = isAnimated 
+		? 	shared_ptr<GraphicsResource>(new GraphicsResource(uuid, name, path, type, level, numKeyFrames, 0, 0))
+		:   shared_ptr<GraphicsResource>(new GraphicsResource(uuid, name, path, type, level));
+		
 	
 	return graphicsResource;
 }
@@ -106,17 +133,22 @@ void GraphicsManager::DrawAllActors()
 			actor->VDraw(m_Renderer);
 		}
 	}
+	
+	SDL_UpdateWindowSurface(m_Window);
 }
 
 // Draws all the actors in the scene
-void GraphicsManager::DrawScene()
+void GraphicsManager::DrawCurrentScene()
 {
-	SDL_SetRenderDrawColor(m_Renderer, 0x255, 0x255, 0x55, 0xFF);
-	SDL_RenderClear(m_Renderer);
-	for( auto layer : SceneManager::getInstance().m_Layers)
+	//SDL_SetRenderDrawColor(m_Renderer, 0x255, 0x255, 0x55, 0xFF);
+	SDL_FillRect(m_WindowSurface, 0, 0);
+	
+	// Draw objects in layers, which are ordered by z-order
+	for(auto layer : CurrentLevelManager::GetInstance().m_Layers)
 	{
-		if(layer->m_Visible){
-			for( auto actor : layer->m_Items)
+		if(layer->m_Visible)
+		{
+			for(auto actor : layer->m_Items)
 			{
 				if(actor->m_Visible) {
 					actor->VDraw(m_Renderer);
@@ -124,5 +156,7 @@ void GraphicsManager::DrawScene()
 			}
 		}
 	}
-	SDL_RenderPresent(m_Renderer);
+	SDL_UpdateWindowSurface(m_Window);
+	//SDL_RenderClear(m_Renderer);
+	//SDL_RenderPresent(GraphicsManager::GetInstance().m_Renderer);
 }

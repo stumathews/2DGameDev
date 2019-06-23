@@ -6,7 +6,7 @@
 class EventManager
 {
 public:
-	static EventManager& getInstance()
+	static EventManager& GetInstance()
 	{
 		static EventManager instance;
 		return instance;

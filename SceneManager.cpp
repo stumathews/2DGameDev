@@ -11,20 +11,45 @@
 #include "SceneChangedEvent.h"
 using namespace tinyxml2;
 
-SceneManager::SceneManager()
+
+void CurrentLevelManager::Initialize()
 {
+	EventManager::GetInstance().SubscribeToEvent(LevelChangedEventType, this);
+	m_Initialized = true;
 }
 
-
-SceneManager::~SceneManager()
+CurrentLevelManager::CurrentLevelManager()
 {
+	if(!m_Initialized)
+		m_Initialized = true;
+};
+
+void CurrentLevelManager::ProcessEvent(std::shared_ptr<Event> evt)
+{
+	// As a Scene/Level manager I'll load the scene/level's resources when I get a level/scene event
+	if(evt->m_eventType == LevelChangedEventType)
+	{
+		std::shared_ptr<SceneChangedEvent> cpe = std::dynamic_pointer_cast<SceneChangedEvent>(evt);
+		std::string filename;
+		if(cpe->m_Level == 1)
+		{
+			filename = "scene1.xml";
+		}
+		if(cpe->m_Level == 2)
+		{
+			filename = "scene2.xml";
+		}
+
+		
+
+		LoadScene(filename);
+	}
 }
 
 // Create a new Actor using the details obtained from within the XML file.
-void SceneManager::addObjectsToLayer(shared_ptr<Layer> layer, tinyxml2::XMLElement * element)
+void CurrentLevelManager::addObjectsToLayer(shared_ptr<Layer> layer, tinyxml2::XMLElement * element)
 {
-	
-	cout << "Loading objects into layer..." << endl;
+
 	// We will initialize the actor to default conords etc and then override them with actual values from the 
 	// XML file
 
@@ -45,30 +70,29 @@ void SceneManager::addObjectsToLayer(shared_ptr<Layer> layer, tinyxml2::XMLEleme
 		// A resource is associated with the actor
 		if(name == "resourceId")
 		{
-			const ResourceManager& rm = ResourceManager::getInstance();
-			auto resource = ResourceManager::getInstance().GetResourceByUuid(atoi(value.c_str()));
+			// Set the actors resource 
+				
+			auto resource = ResourceManager::GetInstance().GetResourceByUuid(atoi(value.c_str()));
+			if(resource->m_type != "graphic")
+				throw new exception(("Cannot load non graphic resource: " + resource->m_name + " type=" + resource->m_type).c_str());
 			auto graphicsResource = std::dynamic_pointer_cast<GraphicsResource>(resource);
 			actor->SetGraphicsResource(graphicsResource);
 		}
-		if(name == "posx")
-		{
+		if(name == "posx") {
 			actor->posX = atoi(value.c_str());
 			continue;
 		}
-		if(name == "visible")
-		{
+		if(name == "visible") {
 			if(value == "true")
 				actor->m_Visible = true;
 			else
 				actor->m_Visible = false;
 		}
-		if(name=="posy")
-		{
+		if(name=="posy") {
 			actor->posY = atoi(value.c_str());
 			continue;
 		}
-		if(name == "colourKey")
-		{
+		if(name == "colourKey") {
 			if(value == "true")
 				actor->m_ColourKeyEnabled = true;
 			else
@@ -76,43 +100,35 @@ void SceneManager::addObjectsToLayer(shared_ptr<Layer> layer, tinyxml2::XMLEleme
 
 			continue;
 		}
-		if(name == "r")
-		{
+		if(name == "r") {
 			r = atof(value.c_str());
 			continue;
 		}
-		if(name == "g")
-		{
+		if(name == "g") {
 			g = atof(value.c_str());
 			continue;
 		}
-		if(name == "b")
-		{
+		if(name == "b") {
 			b = atof(value.c_str());
 			continue;
 		}
 		
 	}
 
-	cout << "Loading object at x=" << actor->posX  << " y=" << actor->posY << endl;
-
 	if(actor->m_ColourKeyEnabled)
 		actor->SetColourKey(r,g,b);		
 
-	// Subscribe this actor the the move event
-	cout << "Subscribing actor to PositionChangedEvent..." << endl;
-	EventManager::getInstance().SubscribeToEvent(PositionChangeEventType, actor.get());
+	// Subscribe this actor the the move event	
+	EventManager::GetInstance().SubscribeToEvent(PositionChangeEventType, actor.get());
 		
 	// Subscribe the actor to the update event
-	cout << "Subscribing actor to DoLogicUpdateEventType..." << endl;
-	EventManager::getInstance().SubscribeToEvent(DoLogicUpdateEventType, actor.get());
+	EventManager::GetInstance().SubscribeToEvent(DoLogicUpdateEventType, actor.get());
 		
 	// Add this object to the layer (which later will be rendered by the GraphicsManager)
 	layer->m_Items.push_back(actor);
-
 }
 
-shared_ptr<Layer> SceneManager::addLayer(std::string name)
+shared_ptr<Layer> CurrentLevelManager::addLayer(std::string name)
 {
 	auto layer = findLayer(name);
 	if(!layer){
@@ -123,27 +139,20 @@ shared_ptr<Layer> SceneManager::addLayer(std::string name)
 	return layer;
 }
 
-shared_ptr<Layer> SceneManager::findLayer(std::string name)
+shared_ptr<Layer> CurrentLevelManager::findLayer(std::string name)
 {
 	for( auto layer : m_Layers)
-	{
 		if(layer->m_Name == name)
-		{
-			return layer;
-		}
-	}
+			return layer;		
+	
 	return NULL;
 }
 
-void SceneManager::removeLayer(std::string name)
+void CurrentLevelManager::removeLayer(std::string name)
 {
 	for(auto layer : m_Layers)
-	{
 		if(layer->m_Name == name)
-		{
 			m_Layers.remove(layer);
-		}
-	}
 }
 
 bool compareLayerOrder(shared_ptr<Layer> rhs, shared_ptr<Layer> lhs)
@@ -151,7 +160,7 @@ bool compareLayerOrder(shared_ptr<Layer> rhs, shared_ptr<Layer> lhs)
 	return lhs->m_ZOrder < rhs->m_ZOrder;
 }
 
-void SceneManager::sortLayers()
+void CurrentLevelManager::sortLayers()
 {
 	m_Layers.sort(compareLayerOrder);
 }
@@ -160,13 +169,12 @@ void SceneManager::sortLayers()
 // Collects all actors defined in a scene
 // and represents them as layers within the SceneManager
 // Notifies the resource manager of the new scene and the resource manager will load in/out appropriate scene resources
-
-bool SceneManager::loadSceneFromXml(std::string filename)
+bool CurrentLevelManager::LoadScene(std::string filename)
 {
-	cout << "Loaging new scene " << filename << endl;
 	XMLDocument doc;
 
-	// Load the resource file into memory
+	/* Load the Scene XML and build up the layers (of objects) in the scene 
+	*/
 	doc.LoadFile(filename.c_str());
 	if(doc.ErrorID() == 0)
 	{		
@@ -174,7 +182,6 @@ bool SceneManager::loadSceneFromXml(std::string filename)
 		XMLNode* pResourceTree = doc.FirstChildElement("scene");
 		XMLElement* el = pResourceTree->ToElement();
 		const char* sceneId = el->Attribute("id");	
-		cout << "Scene id is " << sceneId << endl;
 		
 		if(pResourceTree)
 		{
@@ -204,8 +211,7 @@ bool SceneManager::loadSceneFromXml(std::string filename)
 							layer->m_PosY = 0;
 							continue;
 						}
-						if(name=="visible")
-						{
+						if(name=="visible") {
 							if(value == "true")
 								layer->m_Visible = true;
 							else
@@ -214,14 +220,11 @@ bool SceneManager::loadSceneFromXml(std::string filename)
 						}
 						
 					}
-					cout << "Found new layer " << layer->m_Name << endl;
 					// Now load the actors into the layer itself
 					for( XMLNode* objs = child->FirstChild(); objs; objs = objs->NextSibling())
 					{
-						if(std::string(objs->Value()) == "objects")
-						{
-							for( XMLNode* obj = objs->FirstChild(); obj; obj = obj->NextSibling())
-							{
+						if(std::string(objs->Value()) == "objects") {
+							for( XMLNode* obj = objs->FirstChild(); obj; obj = obj->NextSibling()) {
 								XMLElement* objElement = obj->ToElement();
 								// Depending on the object, it can construct itself from the XML
 								addObjectsToLayer(layer, objElement);
@@ -231,19 +234,19 @@ bool SceneManager::loadSceneFromXml(std::string filename)
 					m_Layers.push_back(layer);
 				}
 			}
-			// We want to draw from zOrder 0 -> onwards (in order)
-			sortLayers();
+			
+			sortLayers(); // We want to draw from zOrder 0 -> onwards (in order)
 			return true;
 
 		}
 
-		// Notify the resource manager that the scene has changed at that those scene reseources
-		// should be laoded in and any others be loaded out of memory
-		EventManager::getInstance().RegisterEvent(shared_ptr<SceneChangedEvent>(new SceneChangedEvent(atoi(sceneId))));
+		// Notify that a new scene has been loaded. 
+		// One noticible subscriber ill be the resource manager to load the scene's resources in memory
+		EventManager::GetInstance().RegisterEvent(shared_ptr<SceneChangedEvent>(new SceneChangedEvent(atoi(sceneId))));
 	}
 	return false;
 }
 
-void SceneManager::update()
+void CurrentLevelManager::update()
 {
 }

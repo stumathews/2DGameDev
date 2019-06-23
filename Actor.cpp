@@ -9,6 +9,6 @@
 
 Actor::~Actor()
 {
-	std::cout << "Deleting actor!" << std::endl;
+	std::cout << "~Actor()" << std::endl;
 }
 

@@ -28,10 +28,7 @@ public:
 
 	void ProcessEvent(std::shared_ptr<Event> event);
 	
-	void VDraw(SDL_Renderer* renderer)
-	{
-		Drawing::DrawRectangle(posX, posY,mBounds.w,mBounds.h, renderer, red, blue, green);
-	}
+	void VDraw(SDL_Renderer* renderer);
 		
 
 	void VDoLogic()
@@ -43,20 +40,20 @@ public:
 				isTravelingLeft = false;
 				Mix_PlayChannel( -1, gLow, 0 );
 			}
-			MoveLeft();
+			//MoveLeft();
 		}
 		else
 		{
-			if(posX == GraphicsManager::getInstance().GetScreenWidth())
+			if(posX == GraphicsManager::GetInstance().GetScreenWidth())
 			{		
 				Mix_PlayChannel( -1, gLow, 0 );
 				isTravelingLeft = true;
 			}
-			MoveRight();
+			//MoveRight();
 		}	
 	}
 	Ball(){}
-	virtual ~Ball();
+	virtual ~Ball(){}
 private:
 	bool isTravelingLeft;
 	int red, blue, green;

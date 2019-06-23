@@ -10,7 +10,7 @@
 class AudioManager
 {
 public:
-	 static AudioManager& getInstance()
+	 static AudioManager& GetInstance()
         {
             static AudioManager instance;			
             return instance;

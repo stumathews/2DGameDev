@@ -23,9 +23,8 @@ std::shared_ptr<Resource> ResourceManager::GetResourceByUuid(int uuid)
 	return resource;
 }
 
-void ResourceManager::SetCurrentScene(int newLevel)
+void ResourceManager::LoadCurrentSceneResources(int newLevel)
 {
-	cout << "Setting current scene to " << newLevel << endl;
 	// Load all the resources required by the scene
 	// and unload all those that don't
 	for(auto levelResources : m_ResourcesByLevel)
@@ -35,7 +34,9 @@ void ResourceManager::SetCurrentScene(int newLevel)
 		
 		for( auto resource : resources )
 		{
-			if((resource->m_scene == newLevel || resource->m_scene == 0) && !resource->m_IsLoaded){
+			auto IsAlreadyLoaded = resource->m_IsLoaded;
+			if((resource->m_scene == newLevel || resource->m_scene == 0) && !IsAlreadyLoaded){
+				std::cout << "(" << resource->m_scene << ")" << "MEM_LOAD:" << resource->m_name << std::endl;
 				resource->VLoad();
 				m_CountLoadedResources++;
 				m_CountUnloadedResources--;
@@ -43,6 +44,7 @@ void ResourceManager::SetCurrentScene(int newLevel)
 			// Don't unload level 0 resources - they are always needed irrespective of the level
 			else if(resource->m_IsLoaded && resource->m_scene != 0 && resource->m_scene != newLevel)
 			{
+				std::cout << "(" << resource->m_scene << ")" << "MEM_UNLOAD:" << resource->m_name << std::endl;
 				resource->VUnload();
 				m_CountUnloadedResources++;
 				m_CountLoadedResources--;
@@ -56,8 +58,9 @@ void ResourceManager::ProcessEvent(std::shared_ptr<Event> evt)
 	switch(evt->m_eventType)
 	{
 		case LevelChangedEventType:
+			// As a resource manager I'll actually Load the resources for the scene into memory
 			auto cpe = std::dynamic_pointer_cast<SceneChangedEvent>(evt);
-			
+			LoadCurrentSceneResources(cpe->m_Level);
 			break;
 	}
 }
@@ -89,11 +92,11 @@ void ResourceManager::ReadInResources()
 
 					if(strcmp(type, "graphic") == 0)
 					{
-						resource = GraphicsManager::getInstance().MakeResource(element);						
+						resource = GraphicsManager::GetInstance().MakeResource(element);						
 					}
 					if(strcmp(type, "fx") == 0)
 					{					
-						resource = AudioManager::getInstance().MakeResource(element);						
+						resource = AudioManager::GetInstance().MakeResource(element);						
 					}						
 						
 					if(resource)
