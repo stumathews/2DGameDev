@@ -25,7 +25,11 @@ public:
 		SDL_Window* m_Window;
 		SDL_Renderer* m_Renderer;
 		SDL_Surface* m_WindowSurface;
-		// Initializes the mainWindow
+		
+		/* Initializes the graphics system
+		* Creates Main Window
+		* Sets up the window surface and renderer for drawing	
+		*/
 		bool Initialize(unsigned int width = 800, unsigned int height=600, const char* windowTitle=0);
 		// Creates a graphics Resource
 		std::shared_ptr<Resource> MakeResource(tinyxml2::XMLElement * assetXmlElement);

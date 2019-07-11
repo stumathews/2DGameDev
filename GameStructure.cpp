@@ -575,13 +575,15 @@ void Draw(float percentWithinTick)
 }
 
 
-
+/*
+* Initialize the Graphics subsystem incl. Main Window
+* Initialize the Audio subsystem
+*/
 bool InitSDL()
 {
 	// Initialise SDL	
 	if(!GraphicsManager::GetInstance().Initialize())
 		return false;
-
 
 	// Initialize SDL_mixer 
     if( Mix_OpenAudio( 44100 /*sound frequency*/, MIX_DEFAULT_FORMAT/*sample format*/, 2 /*hardware channels*/, 2048 /*sample size*/ ) < 0 )
@@ -620,35 +622,37 @@ bool loadMedia()
 {
 	//Load music
     gMusic = Mix_LoadMUS( ResourceManager::GetInstance().GetResourceByName("MainTheme.wav")->m_path.c_str() );
-    if( gMusic == NULL )
+    
+	//Load sound effects
+    gScratch = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("scratch.wav")->m_path.c_str() );
+	gHigh = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("high.wav")->m_path.c_str() );
+	gMedium = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("medium.wav")->m_path.c_str() );
+	gLow = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("low.wav")->m_path.c_str() );
+
+	if( gMusic == NULL )
     {
         printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
-    }
+    }  
     
-    //Load sound effects
-    gScratch = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("scratch.wav")->m_path.c_str() );
     if( gScratch == NULL )
     {
         printf( "Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
     
-    gHigh = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("high.wav")->m_path.c_str() );
     if( gHigh == NULL )
     {
         printf( "Failed to load high sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
-
-    gMedium = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("medium.wav")->m_path.c_str() );
+    
     if( gMedium == NULL )
     {
         printf( "Failed to load medium sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
-
-    gLow = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("low.wav")->m_path.c_str() );
+    
     if( gLow == NULL )
     {
         printf( "Failed to load low sound effect! SDL_mixer Error: %s\n", Mix_GetError() );

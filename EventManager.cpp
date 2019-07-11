@@ -22,13 +22,12 @@ EventManager::~EventManager(){}
 
 void EventManager::ProcessEvents()
 {
-	// go through all the events and call all ther subscribers telling them about the event
+	// Go through all the registered events and call all ther subscribers telling them about the event
 	
-	for(auto it = events.begin(); it != events.end();it++) {
-		std::shared_ptr<Event> evt = *it;
-		auto subscribers  = event_subscribers[evt->m_eventType];
-		for(auto subscriber : subscribers) {
-			subscriber->ProcessEvent(evt);			
+	for(auto eventIterator = events.begin(); eventIterator != events.end();eventIterator++) {
+		for(auto subscriber : event_subscribers[(*eventIterator)->m_eventType]) {
+			// Call subscriber's ProcessEvent method
+			subscriber->ProcessEvent(*eventIterator);			
 		}		
 	}
 	events.clear();

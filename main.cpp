@@ -24,6 +24,8 @@ using namespace std;
 
 extern std::shared_ptr<GameWorldData> g_pGameWorldData;
 extern bool InitSDL();
+
+// Load game audio files
 extern bool loadMedia();
 extern long ticks();
 extern void Update();
@@ -37,29 +39,31 @@ void SetLevel(int level);
 
 int main(int argc, char *args[])
 {	
+	// Prepare all sub systems
 	if(!Initialize())
 		return -1;
 
-	if (!loadMedia())
-		return -1;		
-
-	SetLevel(1);
+	// Trigger the first level by kicking the event manager
+	EventManager::GetInstance().RegisterEvent(std::shared_ptr<SceneChangedEvent>(new SceneChangedEvent(1)));
+	
+	// Process events, render and update
 	DoGameLoop();	
 	Uninitialize();	
 	return 0;
 }
 
-void SetLevel(int level)
-{
-	// Notifies the Event system that you want to change the level
-	EventManager::GetInstance().RegisterEvent(std::shared_ptr<SceneChangedEvent>(new SceneChangedEvent(level)));
-}
 
+/* Cleans up resources
+* Frees surfaces audio files etc
+*/
 void Uninitialize()
 {
 	CleanupResources();
 }
 
+/* Main game loop
+* Separates Rendering, event processing and logic updates
+*/
 void DoGameLoop()
 {
 	int frameTicks; // Number of ticks in the update call	
@@ -98,6 +102,9 @@ void DoGameLoop()
 	std::cout << "Game done" << std::endl;
 }
 
+/* Initialize resource,level manager, and load game audio files
+*
+*/
 bool Initialize()
 {
 	ResourceManager::GetInstance().Initialize();	
@@ -112,6 +119,10 @@ bool Initialize()
 		std::cout << "Could not initailize SDL, aborting." << std::endl;
 		return false;
 	}
+
+	// Load audio game files
+	if (!loadMedia())
+		return -1;	
 		
 	return true;
 }

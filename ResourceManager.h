@@ -38,10 +38,13 @@ class ResourceManager : EventSubscriber
 
 		// Process an incoming event
 		void ProcessEvent(std::shared_ptr<Event> evt);
-		void Initialize(){}
-    private:
 		
-		ResourceManager()
+		/*
+		* Initialize the resource manager. 
+		* Subscribe to event manager events
+		* Read in all game resource references(meta data)
+		*/
+		void Initialize()
 		{
 			// Subscribe to scene changed Event
 			EventManager::GetInstance().SubscribeToEvent(LevelChangedEventType, this);
@@ -50,8 +53,10 @@ class ResourceManager : EventSubscriber
 			// Load the resources on creation of the Resource Manager
 			ReadInResources();
 			// Load all the global game rsources - default is set to level 0
-			
 		}
+    private:
+		
+		ResourceManager(){ }
 		void ReadInResources();
 		
 				

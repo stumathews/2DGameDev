@@ -27,6 +27,10 @@ public:
 		void sortLayers();
 		void update();
 		void ProcessEvent(std::shared_ptr<Event> evt);
+		/*
+		* Initialize the Current level manager
+		* Subscribe to event system
+		*/
 		void Initialize();
 		bool m_Initialized;
 protected:

@@ -11,7 +11,6 @@
 #include "SceneChangedEvent.h"
 using namespace tinyxml2;
 
-
 void CurrentLevelManager::Initialize()
 {
 	EventManager::GetInstance().SubscribeToEvent(LevelChangedEventType, this);

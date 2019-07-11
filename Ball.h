@@ -26,10 +26,11 @@ public:
 		isTravelingLeft = false; // its traveling right		
 	}
 
-	void ProcessEvent(std::shared_ptr<Event> event);
-	
-	void VDraw(SDL_Renderer* renderer);
-		
+	/*
+	* Deals with events that a ball knows how to work with
+	*/
+	void ProcessEvent(std::shared_ptr<Event> event);	
+	void virtual VDraw(SDL_Renderer* renderer);	
 
 	void VDoLogic()
 	{		
@@ -39,8 +40,7 @@ public:
 			{		
 				isTravelingLeft = false;
 				Mix_PlayChannel( -1, gLow, 0 );
-			}
-			//MoveLeft();
+			}			
 		}
 		else
 		{
@@ -48,8 +48,7 @@ public:
 			{		
 				Mix_PlayChannel( -1, gLow, 0 );
 				isTravelingLeft = true;
-			}
-			//MoveRight();
+			}			
 		}	
 	}
 	Ball(){}

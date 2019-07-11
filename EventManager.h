@@ -17,6 +17,9 @@ public:
 	void RegisterEvent(std::shared_ptr<Event> evt);
 	void SubscribeToEvent(EventType type, EventSubscriber* you);
 	
+	/* Go through all the events and call all ther subscribers telling them about the event
+	*
+	*/
 	void ProcessEvents();
 private:	
 	EventManager();

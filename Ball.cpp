@@ -28,10 +28,11 @@ void Ball::ProcessEvent(std::shared_ptr<Event> evt)
 
 void Ball::VDraw(SDL_Renderer * renderer)
 {
-	//Drawing::DrawRectangle(posX, posY,mBounds.w,mBounds.h, renderer, red, blue, green);
-	SDL_Rect drect;
-	drect.x = posX;
-	drect.y = posY;
-	SDL_BlitSurface(m_GraphicsResource->m_Surface, NULL, GraphicsManager::GetInstance().m_WindowSurface, &drect);
+	// Surely this should be a more common routine, that all Actors should be able to do by default (draw themselves)
+
+	// Switch in diffirence keyframes here
+
+	SDL_Rect drawLocation = { posX, posY };	
+	SDL_BlitSurface(m_GraphicsResource->m_Surface, NULL, GraphicsManager::GetInstance().m_WindowSurface, &drawLocation);	
 	
 }
