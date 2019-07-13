@@ -2,7 +2,6 @@
 <scene id="2">
   <layer name="layer0" posx="0" posy="0" visible="true">
     <objects>
-      
       <object posx="100" posy="40" resourceId="7" visible="true" colourKey="true" r="0" g="0" b="0"></object>
       <object posx="500" posy="40" resourceId="8" visible="true" colourKey="true" r="0" g="0" b="0"></object>
     </objects>

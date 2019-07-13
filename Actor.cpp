@@ -7,7 +7,7 @@
 //{
 //}
 
-Actor::~Actor()
+ActorBase::~ActorBase()
 {
 	std::cout << "~Actor()" << std::endl;
 }

@@ -4,31 +4,33 @@
 #include "GraphicsResource.h"
 
 
-// Drawable object
-class Actor : public EventSubscriber
+/* An actor is an game object has state and can draw and update itself 
+* Its mean to be derived from as it contains some base functionality shared by all actors such
+* as updating its position, Setting its graphic resource.
+* VDoLogic and VDraw should be implemented by a derived class
+*/
+class ActorBase : public EventSubscriber
 {
 public:
-	Actor(){}
-	Actor(int x, int y, int w, int h, int posX, int posY) : posX(posX), posY(posY)
-	{
-		mBounds = { x = x, y = y, w = w, h = h};	
-	}
+	ActorBase(){}
+	ActorBase(int m_xPos, int m_yPos) 
+		: m_xPos(m_xPos), m_yPos(m_yPos) { }
 
 	virtual void MoveUp()
 	{
-		posY -= moveInterval;
+		m_yPos -= moveInterval;
 	}
 	virtual void MoveDown()
 	{
-		posY += moveInterval;
+		m_yPos += moveInterval;
 	}
 	virtual void MoveLeft()
 	{
-		posX -= moveInterval;
+		m_xPos -= moveInterval;
 	}
 	virtual void MoveRight()
 	{
-		posX += moveInterval;
+		m_xPos += moveInterval;
 	}
 
 	// Actor can look after itself
@@ -37,7 +39,7 @@ public:
 	// Actor can draw itself, usually refering to the GraphicsResource assoaicted with the actor
 	virtual void VDraw(SDL_Renderer* renderer) = 0;
 	
-	virtual ~Actor();
+	virtual ~ActorBase();
 
 	// Set the graphics resource that underlies this Actor
 	// There could be many Actors refering to this graphics resource in the game
@@ -53,8 +55,8 @@ public:
 		m_ColorKey.g = g;
 		m_ColorKey.b = b;
 	}
-	int posX;
-	int posY;
+	int m_xPos;
+	int m_yPos;
 	shared_ptr<GraphicsResource> GetResource() { return m_GraphicsResource;}
 protected:
 	shared_ptr<GraphicsResource> m_GraphicsResource; // can be shared by other actors

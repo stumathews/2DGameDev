@@ -29,6 +29,7 @@
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="EventSubscriber.cpp" />
+    <ClCompile Include="GameObjectFactory.cpp" />
     <ClCompile Include="GameStructure.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="GraphicsResource.cpp" />
@@ -40,6 +41,7 @@
     <ClCompile Include="SceneChangedEvent.cpp" />
     <ClCompile Include="SceneItem.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="tinyxml2-master\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +57,7 @@
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="Events.h" />
     <ClInclude Include="EventSubscriber.h" />
+    <ClInclude Include="GameObjectFactory.h" />
     <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="GraphicsResource.h" />
     <ClInclude Include="Layer.h" />
@@ -64,10 +67,12 @@
     <ClInclude Include="SceneChangedEvent.h" />
     <ClInclude Include="SceneItem.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Sprite.h" />
     <ClInclude Include="tinyxml2-master\tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="scene2.xml" />
+    <Xml Include="scene3.xml" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

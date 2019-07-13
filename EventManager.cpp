@@ -4,18 +4,14 @@
 #include <iostream>
 
 
-EventManager::EventManager()
-{
-}
-
 void EventManager::RegisterEvent(std::shared_ptr<Event> evt)
 {
-	events.push_back(evt);
+	m_events.push_back(evt);
 }
 
 void EventManager::SubscribeToEvent(EventType type, EventSubscriber* you)
 {
-	event_subscribers[type].push_back(you);	
+	m_EventSubscribers[type].push_back(you);	
 }
 
 EventManager::~EventManager(){}
@@ -24,11 +20,11 @@ void EventManager::ProcessEvents()
 {
 	// Go through all the registered events and call all ther subscribers telling them about the event
 	
-	for(auto eventIterator = events.begin(); eventIterator != events.end();eventIterator++) {
-		for(auto subscriber : event_subscribers[(*eventIterator)->m_eventType]) {
+	for(auto eventIterator = m_events.begin(); eventIterator != m_events.end();eventIterator++) {
+		for(auto subscriber : m_EventSubscribers[(*eventIterator)->m_eventType]) {
 			// Call subscriber's ProcessEvent method
 			subscriber->ProcessEvent(*eventIterator);			
 		}		
 	}
-	events.clear();
+	m_events.clear();
 }

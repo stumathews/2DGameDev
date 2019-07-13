@@ -2,7 +2,7 @@
 #include "Actor.h"
 #include <windows.h>
 
-class AnimatedActor : public Actor
+class AnimatedActor : public ActorBase
 {
 public:
 	AnimatedActor();

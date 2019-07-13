@@ -7,9 +7,8 @@ public:
 	{
 		SetData((void*) level);
 		m_Level = level;
-
 	}
-		~SceneChangedEvent();
-		int m_Level;
+	~SceneChangedEvent();
+	int m_Level;
 
 };

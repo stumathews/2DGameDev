@@ -19,7 +19,10 @@ public:
         void operator=(CurrentLevelManager const&)  = delete;
 		std::list<shared_ptr<Layer>> m_Layers;
 		
-		bool LoadScene(std::string filename);
+		/* Collects all actors defined in a scene and represents them as layers within the SceneManager
+		*  Notifies the resource manager of the new scene and the resource manager will load in/out appropriate scene resources
+		*/
+		bool PopulateLayers(std::string filename);
 		void addObjectsToLayer(shared_ptr<Layer> layer, tinyxml2::XMLElement* element);
 		shared_ptr<Layer> addLayer(std::string name);
 		shared_ptr<Layer> findLayer(std::string name);

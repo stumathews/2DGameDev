@@ -21,7 +21,7 @@ struct GameWorldData
 	bool bCanRender;
 		
 	// List of game objects
-	std::vector<std::shared_ptr<Actor>> actors;
+	std::vector<std::shared_ptr<ActorBase>> actors;
 
 	~GameWorldData()
 	{

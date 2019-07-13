@@ -42,7 +42,7 @@ public:
 		unsigned int GetScreenhEIGHT() { return  m_ScreenHeight;}
 private:	
 
-	std::vector<shared_ptr<Actor>> m_Actors;
+	std::vector<shared_ptr<ActorBase>> m_Actors;
 	GraphicsManager(){}
 	~GraphicsManager();
 	unsigned int m_ScreenWidth;

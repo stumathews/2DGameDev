@@ -83,15 +83,20 @@ void sense_player_input()
 					std::cout << "Player pressed Quit key !" << std::endl;
 					g_pGameWorldData->bGameDone = 1;
 					break;
-				case SDLK_k:
+				case SDLK_j:
 					// simluate a level change
 					std::cout << "Level change to 1" << std::endl;
 					EventManager::GetInstance().RegisterEvent( shared_ptr<SceneChangedEvent>(new SceneChangedEvent(1)));
 					break;
-				case SDLK_l:
+				case SDLK_k:
 				// simluate a level change
 				std::cout << "Level change to 2" << std::endl;
 				EventManager::GetInstance().RegisterEvent( shared_ptr<SceneChangedEvent>(new SceneChangedEvent(2)));
+				break;
+				case SDLK_l:
+				// simluate a level change
+				std::cout << "Level change to 3" << std::endl;
+				EventManager::GetInstance().RegisterEvent( shared_ptr<SceneChangedEvent>(new SceneChangedEvent(3)));
 				break;
 
 				 //Play high sound effect

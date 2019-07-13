@@ -14,11 +14,11 @@ extern Mix_Chunk *gMedium;
 extern Mix_Chunk *gLow;
 
 
-class Ball : public Actor
+class GameObject : public ActorBase
 {
 public:
-	Ball(int x, int y, int w, int h, int posX, int posY)
-		: Actor(x, y, w, h, posX, posY)
+	GameObject(int m_xPos, int m_yPos)
+		: ActorBase(m_xPos, m_yPos)
 	{
 		red = 0x00;
 		blue = 0xFF;
@@ -34,25 +34,20 @@ public:
 
 	void VDoLogic()
 	{		
-		if(isTravelingLeft)
-		{
-			if(posX == 0)
-			{		
+		if(isTravelingLeft) {
+			if(m_xPos == 0) {		
 				isTravelingLeft = false;
 				Mix_PlayChannel( -1, gLow, 0 );
 			}			
-		}
-		else
-		{
-			if(posX == GraphicsManager::GetInstance().GetScreenWidth())
-			{		
+		} else {
+			if(m_xPos == GraphicsManager::GetInstance().GetScreenWidth()) {		
 				Mix_PlayChannel( -1, gLow, 0 );
 				isTravelingLeft = true;
 			}			
 		}	
 	}
-	Ball(){}
-	virtual ~Ball(){}
+	GameObject(){}
+	virtual ~GameObject(){}
 private:
 	bool isTravelingLeft;
 	int red, blue, green;

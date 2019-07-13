@@ -4,7 +4,7 @@
 #include "Event.h"
 #include <iostream>
 
-void Ball::ProcessEvent(std::shared_ptr<Event> evt)
+void GameObject::ProcessEvent(std::shared_ptr<Event> evt)
 {
 	if(evt->m_eventType == PositionChangeEventType)
 	{
@@ -26,13 +26,15 @@ void Ball::ProcessEvent(std::shared_ptr<Event> evt)
 
 }
 
-void Ball::VDraw(SDL_Renderer * renderer)
+void GameObject::VDraw(SDL_Renderer * renderer)
 {
+	
 	// Surely this should be a more common routine, that all Actors should be able to do by default (draw themselves)
 
 	// Switch in diffirence keyframes here
 
-	SDL_Rect drawLocation = { posX, posY };	
-	SDL_BlitSurface(m_GraphicsResource->m_Surface, NULL, GraphicsManager::GetInstance().m_WindowSurface, &drawLocation);	
+	SDL_Rect drawLocation = { m_xPos, m_yPos };	
+	
+	SDL_BlitSurface(m_GraphicsResource->m_Surface, &m_GraphicsResource->m_Surface->clip_rect, GraphicsManager::GetInstance().m_WindowSurface, &drawLocation);
 	
 }
