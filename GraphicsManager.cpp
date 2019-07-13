@@ -97,7 +97,7 @@ std::shared_ptr<Resource> GraphicsManager::MakeResource(tinyxml2::XMLElement * e
 
 		if(name == "isAnimated")
 		{
-			isAnimated = name == "true" ? true : false;
+			isAnimated = value == "true" ? true : false;
  		}
 		if(name == "numKeyFrames")
 		{
@@ -148,7 +148,7 @@ void GraphicsManager::DrawCurrentScene()
 	{
 		if(layer->m_Visible)
 		{
-			for(auto actor : layer->m_Items)
+			for(auto actor : layer->m_objects)
 			{
 				if(actor->m_Visible) {
 					actor->VDraw(m_Renderer);
