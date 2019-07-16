@@ -82,7 +82,7 @@ std::shared_ptr<Resource> GraphicsManager::MakeResource(tinyxml2::XMLElement * e
 	const char* name;
 	int level;
 	bool isAnimated = false;
-	int numKeyFrames = 1;
+	int numKeyFrames = 12, keyFrameHeight = 64, keyFrameWidth = 64;
 
 	element->QueryIntAttribute("uid", &uuid);
 	element->QueryStringAttribute("type", &type);
@@ -105,19 +105,19 @@ std::shared_ptr<Resource> GraphicsManager::MakeResource(tinyxml2::XMLElement * e
 		}
 		if(name == "keyFrameHeight")
 		{
-			numKeyFrames = atoi(value.c_str());
+			keyFrameHeight = atoi(value.c_str());
 		}
 		if(name == "keyFrameWidth")
 		{
-			numKeyFrames = atoi(value.c_str());
+			keyFrameWidth = atoi(value.c_str());
 		}
 	}
 	
 	
-
-	auto graphicsResource = isAnimated 
-		? 	shared_ptr<GraphicsResource>(new GraphicsResource(uuid, name, path, type, level, numKeyFrames, 0, 0))
-		:   shared_ptr<GraphicsResource>(new GraphicsResource(uuid, name, path, type, level));
+	shared_ptr<GraphicsResource> graphicsResource;
+	graphicsResource= isAnimated 
+		? 	shared_ptr<GraphicsResource>(new GraphicsResource(uuid, name, path, type, level, numKeyFrames, keyFrameHeight, keyFrameWidth, isAnimated))
+		:   shared_ptr<GraphicsResource>(new GraphicsResource(uuid, name, path, type, level, isAnimated));
 		
 	
 	return graphicsResource;

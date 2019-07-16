@@ -5,6 +5,7 @@ using namespace std;
 class Resource
 {
 public:	
+	Resource(){}
 	Resource(int uid, string name, string path, string type, int scene);
 	int m_uid;
 	string m_name;

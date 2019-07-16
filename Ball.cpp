@@ -34,7 +34,7 @@ void GameObject::VDraw(SDL_Renderer * renderer)
 	// Switch in diffirence keyframes here
 
 	SDL_Rect drawLocation = { m_xPos, m_yPos };	
-	
-	SDL_BlitSurface(m_GraphicsResource->m_Surface, &m_GraphicsResource->m_Surface->clip_rect, GraphicsManager::GetInstance().m_WindowSurface, &drawLocation);
+	auto rect = GetResource()->m_bIsAnimated ?  &m_GraphicsResource->m_viewPort : NULL;
+	SDL_BlitSurface(m_GraphicsResource->m_Surface, rect, GraphicsManager::GetInstance().m_WindowSurface, &drawLocation);
 	
 }

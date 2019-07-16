@@ -1,13 +1,11 @@
 #pragma once
 
 #include <SDL.h>
-#include "Common.h"
 #include <vector>
 #include <memory>
 #include "EventManager.h"
 #include "Actor.h"
 #include <iostream>
-
 
 struct GameWorldData 
 {
@@ -21,7 +19,7 @@ struct GameWorldData
 	bool bCanRender;
 		
 	// List of game objects
-	std::vector<std::shared_ptr<ActorBase>> actors;
+	std::vector<std::shared_ptr<GameObjectBase>> actors;
 
 	~GameWorldData()
 	{

@@ -14,11 +14,11 @@ extern Mix_Chunk *gMedium;
 extern Mix_Chunk *gLow;
 
 
-class GameObject : public ActorBase
+class GameObject : public GameObjectBase
 {
 public:
 	GameObject(int m_xPos, int m_yPos)
-		: ActorBase(m_xPos, m_yPos)
+		: GameObjectBase(m_xPos, m_yPos)
 	{
 		red = 0x00;
 		blue = 0xFF;

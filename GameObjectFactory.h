@@ -14,7 +14,7 @@ public:
 	 GameObjectFactory(GameObjectFactory const&)  = delete;
      void operator=(GameObjectFactory const&)  = delete;
 	 ~GameObjectFactory(){};
-	std::shared_ptr<ActorBase> BuildGameObject(tinyxml2::XMLElement * sceneObjectXml);
+	std::shared_ptr<GameObjectBase> BuildGameObject(tinyxml2::XMLElement * sceneObjectXml);
 private:
 	static GameObjectFactory& m_Instance;
 	GameObjectFactory(){};

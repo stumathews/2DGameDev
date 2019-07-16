@@ -2,16 +2,16 @@
 #include "ResourceManager.h"
 #include "Ball.h"
 #include "Sprite.h"
+#include  "TypeAliases.h"
 using namespace tinyxml2;
 
 
-shared_ptr<ActorBase> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement * sceneObjectXml)
+shared_ptr<GameObjectBase> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement * sceneObjectXml)
 {
-	unsigned int r = 0;
-	unsigned int g = 0;
-	unsigned int b = 0;
-	unsigned int xPos, yPos = 0;
-	bool visible, colourKeyEnabled = false;
+	uint r = 0, g = 0, b = 0;
+	
+	uint xPos = 0, yPos = 0;
+	bool visible = false, colourKeyEnabled = false;
 	shared_ptr<GraphicsResource> resource;
 
 	for(const XMLAttribute* sceneObjAtt = sceneObjectXml->FirstAttribute(); sceneObjAtt; sceneObjAtt = sceneObjAtt->Next()) {
@@ -22,6 +22,9 @@ shared_ptr<ActorBase> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement * 
 			auto meta = ResourceManager::GetInstance().GetResourceByUuid(atoi(attVal.c_str()));
 			if(meta->m_type != "graphic") { 
 				throw new exception(("Cannot load non graphic resource: " + meta->m_name + " type=" + meta->m_type).c_str()); 
+			}
+			if(meta == NULL) {
+				throw new exception(("Could not load resource meta data for resource id:" + attVal).c_str());
 			}
 			resource = std::dynamic_pointer_cast<GraphicsResource>(meta);
 		}
@@ -46,7 +49,6 @@ shared_ptr<ActorBase> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement * 
 			} else {
 				colourKeyEnabled = false;
 			}
-
 			continue;
 		}
 		if(attName == "r") {
@@ -62,34 +64,24 @@ shared_ptr<ActorBase> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement * 
 			continue;
 		}		
 	}
-
-	
-	auto gameObject = shared_ptr<ActorBase>();
-	auto sprite = shared_ptr<Sprite>();
-	if(resource->m_bIsAnimated) {
-
-		sprite = shared_ptr<Sprite>(new Sprite(xPos, yPos, 100, 11, 3, 3));		
-		gameObject = shared_ptr<ActorBase>(sprite);
 		
-	} else {
-		gameObject = shared_ptr<ActorBase>(new GameObject(xPos, yPos));
-	}
-
-
+	auto gameObject = shared_ptr<GameObjectBase>(NULL);
 	
+	if(resource->m_bIsAnimated)
+	{
+		auto framesPerRow = 3, framesPerColumn = 3;
+		auto sprite = new Sprite(xPos, yPos, 100, resource->m_NumKeyFrames, framesPerRow, framesPerColumn, resource->m_KeyFrameWidth, resource->m_KeyFrameHeight);
+		gameObject = shared_ptr<Sprite>(sprite);			
+	} else
+		gameObject = shared_ptr<GameObjectBase>(new GameObject(xPos, yPos));	
+
 	gameObject->SetGraphicsResource(resource);
 	gameObject->m_ColourKeyEnabled = colourKeyEnabled;
-	gameObject->m_Visible = visible;
-		
+	gameObject->m_Visible = visible;		
 
 	if(gameObject->m_ColourKeyEnabled)
 		gameObject->SetColourKey(r,g,b);
-
 	if(resource->m_bIsAnimated)
-	{
-		
-		sprite->play();
-	}
-	
+		std::dynamic_pointer_cast<Sprite>(gameObject)->play();	
 	return gameObject;
 }

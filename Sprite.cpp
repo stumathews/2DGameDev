@@ -21,24 +21,48 @@ void Sprite::update()
 void Sprite::play()
 {
 	auto resource = GetResource();
-	SDL_Surface* TmpSurface = resource->m_Surface;
-	m_FrameWidth = TmpSurface->w/m_FramesPerRow;
-	m_FrameHeight = TmpSurface->h/m_FramesPerColumn;
+	auto TmpSurface = resource->m_Surface;
+	//m_FrameWidth =  TmpSurface->w/m_FramesPerRow;
+	//m_FrameHeight = TmpSurface->h/m_FramesPerColumn;
 	m_CurrentFrame = m_StartFrame;
 	setFrameRect(m_CurrentFrame);
 	m_TimeLastFrame = timeGetTime();
 }
 
-void Sprite::setFrameRect(unsigned int FrameNumber)
+void Sprite::stop()
 {
-	unsigned int RowNumber = floor(FrameNumber/m_FramesPerRow);
-	unsigned int ColumnNumber = FrameNumber;
+	stopped = true;
+}
+
+void Sprite::setFrameRect(uint FrameNumber)
+{
+	/*uint RowNumber = floor(FrameNumber/m_FramesPerRow);
+	uint ColumnNumber = FrameNumber;
 
 	if(RowNumber > 0)
-		ColumnNumber = FrameNumber - (RowNumber * m_FramesPerRow);
+		ColumnNumber = FrameNumber - (RowNumber * m_FramesPerRow);*/
 	
-	GetResource()->m_Surface->clip_rect.x = ColumnNumber * m_FrameWidth;
-	GetResource()->m_Surface->clip_rect.y = RowNumber * m_FrameHeight;
-	GetResource()->m_Surface->clip_rect.w = m_FrameWidth;
-	GetResource()->m_Surface->clip_rect.h = m_FrameHeight;
+	SDL_Rect typicalFrame[] = { 
+		{0,0,66,92},
+		{66,0,66,93},
+		{132,0,66,93},
+		{0,93,66,93},
+		{66,93,66,93},
+		{132,93,71,92},
+		{0,186,71,93},
+		{71,186,71,93},
+		{142,186,70,92},
+		{0,279,71,93},
+		{71,279,66,97},
+	};
+
+	/*GetResource()->m_viewPort.x = ColumnNumber * m_FrameWidth;
+	GetResource()->m_viewPort.y = RowNumber * m_FrameHeight;
+	GetResource()->m_viewPort.w = m_FrameWidth;
+	GetResource()->m_viewPort.h = m_FrameHeight;*/
+
+	GetResource()->m_viewPort.x = typicalFrame[FrameNumber].x;
+	GetResource()->m_viewPort.y = typicalFrame[FrameNumber].y;
+	GetResource()->m_viewPort.w = typicalFrame[FrameNumber].w;
+	GetResource()->m_viewPort.h = typicalFrame[FrameNumber].h;
 }

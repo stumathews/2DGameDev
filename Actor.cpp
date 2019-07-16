@@ -7,7 +7,7 @@
 //{
 //}
 
-ActorBase::~ActorBase()
+GameObjectBase::~GameObjectBase()
 {
 	std::cout << "~Actor()" << std::endl;
 }

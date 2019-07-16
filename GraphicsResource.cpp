@@ -5,21 +5,17 @@
 #include <SDL.h>
 
 
-GraphicsResource::GraphicsResource(int uid, string name, string path, string type, int level) 
-	: Resource(uid, name, path, type, level), m_NumKeyFrames(0)
-{	
-	
-}
 
-GraphicsResource::GraphicsResource(int uid, string name, string path, string type, int level, unsigned int numKeyFrames, unsigned int keyFrameHeight, unsigned int keyFrameWidth)
-	: GraphicsResource(uid, name, path, type, level)
-{	
-	m_NumKeyFrames = numKeyFrames;
-	m_KeyFrameHeight = keyFrameHeight;
-	m_KeyFrameWidth = keyFrameWidth;
-	m_bIsAnimated = m_NumKeyFrames > 0;
 
-}
+//GraphicsResource::GraphicsResource(int uid, string name, string path, string type, int level, unsigned int numKeyFrames, unsigned int keyFrameHeight, unsigned int keyFrameWidth)
+//	: GraphicsResource(uid, name, path, type, level)
+//{	
+//	m_NumKeyFrames = numKeyFrames;
+//	m_KeyFrameHeight = keyFrameHeight;
+//	m_KeyFrameWidth = keyFrameWidth;
+//	m_bIsAnimated = m_NumKeyFrames > 0;
+//
+//}
 
 GraphicsResource::~GraphicsResource()
 {

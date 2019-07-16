@@ -9,29 +9,17 @@
 * as updating its position, Setting its graphic resource.
 * VDoLogic and VDraw should be implemented by a derived class
 */
-class ActorBase : public EventSubscriber
+class GameObjectBase : public EventSubscriber
 {
 public:
-	ActorBase(){}
-	ActorBase(int m_xPos, int m_yPos) 
+	GameObjectBase(){}
+	GameObjectBase(int m_xPos, int m_yPos) 
 		: m_xPos(m_xPos), m_yPos(m_yPos) { }
 
-	virtual void MoveUp()
-	{
-		m_yPos -= moveInterval;
-	}
-	virtual void MoveDown()
-	{
-		m_yPos += moveInterval;
-	}
-	virtual void MoveLeft()
-	{
-		m_xPos -= moveInterval;
-	}
-	virtual void MoveRight()
-	{
-		m_xPos += moveInterval;
-	}
+	virtual void MoveUp() { m_yPos -= moveInterval; }
+	virtual void MoveDown() { m_yPos += moveInterval; }
+	virtual void MoveLeft() { m_xPos -= moveInterval; }
+	virtual void MoveRight() { m_xPos += moveInterval; }
 
 	// Actor can look after itself
 	virtual void VDoLogic() = 0;
@@ -39,7 +27,7 @@ public:
 	// Actor can draw itself, usually refering to the GraphicsResource assoaicted with the actor
 	virtual void VDraw(SDL_Renderer* renderer) = 0;
 	
-	virtual ~ActorBase();
+	virtual ~GameObjectBase();
 
 	// Set the graphics resource that underlies this Actor
 	// There could be many Actors refering to this graphics resource in the game
@@ -60,8 +48,7 @@ public:
 	shared_ptr<GraphicsResource> GetResource() { return m_GraphicsResource;}
 protected:
 	shared_ptr<GraphicsResource> m_GraphicsResource; // can be shared by other actors
-	SDL_Rect mBounds;	
-	SDL_Color m_ColorKey;
-	int moveInterval = 50; // move by intervals of 10 pixels
+	SDL_Rect mBounds = {};	
+	SDL_Color m_ColorKey = {};
+	int moveInterval = 5; // move by intervals of 10 pixels
 };
-
