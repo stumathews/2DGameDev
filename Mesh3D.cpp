@@ -13,32 +13,37 @@ Mesh3D::Mesh3D()
 	D3DXMatrixIdentity(&world);
 	D3DXMatrixIdentity(&view);
 	D3DXMatrixIdentity(&projection);
-
 }
 
 void Mesh3D::create()
 {
-
 	D3DX10CreateEffectFromFile("MyShader.fx", NULL, NULL, "fx_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, RenderManager3D::GetInstance().d3dDevice, NULL, NULL, &effect, NULL, NULL);
 	
+	// Fetch technique from Shader file
 	technique = effect->GetTechniqueByName("Render");
 
+	// Define what the vertex structure will hold
 	D3D10_INPUT_ELEMENT_DESC layout[] = 
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0},
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0}
 	};
 
+	// Number of parts/elements to a vertex layout
 	UINT numElements = sizeof(layout) / sizeof(layout[0]);
 
+	// Create the above InputLayout (vertex format) in the device
 	D3D10_PASS_DESC passDescription;
-	technique->GetPassByIndex(0)->GetDesc(&passDescription);
-		
+	technique->GetPassByIndex(0)->GetDesc(&passDescription);		
 	RenderManager3D::GetInstance().d3dDevice->CreateInputLayout(layout, numElements, passDescription.pIAInputSignature, passDescription.IAInputSignatureSize, &vertexlayout);
+
+	// Register/Set the input layout (vertex format) with the device
 	RenderManager3D::GetInstance().d3dDevice->IASetInputLayout(vertexlayout);
 		
-	 Vertex v[] =
+	// These will be the vertices, setup in the format as described above in the input layout
+	 Vertex vertices1[] =
 		{
+		      // POSITION						 // COLOUR
 			{ D3DXVECTOR3( -1.0f, 1.0f, -1.0f ), D3DXVECTOR4( 0.0f, 0.0f, 1.0f, 1.0f ) },
 			{ D3DXVECTOR3( 1.0f, 1.0f, -1.0f ), D3DXVECTOR4( 0.0f, 1.0f, 0.0f, 1.0f ) },
 			{ D3DXVECTOR3( 1.0f, 1.0f, 1.0f ), D3DXVECTOR4( 0.0f, 1.0f, 1.0f, 1.0f ) },
@@ -49,8 +54,24 @@ void Mesh3D::create()
 			{ D3DXVECTOR3( -1.0f, -1.0f, 1.0f ), D3DXVECTOR4( 0.0f, 0.0f, 0.0f, 1.0f ) },
 		};
 
-	UINT numVertices = sizeof(v)/sizeof(v[0]);
-	DWORD i[] = 
+	 auto green = D3DXVECTOR4( 0.0f, 0.0f, 1.0f, 1.0f );
+	 auto blue = D3DXVECTOR4( 0.0f, 0.0f, 1.0f, 1.0f );
+	 auto red = D3DXVECTOR4( 1.0f, 0.0f, 0.0f, 1.0f );
+	  Vertex vertices[] =
+		{
+		      // POSITION						 // COLOUR
+			{ D3DXVECTOR3( -1.0f, 1.0f, -1.0f ), red },
+			{ D3DXVECTOR3( 1.0f, 1.0f, -1.0f ), blue },
+			{ D3DXVECTOR3( 1.0f, 1.0f, 1.0f ), green },
+			{ D3DXVECTOR3( -1.0f, 1.0f, 1.0f ), red },
+			{ D3DXVECTOR3( -1.0f, -1.0f, -1.0f ),blue },
+			{ D3DXVECTOR3( 1.0f, -1.0f, -1.0f ), green},
+			{ D3DXVECTOR3( 1.0f, -1.0f, 1.0f ),red},
+			{ D3DXVECTOR3( -1.0f, -1.0f, 1.0f ),green },
+		};
+
+	UINT numVertices = sizeof(vertices)/sizeof(vertices[0]);
+	DWORD indices[] = 
 	{
 		3,1,0,
 		2,1,3,
@@ -72,12 +93,19 @@ void Mesh3D::create()
 
 	};
 
-	UINT numIndices = sizeof(i)/sizeof(i[0]);
+	UINT numIndices = sizeof(indices)/sizeof(indices[0]);
+	
+	// Create an empty mesh frome the vertices;
 	auto meshCreated = D3DX10CreateMesh(RenderManager3D::GetInstance().d3dDevice, layout, numElements, "POSITION", numVertices, numIndices/3, D3DX10_MESH_32_BIT, &mesh);
 	if(SUCCEEDED(meshCreated))
 	{
-		mesh->SetVertexData(0,v);
-		mesh->SetIndexData(i, numIndices);
+		// Populate the mesh with the verticies
+		mesh->SetVertexData(0,vertices);
+		
+		// Populate the mesh with the indicies data
+		mesh->SetIndexData(indices, numIndices);
+		
+		// Complete building the mesh object
 		mesh->CommitToDevice();
 	}
 }

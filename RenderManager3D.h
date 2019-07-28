@@ -5,12 +5,70 @@
 #include "Texture3D.h"
 #include "Mesh3D.h"
 
+
+// Define the SwapChain requirements
+class MySwapChain
+{
+public:
+	MySwapChain() { }
+	//// Define the SwapChain requirements
+	MySwapChain(UINT backBufferWidth, UINT backBufferHeight, HWND outputWindow) 
+		: backBufferHeight(backBufferHeight), backBufferWidth(backBufferWidth), hwnd(outputWindow), D3DInterface(NULL) 
+	{	
+		ZeroMemory(&backBufferInfo, sizeof(D3D10_TEXTURE2D_DESC));
+		ZeroMemory(&scd, sizeof(scd));
+		Setup();
+	}
+	
+	DXGI_SWAP_CHAIN_DESC GetDescription() {return scd;}
+	IDXGISwapChain* D3DInterface;	
+	
+	D3D10_TEXTURE2D_DESC GetBackBufferDescription() { return backBufferInfo; }
+	
+	// Re-Interpret/Cast the backbuffer itself as a ID3DTexture2D object
+	ID3D10Texture2D* GetBackBufferAsTexture()
+	{	
+		HRESULT hr = D3DInterface->GetBuffer(0, __uuidof(ID3D10Texture2D), (LPVOID*) &backBuffer);
+		if(FAILED(hr)){
+			NULL;
+		}
+		// Now get more details about he back buffer
+		backBuffer->GetDesc(&backBufferInfo);
+		return backBuffer;
+	}
+
+
+private:	
+	UINT backBufferWidth;
+	UINT backBufferHeight;
+	HWND hwnd;
+	DXGI_SWAP_CHAIN_DESC scd;
+	void Setup()
+	{		
+		scd.BufferCount = 1;
+		scd.BufferDesc.Width = backBufferWidth;
+		scd.BufferDesc.Height = backBufferHeight;
+		scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		scd.BufferDesc.RefreshRate.Numerator = 60;
+		scd.BufferDesc.RefreshRate.Denominator = 1;
+		scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		scd.OutputWindow = hwnd;
+		scd.SampleDesc.Count = 1;
+		scd.SampleDesc.Quality = 0;
+		scd.Windowed = TRUE;
+	}
+	ID3D10Texture2D* backBuffer = NULL;
+	D3D10_TEXTURE2D_DESC backBufferInfo = {};
+};
+
+
 class RenderManager3D
 {
 private:
-	RenderManager3D();
+
+	float clearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; 
 protected:
-	
+		RenderManager3D();
 		RenderManager3D(RenderManager3D const&)  = delete;
         void operator=(RenderManager3D const&)  = delete;
 public:
@@ -21,9 +79,9 @@ public:
         }
 	D3D10_DRIVER_TYPE driverType;
 	ID3D10Device* d3dDevice;
-	IDXGISwapChain* swapChain;
+	MySwapChain swapChain;
 	ID3D10RenderTargetView* renderTargetView;
-	D3D10_TEXTURE2D_DESC backBufferInfo;
+	
 	HINSTANCE hInst;
 	HWND hwnd;
 	D3D10_VIEWPORT viewPort;
@@ -32,7 +90,7 @@ public:
 	std::list<Texture3D*> textures;
 	std::list<Mesh3D*> meshes;
 	~RenderManager3D(){};
-	bool init(HINSTANCE hInstance, unsigned int width, unsigned int height, bool fullScreen, const char* windowTitle);
+	bool Initialize(HINSTANCE hInstance, unsigned int width, unsigned int height, bool fullScreen, const char* windowTitle);
 	void free();
 	bool update();
 	

@@ -127,7 +127,7 @@ bool Initialize()
 	
 	
 		RenderManager3D& renderManager = RenderManager3D::GetInstance();
-		renderManager.init(GetModuleHandle(NULL), 800, 600, false, "My Window");
+		renderManager.Initialize(GetModuleHandle(NULL), 800, 600, false, "My Window");
 		Mesh3D* mesh = new Mesh3D();
 		mesh->create();
 		RenderManager3D::GetInstance().meshes.push_back(mesh);

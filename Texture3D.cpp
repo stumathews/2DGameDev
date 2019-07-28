@@ -40,11 +40,11 @@ bool Texture3D::free()
 
 void Texture3D::blitRectToBackBuffer(RECT rect, int x, int y)
 {
-	RenderManager3D& rendermanager = RenderManager3D::GetInstance();
+	RenderManager3D& renderManager3D = RenderManager3D::GetInstance();
 	ID3D10Texture2D* buffer;
-	rendermanager.swapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), (LPVOID*) &buffer);
+	renderManager3D.swapChain.D3DInterface->GetBuffer(0, __uuidof(ID3D10Texture2D), (LPVOID*) &buffer);
 
-	if(((rect.right-rect.left) <= rendermanager.backBufferInfo.Width) && (rect.bottom-rect.top) <= rendermanager.backBufferInfo.Height)
+	if(((rect.right-rect.left) <= renderManager3D.swapChain.GetBackBufferDescription().Width) && (rect.bottom-rect.top) <= renderManager3D.swapChain.GetBackBufferDescription().Height)
 	{
 		D3D10_BOX crop;
 		crop.left = rect.left;
@@ -54,7 +54,7 @@ void Texture3D::blitRectToBackBuffer(RECT rect, int x, int y)
 		crop.front = 0;
 		crop.back = 1;
 
-		rendermanager.d3dDevice->CopySubresourceRegion(buffer, x, y, 0, 0,  textureInterface, 0, &crop);
+		renderManager3D.d3dDevice->CopySubresourceRegion(buffer, x, y, 0, 0,  textureInterface, 0, &crop);
 
 	}
 	buffer->Release();
