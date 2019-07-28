@@ -13,6 +13,7 @@
 #include "SceneChangedEvent.h"
 #include "SceneManager.h"
 #include "DoLogicUpdateEvent.h"
+#include "RenderManager3D.h"
 
 using namespace std;
 
@@ -109,20 +110,28 @@ bool Initialize()
 {
 	ResourceManager::GetInstance().Initialize();	
 	CurrentLevelManager::GetInstance().Initialize();
-
+	
 	g_pGameWorldData->bGameDone = 0;
 	g_pGameWorldData->bNetworkGame = 0;
 	g_pGameWorldData->bCanRender = true;
+	
+		if (!InitSDL())
+		{
+			std::cout << "Could not initailize SDL, aborting." << std::endl;
+			return false;
+		}
 
-	if (!InitSDL())
-	{
-		std::cout << "Could not initailize SDL, aborting." << std::endl;
-		return false;
-	}
-
-	// Load audio game files
-	if (!loadMedia())
-		return -1;	
+		// Load audio game files
+		if (!loadMedia())
+			return -1;	
+	
+	
+		RenderManager3D& renderManager = RenderManager3D::GetInstance();
+		renderManager.init(GetModuleHandle(NULL), 800, 600, false, "My Window");
+		Mesh3D* mesh = new Mesh3D();
+		mesh->create();
+		RenderManager3D::GetInstance().meshes.push_back(mesh);
+	
 		
 	return true;
 }

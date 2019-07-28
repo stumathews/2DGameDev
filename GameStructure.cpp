@@ -14,6 +14,7 @@
 #include "SceneChangedEvent.h"
 #include "SceneManager.h"
 #include "DoLogicUpdateEvent.h"
+#include "RenderManager3D.h"
 
 using namespace std;
 //The music that will be played
@@ -569,6 +570,7 @@ void World_Presentation()
 void Draw(float percentWithinTick)
 {	
 	GraphicsManager::GetInstance().DrawCurrentScene();
+	RenderManager3D::GetInstance().update();
 	// Render the game work visually and sonically
 	World_Presentation();
 	
@@ -577,6 +579,8 @@ void Draw(float percentWithinTick)
 
 	// Render the player (not used yet)
 	Player_Presentation();
+
+	
 }
 
 
