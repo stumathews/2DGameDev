@@ -15,15 +15,18 @@ shared_ptr<GameObjectBase> GameObjectFactory::BuildGameObject(tinyxml2::XMLEleme
 	bool visible = false, colourKeyEnabled = false;
 	shared_ptr<GraphicsResource> resource;
 	
+	// The game object we are going to construct
+	auto gameObject = shared_ptr<GameObjectBase>(NULL);
+
 	// Traverse the object definition
 	for(const XMLAttribute* sceneObjAtt = sceneObjectXml->FirstAttribute(); sceneObjAtt; sceneObjAtt = sceneObjAtt->Next()) 
 	{
-		std::string detail = sceneObjAtt->Name();
+		std::string detailName = sceneObjAtt->Name();
 		std::string detailValue = sceneObjAtt->Value();		
 		
 		// Discover object's information:
 
-		if(detail == "resourceId") 
+		if(detailName == "resourceId") 
 		{
 			// Get the associated resource details referenced by this object
 			auto meta = ResourceManager::GetInstance().GetResourceByUuid(atoi(detailValue.c_str()));
@@ -41,64 +44,91 @@ shared_ptr<GameObjectBase> GameObjectFactory::BuildGameObject(tinyxml2::XMLEleme
 		}
 
 		// Object's initial x position
-		if(detail._Equal("posx")) 
+		if(detailName._Equal("posx")) 
 		{
 			x = atoi(detailValue.c_str());
 			continue;
 		}
 
 		// Object iintial visibility setting
-		if(detail._Equal("visible")) 
+		if(detailName._Equal("visible")) 
 		{
 			visible = detailValue._Equal("true") ? true : false;			
 		}
 
 		// object initial y position
-		if(detail._Equal("posy")) 
+		if(detailName._Equal("posy")) 
 		{
 			y = atoi(detailValue.c_str());
 			continue;
 		}
 
 		// object's associated colour key
-		if(detail._Equal("colourKey")) 
+		if(detailName._Equal("colourKey")) 
 		{
 			colourKeyEnabled = detailValue._Equal("true") ? true : false;			
 			continue;
 		}
 
 		// Objects colour
-		if(detail._Equal("r")) {
+		if(detailName._Equal("r")) {
 			red = atof(detailValue.c_str());
 			continue;
 		}
-		if(detail._Equal("g")) {
+		if(detailName._Equal("g")) {
 			green = atof(detailValue.c_str());
 			continue;
 		}
-		if(detail._Equal("b")) {
+		if(detailName._Equal("b")) {
 			blue = atof(detailValue.c_str());
 			continue;
 		}		
 	}
 		
-	auto gameObject = shared_ptr<GameObjectBase>(NULL);
-	
+	// Popuate it with what we found in the object xml definition
+	return InitGameObject(gameObject, x, y, resource, colourKeyEnabled, visible, red, green, blue);		
+}
+
+std::shared_ptr<GameObjectBase>& GameObjectFactory::InitGameObject(std::shared_ptr<GameObjectBase>& gameObject, uint x, uint y, std::shared_ptr<GraphicsResource>& resource, bool colourKeyEnabled, bool visible, const uint& red, const uint& green, const uint& blue)
+{
+	if(resource == NULL)
+	{ 
+		throw new exception("Resource s null"); 
+	}
+
+	if( (red < 0 || red > 255)  || (blue < 0 || blue > 255) || (green < 0 || green > 255) )
+	{
+		throw new exception("Invalid colour values when constructing game object");
+	}
+
+	if( x < 0 || y < 0)
+	{
+		throw new exception("Position values are invalid when constructing a game object");
+	}
+
+
+	// Special animated game object?	
 	if(resource->m_bIsAnimated)
 	{
 		auto framesPerRow = 3, framesPerColumn = 3;
 		auto sprite = new Sprite(x, y, 100, resource->m_NumKeyFrames, framesPerRow, framesPerColumn, resource->m_KeyFrameWidth, resource->m_KeyFrameHeight);
-		gameObject = shared_ptr<Sprite>(sprite);			
-	} else
+		gameObject = shared_ptr<Sprite>(sprite);
+		
+	} 
+	else 
+	{
+		// Normal game object
 		gameObject = shared_ptr<GameObjectBase>(new GameObject(x, y));	
-
+	}
 	gameObject->SetGraphicsResource(resource);
 	gameObject->m_ColourKeyEnabled = colourKeyEnabled;
-	gameObject->m_Visible = visible;		
+	gameObject->m_Visible = visible;
 
-	if(gameObject->m_ColourKeyEnabled)
-		gameObject->SetColourKey(red,green,blue);
-	if(resource->m_bIsAnimated)
-		std::dynamic_pointer_cast<Sprite>(gameObject)->play();	
+	if (gameObject->m_ColourKeyEnabled)
+		gameObject->SetColourKey(red, green, blue);
+
+
+	if (resource->m_bIsAnimated)
+		std::dynamic_pointer_cast<Sprite>(gameObject)->play();
 	return gameObject;
 }
