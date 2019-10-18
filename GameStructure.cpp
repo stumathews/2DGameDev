@@ -26,6 +26,8 @@ Mix_Chunk *gHigh = NULL;
 Mix_Chunk *gMedium = NULL;
 Mix_Chunk *gLow = NULL;
 
+bool use3dRengerManager = false;
+
 int main(int argc, char * args[]);
 
 void SetLevel();
@@ -570,7 +572,10 @@ void World_Presentation()
 void Draw(float percentWithinTick)
 {	
 	GraphicsManager::GetInstance().DrawCurrentScene();
-	RenderManager3D::GetInstance().update();
+	
+	// Tick 3d Render manager
+	if(use3dRengerManager)
+		D3DRenderManager::GetInstance().update();
 	// Render the game work visually and sonically
 	World_Presentation();
 	

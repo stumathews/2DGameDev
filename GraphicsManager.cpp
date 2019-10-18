@@ -140,8 +140,10 @@ void GraphicsManager::DrawAllActors()
 // Draws all the actors in the scene
 void GraphicsManager::DrawCurrentScene()
 {
-	//SDL_SetRenderDrawColor(m_Renderer, 0x255, 0x255, 0x55, 0xFF);
-	SDL_FillRect(m_WindowSurface, 0, 0);
+	SDL_SetRenderDrawColor(m_Renderer, 0x255, 0x255, 0x55, 0xFF);
+
+
+	SDL_FillRect(m_WindowSurface, 0, 255);
 	
 	// Draw objects in layers, which are ordered by z-order
 	for(auto layer : CurrentLevelManager::GetInstance().m_Layers)
@@ -156,7 +158,5 @@ void GraphicsManager::DrawCurrentScene()
 			}
 		}
 	}
-	SDL_UpdateWindowSurface(m_Window);
-	//SDL_RenderClear(m_Renderer);
-	//SDL_RenderPresent(GraphicsManager::GetInstance().m_Renderer);
+	SDL_UpdateWindowSurface(m_Window);	
 }

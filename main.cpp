@@ -25,6 +25,7 @@ using namespace std;
 
 extern std::shared_ptr<GameWorldData> g_pGameWorldData;
 extern bool InitSDL();
+extern bool use3dRengerManager;
 
 // Load game audio files
 extern bool loadMedia();
@@ -35,6 +36,7 @@ extern void SpareTime(long);
 extern void CleanupResources();
 void DoGameLoop();
 bool Initialize();
+void Init3dRenderManager();
 void Uninitialize();
 void SetLevel(int level);
 
@@ -125,13 +127,19 @@ bool Initialize()
 		if (!loadMedia())
 			return -1;	
 	
-	
-		RenderManager3D& renderManager = RenderManager3D::GetInstance();
-		renderManager.Initialize(GetModuleHandle(NULL), 800, 600, false, "My Window");
-		Mesh3D* mesh = new Mesh3D();
-		mesh->create();
-		RenderManager3D::GetInstance().meshes.push_back(mesh);
+
+	if(use3dRengerManager)
+		Init3dRenderManager();
 	
 		
 	return true;
+}
+
+void Init3dRenderManager()
+{
+	D3DRenderManager& renderManager = D3DRenderManager::GetInstance();
+	renderManager.Initialize(GetModuleHandle(NULL), 800, 600, false, "My Window");
+	Mesh3D* mesh = new Mesh3D();
+	mesh->create();
+	D3DRenderManager::GetInstance().meshes.push_back(mesh);
 }

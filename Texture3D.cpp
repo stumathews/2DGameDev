@@ -12,7 +12,7 @@ bool Texture3D::loadFromFile(std::wstring fileName)
 	auto res = D3DX10GetImageInfoFromFile( filepath, NULL, fileInfo, NULL);
 	if(SUCCEEDED(res))
 	{
-		RenderManager3D& renderManager = RenderManager3D::GetInstance();
+		D3DRenderManager& renderManager = D3DRenderManager::GetInstance();
 		ID3D10Resource* tmpTextureResource;
 
 		HRESULT hr = D3DX10CreateTextureFromFile(renderManager.d3dDevice, filepath, NULL, NULL, &tmpTextureResource, NULL);
@@ -40,7 +40,7 @@ bool Texture3D::free()
 
 void Texture3D::blitRectToBackBuffer(RECT rect, int x, int y)
 {
-	RenderManager3D& renderManager3D = RenderManager3D::GetInstance();
+	D3DRenderManager& renderManager3D = D3DRenderManager::GetInstance();
 	ID3D10Texture2D* buffer;
 	renderManager3D.swapChain.D3DInterface->GetBuffer(0, __uuidof(ID3D10Texture2D), (LPVOID*) &buffer);
 

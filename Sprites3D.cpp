@@ -52,9 +52,9 @@ bool Sprites3D::loadFromFile(int id, std::wstring filename)
 	SRVDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
 	SRVDesc.Texture2D.MipLevels = textures[id].textureDescription.MipLevels;
 
-	RenderManager3D::GetInstance().d3dDevice->CreateShaderResourceView(textures[id].textureInterface, &SRVDesc, &spriteInfo[id].pTexture);
+	D3DRenderManager::GetInstance().d3dDevice->CreateShaderResourceView(textures[id].textureInterface, &SRVDesc, &spriteInfo[id].pTexture);
 	if(!spriteInterface)
-		D3DX10CreateSprite(RenderManager3D::GetInstance().d3dDevice, 0, &spriteInterface);
+		D3DX10CreateSprite(D3DRenderManager::GetInstance().d3dDevice, 0, &spriteInterface);
 
 	return true;
 }
@@ -74,10 +74,10 @@ void Sprites3D::update()
 
 	D3DXMATRIX projectionMatrix;
 	D3DXMatrixOrthoOffCenterLH(&projectionMatrix, 
-		RenderManager3D::GetInstance().viewPort.TopLeftX,
-		RenderManager3D::GetInstance().viewPort.Width,
-		RenderManager3D::GetInstance().viewPort.TopLeftY,
-		RenderManager3D::GetInstance().viewPort.Height, 0.0f, 10);
+		D3DRenderManager::GetInstance().viewPort.TopLeftX,
+		D3DRenderManager::GetInstance().viewPort.Width,
+		D3DRenderManager::GetInstance().viewPort.TopLeftY,
+		D3DRenderManager::GetInstance().viewPort.Height, 0.0f, 10);
 
 	spriteInterface->SetProjectionTransform(&projectionMatrix);
 	for(int i = 0; i < numSprites; i++){

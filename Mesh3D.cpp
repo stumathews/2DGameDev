@@ -17,7 +17,7 @@ Mesh3D::Mesh3D()
 
 void Mesh3D::create()
 {
-	D3DX10CreateEffectFromFile("MyShader.fx", NULL, NULL, "fx_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, RenderManager3D::GetInstance().d3dDevice, NULL, NULL, &effect, NULL, NULL);
+	D3DX10CreateEffectFromFile("MyShader.fx", NULL, NULL, "fx_4_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, D3DRenderManager::GetInstance().d3dDevice, NULL, NULL, &effect, NULL, NULL);
 	
 	// Fetch technique from Shader file
 	technique = effect->GetTechniqueByName("Render");
@@ -35,10 +35,10 @@ void Mesh3D::create()
 	// Create the above InputLayout (vertex format) in the device
 	D3D10_PASS_DESC passDescription;
 	technique->GetPassByIndex(0)->GetDesc(&passDescription);		
-	RenderManager3D::GetInstance().d3dDevice->CreateInputLayout(layout, numElements, passDescription.pIAInputSignature, passDescription.IAInputSignatureSize, &vertexlayout);
+	D3DRenderManager::GetInstance().d3dDevice->CreateInputLayout(layout, numElements, passDescription.pIAInputSignature, passDescription.IAInputSignatureSize, &vertexlayout);
 
 	// Register/Set the input layout (vertex format) with the device
-	RenderManager3D::GetInstance().d3dDevice->IASetInputLayout(vertexlayout);
+	D3DRenderManager::GetInstance().d3dDevice->IASetInputLayout(vertexlayout);
 		
 	// These will be the vertices, setup in the format as described above in the input layout
 	 Vertex vertices1[] =
@@ -96,7 +96,7 @@ void Mesh3D::create()
 	UINT numIndices = sizeof(indices)/sizeof(indices[0]);
 	
 	// Create an empty mesh frome the vertices;
-	auto meshCreated = D3DX10CreateMesh(RenderManager3D::GetInstance().d3dDevice, layout, numElements, "POSITION", numVertices, numIndices/3, D3DX10_MESH_32_BIT, &mesh);
+	auto meshCreated = D3DX10CreateMesh(D3DRenderManager::GetInstance().d3dDevice, layout, numElements, "POSITION", numVertices, numIndices/3, D3DX10_MESH_32_BIT, &mesh);
 	if(SUCCEEDED(meshCreated))
 	{
 		// Populate the mesh with the verticies
@@ -122,7 +122,7 @@ void Mesh3D::update()
 
 	D3DXMatrixLookAtLH(&view, &eye, &at, &up);
 
-	D3DXMatrixPerspectiveFovLH(&projection, (float) D3DX_PI * 0.5f, RenderManager3D::GetInstance().viewPort.Width / (float) RenderManager3D::GetInstance().viewPort.Height, 0.1f, 100.0f);
+	D3DXMatrixPerspectiveFovLH(&projection, (float) D3DX_PI * 0.5f, D3DRenderManager::GetInstance().viewPort.Width / (float) D3DRenderManager::GetInstance().viewPort.Height, 0.1f, 100.0f);
 
 	worldVariable->SetMatrix(world);
 	viewVariable->SetMatrix(view);

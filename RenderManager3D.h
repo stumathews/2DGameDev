@@ -70,19 +70,19 @@ private:
 };
 
 
-class RenderManager3D
+class D3DRenderManager
 {
 private:
 
 	float clearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; 
 protected:
-		RenderManager3D();
-		RenderManager3D(RenderManager3D const&)  = delete;
-        void operator=(RenderManager3D const&)  = delete;
+		D3DRenderManager();
+		D3DRenderManager(D3DRenderManager const&)  = delete;
+        void operator=(D3DRenderManager const&)  = delete;
 public:
-	static RenderManager3D& GetInstance()
+	static D3DRenderManager& GetInstance()
     {
-        static RenderManager3D instance;			
+        static D3DRenderManager instance;			
         return instance;
     }
 	D3D10_DRIVER_TYPE driverType;
@@ -99,7 +99,7 @@ public:
 	Sprites3D sprites;
 	std::list<Texture3D*> textures;
 	std::list<Mesh3D*> meshes;
-	~RenderManager3D(){};
+	~D3DRenderManager(){};
 	bool Initialize(HINSTANCE hInstance, unsigned int width, unsigned int height, bool fullScreen, const char* windowTitle);
 	HRESULT CreateSwapChainAndDevice();
 	void free();

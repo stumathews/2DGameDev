@@ -1,6 +1,6 @@
 #include "RenderManager3D.h"
 
-RenderManager3D::RenderManager3D()
+D3DRenderManager::D3DRenderManager()
 {
 	driverType = D3D10_DRIVER_TYPE_NULL;
 	d3dDevice = NULL;	
@@ -108,7 +108,7 @@ private:
 };
 
 
-bool RenderManager3D::Initialize(HINSTANCE hInstance, unsigned int width, unsigned int height, bool fullScreen, const char* windowTitle)
+bool D3DRenderManager::Initialize(HINSTANCE hInstance, unsigned int width, unsigned int height, bool fullScreen, const char* windowTitle)
 {	
 	Window3D window(hInstance, width, height);
 	hInst = hInstance;
@@ -155,7 +155,7 @@ bool RenderManager3D::Initialize(HINSTANCE hInstance, unsigned int width, unsign
 }
 
 // See which driver type we can get to create the a) device and b) swap chain with	
-HRESULT RenderManager3D::CreateSwapChainAndDevice()
+HRESULT D3DRenderManager::CreateSwapChainAndDevice()
 {
 	HRESULT hr = S_OK;
 	D3D10_DRIVER_TYPE driverTypes[] =
@@ -174,7 +174,7 @@ HRESULT RenderManager3D::CreateSwapChainAndDevice()
 	return hr;
 }
 
-void RenderManager3D::free()
+void D3DRenderManager::free()
 {
 	// Free textures
 	for( auto texture : textures) {
@@ -198,7 +198,7 @@ void RenderManager3D::free()
 	SAFE_RELEASE(d3dDevice);
 }
 
-bool RenderManager3D::update()
+bool D3DRenderManager::update()
 {
 	// Blank out the drawing area
 	d3dDevice->ClearRenderTargetView(renderTargetView, clearColor);
