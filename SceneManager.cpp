@@ -44,14 +44,6 @@ void CurrentLevelManager::ProcessEvent(std::shared_ptr<Event> evt)
 	}
 }
 
-void CurrentLevelManager::addObjectsToLayer(shared_ptr<Layer> layer, tinyxml2::XMLElement * sceneObjectXml)
-{	
-	layer->m_objects.push_back(GameObjectFactory::GetInstance().BuildGameObject(sceneObjectXml));	
-
-	EventManager::GetInstance().SubscribeToEvent(PositionChangeEventType, layer->m_objects.back().get());	
-	EventManager::GetInstance().SubscribeToEvent(DoLogicUpdateEventType, layer->m_objects.back().get());	
-}
-
 shared_ptr<Layer> CurrentLevelManager::addLayer(std::string name)
 {
 	auto layer = findLayer(name);
@@ -91,40 +83,70 @@ void CurrentLevelManager::sortLayers()
 
 bool CurrentLevelManager::PopulateLayers(std::string filename)
 {
-	XMLDocument doc;
-		
+	/*
+
+	A Scene is composed of a) resources at b) various positions c) visibility
+	
+	<scene id="2">
+	  <layer name="layer0" posx="0" posy="0" visible="true">
+		<objects>
+		  <object posx="100" posy="40" resourceId="7" visible="true" colourKey="true" r="0" g="0" b="0"></object>
+		  <object posx="500" posy="40" resourceId="8" visible="true" colourKey="true" r="0" g="0" b="0"></object>
+		</objects>
+	  </layer>
+	</scene>
+	
+	Read in the scene details and store them in the scene manager
+	*/
+
+	XMLDocument doc;		
 	doc.LoadFile(filename.c_str());
-	if(doc.ErrorID() == 0) 	{		
+	if(doc.ErrorID() == 0) 	
+	{				
+		XMLNode* pResourcesNode = doc.FirstChildElement("scene");
+		XMLElement* el = pResourcesNode->ToElement();
+		const char* sceneId = el->Attribute("id");	 // Every scence has an id
 		
-		XMLNode* pResourceTree = doc.FirstChildElement("scene");
-		XMLElement* el = pResourceTree->ToElement();
-		const char* sceneId = el->Attribute("id");	
-		
-		if(pResourceTree) {
-			for(tinyxml2::XMLNode* layerNode = pResourceTree->FirstChild(); layerNode; layerNode = layerNode->NextSibling()) {
-				// Load each layer into the Scene manager...
+		if(pResourcesNode) 
+		{
+			// Traverse the multiple layers within the scene
+			for(tinyxml2::XMLNode* layerNode = pResourcesNode->FirstChild(); layerNode; layerNode = layerNode->NextSibling()) 
+			{				
 				auto layerElement = layerNode->ToElement();
-				if(layerElement) {
+				if(layerElement) 
+				{
+					// We'll build up the layer object with the discovered details
 					auto layer = shared_ptr<Layer>(new Layer());
+
 					layer->m_ZOrder = m_Layers.size();					
-
-					for(const XMLAttribute* layerAttribute = layerElement->FirstAttribute(); layerAttribute; layerAttribute = layerAttribute->Next()) {
-						std::string name = layerAttribute->Name();
-						std::string value = layerAttribute->Value();						
-
-						if(name == "name"){
+					
+					// Traverse layer's details/attributes
+					for(const XMLAttribute* attributes = layerElement->FirstAttribute(); attributes; attributes = attributes->Next()) 
+					{
+						std::string name = attributes->Name();
+						std::string value = attributes->Value();						
+						
+						// Populate the layer with the layer's details as we come across them
+						if(name._Equal("name"))
+						{
 							layer->m_Name = name;
 							continue;
 						}
-						if(name =="posx"){
+
+						if(name._Equal("posx"))
+						{
 							layer->m_PosX = 0;
 							continue;
 						}
-						if(name=="posy") {
+
+						if(name._Equal("posy")) 
+						{
 							layer->m_PosY = 0;
 							continue;
 						}
-						if(name=="visible") {
+
+						if(name._Equal("visible")) 
+						{
 							if(value == "true")
 								layer->m_Visible = true;
 							else
@@ -132,12 +154,24 @@ bool CurrentLevelManager::PopulateLayers(std::string filename)
 							continue;
 						}
 						
-					}
+					} // Done with traversing layer
 					
-					for(auto layerContents = layerNode->FirstChild(); layerContents; layerContents = layerContents->NextSibling()) {
-						if(std::string(layerContents->Value()) == "objects") {
-							for(auto sceneObject = layerContents->FirstChild(); sceneObject; sceneObject = sceneObject->NextSibling()) {						
-								addObjectsToLayer(layer, sceneObject->ToElement());
+					/* Now travese the constituents of the layer, ie the game objects (which reference resources) */
+					for(auto data = layerNode->FirstChild(); data; data = data->NextSibling()) 
+					{
+						// Currently we only support objects within the layer
+						if(std::string(data->Value())._Equal("objects")) 
+						{
+							for(auto objectNode = data->FirstChild(); objectNode; objectNode = objectNode->NextSibling())
+							{						
+								// Ok what type of object is that - construct it using the game object factory!
+								shared_ptr<GameObjectBase>  gameObject = GameObjectFactory::GetInstance().BuildGameObject(objectNode->ToElement());
+								
+								layer->m_objects.push_back(gameObject);	
+
+								EventManager::GetInstance().SubscribeToEvent(PositionChangeEventType, layer->m_objects.back().get());	
+								EventManager::GetInstance().SubscribeToEvent(DoLogicUpdateEventType, layer->m_objects.back().get());	
+								
 							}
 						}
 					}

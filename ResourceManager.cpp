@@ -32,7 +32,7 @@ void ResourceManager::LoadCurrentSceneResources(int newLevel)
 		auto level = levelResources.first;
 		auto resources = levelResources.second;
 		
-		for( auto resource : resources )
+		for(auto resource : resources)
 		{
 			auto IsAlreadyLoaded = resource->m_IsLoaded;
 			if((resource->m_scene == newLevel || resource->m_scene == 0) && !IsAlreadyLoaded){
@@ -92,7 +92,7 @@ void ResourceManager::ReadInResources()
 
 					if(strcmp(type, "graphic") == 0)
 					{
-						resource = GraphicsManager::GetInstance().MakeResource(element);						
+						resource = SDLGraphicsManager::GetInstance().MakeResource(element);						
 					}
 					if(strcmp(type, "fx") == 0)
 					{					

@@ -11,16 +11,16 @@
 // Manages the graphics in the project,
 // specifically graphic-enabled objects like Actors and AnimatedActors.
 
-class GraphicsManager
+class SDLGraphicsManager
 {
 public:
-	 static GraphicsManager& GetInstance()
+	 static SDLGraphicsManager& GetInstance()
         {
-            static GraphicsManager instance;			
+            static SDLGraphicsManager instance;			
             return instance;
         }
-		GraphicsManager(GraphicsManager const&)  = delete;
-        void operator=(GraphicsManager const&)  = delete;
+		SDLGraphicsManager(SDLGraphicsManager const&)  = delete;
+        void operator=(SDLGraphicsManager const&)  = delete;
 		
 		SDL_Window* m_Window;
 		SDL_Renderer* m_Renderer;
@@ -43,8 +43,8 @@ public:
 private:	
 
 	std::vector<shared_ptr<GameObjectBase>> m_Actors;
-	GraphicsManager(){}
-	~GraphicsManager();
+	SDLGraphicsManager(){}
+	~SDLGraphicsManager();
 	unsigned int m_ScreenWidth;
 	unsigned int m_ScreenHeight;
 

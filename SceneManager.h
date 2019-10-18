@@ -23,7 +23,7 @@ public:
 		*  Notifies the resource manager of the new scene and the resource manager will load in/out appropriate scene resources
 		*/
 		bool PopulateLayers(std::string filename);
-		void addObjectsToLayer(shared_ptr<Layer> layer, tinyxml2::XMLElement* element);
+		
 		shared_ptr<Layer> addLayer(std::string name);
 		shared_ptr<Layer> findLayer(std::string name);
 		void removeLayer(std::string name);

@@ -10,7 +10,7 @@
 #include <SDL.h>
 using namespace std;
 
-GraphicsManager::~GraphicsManager()
+SDLGraphicsManager::~SDLGraphicsManager()
 {
 	
 	// get rid of renderer
@@ -45,7 +45,7 @@ SDL_Renderer* GetSDLWindowRenderer(SDL_Window* window)
 
 
 
-bool GraphicsManager::Initialize(unsigned int width, unsigned int height, const char * windowTitle)
+bool SDLGraphicsManager::Initialize(unsigned int width, unsigned int height, const char * windowTitle)
 {
 	std::cout << "Initalizing Graphics" << std::endl;
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0)
@@ -73,7 +73,7 @@ bool GraphicsManager::Initialize(unsigned int width, unsigned int height, const 
 
 }
 
-std::shared_ptr<Resource> GraphicsManager::MakeResource(tinyxml2::XMLElement * element)
+std::shared_ptr<Resource> SDLGraphicsManager::MakeResource(tinyxml2::XMLElement * element)
 {
 	
 	int uuid;
@@ -123,7 +123,7 @@ std::shared_ptr<Resource> GraphicsManager::MakeResource(tinyxml2::XMLElement * e
 	return graphicsResource;
 }
 
-void GraphicsManager::DrawAllActors()
+void SDLGraphicsManager::DrawAllActors()
 {
 	for(auto actor : m_Actors)
 	{
@@ -138,11 +138,9 @@ void GraphicsManager::DrawAllActors()
 }
 
 // Draws all the actors in the scene
-void GraphicsManager::DrawCurrentScene()
+void SDLGraphicsManager::DrawCurrentScene()
 {
 	SDL_SetRenderDrawColor(m_Renderer, 0x255, 0x255, 0x55, 0xFF);
-
-
 	SDL_FillRect(m_WindowSurface, 0, 255);
 	
 	// Draw objects in layers, which are ordered by z-order

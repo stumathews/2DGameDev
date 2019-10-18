@@ -40,7 +40,7 @@ public:
 				Mix_PlayChannel( -1, gLow, 0 );
 			}			
 		} else {
-			if(m_xPos == GraphicsManager::GetInstance().GetScreenWidth()) {		
+			if(m_xPos == SDLGraphicsManager::GetInstance().GetScreenWidth()) {		
 				Mix_PlayChannel( -1, gLow, 0 );
 				isTravelingLeft = true;
 			}			

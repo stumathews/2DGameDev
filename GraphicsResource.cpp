@@ -33,7 +33,7 @@ void GraphicsResource::VLoad()
 	SDL_Surface* tmpSurface = IMG_Load(m_path.c_str());
 	if(tmpSurface)
 	{
-		auto r = GraphicsManager::GetInstance().m_WindowSurface;
+		auto r = SDLGraphicsManager::GetInstance().m_WindowSurface;
 		
 		
 		m_Surface =  SDL_ConvertSurface(tmpSurface, r->format, NULL);

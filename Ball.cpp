@@ -35,6 +35,6 @@ void GameObject::VDraw(SDL_Renderer * renderer)
 
 	SDL_Rect drawLocation = { m_xPos, m_yPos };	
 	auto rect = GetResource()->m_bIsAnimated ?  &m_GraphicsResource->m_viewPort : NULL;
-	SDL_BlitSurface(m_GraphicsResource->m_Surface, rect, GraphicsManager::GetInstance().m_WindowSurface, &drawLocation);
+	SDL_BlitSurface(m_GraphicsResource->m_Surface, rect, SDLGraphicsManager::GetInstance().m_WindowSurface, &drawLocation);
 	
 }

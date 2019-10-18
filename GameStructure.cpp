@@ -571,7 +571,7 @@ void World_Presentation()
  */
 void Draw(float percentWithinTick)
 {	
-	GraphicsManager::GetInstance().DrawCurrentScene();
+	SDLGraphicsManager::GetInstance().DrawCurrentScene();
 	
 	// Tick 3d Render manager
 	if(use3dRengerManager)
@@ -596,7 +596,7 @@ void Draw(float percentWithinTick)
 bool InitSDL()
 {
 	// Initialise SDL	
-	if(!GraphicsManager::GetInstance().Initialize())
+	if(!SDLGraphicsManager::GetInstance().Initialize())
 		return false;
 
 	// Initialize SDL_mixer 
