@@ -1,5 +1,5 @@
 #pragma once
-#include "Actor.h"
+#include "GameObjectBase.h"
 #include <SDL.h>
 #include "Drawing.h"
 #include <iostream>
@@ -13,12 +13,14 @@ extern Mix_Chunk *gHigh;
 extern Mix_Chunk *gMedium;
 extern Mix_Chunk *gLow;
 
-
+/*
+	A game Object 
+*/
 class GameObject : public GameObjectBase
 {
 public:
-	GameObject(int m_xPos, int m_yPos)
-		: GameObjectBase(m_xPos, m_yPos)
+	GameObject() : red(0x00), blue(0xFF), green(0x00), isTravelingLeft(false) {}
+	GameObject(int m_xPos, int m_yPos) 	: GameObjectBase(m_xPos, m_yPos)
 	{
 		red = 0x00;
 		blue = 0xFF;
@@ -46,7 +48,7 @@ public:
 			}			
 		}	
 	}
-	GameObject(){}
+	
 	virtual ~GameObject(){}
 private:
 	bool isTravelingLeft;

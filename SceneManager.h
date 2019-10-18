@@ -22,7 +22,7 @@ public:
 		/* Collects all actors defined in a scene and represents them as layers within the SceneManager
 		*  Notifies the resource manager of the new scene and the resource manager will load in/out appropriate scene resources
 		*/
-		bool PopulateLayers(std::string filename);
+		bool LoadScene(std::string filename);
 		
 		shared_ptr<Layer> addLayer(std::string name);
 		shared_ptr<Layer> findLayer(std::string name);

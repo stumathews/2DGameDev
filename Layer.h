@@ -3,7 +3,7 @@
 #include <list>
 #include "SceneItem.h"
 #include <memory>
-#include "Actor.h"
+#include "GameObject.h"
 class Layer
 {
 public:
@@ -14,6 +14,6 @@ public:
 	float m_PosX;
 	float m_PosY;
 	std::string m_Name;
-	std::list<shared_ptr<GameObjectBase>> m_objects;
+	std::list<shared_ptr<GameObject>> m_objects;
 };
 

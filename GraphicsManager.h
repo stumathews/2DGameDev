@@ -3,7 +3,7 @@
 #include "GraphicsResource.h"
 #include "tinyxml2.h"
 #include <memory>
-#include "Actor.h"
+#include "GameObjectBase.h"
 #include "SDL.h"
 
 

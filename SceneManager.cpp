@@ -2,8 +2,8 @@
 #include "SceneManager.h"
 #include <list>
 #include "tinyxml2.h"
-#include "Actor.h"
-#include "Ball.h"
+#include "GameObjectBase.h"
+#include "GameObject.h"
 #include "ResourceManager.h"
 #include <memory>
 #include <list>
@@ -40,7 +40,8 @@ void CurrentLevelManager::ProcessEvent(std::shared_ptr<Event> evt)
 		if(cpe->m_Level == 3) {
 			filename = "scene3.xml";
 		}
-		PopulateLayers(filename);
+
+		LoadScene(filename);
 	}
 }
 
@@ -81,7 +82,8 @@ void CurrentLevelManager::sortLayers()
 	m_Layers.sort(compareLayerOrder);
 }
 
-bool CurrentLevelManager::PopulateLayers(std::string filename)
+// Reads the scene data from the scene file
+bool CurrentLevelManager::LoadScene(std::string filename)
 {
 	/*
 
@@ -165,7 +167,7 @@ bool CurrentLevelManager::PopulateLayers(std::string filename)
 							for(auto objectNode = data->FirstChild(); objectNode; objectNode = objectNode->NextSibling())
 							{						
 								// Ok what type of object is that - construct it using the game object factory!
-								shared_ptr<GameObjectBase>  gameObject = GameObjectFactory::GetInstance().BuildGameObject(objectNode->ToElement());
+								shared_ptr<GameObject>  gameObject = GameObjectFactory::GetInstance().BuildGameObject(objectNode->ToElement());
 								
 								layer->m_objects.push_back(gameObject);	
 

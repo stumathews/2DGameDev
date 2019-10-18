@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <iostream>
 #include "Common.h"
-#include "Ball.h"
+#include "GameObject.h"
 #include "Drawing.h"
 #include <vector>
 #include <SDL.h>

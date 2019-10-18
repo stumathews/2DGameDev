@@ -2,11 +2,6 @@
 #include <iostream>
 #include "GraphicsManager.h"
 
-//
-//
-//Actor::~Actor()
-//{
-//}
 
 void GameObjectBase::VDraw(SDL_Renderer* renderer)
 {

@@ -1,6 +1,6 @@
 #include "GameObjectFactory.h"
 #include "ResourceManager.h"
-#include "Ball.h"
+#include "GameObject.h"
 #include "Sprite.h"
 #include  "TypeAliases.h"
 using namespace tinyxml2;
@@ -8,7 +8,7 @@ using namespace tinyxml2;
 /*
 Create a Game Object Type from an object's xml definition.
 */
-shared_ptr<GameObjectBase> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement * sceneObjectXml)
+shared_ptr<GameObject> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement * sceneObjectXml)
 {
 	uint red = 0, green = 0, blue = 0;	
 	uint x = 0, y = 0;
@@ -16,7 +16,7 @@ shared_ptr<GameObjectBase> GameObjectFactory::BuildGameObject(tinyxml2::XMLEleme
 	shared_ptr<GraphicsResource> resource;
 	
 	// The game object we are going to construct
-	auto gameObject = shared_ptr<GameObjectBase>(NULL);
+	auto emptyGameObject = shared_ptr<GameObject>(NULL);
 
 	// Traverse the object definition
 	for(const XMLAttribute* sceneObjAtt = sceneObjectXml->FirstAttribute(); sceneObjAtt; sceneObjAtt = sceneObjAtt->Next()) 
@@ -86,10 +86,10 @@ shared_ptr<GameObjectBase> GameObjectFactory::BuildGameObject(tinyxml2::XMLEleme
 	}
 		
 	// Popuate it with what we found in the object xml definition
-	return InitGameObject(gameObject, x, y, resource, colourKeyEnabled, visible, red, green, blue);		
+	return InitGameObject(emptyGameObject, x, y, resource, colourKeyEnabled, visible, red, green, blue);		
 }
 
-std::shared_ptr<GameObjectBase>& GameObjectFactory::InitGameObject(std::shared_ptr<GameObjectBase>& gameObject, uint x, uint y, std::shared_ptr<GraphicsResource>& resource, bool colourKeyEnabled, bool visible, const uint& red, const uint& green, const uint& blue)
+std::shared_ptr<GameObject>& GameObjectFactory::InitGameObject(std::shared_ptr<GameObject>& gameObject, uint x, uint y, std::shared_ptr<GraphicsResource>& resource, bool colourKeyEnabled, bool visible, const uint& red, const uint& green, const uint& blue)
 {
 	if(resource == NULL)
 	{ 
@@ -118,7 +118,7 @@ std::shared_ptr<GameObjectBase>& GameObjectFactory::InitGameObject(std::shared_p
 	else 
 	{
 		// Normal game object
-		gameObject = shared_ptr<GameObjectBase>(new GameObject(x, y));	
+		gameObject = shared_ptr<GameObject>(new GameObject(x, y));	
 	}
 	gameObject->SetGraphicsResource(resource);
 	gameObject->m_ColourKeyEnabled = colourKeyEnabled;

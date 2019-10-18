@@ -1,5 +1,5 @@
 #pragma once
-#include "Ball.h"
+#include "GameObject.h"
 #include "TypeAliases.h"
 
 

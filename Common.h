@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 #include "EventManager.h"
-#include "Actor.h"
+#include "GameObjectBase.h"
 #include <iostream>
 
 struct GameWorldData 

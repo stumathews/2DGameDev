@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="GameObjectBase.cpp" />
     <ClCompile Include="AnimatedActor.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="AudioResource.cpp" />
-    <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="DoLogicUpdateEvent.cpp" />
     <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="Event.cpp" />
@@ -49,11 +49,11 @@
     <ClCompile Include="tinyxml2-master\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Actor.h" />
+    <ClInclude Include="GameObjectBase.h" />
     <ClInclude Include="AnimatedActor.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="AudioResource.h" />
-    <ClInclude Include="Ball.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="COMUtils.h" />
     <ClInclude Include="DoLogicUpdateEvent.h" />

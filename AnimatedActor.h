@@ -1,5 +1,5 @@
 #pragma once
-#include "Actor.h"
+#include "GameObjectBase.h"
 #include <windows.h>
 
 class AnimatedActor : public GameObjectBase
