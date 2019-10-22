@@ -2,10 +2,11 @@
 #include <SDL.h>
 using namespace std;
 
-Room::Room(int i, int j, int rw) {
+Room::Room(int i, int j, int rw) 
+{
   this->roomWidth = rw;
-	this->x = i*rw;
-  this->y = j*rw;
+  this->x = i;
+  this->y = j;
   
   walls[0] = true;
   walls[1] = true;
@@ -33,8 +34,8 @@ void Room::removeWalls(Room &r) {
   } 
 }
 
-void Room::show(SDL_Renderer* renderer) {
-  
+void Room::show(SDL_Renderer* renderer) 
+{  
   int ax = this->x;
   int ay = this->y;
   int bx = ax+roomWidth;
@@ -86,4 +87,18 @@ int Room::getY() {
 
 bool Room::isVisited() {
   return this->visited;
+}
+
+void Room::VDraw(SDL_Renderer* renderer)
+{
+	SDL_SetRenderDrawColor(renderer, 0x255, 0x255, 0x55, SDL_ALPHA_OPAQUE);
+	
+	//SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);    
+	show(renderer);
+	SDL_RenderPresent( renderer );
+	
+}
+
+void Room::VDoLogic()
+{
 }

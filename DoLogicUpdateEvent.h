@@ -1,7 +1,6 @@
 #pragma once
 #include "Event.h"
-class DoLogicUpdateEvent :
-	public Event
+class DoLogicUpdateEvent : 	public Event
 {
 public:
 	DoLogicUpdateEvent() : Event(DoLogicUpdateEventType)

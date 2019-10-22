@@ -10,11 +10,14 @@
 #include "SceneManager.h"
 #include "SceneChangedEvent.h"
 #include "GameObjectFactory.h"
+#include "AddGameObjectToCurrentSceneEvent.h"
 using namespace tinyxml2;
 
 void CurrentLevelManager::Initialize()
 {
 	EventManager::GetInstance().SubscribeToEvent(LevelChangedEventType, this);
+	EventManager::GetInstance().SubscribeToEvent(AddGameObjectToCurrentScene, this);
+	
 	m_Initialized = true;
 }
 
@@ -40,8 +43,16 @@ void CurrentLevelManager::ProcessEvent(std::shared_ptr<Event> evt)
 		if(cpe->m_Level == 3) {
 			filename = "scene3.xml";
 		}
+		if(cpe->m_Level == 4) {
+			filename = "scene4.xml";
+		}
 
 		LoadScene(filename);
+	}
+	if(evt->m_eventType == AddGameObjectToCurrentScene)
+	{
+		std::shared_ptr<AddGameObjectToCurrentSceneEvent> cpe = std::dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(evt);
+		m_Layers.back()->m_objects.push_back(cpe->GetGameObject());	
 	}
 }
 

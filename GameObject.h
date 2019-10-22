@@ -32,21 +32,29 @@ public:
 	* Deals with events that a ball knows how to work with
 	*/
 	void ProcessEvent(std::shared_ptr<Event> event);	
-	void virtual VDraw(SDL_Renderer* renderer);	
 
-	void VDoLogic()
-	{		
-		if(isTravelingLeft) {
-			if(m_xPos == 0) {		
+	// A game object should know how to draw itself
+	void virtual VDraw(SDL_Renderer* renderer) = 0;	
+
+	void virtual VDoLogic() = 0;
+
+	void DetectSideColission()
+	{
+		if (isTravelingLeft)
+		{
+			if (m_xPos == 0) {
 				isTravelingLeft = false;
-				Mix_PlayChannel( -1, gLow, 0 );
-			}			
-		} else {
-			if(m_xPos == SDLGraphicsManager::GetInstance().GetScreenWidth()) {		
-				Mix_PlayChannel( -1, gLow, 0 );
+				Mix_PlayChannel(-1, gLow, 0);
+			}
+		}
+		else
+		{
+			if (m_xPos == SDLGraphicsManager::GetInstance().GetScreenWidth())
+			{
+				Mix_PlayChannel(-1, gLow, 0);
 				isTravelingLeft = true;
-			}			
-		}	
+			}
+		}
 	}
 	
 	virtual ~GameObject(){}

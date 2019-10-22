@@ -3,6 +3,8 @@
 #include "GameObject.h"
 #include "Sprite.h"
 #include  "TypeAliases.h"
+#include "GameObject.h"
+#include "Room.h"
 using namespace tinyxml2;
 
 /*
@@ -30,17 +32,20 @@ shared_ptr<GameObject> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement *
 		{
 			// Get the associated resource details referenced by this object
 			auto meta = ResourceManager::GetInstance().GetResourceByUuid(atoi(detailValue.c_str()));
-			if(!meta->m_type._Equal("graphic"))
-			{ 
-				throw new exception(("Cannot load non graphic resource: " + meta->m_name + " type=" + meta->m_type).c_str()); 
-			}
-
-			if(meta == NULL) 
+			if(meta != NULL)
 			{
-				throw new exception(("Could not load resource meta data for resource id:" + detailValue).c_str());
-			}
+				if(!meta->m_type._Equal("graphic"))
+				{ 
+					throw new exception(("Cannot load non graphic resource: " + meta->m_name + " type=" + meta->m_type).c_str()); 
+				}
 
-			resource = std::dynamic_pointer_cast<GraphicsResource>(meta);
+				if(meta == NULL) 
+				{
+					throw new exception(("Could not load resource meta data for resource id:" + detailValue).c_str());
+				}
+
+				resource = std::dynamic_pointer_cast<GraphicsResource>(meta);
+			}
 		}
 
 		// Object's initial x position
@@ -90,10 +95,13 @@ shared_ptr<GameObject> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement *
 }
 
 std::shared_ptr<GameObject>& GameObjectFactory::InitGameObject(std::shared_ptr<GameObject>& gameObject, uint x, uint y, std::shared_ptr<GraphicsResource>& resource, bool colourKeyEnabled, bool visible, const uint& red, const uint& green, const uint& blue)
-{
+{	
 	if(resource == NULL)
 	{ 
-		throw new exception("Resource s null"); 
+		auto width = 50;
+		gameObject = shared_ptr<GameObject>(new Room(x, y, width));
+		gameObject->m_Visible = true;
+		return gameObject;		
 	}
 
 	if( (red < 0 || red > 255)  || (blue < 0 || blue > 255) || (green < 0 || green > 255) )
@@ -115,10 +123,10 @@ std::shared_ptr<GameObject>& GameObjectFactory::InitGameObject(std::shared_ptr<G
 		gameObject = shared_ptr<Sprite>(sprite);
 		
 	} 
-	else 
+	else
 	{
-		// Normal game object
-		gameObject = shared_ptr<GameObject>(new GameObject(x, y));	
+		// Normal 2d Sprite (no animation)
+		gameObject = shared_ptr<GameObject>(new Sprite(x, y));	
 	}
 	gameObject->SetGraphicsResource(resource);
 	gameObject->m_ColourKeyEnabled = colourKeyEnabled;

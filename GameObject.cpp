@@ -30,6 +30,6 @@ void GameObject::VDraw(SDL_Renderer * renderer)
 {
 	// Include base drawing functionality
 	
-	GameObjectBase::VDraw(renderer);
+	GameObjectBase::DrawResource(renderer);
 	// Custom drawing afterwards occus here
 }

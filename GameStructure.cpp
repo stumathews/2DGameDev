@@ -102,6 +102,10 @@ void sense_player_input()
 				EventManager::GetInstance().RegisterEvent( shared_ptr<SceneChangedEvent>(new SceneChangedEvent(3)));
 				break;
 
+				case SDLK_x:
+				std::cout << "Level change to 4" << std::endl;
+				EventManager::GetInstance().RegisterEvent( shared_ptr<SceneChangedEvent>(new SceneChangedEvent(4)));
+				break;	
 				 //Play high sound effect
                 case SDLK_1:
                 Mix_PlayChannel( -1, gHigh, 0 );
@@ -571,11 +575,13 @@ void World_Presentation()
  */
 void Draw(float percentWithinTick)
 {	
-	SDLGraphicsManager::GetInstance().DrawCurrentScene();
+	// Draw all objects in the current scene
+	SDLGraphicsManager::GetInstance().DrawCurrentScene(false);
 	
 	// Tick 3d Render manager
 	if(use3dRengerManager)
 		D3DRenderManager::GetInstance().update();
+
 	// Render the game work visually and sonically
 	World_Presentation();
 	

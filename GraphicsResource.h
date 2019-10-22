@@ -23,6 +23,7 @@ public:
 
 	// The binary data that will represent the resource once its loaded.
 	SDL_Surface* m_Surface;
+	SDL_Texture* newTexture = NULL;
 
 
 	uint m_NumKeyFrames;

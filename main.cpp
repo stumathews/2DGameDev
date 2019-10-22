@@ -14,6 +14,8 @@
 #include "SceneManager.h"
 #include "DoLogicUpdateEvent.h"
 #include "RenderManager3D.h"
+#include "AddGameObjectToCurrentSceneEvent.h"
+#include "Room.h"
 
 using namespace std;
 
@@ -47,7 +49,25 @@ int main(int argc, char *args[])
 		return -1;
 
 	// Trigger the first level by kicking the event manager
-	EventManager::GetInstance().RegisterEvent(std::shared_ptr<SceneChangedEvent>(new SceneChangedEvent(1)));
+	EventManager::GetInstance().RegisterEvent(std::shared_ptr<SceneChangedEvent>(new SceneChangedEvent(4)));
+
+	auto screenWidth=800;
+	auto screenHeight=600;
+	
+	auto width = 10;
+	auto maxRoomsWidthWise = screenWidth/width;
+	auto maxRoomsHeightWise = screenHeight/width;
+	
+	for(int i = 0; i < maxRoomsHeightWise;i++)
+	{
+		for(int j = 0; j < maxRoomsWidthWise;j++)
+		{
+			auto gameObject = shared_ptr<GameObject>(new Room(j*width, i*width, width));
+			gameObject->m_Visible = true;
+			EventManager::GetInstance().RegisterEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&gameObject)));
+		}
+	}
+	
 	
 	// Process events, render and update
 	DoGameLoop();	

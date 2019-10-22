@@ -97,7 +97,7 @@ void ResourceManager::ReadInResources()
 					if(strcmp(type, "fx") == 0)
 					{					
 						resource = AudioManager::GetInstance().MakeResource(element);						
-					}						
+					}
 						
 					if(resource)
 					{

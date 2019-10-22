@@ -1,7 +1,8 @@
 #include <iostream>
 #include <SDL.h>
+#include "GameObject.h"
 
-class Room {
+class Room : public GameObject {
   private: 
     int x, y, roomWidth;
     bool walls[4];
@@ -17,4 +18,8 @@ class Room {
     int getX();
     int getY();
     bool isVisited();
+
+	// Inherited via GameObject
+	virtual void VDraw(SDL_Renderer* renderer) override;
+	virtual void VDoLogic() override;
 };

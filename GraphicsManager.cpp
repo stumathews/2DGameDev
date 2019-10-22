@@ -133,16 +133,18 @@ void SDLGraphicsManager::DrawAllActors()
 			actor->VDraw(m_Renderer);
 		}
 	}
-	
+	//SDL_RenderPresent(m_Renderer);
 	SDL_UpdateWindowSurface(m_Window);
 }
 
 // Draws all the actors in the scene
-void SDLGraphicsManager::DrawCurrentScene()
+void SDLGraphicsManager::DrawCurrentScene(bool updateWindowSurfaceAfterDrawing)
 {
-	SDL_SetRenderDrawColor(m_Renderer, 0x255, 0x255, 0x55, 0xFF);
-	SDL_FillRect(m_WindowSurface, 0, 255);
 	
+	SDL_SetRenderDrawColor(m_Renderer, 0x255, 0x255, 0x55, 0xFF);
+	SDL_FillRect(m_WindowSurface, 0, 0);
+	
+	static bool sendSurfaceToScreen = true;
 	// Draw objects in layers, which are ordered by z-order
 	for(auto layer : CurrentLevelManager::GetInstance().m_Layers)
 	{
@@ -150,11 +152,14 @@ void SDLGraphicsManager::DrawCurrentScene()
 		{
 			for(auto actor : layer->m_objects)
 			{
-				if(actor->m_Visible) {
+				if(actor->m_Visible) {					
 					actor->VDraw(m_Renderer);
 				}
 			}
 		}
 	}
-	SDL_UpdateWindowSurface(m_Window);	
+	
+	if(updateWindowSurfaceAfterDrawing)
+		SDL_UpdateWindowSurface(m_Window);
+	
 }

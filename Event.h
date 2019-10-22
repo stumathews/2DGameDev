@@ -1,11 +1,13 @@
 #pragma once
 #include <map>
-enum EventType { PositionChangeEventType, LevelChangedEventType, DoLogicUpdateEventType };
+
+enum EventType { PositionChangeEventType, LevelChangedEventType, DoLogicUpdateEventType, AddGameObjectToCurrentScene };
+
 
 class Event
 {
 public:
-	Event(EventType type) : m_eventType(type){};
+	Event(EventType type) : m_eventType(type), m_evtData(NULL){};
 	~Event();
 	virtual void SetData(void* data)
 	{

@@ -37,7 +37,7 @@ void GraphicsResource::VLoad()
 		
 		
 		m_Surface =  SDL_ConvertSurface(tmpSurface, r->format, NULL);
-		
+		newTexture = SDL_CreateTextureFromSurface( SDLGraphicsManager::GetInstance().m_Renderer, m_Surface );
 		
 		SDL_FreeSurface(tmpSurface);
 		if(m_Surface)

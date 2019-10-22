@@ -3,10 +3,10 @@
 #include "GraphicsResource.h"
 #include "tinyxml2.h"
 #include <memory>
-#include "GameObjectBase.h"
+
 #include "SDL.h"
 
-
+class GameObject;
 
 // Manages the graphics in the project,
 // specifically graphic-enabled objects like Actors and AnimatedActors.
@@ -22,9 +22,9 @@ public:
 		SDLGraphicsManager(SDLGraphicsManager const&)  = delete;
         void operator=(SDLGraphicsManager const&)  = delete;
 		
-		SDL_Window* m_Window;
-		SDL_Renderer* m_Renderer;
-		SDL_Surface* m_WindowSurface;
+		SDL_Window* m_Window = NULL;
+		SDL_Renderer* m_Renderer = NULL;
+		SDL_Surface* m_WindowSurface = NULL;
 		
 		/* Initializes the graphics system
 		* Creates Main Window
@@ -37,13 +37,18 @@ public:
 		// Draw all the Actors we know about onto the surface
 		void DrawAllActors();
 
-		void DrawCurrentScene();
+		void DrawCurrentScene(bool updateWindowSurfaceAfterDrawing = true);
 		unsigned int GetScreenWidth() { return  m_ScreenWidth;}
 		unsigned int GetScreenhEIGHT() { return  m_ScreenHeight;}
 private:	
 
-	std::vector<shared_ptr<GameObjectBase>> m_Actors;
-	SDLGraphicsManager(){}
+	std::vector<shared_ptr<GameObject>> m_Actors;
+	SDLGraphicsManager()
+		: m_Window(NULL), 
+		m_Renderer(NULL),
+		m_WindowSurface(NULL),
+		m_ScreenHeight(0),
+		m_ScreenWidth(0) { }
 	~SDLGraphicsManager();
 	unsigned int m_ScreenWidth;
 	unsigned int m_ScreenHeight;

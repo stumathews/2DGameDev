@@ -9,6 +9,7 @@
 * as updating its position, Setting its graphic resource.
 * VDoLogic and VDraw should be implemented by a derived class
 */
+
 class GameObjectBase : public EventSubscriber
 {
 public:
@@ -29,8 +30,9 @@ public:
 	// Actor can look after itself
 	virtual void VDoLogic() = 0;
 
-	// Actor can draw itself, usually refering to the GraphicsResource assoaicted with the actor
-	virtual void VDraw(SDL_Renderer* renderer);
+	// Actor can draw itself, usually refering to the GraphicsResource assoaicted with the actor	
+	
+	virtual void DrawResource(SDL_Renderer* renderer);
 	
 	virtual ~GameObjectBase();
 
