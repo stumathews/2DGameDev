@@ -4,7 +4,8 @@
 #include <vector>
 #include <memory>
 #include "EventManager.h"
-#include "GameObjectBase.h"
+#include "GameObject.h"
+
 #include <iostream>
 
 struct GameWorldData 
@@ -19,7 +20,7 @@ struct GameWorldData
 	bool bCanRender;
 		
 	// List of game objects
-	std::vector<std::shared_ptr<GameObjectBase>> actors;
+	std::vector<std::shared_ptr<GameObject>> actors;
 
 	~GameWorldData()
 	{

@@ -2,11 +2,11 @@
 #include <SDL.h>
 using namespace std;
 
-Room::Room(int i, int j, int rw) 
+Room::Room(int x, int y, int rw) 
 {
   this->roomWidth = rw;
-  this->x = i;
-  this->y = j;
+  this->x = x;
+  this->y = y;
   
   walls[0] = true;
   walls[1] = true;
@@ -15,22 +15,22 @@ Room::Room(int i, int j, int rw)
   visited = false;
 }
 
-void Room::removeWalls(Room &r) {
-  if (this->x - r.x == -1) {
+void Room::removeWalls(shared_ptr<Room> &r) {
+  if (this->x - r->x == -1) {
     this->removeWall(1);
-    r.removeWall(3);
+    r->removeWall(3);
   } 
-  if (this->x - r.x == 1) {
+  if (this->x - r->x == 1) {
     this->removeWall(3);
-    r.removeWall(1);
+    r->removeWall(1);
   } 
-  if (this->y - r.y == -1) {
+  if (this->y - r->y == -1) {
     this->removeWall(2);
-    r.removeWall(0);
+    r->removeWall(0);
   } 
-  if (this->y - r.y == 1) {
+  if (this->y - r->y == 1) {
       this->removeWall(0);
-      r.removeWall(2);
+      r->removeWall(2);
   } 
 }
 
@@ -56,6 +56,7 @@ void Room::show(SDL_Renderer* renderer)
   if (this->walls[3]) {
     SDL_RenderDrawLine(renderer, dx,dy,ax,ay);
   }
+ 
 }
 
 void Room::printWalls() {
@@ -65,8 +66,10 @@ void Room::printWalls() {
   std::cout << "\n";
 }
 
+
+
 void Room::removeWall(int w) {
-  this->walls[w] = false;
+  this->walls[w-1] = false;
 }
 
 void Room::visit() {
@@ -90,13 +93,8 @@ bool Room::isVisited() {
 }
 
 void Room::VDraw(SDL_Renderer* renderer)
-{
-	SDL_SetRenderDrawColor(renderer, 0x255, 0x255, 0x55, SDL_ALPHA_OPAQUE);
-	
-	//SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);    
+{	
 	show(renderer);
-	SDL_RenderPresent( renderer );
-	
 }
 
 void Room::VDoLogic()

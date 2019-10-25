@@ -3,11 +3,9 @@
 #include <memory>
 
 
-class EventSubscriber
+class IEventSubscriber
 {
 public:
-	EventSubscriber();
-	~EventSubscriber();
 	virtual void ProcessEvent(std::shared_ptr<Event> evt) = 0;
 };
 

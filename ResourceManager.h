@@ -14,7 +14,7 @@ using namespace std;
 using namespace tinyxml2;
 
 
-class ResourceManager : EventSubscriber
+class ResourceManager : IEventSubscriber
 {
     public:
         static ResourceManager& GetInstance()

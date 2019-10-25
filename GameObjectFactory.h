@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include "tinyxml2.h"
-#include "GameObjectBase.h"
 #include "TypeAliases.h"
 #include "GameObject.h"
 

@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AddGameObjectToCurrentSceneEvent.h" />
-    <ClCompile Include="GameObjectBase.cpp" />
     <ClCompile Include="AnimatedActor.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="AudioResource.cpp" />
@@ -29,13 +28,10 @@
     <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="EventManager.cpp" />
-    <ClCompile Include="EventSubscriber.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
     <ClCompile Include="GameStructure.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="GraphicsResource.cpp" />
-    <ClCompile Include="Layer.cpp" />
-    <ClCompile Include="LevelChangeData.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh3D.cpp" />
     <ClCompile Include="PositionChangeEvent.cpp" />
@@ -52,7 +48,6 @@
     <ClCompile Include="tinyxml2-master\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameObjectBase.h" />
     <ClInclude Include="AnimatedActor.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="AudioResource.h" />

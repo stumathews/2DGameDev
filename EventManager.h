@@ -15,7 +15,7 @@ public:
 	void operator=(EventManager const&) = delete;
 	
 	void RegisterEvent(std::shared_ptr<Event> evt);
-	void SubscribeToEvent(EventType type, EventSubscriber* you);
+	void SubscribeToEvent(EventType type, IEventSubscriber* you);
 	
 	/* Go through all the events and call all ther subscribers telling them about the event
 	*
@@ -25,7 +25,7 @@ private:
 	EventManager(){}
 	~EventManager();
 	std::vector<std::shared_ptr<Event>> m_events;
-	std::map<EventType, std::vector<EventSubscriber*>> m_EventSubscribers;
+	std::map<EventType, std::vector<IEventSubscriber*>> m_EventSubscribers;
 
 };
 

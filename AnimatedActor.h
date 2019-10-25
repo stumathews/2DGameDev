@@ -5,10 +5,10 @@
 class AnimatedActor : public GameObjectBase
 {
 public:
-	AnimatedActor();
-	~AnimatedActor();
+	AnimatedActor(){};
+	~AnimatedActor(){};
 	
-	void VDraw();
+	void VDraw(){};
 
 private:
 

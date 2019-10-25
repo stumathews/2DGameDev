@@ -70,7 +70,7 @@ bool SDLGraphicsManager::Initialize(unsigned int width, unsigned int height, con
 	m_ScreenWidth = width;
 
 	
-
+	return true;
 }
 
 std::shared_ptr<Resource> SDLGraphicsManager::MakeResource(tinyxml2::XMLElement * element)
@@ -134,7 +134,7 @@ void SDLGraphicsManager::DrawAllActors()
 		}
 	}
 	//SDL_RenderPresent(m_Renderer);
-	SDL_UpdateWindowSurface(m_Window);
+	//SDL_UpdateWindowSurface(m_Window);
 }
 
 // Draws all the actors in the scene
@@ -145,6 +145,7 @@ void SDLGraphicsManager::DrawCurrentScene(bool updateWindowSurfaceAfterDrawing)
 	SDL_FillRect(m_WindowSurface, 0, 0);
 	
 	static bool sendSurfaceToScreen = true;
+
 	// Draw objects in layers, which are ordered by z-order
 	for(auto layer : CurrentLevelManager::GetInstance().m_Layers)
 	{
@@ -161,5 +162,7 @@ void SDLGraphicsManager::DrawCurrentScene(bool updateWindowSurfaceAfterDrawing)
 	
 	if(updateWindowSurfaceAfterDrawing)
 		SDL_UpdateWindowSurface(m_Window);
+	else
+		SDL_RenderPresent(m_Renderer);
 	
 }

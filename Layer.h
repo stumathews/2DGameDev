@@ -7,8 +7,8 @@
 class Layer
 {
 public:
-	Layer();
-	~Layer();
+	Layer(){};
+	~Layer(){};
 	bool m_Visible;
 	unsigned int m_ZOrder;
 	float m_PosX;

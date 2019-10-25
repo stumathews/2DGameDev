@@ -2,7 +2,6 @@
 #include "SceneManager.h"
 #include <list>
 #include "tinyxml2.h"
-#include "GameObjectBase.h"
 #include "GameObject.h"
 #include "ResourceManager.h"
 #include <memory>

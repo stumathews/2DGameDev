@@ -9,7 +9,7 @@ void EventManager::RegisterEvent(std::shared_ptr<Event> evt)
 	m_events.push_back(evt);
 }
 
-void EventManager::SubscribeToEvent(EventType type, EventSubscriber* you)
+void EventManager::SubscribeToEvent(EventType type, IEventSubscriber* you)
 {
 	m_EventSubscribers[type].push_back(you);	
 }

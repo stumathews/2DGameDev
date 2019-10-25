@@ -8,8 +8,8 @@ class Room : public GameObject {
     bool walls[4];
     bool visited;
   public: 
-    Room(int i, int j, int rw);
-    void removeWalls(Room &r);
+    Room(int x, int y, int rw);
+    void removeWalls(shared_ptr<Room> &r);
     void removeWall(int wall);
     void show(SDL_Renderer* renderer);    
     void printWalls();
@@ -18,6 +18,7 @@ class Room : public GameObject {
     int getX();
     int getY();
     bool isVisited();
+	bool IsWalled(int wall) { return walls[wall-1];  }
 
 	// Inherited via GameObject
 	virtual void VDraw(SDL_Renderer* renderer) override;

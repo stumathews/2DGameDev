@@ -16,6 +16,8 @@
 #include "RenderManager3D.h"
 #include "AddGameObjectToCurrentSceneEvent.h"
 #include "Room.h"
+#include <stack>
+#include <time.h>
 
 using namespace std;
 
@@ -42,6 +44,42 @@ void Init3dRenderManager();
 void Uninitialize();
 void SetLevel(int level);
 
+bool unvisitedCells(vector <Room> mazeGrid) {
+  for (Uint32 i = 0; i < mazeGrid.size(); i++) {
+    if (!mazeGrid[i].isVisited()) {
+      return true;
+    }
+  }
+  return false;
+}
+#define ROWS 800
+#define COLUMNS 600
+
+int checkNeighbours(vector<shared_ptr<Room>> maze, shared_ptr<Room> r) {
+  int x = r->getX();
+  int y = r->getY();
+  vector <shared_ptr<Room>> neighbours;
+  if(x > 0 && !maze[(x - 1) * ROWS + y]->isVisited()) {
+    neighbours.push_back(maze[(x - 1) * ROWS + y]);
+  }
+  if( x < ROWS - 1 && !maze[(x + 1) * ROWS + y]->isVisited()) {
+    neighbours.push_back(maze[(x + 1) * ROWS + y]);
+  }
+  if(y < COLUMNS - 1 && !maze[x * ROWS + y + 1]->isVisited()) {
+    neighbours.push_back(maze[x * ROWS + y + 1]);
+  }
+  if(y > 0 && !maze[x * ROWS + y - 1]->isVisited()) {
+    neighbours.push_back(maze[x * ROWS + y - 1]);
+  }
+  if (neighbours.size() < 1) {
+    return -1;
+  }
+  
+  int randomIdx = rand() % neighbours.size();
+  int nxt = randomIdx;//neighbours[randomIdx]->getY() + neighbours[randomIdx]->getX() * ROWS;
+  return nxt;
+}
+
 int main(int argc, char *args[])
 {	
 	// Prepare all sub systems
@@ -49,25 +87,111 @@ int main(int argc, char *args[])
 		return -1;
 
 	// Trigger the first level by kicking the event manager
-	EventManager::GetInstance().RegisterEvent(std::shared_ptr<SceneChangedEvent>(new SceneChangedEvent(4)));
+	EventManager::GetInstance().RegisterEvent(std::shared_ptr<SceneChangedEvent>(new SceneChangedEvent(1)));
 
 	auto screenWidth=800;
-	auto screenHeight=600;
+	auto screenHeight=600;	
+	auto width = 50;
+	auto maxRows = screenWidth/width;
+	auto maxColumns = screenHeight/width;
 	
-	auto width = 10;
-	auto maxRoomsWidthWise = screenWidth/width;
-	auto maxRoomsHeightWise = screenHeight/width;
-	
-	for(int i = 0; i < maxRoomsHeightWise;i++)
+	 vector<shared_ptr<Room>> mazeGrid;
+	 stack<shared_ptr<Room>> roomStack;
+
+	for(int y = 0; y < maxColumns; y++)
 	{
-		for(int j = 0; j < maxRoomsWidthWise;j++)
+		for(int x = 0; x < maxRows; x++)
 		{
-			auto gameObject = shared_ptr<GameObject>(new Room(j*width, i*width, width));
-			gameObject->m_Visible = true;
-			EventManager::GetInstance().RegisterEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&gameObject)));
+			auto gameObject = shared_ptr<Room>(new Room(x*width, y*width, width));			
+			mazeGrid.push_back(gameObject);			
 		}
 	}
+	auto totalRooms = mazeGrid.size();
 	
+	srand(time(0));
+	for(int i = 0; i < totalRooms; i++)
+	{
+		auto current = mazeGrid[i];
+		auto nextIndex = i + 1;
+		auto prevIndex = i - 1;
+		if(nextIndex >= totalRooms)
+			break;
+		auto next = mazeGrid[nextIndex];
+		auto row = abs(i / maxColumns);		
+		auto lastCol = (row+1 * maxColumns)-1;
+		auto col = maxColumns - (lastCol-i);
+
+		bool withinRowBound = row >= 0 && i <= maxRows;
+		bool withinColBound = i >= 0 && i <= maxColumns-1;
+		
+		int roomAbove = i - maxColumns;
+		int roomBelow = i + maxColumns;
+		int roomLeft = i - 1;
+		int roomRight = i + 1;
+
+		bool canRemoveAbove = roomAbove >= 0;
+		bool canRemoveBelow = roomBelow < totalRooms; 
+		bool canRemoveLeft = col-1 >= 1;
+		bool canRemoveRight = col+1 <= maxColumns;
+
+		vector<int> list;
+		if(canRemoveAbove && current->IsWalled(1) && mazeGrid[roomAbove]->IsWalled(3))
+			list.push_back(1);
+		if(canRemoveBelow  && current->IsWalled(3) && mazeGrid[roomBelow]->IsWalled(1))
+			list.push_back(3);
+		if(canRemoveLeft  && current->IsWalled(4) && mazeGrid[roomLeft]->IsWalled(2))
+			list.push_back(4);
+		if(canRemoveRight  && current->IsWalled(2) && mazeGrid[roomRight]->IsWalled(4))
+			list.push_back(2);
+
+		if(list.size() == 0)
+			int i = 0;
+
+		int randIndex = rand() % list.size();
+		if(list[randIndex] == 1)
+		{
+				current->removeWall(1);
+				next->removeWall(3);
+				continue;
+			
+		}
+		if(list[randIndex] == 2)
+		{ 
+				current->removeWall(2);
+				next->removeWall(4);
+				continue;
+			
+		}
+		if(list[randIndex] == 3)
+		{
+		
+				current->removeWall(3);
+				next->removeWall(1);
+				continue;
+			
+		}
+		if(list[randIndex] == 4)
+		{		
+			
+				current->removeWall(4);				
+				auto prev = mazeGrid[prevIndex];
+				prev->removeWall(2);
+				continue;
+		
+		}
+		
+	}
+	
+	for(auto gameObject : mazeGrid)
+	{
+			std::shared_ptr<GameObject> cpe = std::dynamic_pointer_cast<Room>(gameObject);
+			auto event = std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&cpe));
+			EventManager::GetInstance().RegisterEvent(event);
+	}
+	
+
+	    
+    
 	
 	// Process events, render and update
 	DoGameLoop();	
@@ -125,7 +249,7 @@ void DoGameLoop()
 	std::cout << "Game done" << std::endl;
 }
 
-/* Initialize resource,level manager, and load game audio files
+/* Initialize resource, level manager, and load game audio files
 *
 */
 bool Initialize()
@@ -137,20 +261,18 @@ bool Initialize()
 	g_pGameWorldData->bNetworkGame = 0;
 	g_pGameWorldData->bCanRender = true;
 	
-		if (!InitSDL())
-		{
-			std::cout << "Could not initailize SDL, aborting." << std::endl;
-			return false;
-		}
+	if (!InitSDL())
+	{
+		std::cout << "Could not initailize SDL, aborting." << std::endl;
+		return false;
+	}
 
-		// Load audio game files
-		if (!loadMedia())
-			return -1;	
-	
+	// Load audio game files
+	if (!loadMedia())
+		return -1;		
 
 	if(use3dRengerManager)
-		Init3dRenderManager();
-	
+		Init3dRenderManager();	
 		
 	return true;
 }

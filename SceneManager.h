@@ -7,7 +7,7 @@
 
 // Scene manager deals with managing the actors that make up a scene.
 // Actors are chlidren to layers
-class CurrentLevelManager : public EventSubscriber
+class CurrentLevelManager : public IEventSubscriber
 {
 public:
 	 static CurrentLevelManager& GetInstance()
