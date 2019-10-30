@@ -1,10 +1,10 @@
 #pragma once
 
-#define SAFE_RELEASE(x) \
-	if(x != NULL)		\
+#define SAFE_RELEASE(m_xPos) \
+	if(m_xPos != NULL)		\
 	{					\
-		x->Release();	\
-		x = NULL;		\
+		m_xPos->Release();	\
+		m_xPos = NULL;		\
 	}					\
 
 

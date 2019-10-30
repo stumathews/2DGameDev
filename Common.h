@@ -10,8 +10,8 @@
 
 struct GameWorldData 
 {
-	int x;
-	int y;
+	int m_xPos;
+	int m_yPos;
 	int w;
 	int h;
 	

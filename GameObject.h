@@ -8,6 +8,7 @@
 #include "Event.h"
 #include "GraphicsManager.h"
 #include "EventSubscriber.h"
+#include "EventManager.h"
 
 extern Mix_Chunk *gScratch;
 extern Mix_Chunk *gHigh;
@@ -46,6 +47,11 @@ public:
 	bool m_ColourKeyEnabled = false;
 	int m_xPos;
 	int m_yPos;
+
+	void SubScribeToEvent(EventType type) 
+	{ 
+		EventManager::GetInstance().SubscribeToEvent(type, this);
+	}
 
 	shared_ptr<GraphicsResource> GetResource() { return m_GraphicsResource; }
 	void SetGraphicsResource(shared_ptr<GraphicsResource> graphicsResource)

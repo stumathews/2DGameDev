@@ -2,11 +2,11 @@
 #include <SDL.h>
 using namespace std;
 
-Room::Room(int x, int y, int rw) 
+Room::Room(int x, int y, int rw, bool fill) : fill(fill)
 {
   this->roomWidth = rw;
-  this->x = x;
-  this->y = y;
+  this->m_xPos = x;
+  this->m_yPos = y;
   
   walls[0] = true;
   walls[1] = true;
@@ -16,19 +16,19 @@ Room::Room(int x, int y, int rw)
 }
 
 void Room::removeWalls(shared_ptr<Room> &r) {
-  if (this->x - r->x == -1) {
+  if (this->m_xPos - r->m_xPos == -1) {
     this->removeWall(1);
     r->removeWall(3);
   } 
-  if (this->x - r->x == 1) {
+  if (this->m_xPos - r->m_xPos == 1) {
     this->removeWall(3);
     r->removeWall(1);
   } 
-  if (this->y - r->y == -1) {
+  if (this->m_yPos - r->m_yPos == -1) {
     this->removeWall(2);
     r->removeWall(0);
   } 
-  if (this->y - r->y == 1) {
+  if (this->m_yPos - r->m_yPos == 1) {
       this->removeWall(0);
       r->removeWall(2);
   } 
@@ -36,8 +36,8 @@ void Room::removeWalls(shared_ptr<Room> &r) {
 
 void Room::show(SDL_Renderer* renderer) 
 {  
-  int ax = this->x;
-  int ay = this->y;
+  int ax = this->m_xPos;
+  int ay = this->m_yPos;
   int bx = ax+roomWidth;
   int by = ay;
   int cx = bx;
@@ -55,6 +55,17 @@ void Room::show(SDL_Renderer* renderer)
   }
   if (this->walls[3]) {
     SDL_RenderDrawLine(renderer, dx,dy,ax,ay);
+  }
+
+  if(fill)
+  {
+	 SDL_Rect rect;
+	 rect.x = this->m_xPos;
+	 rect.y = this->m_yPos;
+	 rect.w = roomWidth;
+	 rect.h = roomWidth;
+
+	  SDL_RenderFillRect(renderer, &rect);
   }
  
 }
@@ -77,15 +88,15 @@ void Room::visit() {
 }
 
 int Room::getPositionInVector(int size) {
-  return this->x * size + this->y;
+  return this->m_xPos * size + this->m_yPos;
 }
 
 int Room::getX() {
-  return this->x;
+  return this->m_xPos;
 }
 
 int Room::getY() {
-  return this->y;
+  return this->m_yPos;
 }
 
 bool Room::isVisited() {

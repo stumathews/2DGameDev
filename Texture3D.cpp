@@ -38,7 +38,7 @@ bool Texture3D::free()
 	return false;
 }
 
-void Texture3D::blitRectToBackBuffer(RECT rect, int x, int y)
+void Texture3D::blitRectToBackBuffer(RECT rect, int m_xPos, int m_yPos)
 {
 	D3DRenderManager& renderManager3D = D3DRenderManager::GetInstance();
 	ID3D10Texture2D* buffer;
@@ -54,7 +54,7 @@ void Texture3D::blitRectToBackBuffer(RECT rect, int x, int y)
 		crop.front = 0;
 		crop.back = 1;
 
-		renderManager3D.d3dDevice->CopySubresourceRegion(buffer, x, y, 0, 0,  textureInterface, 0, &crop);
+		renderManager3D.d3dDevice->CopySubresourceRegion(buffer, m_xPos, m_yPos, 0, 0,  textureInterface, 0, &crop);
 
 	}
 	buffer->Release();

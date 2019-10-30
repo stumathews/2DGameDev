@@ -56,20 +56,20 @@ bool unvisitedCells(vector <Room> mazeGrid) {
 #define COLUMNS 600
 
 int checkNeighbours(vector<shared_ptr<Room>> maze, shared_ptr<Room> r) {
-  int x = r->getX();
-  int y = r->getY();
+  int m_xPos = r->getX();
+  int m_yPos = r->getY();
   vector <shared_ptr<Room>> neighbours;
-  if(x > 0 && !maze[(x - 1) * ROWS + y]->isVisited()) {
-    neighbours.push_back(maze[(x - 1) * ROWS + y]);
+  if(m_xPos > 0 && !maze[(m_xPos - 1) * ROWS + m_yPos]->isVisited()) {
+    neighbours.push_back(maze[(m_xPos - 1) * ROWS + m_yPos]);
   }
-  if( x < ROWS - 1 && !maze[(x + 1) * ROWS + y]->isVisited()) {
-    neighbours.push_back(maze[(x + 1) * ROWS + y]);
+  if( m_xPos < ROWS - 1 && !maze[(m_xPos + 1) * ROWS + m_yPos]->isVisited()) {
+    neighbours.push_back(maze[(m_xPos + 1) * ROWS + m_yPos]);
   }
-  if(y < COLUMNS - 1 && !maze[x * ROWS + y + 1]->isVisited()) {
-    neighbours.push_back(maze[x * ROWS + y + 1]);
+  if(m_yPos < COLUMNS - 1 && !maze[m_xPos * ROWS + m_yPos + 1]->isVisited()) {
+    neighbours.push_back(maze[m_xPos * ROWS + m_yPos + 1]);
   }
-  if(y > 0 && !maze[x * ROWS + y - 1]->isVisited()) {
-    neighbours.push_back(maze[x * ROWS + y - 1]);
+  if(m_yPos > 0 && !maze[m_xPos * ROWS + m_yPos - 1]->isVisited()) {
+    neighbours.push_back(maze[m_xPos * ROWS + m_yPos - 1]);
   }
   if (neighbours.size() < 1) {
     return -1;
@@ -80,6 +80,8 @@ int checkNeighbours(vector<shared_ptr<Room>> maze, shared_ptr<Room> r) {
   return nxt;
 }
 
+enum RoomSide {TopSide = 1, RightSide = 2, BottomSide = 3, LeftSize = 4};
+
 int main(int argc, char *args[])
 {	
 	// Prepare all sub systems
@@ -89,11 +91,13 @@ int main(int argc, char *args[])
 	// Trigger the first level by kicking the event manager
 	EventManager::GetInstance().RegisterEvent(std::shared_ptr<SceneChangedEvent>(new SceneChangedEvent(1)));
 
+	srand(time(0));
+
 	auto screenWidth=800;
 	auto screenHeight=600;	
-	auto width = 50;
-	auto maxRows = screenWidth/width;
-	auto maxColumns = screenHeight/width;
+	auto roomWidth = 25;
+	auto maxRows = screenWidth/roomWidth;
+	auto maxColumns = screenHeight/roomWidth;
 	
 	 vector<shared_ptr<Room>> mazeGrid;
 	 stack<shared_ptr<Room>> roomStack;
@@ -102,97 +106,97 @@ int main(int argc, char *args[])
 	{
 		for(int x = 0; x < maxRows; x++)
 		{
-			auto gameObject = shared_ptr<Room>(new Room(x*width, y*width, width));			
+			auto gameObject = shared_ptr<Room>(new Room(x*roomWidth, y*roomWidth, roomWidth));			
 			mazeGrid.push_back(gameObject);			
 		}
 	}
-	auto totalRooms = mazeGrid.size();
+
+	auto totalRooms = mazeGrid.size();	
 	
-	srand(time(0));
 	for(int i = 0; i < totalRooms; i++)
 	{
-		auto current = mazeGrid[i];
+		auto currentRoom = mazeGrid[i];
 		auto nextIndex = i + 1;
 		auto prevIndex = i - 1;
+
 		if(nextIndex >= totalRooms)
 			break;
-		auto next = mazeGrid[nextIndex];
+
+		auto nextRoom = mazeGrid[nextIndex];
 		auto row = abs(i / maxColumns);		
 		auto lastCol = (row+1 * maxColumns)-1;
 		auto col = maxColumns - (lastCol-i);
 
-		bool withinRowBound = row >= 0 && i <= maxRows;
-		bool withinColBound = i >= 0 && i <= maxColumns-1;
+		bool withinRowsRange = row >= 0 && i <= maxRows;
+		bool withinColsRange = i >= 0 && i <= maxColumns-1;
 		
-		int roomAbove = i - maxColumns;
-		int roomBelow = i + maxColumns;
-		int roomLeft = i - 1;
-		int roomRight = i + 1;
+		int roomAboveIndex = i - maxColumns;
+		int roomBelowIndex = i + maxColumns;
+		int roomLeftIndex = i - 1;
+		int roomRightIndex = i + 1;
 
-		bool canRemoveAbove = roomAbove >= 0;
-		bool canRemoveBelow = roomBelow < totalRooms; 
+		bool canRemoveAbove = roomAboveIndex >= 0;
+		bool canRemoveBelow = roomBelowIndex < totalRooms; 
 		bool canRemoveLeft = col-1 >= 1;
 		bool canRemoveRight = col+1 <= maxColumns;
 
-		vector<int> list;
-		if(canRemoveAbove && current->IsWalled(1) && mazeGrid[roomAbove]->IsWalled(3))
-			list.push_back(1);
-		if(canRemoveBelow  && current->IsWalled(3) && mazeGrid[roomBelow]->IsWalled(1))
-			list.push_back(3);
-		if(canRemoveLeft  && current->IsWalled(4) && mazeGrid[roomLeft]->IsWalled(2))
-			list.push_back(4);
-		if(canRemoveRight  && current->IsWalled(2) && mazeGrid[roomRight]->IsWalled(4))
-			list.push_back(2);
-
-		if(list.size() == 0)
-			int i = 0;
-
-		int randIndex = rand() % list.size();
-		if(list[randIndex] == 1)
-		{
-				current->removeWall(1);
-				next->removeWall(3);
-				continue;
-			
-		}
-		if(list[randIndex] == 2)
-		{ 
-				current->removeWall(2);
-				next->removeWall(4);
-				continue;
-			
-		}
-		if(list[randIndex] == 3)
-		{
+		vector<int> removableSides;
+				
+		if(canRemoveAbove && currentRoom->IsWalled(TopSide) && mazeGrid[roomAboveIndex]->IsWalled(BottomSide))
+			removableSides.push_back(TopSide);
+		if(canRemoveBelow  && currentRoom->IsWalled(BottomSide) && mazeGrid[roomBelowIndex]->IsWalled(TopSide))
+			removableSides.push_back(BottomSide);
+		if(canRemoveLeft  && currentRoom->IsWalled(LeftSize) && mazeGrid[roomLeftIndex]->IsWalled(RightSide))
+			removableSides.push_back(LeftSize);
+		if(canRemoveRight  && currentRoom->IsWalled(RightSide) && mazeGrid[roomRightIndex]->IsWalled(LeftSize))
+			removableSides.push_back(RightSide);
+				
+		int randSideIndex = rand() % removableSides.size(); // Choose a random element wall to remove from possible choices
 		
-				current->removeWall(3);
-				next->removeWall(1);
-				continue;
-			
-		}
-		if(list[randIndex] == 4)
-		{		
-			
-				current->removeWall(4);				
-				auto prev = mazeGrid[prevIndex];
-				prev->removeWall(2);
-				continue;
-		
+		switch(removableSides[randSideIndex])
+		{
+		case 1:
+			currentRoom->removeWall(TopSide);
+			nextRoom->removeWall(BottomSide);
+			continue;
+		case 2:
+			currentRoom->removeWall(RightSide);
+			nextRoom->removeWall(LeftSize);
+			continue;
+		case 3:
+			currentRoom->removeWall(BottomSide);
+			nextRoom->removeWall(TopSide);
+			continue;
+		case 4:
+			currentRoom->removeWall(LeftSize);				
+			auto prev = mazeGrid[prevIndex];
+			prev->removeWall(RightSide);
+			continue;
 		}
 		
 	}
 	
+	/* Queue each generated game object to be added to the current scene */
 	for(auto gameObject : mazeGrid)
 	{
-			std::shared_ptr<GameObject> cpe = std::dynamic_pointer_cast<Room>(gameObject);
-			auto event = std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&cpe));
-			EventManager::GetInstance().RegisterEvent(event);
+		std::shared_ptr<GameObject> cpe = std::dynamic_pointer_cast<Room>(gameObject);
+		auto event = std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&cpe));
+		
+		EventManager::GetInstance().RegisterEvent(event);
 	}
+
+	// Main player
+	auto playerWidth = roomWidth / 2;
+	std::shared_ptr<GameObject> player = std::shared_ptr<GameObject>(new Room(0,0, playerWidth, true));	
+	
+	EventManager::GetInstance().RegisterEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&player)));
+		
+	player->SubScribeToEvent(PositionChangeEventType);
+
+
+
 	
 
-	    
-    
-	
 	// Process events, render and update
 	DoGameLoop();	
 	Uninitialize();	

@@ -15,6 +15,6 @@ public:
 	Texture3D();
 	virtual bool loadFromFile(std::wstring fileName);
 	virtual bool free();
-	void blitRectToBackBuffer(RECT tect, int x, int y);
+	void blitRectToBackBuffer(RECT tect, int m_xPos, int m_yPos);
 };
 

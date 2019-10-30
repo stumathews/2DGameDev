@@ -1,14 +1,15 @@
 #include <iostream>
 #include <SDL.h>
 #include "GameObject.h"
+#include <stdbool.h>
 
 class Room : public GameObject {
   private: 
-    int x, y, roomWidth;
+    int roomWidth;
     bool walls[4];
     bool visited;
   public: 
-    Room(int x, int y, int rw);
+    Room(int m_xPos, int m_yPos, int rw, bool fill = false);
     void removeWalls(shared_ptr<Room> &r);
     void removeWall(int wall);
     void show(SDL_Renderer* renderer);    
@@ -19,6 +20,7 @@ class Room : public GameObject {
     int getY();
     bool isVisited();
 	bool IsWalled(int wall) { return walls[wall-1];  }
+	bool fill;
 
 	// Inherited via GameObject
 	virtual void VDraw(SDL_Renderer* renderer) override;

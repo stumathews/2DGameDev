@@ -8,11 +8,11 @@ Drawing::Drawing()
 {
 }
 
-void Drawing::DrawRectangle(const int x, const int y, const int w, const int h, SDL_Renderer * onRenderer, int r, int g, int b)
+void Drawing::DrawRectangle(const int m_xPos, const int m_yPos, const int w, const int h, SDL_Renderer * onRenderer, int r, int g, int b)
 {
 
 	// Define a rectangle
-	SDL_Rect fillRect = { x == 0 ? 3 : x , y == 0 ? 4 : y , w, h };
+	SDL_Rect fillRect = { m_xPos == 0 ? 3 : m_xPos , m_yPos == 0 ? 4 : m_yPos , w, h };
 	
 	// Set draw colour on renderer
 	SDL_SetRenderDrawColor(onRenderer, r, g, b, 0xFF);

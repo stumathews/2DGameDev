@@ -19,8 +19,13 @@ void GameObject::ProcessEvent(std::shared_ptr<Event> evt)
 			MoveLeft();			
 		
 		if(event->m_direction == Right)
-			MoveRight();		
+			MoveRight();	
+
+		// On move draw the entire screen again
+		SDL_SetRenderDrawColor(SDLGraphicsManager::GetInstance().m_Renderer, 0,0,0,0);
+		SDL_RenderClear(SDLGraphicsManager::GetInstance().m_Renderer);
 	}
+
 	if(evt->m_eventType == DoLogicUpdateEventType)
 		VDoLogic();
 
@@ -29,6 +34,7 @@ void GameObject::ProcessEvent(std::shared_ptr<Event> evt)
 void GameObject::VDraw(SDL_Renderer * renderer)
 {
 	// Include base drawing functionality
+	
 	
 	DrawResource(renderer);
 	// Custom drawing afterwards occus here
