@@ -81,7 +81,7 @@ int checkNeighbours(vector<shared_ptr<Room>> maze, shared_ptr<Room> r) {
   return nxt;
 }
 
-enum RoomSide {TopSide = 1, RightSide = 2, BottomSide = 3, LeftSize = 4};
+enum RoomSide {TopSide = 1, RightSide = 2, BottomSide = 3, LeftSide = 4};
 
 int main(int argc, char *args[])
 {	
@@ -94,43 +94,40 @@ int main(int argc, char *args[])
 
 	srand(time(0));
 
-	auto screenWidth=800;
-	auto screenHeight=600;	
+	auto screenWidth = 800;
+	auto screenHeight = 600;	
 	auto roomWidth = 25;
 	auto maxRows = screenWidth/roomWidth;
 	auto maxColumns = screenHeight/roomWidth;
 	
-	 vector<shared_ptr<Room>> mazeGrid;
-	 stack<shared_ptr<Room>> roomStack;
+	vector<shared_ptr<Room>> mazeGrid;
+	stack<shared_ptr<Room>> roomStack;
 
+	/* Generate Rooms for the Maze */
 	for(int y = 0; y < maxColumns; y++)
 	{
 		for(int x = 0; x < maxRows; x++)
 		{
-			auto gameObject = shared_ptr<Room>(new Room(x*roomWidth, y*roomWidth, roomWidth));			
+			auto gameObject = shared_ptr<Room>(new Room(x * roomWidth, y * roomWidth, roomWidth));			
 			mazeGrid.push_back(gameObject);			
 		}
 	}
 
 	auto totalRooms = mazeGrid.size();	
 	
+	/* Determine which faces/edges can be removed, based on the bounds of the grid i.e within rows x cols of board */
 	for(int i = 0; i < totalRooms; i++)
-	{
-		auto currentRoom = mazeGrid[i];
+	{		
 		auto nextIndex = i + 1;
 		auto prevIndex = i - 1;
 
 		if(nextIndex >= totalRooms)
 			break;
-
-		auto nextRoom = mazeGrid[nextIndex];
-		auto row = abs(i / maxColumns);		
-		auto lastCol = (row+1 * maxColumns)-1;
-		auto col = maxColumns - (lastCol-i);
-
-		bool withinRowsRange = row >= 0 && i <= maxRows;
-		bool withinColsRange = i >= 0 && i <= maxColumns-1;
 		
+		auto thisRow = abs(i / maxColumns);		
+		auto lastColumn = (thisRow+1 * maxColumns)-1;
+		auto thisColumn = maxColumns - (lastColumn-i);
+			
 		int roomAboveIndex = i - maxColumns;
 		int roomBelowIndex = i + maxColumns;
 		int roomLeftIndex = i - 1;
@@ -138,38 +135,40 @@ int main(int argc, char *args[])
 
 		bool canRemoveAbove = roomAboveIndex >= 0;
 		bool canRemoveBelow = roomBelowIndex < totalRooms; 
-		bool canRemoveLeft = col-1 >= 1;
-		bool canRemoveRight = col+1 <= maxColumns;
+		bool canRemoveLeft = thisColumn-1 >= 1;
+		bool canRemoveRight = thisColumn+1 <= maxColumns;
 
 		vector<int> removableSides;
-				
+		auto currentRoom = mazeGrid[i];
+		auto nextRoom = mazeGrid[nextIndex];
+
 		if(canRemoveAbove && currentRoom->IsWalled(TopSide) && mazeGrid[roomAboveIndex]->IsWalled(BottomSide))
 			removableSides.push_back(TopSide);
 		if(canRemoveBelow  && currentRoom->IsWalled(BottomSide) && mazeGrid[roomBelowIndex]->IsWalled(TopSide))
 			removableSides.push_back(BottomSide);
-		if(canRemoveLeft  && currentRoom->IsWalled(LeftSize) && mazeGrid[roomLeftIndex]->IsWalled(RightSide))
-			removableSides.push_back(LeftSize);
-		if(canRemoveRight  && currentRoom->IsWalled(RightSide) && mazeGrid[roomRightIndex]->IsWalled(LeftSize))
+		if(canRemoveLeft  && currentRoom->IsWalled(LeftSide) && mazeGrid[roomLeftIndex]->IsWalled(RightSide))
+			removableSides.push_back(LeftSide);
+		if(canRemoveRight  && currentRoom->IsWalled(RightSide) && mazeGrid[roomRightIndex]->IsWalled(LeftSide))
 			removableSides.push_back(RightSide);
 				
 		int randSideIndex = rand() % removableSides.size(); // Choose a random element wall to remove from possible choices
 		
 		switch(removableSides[randSideIndex])
 		{
-		case 1:
+		case TopSide:
 			currentRoom->removeWall(TopSide);
 			nextRoom->removeWall(BottomSide);
 			continue;
-		case 2:
+		case RightSide:
 			currentRoom->removeWall(RightSide);
-			nextRoom->removeWall(LeftSize);
+			nextRoom->removeWall(LeftSide);
 			continue;
-		case 3:
+		case BottomSide:
 			currentRoom->removeWall(BottomSide);
 			nextRoom->removeWall(TopSide);
 			continue;
-		case 4:
-			currentRoom->removeWall(LeftSize);				
+		case LeftSide:
+			currentRoom->removeWall(LeftSide);				
 			auto prev = mazeGrid[prevIndex];
 			prev->removeWall(RightSide);
 			continue;
@@ -183,8 +182,7 @@ int main(int argc, char *args[])
 		gameObject->SubScribeToEvent(PlayerMovedEventType);
 		gameObject->RaiseEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&gameObject)));		
 	}
-
-	// Add main player to scene (last layer)
+	
 	auto playerWidth = roomWidth / 2;	
 	auto playerDetails = new PlayerComponent("PlayerDetails", 0, 0, playerWidth, playerWidth);
 	std::shared_ptr<GameObject> player = std::shared_ptr<GameObject>(new Room(playerDetails->x,playerDetails->y, playerDetails->w, true));	
@@ -192,8 +190,6 @@ int main(int argc, char *args[])
 	player->AddComponent(shared_ptr<Component>(playerDetails));
 	player->RaiseEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&player)));
 	player->SubScribeToEvent(PositionChangeEventType);
-	
-	
 	
 
 	// Process events, render and update

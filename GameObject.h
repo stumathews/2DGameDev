@@ -108,6 +108,6 @@ private:
 	map<string, shared_ptr<Component>> m_Components;
 	SDL_Rect mBounds = {};	
 	SDL_Color m_ColorKey = {};
-	int moveInterval = 5; // move by intervals of 10 pixels
+	int moveInterval = 10; // move by intervals of 10 pixels
 };
 
