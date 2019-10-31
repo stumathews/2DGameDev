@@ -18,6 +18,7 @@
 #include "Room.h"
 #include <stack>
 #include <time.h>
+#include "PlayerComponent.h"
 
 using namespace std;
 
@@ -176,25 +177,23 @@ int main(int argc, char *args[])
 		
 	}
 	
-	/* Queue each generated game object to be added to the current scene */
-	for(auto gameObject : mazeGrid)
+	for(auto object : mazeGrid)
 	{
-		std::shared_ptr<GameObject> cpe = std::dynamic_pointer_cast<Room>(gameObject);
-		auto event = std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&cpe));
-		
-		EventManager::GetInstance().RegisterEvent(event);
+		std::shared_ptr<GameObject> gameObject = std::dynamic_pointer_cast<Room>(object);		
+		gameObject->SubScribeToEvent(PlayerMovedEventType);
+		gameObject->RaiseEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&gameObject)));		
 	}
 
-	// Main player
-	auto playerWidth = roomWidth / 2;
-	std::shared_ptr<GameObject> player = std::shared_ptr<GameObject>(new Room(0,0, playerWidth, true));	
+	// Add main player to scene (last layer)
+	auto playerWidth = roomWidth / 2;	
+	auto playerDetails = new PlayerComponent("PlayerDetails", 0, 0, playerWidth, playerWidth);
+	std::shared_ptr<GameObject> player = std::shared_ptr<GameObject>(new Room(playerDetails->x,playerDetails->y, playerDetails->w, true));	
 	
-	EventManager::GetInstance().RegisterEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&player)));
-		
+	player->AddComponent(shared_ptr<Component>(playerDetails));
+	player->RaiseEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&player)));
 	player->SubScribeToEvent(PositionChangeEventType);
-
-
-
+	
+	
 	
 
 	// Process events, render and update

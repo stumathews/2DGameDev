@@ -9,6 +9,8 @@
 #include "GraphicsManager.h"
 #include "EventSubscriber.h"
 #include "EventManager.h"
+#include "Component.h"
+#include <map>
 
 extern Mix_Chunk *gScratch;
 extern Mix_Chunk *gHigh;
@@ -29,7 +31,7 @@ public:
 		m_Visible(true), 
 		m_ColourKeyEnabled(false), 
 		m_xPos(0), 
-		m_yPos(0) {}
+		m_yPos(0), m_DoMoveLogic(true) {}
 
 	GameObject(int m_xPos, int m_yPos): 
 		m_xPos(m_xPos),
@@ -43,6 +45,7 @@ public:
 		m_ColourKeyEnabled = false;
 	}
 
+	bool m_DoMoveLogic = true;
 	bool m_Visible;
 	bool m_ColourKeyEnabled = false;
 	int m_xPos;
@@ -51,6 +54,15 @@ public:
 	void SubScribeToEvent(EventType type) 
 	{ 
 		EventManager::GetInstance().SubscribeToEvent(type, this);
+	}
+
+	void RaiseEvent(Event event)
+	{		
+		EventManager::GetInstance().RegisterEvent(std::shared_ptr<Event>(&event));
+	}
+	void RaiseEvent(shared_ptr<Event> event)
+	{		
+		EventManager::GetInstance().RegisterEvent(event);
 	}
 
 	shared_ptr<GraphicsResource> GetResource() { return m_GraphicsResource; }
@@ -79,12 +91,21 @@ public:
 		m_ColorKey.b = b;
 	}
 
-	
+	void AddComponent(shared_ptr<Component> component)
+	{		
+		m_Components[component->GetName()] = component;
+	}
+
+	shared_ptr<Component> FindComponent(string name)
+	{
+		return m_Components[name];
+	}
 	
 private:
 	bool isTravelingLeft;
 	int red, blue, green;
 	shared_ptr<GraphicsResource> m_GraphicsResource; // can be shared by other actors
+	map<string, shared_ptr<Component>> m_Components;
 	SDL_Rect mBounds = {};	
 	SDL_Color m_ColorKey = {};
 	int moveInterval = 5; // move by intervals of 10 pixels

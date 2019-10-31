@@ -9,16 +9,16 @@ void GameObject::ProcessEvent(std::shared_ptr<Event> evt)
 	if(evt->m_eventType == PositionChangeEventType)
 	{
 		auto event = std::dynamic_pointer_cast<PositionChangeEvent>(evt);
-		if(event->m_direction == Up)					
+		if(event->m_direction == Up && m_DoMoveLogic)					
 			MoveUp();			
 		
-		if(event->m_direction == Down)
+		if(event->m_direction == Down && m_DoMoveLogic)
 			MoveDown();			
 		
-		if(event->m_direction == Left)
+		if(event->m_direction == Left && m_DoMoveLogic)
 			MoveLeft();			
 		
-		if(event->m_direction == Right)
+		if(event->m_direction == Right && m_DoMoveLogic)
 			MoveRight();	
 
 		// On move draw the entire screen again

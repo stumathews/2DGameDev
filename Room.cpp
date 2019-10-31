@@ -1,5 +1,6 @@
 #include "Room.h"
 #include <SDL.h>
+#include "PlayerMovedEvent.h"
 using namespace std;
 
 Room::Room(int x, int y, int rw, bool fill) : fill(fill)
@@ -13,25 +14,6 @@ Room::Room(int x, int y, int rw, bool fill) : fill(fill)
   walls[2] = true;
   walls[3] = true;
   visited = false;
-}
-
-void Room::removeWalls(shared_ptr<Room> &r) {
-  if (this->m_xPos - r->m_xPos == -1) {
-    this->removeWall(1);
-    r->removeWall(3);
-  } 
-  if (this->m_xPos - r->m_xPos == 1) {
-    this->removeWall(3);
-    r->removeWall(1);
-  } 
-  if (this->m_yPos - r->m_yPos == -1) {
-    this->removeWall(2);
-    r->removeWall(0);
-  } 
-  if (this->m_yPos - r->m_yPos == 1) {
-      this->removeWall(0);
-      r->removeWall(2);
-  } 
 }
 
 void Room::show(SDL_Renderer* renderer) 
@@ -64,7 +46,7 @@ void Room::show(SDL_Renderer* renderer)
 	 rect.y = this->m_yPos;
 	 rect.w = roomWidth;
 	 rect.h = roomWidth;
-
+	 
 	  SDL_RenderFillRect(renderer, &rect);
   }
  
@@ -103,6 +85,33 @@ bool Room::isVisited() {
   return this->visited;
 }
 
+
+void Room::ProcessEvent(std::shared_ptr<Event> event)
+{	
+	auto playerComponent = FindComponent("PlayerDetails");
+	auto arePlayer = playerComponent != NULL;
+	if(arePlayer)
+	{
+		auto player = static_pointer_cast<PlayerComponent>(playerComponent);
+		player->x = getX();
+		player->y = getY();
+		auto playerMovedEvent = new PlayerMovedEvent(player);
+		auto event = shared_ptr<PlayerMovedEvent>(playerMovedEvent);
+		RaiseEvent(event);
+	}
+
+	if(event->m_eventType == PlayerMovedEventType)
+	{
+		std::shared_ptr<PlayerMovedEvent> cpe = std::static_pointer_cast<PlayerMovedEvent>(event);
+		SDL_Rect me { this->getX(), this->getY(), this->roomWidth, this->roomWidth };
+		SDL_Rect player { cpe->GetPlayerComponent()->x, cpe->GetPlayerComponent()->y, cpe->GetPlayerComponent()->w, cpe->GetPlayerComponent()->h };
+		SDL_Rect result;
+		fill = SDL_IntersectRect(&me, &player, &result);
+	}
+
+	GameObject::ProcessEvent(event);
+}
+
 void Room::VDraw(SDL_Renderer* renderer)
 {	
 	show(renderer);
@@ -111,3 +120,6 @@ void Room::VDraw(SDL_Renderer* renderer)
 void Room::VDoLogic()
 {
 }
+
+
+

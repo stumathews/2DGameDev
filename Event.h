@@ -1,7 +1,7 @@
 #pragma once
 #include <map>
 
-enum EventType { PositionChangeEventType, LevelChangedEventType, DoLogicUpdateEventType, AddGameObjectToCurrentScene };
+enum EventType { PositionChangeEventType, LevelChangedEventType, DoLogicUpdateEventType, AddGameObjectToCurrentScene, PlayerMovedEventType };
 
 
 class Event

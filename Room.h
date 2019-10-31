@@ -9,8 +9,7 @@ class Room : public GameObject {
     bool walls[4];
     bool visited;
   public: 
-    Room(int m_xPos, int m_yPos, int rw, bool fill = false);
-    void removeWalls(shared_ptr<Room> &r);
+    Room(int m_xPos, int m_yPos, int rw, bool fill = false);    
     void removeWall(int wall);
     void show(SDL_Renderer* renderer);    
     void printWalls();
@@ -23,6 +22,7 @@ class Room : public GameObject {
 	bool fill;
 
 	// Inherited via GameObject
+	virtual void ProcessEvent(std::shared_ptr<Event> event);
 	virtual void VDraw(SDL_Renderer* renderer) override;
 	virtual void VDoLogic() override;
 };

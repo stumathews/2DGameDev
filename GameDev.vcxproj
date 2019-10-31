@@ -23,6 +23,7 @@
     <ClCompile Include="AnimatedActor.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="AudioResource.cpp" />
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="DoLogicUpdateEvent.cpp" />
     <ClCompile Include="Drawing.cpp" />
@@ -34,6 +35,8 @@
     <ClCompile Include="GraphicsResource.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh3D.cpp" />
+    <ClCompile Include="PlayerComponent.cpp" />
+    <ClCompile Include="PlayerMovedEvent.cpp" />
     <ClCompile Include="PositionChangeEvent.cpp" />
     <ClCompile Include="RenderManager3D.cpp" />
     <ClCompile Include="Resource.cpp" />
@@ -51,6 +54,7 @@
     <ClInclude Include="AnimatedActor.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="AudioResource.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="COMUtils.h" />
@@ -65,6 +69,8 @@
     <ClInclude Include="GraphicsResource.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Mesh3D.h" />
+    <ClInclude Include="PlayerComponent.h" />
+    <ClInclude Include="PlayerMovedEvent.h" />
     <ClInclude Include="PositionChangeEvent.h" />
     <ClInclude Include="RenderManager3D.h" />
     <ClInclude Include="Resource.h" />

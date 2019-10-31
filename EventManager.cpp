@@ -22,8 +22,11 @@ void EventManager::ProcessEvents()
 	
 	for(auto eventIterator = m_events.begin(); eventIterator != m_events.end();eventIterator++) {
 		for(auto subscriber : m_EventSubscribers[(*eventIterator)->m_eventType]) {
+			
 			// Call subscriber's ProcessEvent method
-			subscriber->ProcessEvent(*eventIterator);			
+			auto event = *eventIterator;
+			subscriber->ProcessEvent(event);
+			
 		}		
 	}
 	m_events.clear();
