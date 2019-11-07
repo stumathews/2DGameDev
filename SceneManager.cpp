@@ -177,7 +177,10 @@ bool CurrentLevelManager::LoadScene(std::string filename)
 							for(auto objectNode = data->FirstChild(); objectNode; objectNode = objectNode->NextSibling())
 							{						
 								// Ok what type of object is that - construct it using the game object factory!
-								shared_ptr<GameObject>  gameObject = GameObjectFactory::GetInstance().BuildGameObject(objectNode->ToElement());
+								auto object = objectNode->ToElement();
+								if(object == NULL)
+									continue;
+								shared_ptr<GameObject>  gameObject = GameObjectFactory::GetInstance().BuildGameObject(object);
 								
 								layer->m_objects.push_back(gameObject);	
 

@@ -4,7 +4,7 @@
 #include "Sprite.h"
 #include  "TypeAliases.h"
 #include "GameObject.h"
-#include "Room.h"
+#include "Square.h"
 using namespace tinyxml2;
 
 /*
@@ -99,7 +99,7 @@ std::shared_ptr<GameObject>& GameObjectFactory::InitGameObject(std::shared_ptr<G
 	if(resource == NULL)
 	{ 
 		auto width = 50;
-		gameObject = shared_ptr<GameObject>(new Room(m_xPos, m_yPos, width));
+		gameObject = shared_ptr<GameObject>(new Square(m_xPos, m_yPos, width));
 		gameObject->m_Visible = true;
 		return gameObject;		
 	}

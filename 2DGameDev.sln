@@ -5,94 +5,6 @@ VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "2DGameDev", "GameDev.vcxproj", "{A335C1BA-CFDA-41FD-A0E3-307EBDF715CC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Game", "Game", "{CFF626B5-2895-4448-9AD4-EC208A14BBA7}"
-	ProjectSection(SolutionItems) = preProject
-		GameStructure.cpp = GameStructure.cpp
-		main.cpp = main.cpp
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scene", "Scene", "{0BC4A6FF-6AD7-4162-84F9-6BEE7DE4E80D}"
-	ProjectSection(SolutionItems) = preProject
-		Layer.cpp = Layer.cpp
-		Layer.h = Layer.h
-		SceneChangedEvent.cpp = SceneChangedEvent.cpp
-		SceneChangedEvent.h = SceneChangedEvent.h
-		SceneItem.cpp = SceneItem.cpp
-		SceneItem.h = SceneItem.h
-		SceneManager.cpp = SceneManager.cpp
-		SceneManager.h = SceneManager.h
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GameObjects", "GameObjects", "{BB599172-BC04-4FAF-A2BB-F7D18AFA2E4B}"
-	ProjectSection(SolutionItems) = preProject
-		Actor.cpp = Actor.cpp
-		Actor.h = Actor.h
-		AnimatedActor.cpp = AnimatedActor.cpp
-		AnimatedActor.h = AnimatedActor.h
-		Ball.cpp = Ball.cpp
-		Ball.h = Ball.h
-		GameObjectFactory.cpp = GameObjectFactory.cpp
-		GameObjectFactory.h = GameObjectFactory.h
-		Sprite.cpp = Sprite.cpp
-		Sprite.h = Sprite.h
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Events", "Events", "{06AA8245-E123-4990-B617-4E150035A137}"
-	ProjectSection(SolutionItems) = preProject
-		DoLogicUpdateEvent.cpp = DoLogicUpdateEvent.cpp
-		DoLogicUpdateEvent.h = DoLogicUpdateEvent.h
-		Event.cpp = Event.cpp
-		Event.h = Event.h
-		EventManager.cpp = EventManager.cpp
-		EventManager.h = EventManager.h
-		Events.h = Events.h
-		EventSubscriber.cpp = EventSubscriber.cpp
-		EventSubscriber.h = EventSubscriber.h
-		PositionChangeEvent.cpp = PositionChangeEvent.cpp
-		PositionChangeEvent.h = PositionChangeEvent.h
-		SceneChangedEvent.cpp = SceneChangedEvent.cpp
-		SceneChangedEvent.h = SceneChangedEvent.h
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rendering", "Rendering", "{34EB62DE-C7E1-4840-A8C3-9AAF86AAE13D}"
-	ProjectSection(SolutionItems) = preProject
-		Drawing.cpp = Drawing.cpp
-		Drawing.h = Drawing.h
-		GraphicsManager.cpp = GraphicsManager.cpp
-		GraphicsManager.h = GraphicsManager.h
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{F07B65D4-D022-4B6A-BDF6-CEF1ED7C0E04}"
-	ProjectSection(SolutionItems) = preProject
-		GraphicsResource.cpp = GraphicsResource.cpp
-		GraphicsResource.h = GraphicsResource.h
-		Resource.cpp = Resource.cpp
-		Resource.h = Resource.h
-		ResourceManager.cpp = ResourceManager.cpp
-		ResourceManager.h = ResourceManager.h
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3d", "3d", "{4EA7BD76-D644-4A82-81FD-1702E12FC2BB}"
-	ProjectSection(SolutionItems) = preProject
-		COMUtils.h = COMUtils.h
-		Mesh3D.cpp = Mesh3D.cpp
-		Mesh3D.h = Mesh3D.h
-		RenderManager3D.cpp = RenderManager3D.cpp
-		RenderManager3D.h = RenderManager3D.h
-		Sprites3D.cpp = Sprites3D.cpp
-		Sprites3D.h = Sprites3D.h
-		Texture3D.cpp = Texture3D.cpp
-		Texture3D.h = Texture3D.h
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2d", "2d", "{9BD7CCC7-1034-4F18-89DC-A766F6326B8B}"
-	ProjectSection(SolutionItems) = preProject
-		Drawing.cpp = Drawing.cpp
-		Drawing.h = Drawing.h
-		GraphicsManager.cpp = GraphicsManager.cpp
-		GraphicsManager.h = GraphicsManager.h
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -112,10 +24,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{4EA7BD76-D644-4A82-81FD-1702E12FC2BB} = {34EB62DE-C7E1-4840-A8C3-9AAF86AAE13D}
-		{9BD7CCC7-1034-4F18-89DC-A766F6326B8B} = {34EB62DE-C7E1-4840-A8C3-9AAF86AAE13D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {09EEEA8D-CADC-42F1-B023-4C6322B9FC52}

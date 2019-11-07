@@ -15,10 +15,12 @@
 #include "DoLogicUpdateEvent.h"
 #include "RenderManager3D.h"
 #include "AddGameObjectToCurrentSceneEvent.h"
-#include "Room.h"
+#include "Square.h"
 #include <stack>
 #include <time.h>
 #include "PlayerComponent.h"
+#include "Player.h"
+#include "PlayerMovedEvent.h"
 
 using namespace std;
 
@@ -45,7 +47,7 @@ void Init3dRenderManager();
 void Uninitialize();
 void SetLevel(int level);
 
-bool unvisitedCells(vector <Room> mazeGrid) {
+bool unvisitedCells(vector <Square> mazeGrid) {
   for (Uint32 i = 0; i < mazeGrid.size(); i++) {
     if (!mazeGrid[i].isVisited()) {
       return true;
@@ -56,10 +58,10 @@ bool unvisitedCells(vector <Room> mazeGrid) {
 #define ROWS 800
 #define COLUMNS 600
 
-int checkNeighbours(vector<shared_ptr<Room>> maze, shared_ptr<Room> r) {
-  int m_xPos = r->getX();
-  int m_yPos = r->getY();
-  vector <shared_ptr<Room>> neighbours;
+int checkNeighbours(vector<shared_ptr<Square>> maze, shared_ptr<Square> r) {
+  int m_xPos = r->GetX();
+  int m_yPos = r->GetY();
+  vector <shared_ptr<Square>> neighbours;
   if(m_xPos > 0 && !maze[(m_xPos - 1) * ROWS + m_yPos]->isVisited()) {
     neighbours.push_back(maze[(m_xPos - 1) * ROWS + m_yPos]);
   }
@@ -100,15 +102,15 @@ int main(int argc, char *args[])
 	auto maxRows = screenWidth/roomWidth;
 	auto maxColumns = screenHeight/roomWidth;
 	
-	vector<shared_ptr<Room>> mazeGrid;
-	stack<shared_ptr<Room>> roomStack;
+	vector<shared_ptr<Square>> mazeGrid;
+	stack<shared_ptr<Square>> roomStack;
 
 	/* Generate Rooms for the Maze */
 	for(int y = 0; y < maxColumns; y++)
 	{
 		for(int x = 0; x < maxRows; x++)
 		{
-			auto gameObject = shared_ptr<Room>(new Room(x * roomWidth, y * roomWidth, roomWidth));			
+			auto gameObject = shared_ptr<Square>(new Square(x * roomWidth, y * roomWidth, roomWidth, false, false));			
 			mazeGrid.push_back(gameObject);			
 		}
 	}
@@ -152,44 +154,53 @@ int main(int argc, char *args[])
 			removableSides.push_back(RightSide);
 				
 		int randSideIndex = rand() % removableSides.size(); // Choose a random element wall to remove from possible choices
-		
-		switch(removableSides[randSideIndex])
+		auto removeSidesRandonly = false;
+		if(removeSidesRandonly)
 		{
-		case TopSide:
-			currentRoom->removeWall(TopSide);
-			nextRoom->removeWall(BottomSide);
-			continue;
-		case RightSide:
-			currentRoom->removeWall(RightSide);
-			nextRoom->removeWall(LeftSide);
-			continue;
-		case BottomSide:
-			currentRoom->removeWall(BottomSide);
-			nextRoom->removeWall(TopSide);
-			continue;
-		case LeftSide:
-			currentRoom->removeWall(LeftSide);				
-			auto prev = mazeGrid[prevIndex];
-			prev->removeWall(RightSide);
-			continue;
+			switch(removableSides[randSideIndex])
+			{
+			case TopSide:
+				currentRoom->removeWall(TopSide);
+				nextRoom->removeWall(BottomSide);
+				continue;
+			case RightSide:
+				currentRoom->removeWall(RightSide);
+				nextRoom->removeWall(LeftSide);
+				continue;
+			case BottomSide:
+				currentRoom->removeWall(BottomSide);
+				nextRoom->removeWall(TopSide);
+				continue;
+			case LeftSide:
+				currentRoom->removeWall(LeftSide);				
+				auto prev = mazeGrid[prevIndex];
+				prev->removeWall(RightSide);
+				continue;
+			}
 		}
-		
 	}
 	
+	/* Schedule adding rooms to screen */
 	for(auto object : mazeGrid)
 	{
-		std::shared_ptr<GameObject> gameObject = std::dynamic_pointer_cast<Room>(object);		
+		std::shared_ptr<GameObject> gameObject = std::dynamic_pointer_cast<Square>(object);		
 		gameObject->SubScribeToEvent(PlayerMovedEventType);
 		gameObject->RaiseEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&gameObject)));		
 	}
 	
-	auto playerWidth = roomWidth / 2;	
-	auto playerDetails = new PlayerComponent("PlayerDetails", 0, 0, playerWidth, playerWidth);
-	std::shared_ptr<GameObject> player = std::shared_ptr<GameObject>(new Room(playerDetails->x,playerDetails->y, playerDetails->w, true));	
+	/* Schedule adding the player to the screen */
+	auto playerWidth = roomWidth / 5;	
+	auto playerDetails = shared_ptr<PlayerComponent>(new PlayerComponent("PlayerDetails", 0, 0, playerWidth, playerWidth));
+	std::shared_ptr<GameObject> player = std::shared_ptr<GameObject>(new Player(playerDetails->x, playerDetails->y, playerDetails->w));	
 	
 	player->AddComponent(shared_ptr<Component>(playerDetails));
 	player->RaiseEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&player)));
 	player->SubScribeToEvent(PositionChangeEventType);
+
+	/* Trigger the player's first move event at 0,0 */
+	
+	auto playerInitialMoveEvent = shared_ptr<Event>(new PlayerMovedEvent(playerDetails));	
+	EventManager::GetInstance().RegisterEvent(playerInitialMoveEvent);
 	
 
 	// Process events, render and update

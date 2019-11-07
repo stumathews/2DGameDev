@@ -49,7 +49,7 @@ void sense_player_input()
 	// left button was pushed and button A was pressed MEANS -> request to move character left
 	// while shooting active weapon.
 
-
+	auto beVerbose = false;
 
 	//Event handler
 	int interval = 10;
@@ -63,27 +63,32 @@ void sense_player_input()
 			switch( e.key.keysym.sym )
 			{
 				case SDLK_UP:
-					std::cout << "Player pressed up!" << std::endl;	
+					if(beVerbose)
+						std::cout << "Player pressed up!" << std::endl;	
 					EventManager::GetInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Up)));
 				break;
 
 				case SDLK_DOWN:
-					std::cout << "Player pressed down!" << std::endl;		
+					if(beVerbose)
+						std::cout << "Player pressed down!" << std::endl;		
 					EventManager::GetInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Down)));
 				break;
 
 				case SDLK_LEFT:
-					std::cout << "Player pressed left!" << std::endl;					
+					if(beVerbose)
+						std::cout << "Player pressed left!" << std::endl;					
 					EventManager::GetInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Left)));
 				break;
 
 				case SDLK_RIGHT:
-					std::cout << "Player pressed right!" << std::endl;	
+					if(beVerbose)
+						std::cout << "Player pressed right!" << std::endl;	
 					EventManager::GetInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Right)));
 				break;
 
 				case SDLK_q:
-					std::cout << "Player pressed Quit key !" << std::endl;
+					if(beVerbose)
+						std::cout << "Player pressed Quit key !" << std::endl;
 					g_pGameWorldData->bGameDone = 1;
 					break;
 				case SDLK_j:
@@ -156,10 +161,10 @@ void sense_player_input()
 
 
 				default:
-					SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+					/*SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
                          "Unkown control key",
                          "press up, down, left, right or 'q' to quit",
-                         NULL);
+                         NULL);*/
 					std::cout << "Unknown control key" << std::endl;	
 				break;
 			}

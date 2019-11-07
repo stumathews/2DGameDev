@@ -35,20 +35,23 @@
     <ClCompile Include="GraphicsResource.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh3D.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerComponent.cpp" />
     <ClCompile Include="PlayerMovedEvent.cpp" />
     <ClCompile Include="PositionChangeEvent.cpp" />
+    <ClCompile Include="RectDetails.cpp" />
     <ClCompile Include="RenderManager3D.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="Room.cpp" />
     <ClCompile Include="SceneChangedEvent.cpp" />
     <ClCompile Include="SceneItem.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Sprites3D.cpp" />
+    <ClCompile Include="Square.cpp" />
     <ClCompile Include="Texture3D.cpp" />
     <ClCompile Include="tinyxml2-master\tinyxml2.cpp" />
+    <ClCompile Include="Tuple.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedActor.h" />
@@ -69,21 +72,24 @@
     <ClInclude Include="GraphicsResource.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Mesh3D.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerComponent.h" />
     <ClInclude Include="PlayerMovedEvent.h" />
     <ClInclude Include="PositionChangeEvent.h" />
+    <ClInclude Include="RectDetails.h" />
     <ClInclude Include="RenderManager3D.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="Room.h" />
     <ClInclude Include="SceneChangedEvent.h" />
     <ClInclude Include="SceneItem.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Sprites3D.h" />
+    <ClInclude Include="Square.h" />
     <ClInclude Include="Texture3D.h" />
     <ClInclude Include="tinyxml2-master\tinyxml2.h" />
+    <ClInclude Include="Tuple.h" />
     <ClInclude Include="TypeAliases.h" />
   </ItemGroup>
   <ItemGroup>

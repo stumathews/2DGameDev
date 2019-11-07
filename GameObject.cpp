@@ -4,6 +4,7 @@
 #include "Event.h"
 #include <iostream>
 
+// hello
 void GameObject::ProcessEvent(std::shared_ptr<Event> evt)
 {
 	if(evt->m_eventType == PositionChangeEventType)
