@@ -7,7 +7,7 @@ enum EventType { PositionChangeEventType, LevelChangedEventType, DoLogicUpdateEv
 class Event
 {
 public:
-	Event(EventType type) : m_eventType(type), m_evtData(NULL){};
+	Event(EventType type) : m_eventType(type), m_evtData(NULL), eventId(-1), processed(false){}
 	~Event();
 	virtual void SetData(void* data)
 	{
@@ -15,7 +15,8 @@ public:
 	}
 	void* m_evtData;
 	EventType m_eventType;
-	
+	int eventId;
+	bool processed;
 	
 };
 

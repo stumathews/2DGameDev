@@ -15,26 +15,15 @@
 #include "SceneManager.h"
 #include "DoLogicUpdateEvent.h"
 #include "RenderManager3D.h"
-
+#include <SDL_ttf.h>
+#include "GlobalConfig.h"
 using namespace std;
-//The music that will be played
-Mix_Music *gMusic = NULL;
 
-//The sound effects that will be used
-Mix_Chunk *gScratch = NULL;
-Mix_Chunk *gHigh = NULL;
-Mix_Chunk *gMedium = NULL;
-Mix_Chunk *gLow = NULL;
 
-bool use3dRengerManager = false;
 
 int main(int argc, char * args[]);
 
-void SetLevel();
 
-void DoGameLoop(long &tickCountAtLastCall, long &newTime, int &frameTicks, int &numLoops);
-
-int Initialize(bool &retflag);
 
 // Create our global copy of the game data
 std::shared_ptr<GameWorldData> g_pGameWorldData = std::shared_ptr<GameWorldData>(new GameWorldData());
@@ -45,11 +34,12 @@ std::shared_ptr<GameWorldData> g_pGameWorldData = std::shared_ptr<GameWorldData>
  */
 void sense_player_input()
 {
+	
 	//Map controller actions to meanings for the game:
 	// left button was pushed and button A was pressed MEANS -> request to move character left
 	// while shooting active weapon.
 
-	auto beVerbose = false;
+	auto beVerbose = Singleton<GlobalConfig>::GetInstance().object.verbose;
 
 	//Event handler
 	int interval = 10;
@@ -62,24 +52,26 @@ void sense_player_input()
 		} else if( e.type == SDL_KEYDOWN ) {
 			switch( e.key.keysym.sym )
 			{
+				case SDLK_w:
 				case SDLK_UP:
 					if(beVerbose)
 						std::cout << "Player pressed up!" << std::endl;	
 					EventManager::GetInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Up)));
 				break;
-
+				case SDLK_s:
 				case SDLK_DOWN:
 					if(beVerbose)
 						std::cout << "Player pressed down!" << std::endl;		
 					EventManager::GetInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Down)));
 				break;
-
+				case SDLK_a:
 				case SDLK_LEFT:
 					if(beVerbose)
 						std::cout << "Player pressed left!" << std::endl;					
 					EventManager::GetInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Left)));
 				break;
 
+				case SDLK_d:
 				case SDLK_RIGHT:
 					if(beVerbose)
 						std::cout << "Player pressed right!" << std::endl;	
@@ -113,29 +105,29 @@ void sense_player_input()
 				break;	
 				 //Play high sound effect
                 case SDLK_1:
-                Mix_PlayChannel( -1, gHigh, 0 );
+                Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gHigh, 0 );
                 break;
                             
                 //Play medium sound effect
                 case SDLK_2:
-                Mix_PlayChannel( -1, gMedium, 0 );
+                Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gMedium, 0 );
                 break;
                             
                 //Play low sound effect
                 case SDLK_3:
-                Mix_PlayChannel( -1, gLow, 0 );
+                Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gLow, 0 );
                 break;
                             
                 //Play scratch sound effect
                 case SDLK_4:
-                Mix_PlayChannel( -1, gScratch, 0 );
+                Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gScratch, 0 );
                 break;
 				case SDLK_9:
 				//If there is no music playing
 				if( Mix_PlayingMusic() == 0 )
 				{
 					//Play the music
-					Mix_PlayMusic( gMusic, -1 );
+					Mix_PlayMusic( Singleton<GlobalConfig>::GetInstance().object.gMusic, -1 );
 				}
 				//If music is being played
 				else
@@ -570,10 +562,6 @@ void World_Presentation()
 	/* not used yet */send_audio_to_hardware(); 
 }
 
-
-
-
-
 /***
  * Render the game world (Presentation) ie represent changes in the gameworld data
  * @param percentWithinTick
@@ -581,10 +569,10 @@ void World_Presentation()
 void Draw(float percentWithinTick)
 {	
 	// Draw all objects in the current scene
-	SDLGraphicsManager::GetInstance().DrawCurrentScene(false);
+	SDLGraphicsManager::GetInstance().DrawCurrentScene(false /* updateWindowSurfaceAfterDrawing */);
 	
 	// Tick 3d Render manager
-	if(use3dRengerManager)
+	if(Singleton<GlobalConfig>::GetInstance().object.use3dRengerManager)
 		D3DRenderManager::GetInstance().update();
 
 	// Render the game work visually and sonically
@@ -604,10 +592,10 @@ void Draw(float percentWithinTick)
 * Initialize the Graphics subsystem incl. Main Window
 * Initialize the Audio subsystem
 */
-bool InitSDL()
+bool InitSDL(int screenWidth, int screenHeight)
 {
 	// Initialise SDL	
-	if(!SDLGraphicsManager::GetInstance().Initialize())
+	if(!SDLGraphicsManager::GetInstance().Initialize( screenWidth, screenHeight))
 		return false;
 
 	// Initialize SDL_mixer 
@@ -616,28 +604,42 @@ bool InitSDL()
 		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << (char*)Mix_GetError() << std::endl;
         return false;
     }
+
+	// init TTF
+
+	TTF_Init();
+
+	Singleton<GlobalConfig>::GetInstance().object.font = 
+
+	TTF_OpenFont("arial.ttf", 25);
+
 	return true;
 }
 
 void CleanupResources()
 {
-	Mix_FreeChunk( gScratch );
-    Mix_FreeChunk( gHigh );
-    Mix_FreeChunk( gMedium );
-    Mix_FreeChunk( gLow );
-    gScratch = NULL;
-    gHigh = NULL;
-    gMedium = NULL;
-    gLow = NULL;
+	Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gScratch );
+    Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gHigh );
+    Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gMedium );
+    Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gLow );
+
+    Singleton<GlobalConfig>::GetInstance().object.gScratch = NULL;
+    Singleton<GlobalConfig>::GetInstance().object.gHigh = NULL;
+    Singleton<GlobalConfig>::GetInstance().object.gMedium = NULL;
+    Singleton<GlobalConfig>::GetInstance().object.gLow = NULL;
     
     //Free the music
-    Mix_FreeMusic( gMusic );
-    gMusic = NULL;
-	
-	
+    Mix_FreeMusic( Singleton<GlobalConfig>::GetInstance().object.gMusic );
+    Singleton<GlobalConfig>::GetInstance().object.gMusic = NULL;
 
+	TTF_CloseFont(Singleton<GlobalConfig>::GetInstance().object.font);
+	Singleton<GlobalConfig>::GetInstance().object.font  = NULL;
+	
+	
+	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
+
 
 	
 }
@@ -646,39 +648,39 @@ void CleanupResources()
 bool loadMedia()
 {
 	//Load music
-    gMusic = Mix_LoadMUS( ResourceManager::GetInstance().GetResourceByName("MainTheme.wav")->m_path.c_str() );
+    Singleton<GlobalConfig>::GetInstance().object.gMusic = Mix_LoadMUS( ResourceManager::GetInstance().GetResourceByName("MainTheme.wav")->m_path.c_str() );
     
 	//Load sound effects
-    gScratch = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("scratch.wav")->m_path.c_str() );
-	gHigh = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("high.wav")->m_path.c_str() );
-	gMedium = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("medium.wav")->m_path.c_str() );
-	gLow = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("low.wav")->m_path.c_str() );
+    Singleton<GlobalConfig>::GetInstance().object.gScratch = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("scratch.wav")->m_path.c_str() );
+	Singleton<GlobalConfig>::GetInstance().object.gHigh = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("high.wav")->m_path.c_str() );
+	Singleton<GlobalConfig>::GetInstance().object.gMedium = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("medium.wav")->m_path.c_str() );
+	Singleton<GlobalConfig>::GetInstance().object.gLow = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("low.wav")->m_path.c_str() );
 
-	if( gMusic == NULL )
+	if( Singleton<GlobalConfig>::GetInstance().object.gMusic == NULL )
     {
         printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }  
     
-    if( gScratch == NULL )
+    if( Singleton<GlobalConfig>::GetInstance().object.gScratch == NULL )
     {
         printf( "Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
     
-    if( gHigh == NULL )
+    if( Singleton<GlobalConfig>::GetInstance().object.gHigh == NULL )
     {
         printf( "Failed to load high sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
     
-    if( gMedium == NULL )
+    if( Singleton<GlobalConfig>::GetInstance().object.gMedium == NULL )
     {
         printf( "Failed to load medium sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;
     }
     
-    if( gLow == NULL )
+    if( Singleton<GlobalConfig>::GetInstance().object.gLow == NULL )
     {
         printf( "Failed to load low sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
         return false;

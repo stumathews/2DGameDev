@@ -8,6 +8,7 @@
 #include "GraphicsResource.h"
 #include <iostream>
 #include <SDL.h>
+#include "EventSubscriber.h"
 using namespace std;
 
 SDLGraphicsManager::~SDLGraphicsManager()
@@ -18,6 +19,20 @@ SDLGraphicsManager::~SDLGraphicsManager()
 	
 	// get rid of window and this will also cleanup the screen surface
 	SDL_DestroyWindow(m_Window);
+}
+
+
+vector<shared_ptr<Event>> SDLGraphicsManager::ProcessEvent(std::shared_ptr<Event> evt)
+{
+	if(evt->m_eventType == PlayerMovedEventType)
+	{
+		SDL_SetRenderDrawColor(m_Renderer, 0, 0, 0, 0);
+		SDL_FillRect(m_WindowSurface, 0, 0);
+		SDL_RenderClear(SDLGraphicsManager::GetInstance().m_Renderer);
+	//	DrawCurrentScene();
+		
+	}
+	return vector<shared_ptr<Event>>();
 }
 
 SDL_Window* GetSDLWindow(const int SCREEN_WIDTH, const int SCREEN_HEIGHT, const char* title)
@@ -69,6 +84,7 @@ bool SDLGraphicsManager::Initialize(unsigned int width, unsigned int height, con
 	m_ScreenHeight = height;
 	m_ScreenWidth = width;
 
+	EventManager::GetInstance().SubscribeToEvent(PlayerMovedEventType, this);
 	
 	return true;
 }
@@ -142,11 +158,15 @@ void SDLGraphicsManager::DrawCurrentScene(bool updateWindowSurfaceAfterDrawing)
 {
 	
 	SDL_SetRenderDrawColor(m_Renderer, 0x255, 0x255, 0x55, 0xFF);
-	SDL_FillRect(m_WindowSurface, 0, 0);
+	//SDL_FillRect(m_WindowSurface, 0, 0);
+
+	//SDL_SetRenderDrawColor(SDLGraphicsManager::GetInstance().m_Renderer, 0,0,0,0);
+		
 	
 	static bool sendSurfaceToScreen = true;
 
 	// Draw objects in layers, which are ordered by z-order
+	
 	for(auto layer : CurrentLevelManager::GetInstance().m_Layers)
 	{
 		if(layer->m_Visible)
@@ -161,8 +181,9 @@ void SDLGraphicsManager::DrawCurrentScene(bool updateWindowSurfaceAfterDrawing)
 	}
 	
 	if(updateWindowSurfaceAfterDrawing)
+	{
 		SDL_UpdateWindowSurface(m_Window);
+	}
 	else
-		SDL_RenderPresent(m_Renderer);
-	
+		SDL_RenderPresent(m_Renderer);		
 }

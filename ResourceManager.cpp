@@ -53,7 +53,7 @@ void ResourceManager::LoadCurrentSceneResources(int newLevel)
 	}
 }
 
-void ResourceManager::ProcessEvent(std::shared_ptr<Event> evt)
+vector<shared_ptr<Event>> ResourceManager::ProcessEvent(const std::shared_ptr<Event> evt)
 {
 	switch(evt->m_eventType)
 	{
@@ -63,6 +63,7 @@ void ResourceManager::ProcessEvent(std::shared_ptr<Event> evt)
 			LoadCurrentSceneResources(cpe->m_Level);
 			break;
 	}
+	return vector<shared_ptr<Event>>();
 }
 
 

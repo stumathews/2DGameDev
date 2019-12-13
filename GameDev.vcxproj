@@ -39,6 +39,7 @@
     <ClCompile Include="PlayerComponent.cpp" />
     <ClCompile Include="PlayerMovedEvent.cpp" />
     <ClCompile Include="PositionChangeEvent.cpp" />
+    <ClCompile Include="RectDebugging.cpp" />
     <ClCompile Include="RectDetails.cpp" />
     <ClCompile Include="RenderManager3D.cpp" />
     <ClCompile Include="Resource.cpp" />
@@ -58,6 +59,7 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="AudioResource.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="constants.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="COMUtils.h" />
@@ -68,6 +70,7 @@
     <ClInclude Include="Events.h" />
     <ClInclude Include="EventSubscriber.h" />
     <ClInclude Include="GameObjectFactory.h" />
+    <ClInclude Include="GlobalConfig.h" />
     <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="GraphicsResource.h" />
     <ClInclude Include="Layer.h" />
@@ -76,6 +79,7 @@
     <ClInclude Include="PlayerComponent.h" />
     <ClInclude Include="PlayerMovedEvent.h" />
     <ClInclude Include="PositionChangeEvent.h" />
+    <ClInclude Include="RectDebugging.h" />
     <ClInclude Include="RectDetails.h" />
     <ClInclude Include="RenderManager3D.h" />
     <ClInclude Include="Resource.h" />
@@ -165,11 +169,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\SDL\SDL2\include;C:\SDL\SDL2_image-2.0.4\include;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\SDL\SDL2\include;C:\SDL\SDL2_image-2.0.4\include;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;C:\SDL\SDL2_ttf-2.0.15\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Winmm.lib;SDL2_mixer.lib;d3d10.lib;d3dx10.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\SDL\SDL2\lib\x86;C:\SDL\SDL2_image-2.0.4\lib\x86;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Winmm.lib;SDL2_mixer.lib;d3d10.lib;d3dx10.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\SDL\SDL2\lib\x86;C:\SDL\SDL2_image-2.0.4\lib\x86;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\x86;C:\SDL\SDL2_ttf-2.0.15\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>

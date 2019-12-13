@@ -16,7 +16,7 @@ public:
 	int getDy(){ return getAy()+w;}
 
 	void SetX(int x) { this->x = x;}
-	void SetY(int y) { this->y = w;}
+	void SetY(int y) { this->y = y;}
 	void SetH(int h) { this->h = h;}
 	void SetW(int w) {this->w = w; }
 

@@ -10,6 +10,7 @@
 #include "SceneChangedEvent.h"
 #include "GameObjectFactory.h"
 #include "AddGameObjectToCurrentSceneEvent.h"
+#include "constants.h"
 using namespace tinyxml2;
 
 void CurrentLevelManager::Initialize()
@@ -26,7 +27,7 @@ CurrentLevelManager::CurrentLevelManager()
 		m_Initialized = true;
 };
 
-void CurrentLevelManager::ProcessEvent(std::shared_ptr<Event> evt)
+vector<shared_ptr<Event>> CurrentLevelManager::ProcessEvent(const std::shared_ptr<Event> evt)
 {
 	// As a Scene/Level manager I'll load the scene/level's resources when I get a level/scene event
 	if(evt->m_eventType == LevelChangedEventType)
@@ -50,9 +51,13 @@ void CurrentLevelManager::ProcessEvent(std::shared_ptr<Event> evt)
 	}
 	if(evt->m_eventType == AddGameObjectToCurrentScene)
 	{
-		std::shared_ptr<AddGameObjectToCurrentSceneEvent> cpe = std::dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(evt);
-		m_Layers.back()->m_objects.push_back(cpe->GetGameObject());	
+		auto cpe = std::dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(evt);
+		auto gameObject = cpe->GetGameObject();
+		// add to last layer of the scene
+		m_Layers.back()->m_objects.push_back(gameObject);	
 	}
+
+	return vector<shared_ptr<Event>>();
 }
 
 shared_ptr<Layer> CurrentLevelManager::addLayer(std::string name)

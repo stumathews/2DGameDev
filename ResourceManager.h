@@ -37,7 +37,7 @@ class ResourceManager : IEventSubscriber
 		void LoadCurrentSceneResources(int level);
 
 		// Process an incoming event
-		void ProcessEvent(std::shared_ptr<Event> evt);
+		vector<shared_ptr<Event>> ProcessEvent(std::shared_ptr<Event> evt);
 		
 		/*
 		* Initialize the resource manager. 

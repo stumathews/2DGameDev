@@ -21,6 +21,9 @@
 #include "PlayerComponent.h"
 #include "Player.h"
 #include "PlayerMovedEvent.h"
+#include "constants.h"
+#include <SDL_ttf.h>
+#include "GlobalConfig.h"
 
 using namespace std;
 
@@ -31,7 +34,7 @@ using namespace std;
 #define MAX_LOOPS 4
 
 extern std::shared_ptr<GameWorldData> g_pGameWorldData;
-extern bool InitSDL();
+extern bool InitSDL(int screenWidth, int screenHeight);
 extern bool use3dRengerManager;
 
 // Load game audio files
@@ -42,75 +45,47 @@ extern void Draw(float);
 extern void SpareTime(long);
 extern void CleanupResources();
 void DoGameLoop();
-bool Initialize();
+bool Initialize(int w, int h);
 void Init3dRenderManager();
 void Uninitialize();
-void SetLevel(int level);
 
-bool unvisitedCells(vector <Square> mazeGrid) {
-  for (Uint32 i = 0; i < mazeGrid.size(); i++) {
-    if (!mazeGrid[i].isVisited()) {
-      return true;
-    }
-  }
-  return false;
-}
-#define ROWS 800
-#define COLUMNS 600
+const int ScreenWidth = 800;
+const int ScreenHeight = 600;
 
-int checkNeighbours(vector<shared_ptr<Square>> maze, shared_ptr<Square> r) {
-  int m_xPos = r->GetX();
-  int m_yPos = r->GetY();
-  vector <shared_ptr<Square>> neighbours;
-  if(m_xPos > 0 && !maze[(m_xPos - 1) * ROWS + m_yPos]->isVisited()) {
-    neighbours.push_back(maze[(m_xPos - 1) * ROWS + m_yPos]);
-  }
-  if( m_xPos < ROWS - 1 && !maze[(m_xPos + 1) * ROWS + m_yPos]->isVisited()) {
-    neighbours.push_back(maze[(m_xPos + 1) * ROWS + m_yPos]);
-  }
-  if(m_yPos < COLUMNS - 1 && !maze[m_xPos * ROWS + m_yPos + 1]->isVisited()) {
-    neighbours.push_back(maze[m_xPos * ROWS + m_yPos + 1]);
-  }
-  if(m_yPos > 0 && !maze[m_xPos * ROWS + m_yPos - 1]->isVisited()) {
-    neighbours.push_back(maze[m_xPos * ROWS + m_yPos - 1]);
-  }
-  if (neighbours.size() < 1) {
-    return -1;
-  }
-  
-  int randomIdx = rand() % neighbours.size();
-  int nxt = randomIdx;//neighbours[randomIdx]->getY() + neighbours[randomIdx]->getX() * ROWS;
-  return nxt;
-}
 
 enum RoomSide {TopSide = 1, RightSide = 2, BottomSide = 3, LeftSide = 4};
 
 int main(int argc, char *args[])
 {	
 	// Prepare all sub systems
-	if(!Initialize())
+	if(!Initialize(ScreenWidth, ScreenHeight))
 		return -1;
+
+	bool setInitialLevel = false;
 
 	// Trigger the first level by kicking the event manager
 	EventManager::GetInstance().RegisterEvent(std::shared_ptr<SceneChangedEvent>(new SceneChangedEvent(1)));
 
 	srand(time(0));
 
-	auto screenWidth = 800;
-	auto screenHeight = 600;	
-	auto roomWidth = 25;
-	auto maxRows = screenWidth/roomWidth;
-	auto maxColumns = screenHeight/roomWidth;
+	auto screenWidth = ScreenWidth;
+	auto screenHeight = ScreenHeight;	
+	auto squareWidth = 30;
+	auto maxRows = screenWidth/squareWidth;
+	auto maxColumns = screenHeight/squareWidth;
 	
 	vector<shared_ptr<Square>> mazeGrid;
 	stack<shared_ptr<Square>> roomStack;
 
 	/* Generate Rooms for the Maze */
+	int count = 0;
 	for(int y = 0; y < maxColumns; y++)
 	{
 		for(int x = 0; x < maxRows; x++)
 		{
-			auto gameObject = shared_ptr<Square>(new Square(x * roomWidth, y * roomWidth, roomWidth, false, false));			
+			auto supportMoveLogic = false;
+			auto gameObject = shared_ptr<Square>(new Square(x * squareWidth, y * squareWidth, squareWidth, supportMoveLogic));				
+			gameObject->SetTag(std::to_string(count++));
 			mazeGrid.push_back(gameObject);			
 		}
 	}
@@ -154,7 +129,7 @@ int main(int argc, char *args[])
 			removableSides.push_back(RightSide);
 				
 		int randSideIndex = rand() % removableSides.size(); // Choose a random element wall to remove from possible choices
-		auto removeSidesRandonly = false;
+		auto removeSidesRandonly = true;
 		if(removeSidesRandonly)
 		{
 			switch(removableSides[randSideIndex])
@@ -180,7 +155,6 @@ int main(int argc, char *args[])
 		}
 	}
 	
-	/* Schedule adding rooms to screen */
 	for(auto object : mazeGrid)
 	{
 		std::shared_ptr<GameObject> gameObject = std::dynamic_pointer_cast<Square>(object);		
@@ -189,19 +163,19 @@ int main(int argc, char *args[])
 	}
 	
 	/* Schedule adding the player to the screen */
-	auto playerWidth = roomWidth / 5;	
-	auto playerDetails = shared_ptr<PlayerComponent>(new PlayerComponent("PlayerDetails", 0, 0, playerWidth, playerWidth));
-	std::shared_ptr<GameObject> player = std::shared_ptr<GameObject>(new Player(playerDetails->x, playerDetails->y, playerDetails->w));	
-	
-	player->AddComponent(shared_ptr<Component>(playerDetails));
-	player->RaiseEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&player)));
-	player->SubScribeToEvent(PositionChangeEventType);
+	auto playerWidth = squareWidth;
+	auto playerPosX = 0;
+	auto playerPosY = 0;
+	auto playerComponent = shared_ptr<PlayerComponent>(new PlayerComponent(constants::playerComponentName, playerPosX, playerPosY, playerWidth, playerWidth));
+	auto playerObject = std::shared_ptr<GameObject>(new Player(playerComponent->x, playerComponent->y, playerComponent->w));	
 
-	/* Trigger the player's first move event at 0,0 */
+	playerObject->SetTag(constants::playerTag);	
+	playerObject->AddComponent(shared_ptr<Component>(playerComponent));
+	playerObject->SubScribeToEvent(PositionChangeEventType);
 	
-	auto playerInitialMoveEvent = shared_ptr<Event>(new PlayerMovedEvent(playerDetails));	
-	EventManager::GetInstance().RegisterEvent(playerInitialMoveEvent);
-	
+	auto addToSceneEvent = std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&playerObject));
+	addToSceneEvent->eventId = 100;	
+	playerObject->RaiseEvent(addToSceneEvent);
 
 	// Process events, render and update
 	DoGameLoop();	
@@ -262,7 +236,7 @@ void DoGameLoop()
 /* Initialize resource, level manager, and load game audio files
 *
 */
-bool Initialize()
+bool Initialize(int screenWidth, int screenHeight)
 {
 	ResourceManager::GetInstance().Initialize();	
 	CurrentLevelManager::GetInstance().Initialize();
@@ -271,7 +245,7 @@ bool Initialize()
 	g_pGameWorldData->bNetworkGame = 0;
 	g_pGameWorldData->bCanRender = true;
 	
-	if (!InitSDL())
+	if (!InitSDL(ScreenWidth, ScreenHeight))
 	{
 		std::cout << "Could not initailize SDL, aborting." << std::endl;
 		return false;
@@ -280,8 +254,7 @@ bool Initialize()
 	// Load audio game files
 	if (!loadMedia())
 		return -1;		
-
-	if(use3dRengerManager)
+	if(Singleton<GlobalConfig>::GetInstance().object.use3dRengerManager)
 		Init3dRenderManager();	
 		
 	return true;

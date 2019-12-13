@@ -11,11 +11,12 @@
 #include "EventManager.h"
 #include "Component.h"
 #include <map>
+#include "constants.h"
 
-extern Mix_Chunk *gScratch;
-extern Mix_Chunk *gHigh;
-extern Mix_Chunk *gMedium;
-extern Mix_Chunk *gLow;
+//extern Mix_Chunk *gScratch;
+//extern Mix_Chunk *gHigh;
+//extern Mix_Chunk *gMedium;
+//extern Mix_Chunk *gLow;
 
 /*
 	A game Object 
@@ -60,6 +61,7 @@ public:
 	{		
 		EventManager::GetInstance().RegisterEvent(std::shared_ptr<Event>(&event));
 	}
+
 	void RaiseEvent(shared_ptr<Event> event)
 	{		
 		EventManager::GetInstance().RegisterEvent(event);
@@ -80,7 +82,7 @@ public:
 	virtual void MoveRight() { m_xPos += moveInterval; }
 	virtual void DrawResource(SDL_Renderer* renderer);	
 
-	void ProcessEvent(std::shared_ptr<Event> event);
+	vector<shared_ptr<Event>> ProcessEvent(const std::shared_ptr<Event> event);
 	void DetectSideColission();
 	virtual ~GameObject() { }
 	
@@ -96,12 +98,16 @@ public:
 		m_Components[component->GetName()] = component;
 	}
 
+	bool isPlayer() { return FindComponent(constants::playerComponentName) != NULL; }
+
 	shared_ptr<Component> FindComponent(string name)
 	{
 		return m_Components[name];
 	}
-	
+	string GetTag() { return this->Tag;}
+	void SetTag(string tag) { this->Tag = tag;}
 private:
+	string Tag;
 	bool isTravelingLeft;
 	int red, blue, green;
 	shared_ptr<GraphicsResource> m_GraphicsResource; // can be shared by other actors

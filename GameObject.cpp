@@ -3,10 +3,12 @@
 #include <memory>
 #include "Event.h"
 #include <iostream>
+#include "GlobalConfig.h"""
 
-// hello
-void GameObject::ProcessEvent(std::shared_ptr<Event> evt)
+
+vector<shared_ptr<Event>> GameObject::ProcessEvent(const std::shared_ptr<Event> evt)
 {
+	// Change the object's position
 	if(evt->m_eventType == PositionChangeEventType)
 	{
 		auto event = std::dynamic_pointer_cast<PositionChangeEvent>(evt);
@@ -20,24 +22,22 @@ void GameObject::ProcessEvent(std::shared_ptr<Event> evt)
 			MoveLeft();			
 		
 		if(event->m_direction == Right && m_DoMoveLogic)
-			MoveRight();	
-
-		// On move draw the entire screen again
-		SDL_SetRenderDrawColor(SDLGraphicsManager::GetInstance().m_Renderer, 0,0,0,0);
-		SDL_RenderClear(SDLGraphicsManager::GetInstance().m_Renderer);
+			MoveRight();		
 	}
 
 	if(evt->m_eventType == DoLogicUpdateEventType)
 		VDoLogic();
-
+	return vector<shared_ptr<Event>>();
 }
 
 void GameObject::VDraw(SDL_Renderer * renderer)
 {
 	// Include base drawing functionality
+	// On move draw the entire screen again
+		//SDL_SetRenderDrawColor(SDLGraphicsManager::GetInstance().m_Renderer, 0,0,0,0);
+		//SDL_RenderClear(SDLGraphicsManager::GetInstance().m_Renderer);
 	
-	
-	DrawResource(renderer);
+	//DrawResource(renderer);
 	// Custom drawing afterwards occus here
 }
 
@@ -47,14 +47,14 @@ void GameObject::DetectSideColission()
 		{
 			if (m_xPos == 0) {
 				isTravelingLeft = false;
-				Mix_PlayChannel(-1, gLow, 0);
+				Mix_PlayChannel(-1, Singleton<GlobalConfig>::GetInstance().object.gLow, 0);
 			}
 		}
 		else
 		{
 			if (m_xPos == SDLGraphicsManager::GetInstance().GetScreenWidth())
 			{
-				Mix_PlayChannel(-1, gLow, 0);
+				Mix_PlayChannel(-1, Singleton<GlobalConfig>::GetInstance().object.gLow, 0);
 				isTravelingLeft = true;
 			}
 		}

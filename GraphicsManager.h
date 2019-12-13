@@ -3,7 +3,7 @@
 #include "GraphicsResource.h"
 #include "tinyxml2.h"
 #include <memory>
-
+#include "EventSubscriber.h"
 #include "SDL.h"
 
 class GameObject;
@@ -11,7 +11,7 @@ class GameObject;
 // Manages the graphics in the project,
 // specifically graphic-enabled objects like Actors and AnimatedActors.
 
-class SDLGraphicsManager
+class SDLGraphicsManager : public IEventSubscriber
 {
 public:
 	 static SDLGraphicsManager& GetInstance()
@@ -52,6 +52,10 @@ private:
 	~SDLGraphicsManager();
 	unsigned int m_ScreenWidth;
 	unsigned int m_ScreenHeight;
+
+
+	// Inherited via IEventSubscriber
+	virtual vector<shared_ptr<Event>> ProcessEvent(std::shared_ptr<Event> evt) override;
 
 };
 

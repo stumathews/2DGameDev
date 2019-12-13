@@ -7,45 +7,29 @@
 
 class Square : public GameObject 
 {
-  private: 
-    int roomWidth;
+private: 
+    int width;
     bool walls[4];
-    bool visited;
 	RectDetails* rectDetails;
-  public: 
-    Square(int m_xPos, int m_yPos, int rw, bool fill = false, bool supportMoveLogic = true);  
-    void removeWall(int wall);
-    void show(SDL_Renderer* renderer);    
-    void printWalls();
-    void visit();
-    int getPositionInVector(int size);
-    int GetX();
-    int GetY();
-	inline int GetW() {return roomWidth;}
-	inline int GetH() {return roomWidth;}
-    bool isVisited();
-	bool IsWalled(int wall) { return walls[wall-1];  }
-	SDL_Rect playerBounds;
-	SDL_Rect roomBounds;
-	
-	inline RectDetails* GetRectDetails() 
-	{ 
-		if(m_DoMoveLogic) // We we support move logic, we'll have to update the rect with the latest values as these have changed with moves
-			this->rectDetails->Init(GetX(), GetY(), GetW(), GetH());
-		
-		return this->rectDetails; 
-	}
-	bool touchedTop, touchedRight, touchedBottom, touchedLeft;
-	SDL_Rect topRect, bottomRect, leftRect, rightRect = {-1,-1,-1,-1};
-	
+protected:
+	RectDetails* GetRectDetails(){ return rectDetails; };
 	int fill;
+	SDL_Rect playerBounds;
+	SDL_Rect myBounds;
+public: 
+	Square(int m_xPos, int m_yPos, int rw, bool fill = false, bool supportMoveLogic = true);    
+    
+    inline int GetX() { return this->m_xPos; }
+	inline int GetY() { return this->m_yPos; }
+	inline int GetW() { return width; }
+	inline int GetH() { return width; }
 
-	// Inherited via GameObject
-	virtual void ProcessEvent(std::shared_ptr<Event> event);
-	virtual void VDraw(SDL_Renderer* renderer) override;
-	virtual void VDoLogic() override;
-	virtual ~Square()
-	{
-		delete rectDetails;
-	}
+	bool IsWalled(int wall) { return walls[wall-1]; }	
+	void show(SDL_Renderer* renderer);    
+	inline void removeWall(int wall) { this->walls[wall-1] = false; }
+
+	virtual vector<shared_ptr<Event>> ProcessEvent(std::shared_ptr<Event> event);
+	virtual void VDraw(SDL_Renderer* renderer) override { show(renderer);};
+	inline virtual ~Square() { delete rectDetails;	}
+	virtual void VDoLogic(){}
 };

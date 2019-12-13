@@ -1,15 +1,21 @@
 #include "Player.h"
 #include "PlayerComponent.h"
 #include "PlayerMovedEvent.h"
+#include "constants.h"
 
-void Player::ProcessEvent(std::shared_ptr<Event> event)
-{
-	GameObject::ProcessEvent(event); // This will handle basic events like responding to position changed events and updating player's x,y accordingly
+vector<shared_ptr<Event>> Player::ProcessEvent(const std::shared_ptr<Event> event)
+{	
+	// Process GameObject events
+	auto createdEvents(GameObject::ProcessEvent(event));
+
+	// Process Square events
+	for(auto e : Square::ProcessEvent(event)) 
+		createdEvents.push_back(e);
 	
-	/* Tell people that we've moved */
+	// Process Player events
 	if(event->m_eventType == PositionChangeEventType)
 	{
-		auto playerComponent = static_pointer_cast<PlayerComponent>(FindComponent("PlayerDetails"));		
+		auto playerComponent = static_pointer_cast<PlayerComponent>(FindComponent(constants::playerComponentName));		
 		auto playerMovedEvent = shared_ptr<PlayerMovedEvent>(new PlayerMovedEvent(playerComponent));
 
 		playerComponent->x = GetX();
@@ -17,16 +23,7 @@ void Player::ProcessEvent(std::shared_ptr<Event> event)
 		playerComponent->w = GetW();
 		playerComponent->h = GetH();
 
-		RaiseEvent(playerMovedEvent);		
+		createdEvents.push_back(playerMovedEvent);	
 	}
-}
-
-void Player::VDraw(SDL_Renderer* renderer)
-{
-	Square::VDraw(renderer);
-}
-
-void Player::VDoLogic()
-{
-	
+	return createdEvents;
 }
