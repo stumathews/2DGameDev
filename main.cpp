@@ -24,31 +24,23 @@
 #include "constants.h"
 #include <SDL_ttf.h>
 #include "GlobalConfig.h"
+#include "GameStructure.h"
+#include "Single.h"
 
 using namespace std;
+
+typedef Singleton<GameStructure> MyGameStructure;
 
 // 20 times a second = 50 milliseconds
 // 1 second is 20*50 = 1000 milliseconds
 
-#define TICK_TIME 50
-#define MAX_LOOPS 4
+const int TickTime = 50;
+const int MaxLoops = 4;
 
-extern std::shared_ptr<GameWorldData> g_pGameWorldData;
-extern bool InitSDL(int screenWidth, int screenHeight);
-extern bool use3dRengerManager;
-
-// Load game audio files
-extern bool loadMedia();
-extern long ticks();
-extern void Update();
-extern void Draw(float);
-extern void SpareTime(long);
-extern void CleanupResources();
-void DoGameLoop();
 bool Initialize(int w, int h);
 void Init3dRenderManager();
 void Uninitialize();
-
+void DoGameLoop();
 const int ScreenWidth = 800;
 const int ScreenHeight = 600;
 
@@ -188,9 +180,11 @@ int main(int argc, char *args[])
 * Frees surfaces audio files etc
 */
 void Uninitialize()
-{
-	CleanupResources();
+{	
+	Single<GameStructure>().CleanupResources();
 }
+
+
 
 /* Main game loop
 * Separates Rendering, event processing and logic updates
@@ -200,11 +194,11 @@ void DoGameLoop()
 	int frameTicks; // Number of ticks in the update call	
 	int numLoops; // Number of loops ??
 	long tickCountAtLastCall, newTime;
-	tickCountAtLastCall = ticks();
+	tickCountAtLastCall = Single<GameStructure>().ticks();
 
 	// MAIN GAME LOOP!!
-	while (!g_pGameWorldData->bGameDone) {
-		newTime = ticks();
+	while (!Single<GameStructure>().g_pGameWorldData->bGameDone) {
+		newTime = Single<GameStructure>().ticks();
 		frameTicks = 0;
 		numLoops = 0;
 		long ticksSince = newTime - tickCountAtLastCall;
@@ -212,22 +206,22 @@ void DoGameLoop()
 		// New frame, happens consistently every 50 milliseconds. Ie 20 times a second.
 		// 20 times a second = 50 milliseconds
 		// 1 second is 20*50 = 1000 milliseconds
-		while ((ticksSince) > TICK_TIME && numLoops < MAX_LOOPS)
+		while ((ticksSince) > TickTime && numLoops < MaxLoops)
 		{
-			Update(); // logic/update			
-			tickCountAtLastCall += TICK_TIME; // tickCountAtLastCall is now been +TICK_TIME more since the last time. update it
-			frameTicks += TICK_TIME; numLoops++;
+			Single<GameStructure>().Update(); // logic/update			
+			tickCountAtLastCall += TickTime; // tickCountAtLastCall is now been +TickTime more since the last time. update it
+			frameTicks += TickTime; numLoops++;
 			ticksSince = newTime - tickCountAtLastCall;
 		}
 
-		SpareTime(frameTicks); // handle player input, general housekeeping (Event Manager processing)
+		Single<GameStructure>().SpareTime(frameTicks); // handle player input, general housekeeping (Event Manager processing)
 
-		if (!g_pGameWorldData->bNetworkGame && (ticksSince > TICK_TIME)) {
-			tickCountAtLastCall = newTime - TICK_TIME;
+		if (!Single<GameStructure>().g_pGameWorldData->bNetworkGame && (ticksSince > TickTime)) {
+			tickCountAtLastCall = newTime - TickTime;
 		}
-		else if (g_pGameWorldData->bCanRender) {
-			auto percentOutsideFrame = (float)(ticksSince / TICK_TIME) * 100;
-			Draw(percentOutsideFrame);
+		else if (Single<GameStructure>().g_pGameWorldData->bCanRender) {
+			auto percentOutsideFrame = (float)(ticksSince / TickTime) * 100;
+			Single<GameStructure>().Draw(percentOutsideFrame);
 		}
 	}
 	std::cout << "Game done" << std::endl;
@@ -241,18 +235,18 @@ bool Initialize(int screenWidth, int screenHeight)
 	ResourceManager::GetInstance().Initialize();	
 	CurrentLevelManager::GetInstance().Initialize();
 	
-	g_pGameWorldData->bGameDone = 0;
-	g_pGameWorldData->bNetworkGame = 0;
-	g_pGameWorldData->bCanRender = true;
 	
-	if (!InitSDL(ScreenWidth, ScreenHeight))
+
+	//Single<GameStructure>().InitGameWorldData();
+	
+	if (!Single<GameStructure>().InitSDL(ScreenWidth, ScreenHeight))
 	{
 		std::cout << "Could not initailize SDL, aborting." << std::endl;
 		return false;
 	}
 
 	// Load audio game files
-	if (!loadMedia())
+	if (!Single<GameStructure>().loadMedia())
 		return -1;		
 	if(Singleton<GlobalConfig>::GetInstance().object.use3dRengerManager)
 		Init3dRenderManager();	
