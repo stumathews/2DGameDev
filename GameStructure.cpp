@@ -4,10 +4,7 @@
 #include <Windows.h>
 #include <iostream>
 #include "Common.h"
-#include "GameObject.h"
-#include "Drawing.h"
-#include <vector>
-#include <SDL.h>
+#include "Single.h"
 #include <SDL_mixer.h>
 #include "Events.h"
 #include "ResourceManager.h"
@@ -50,23 +47,23 @@ void GameStructure::get_input() const
 				case SDLK_w:
 				case SDLK_UP:
 					log_message("Player pressed up!", be_verbose);
-					event_manager::get_instance().register_event(std::make_shared<PositionChangeEvent>(Up));
+					event_manager::get_instance().register_event(std::make_unique<PositionChangeEvent>(Up));
 				break;
 				case SDLK_s:
 				case SDLK_DOWN:
 					log_message("Player pressed down!", be_verbose);	
-					event_manager::get_instance().register_event(std::make_shared<PositionChangeEvent>(Down));
+					event_manager::get_instance().register_event(std::make_unique<PositionChangeEvent>(Down));
 				break;
 				case SDLK_a:
 				case SDLK_LEFT:
 					log_message("Player pressed left!", be_verbose);					
-					event_manager::get_instance().register_event(std::make_shared<PositionChangeEvent>(Left));
+					event_manager::get_instance().register_event(std::make_unique<PositionChangeEvent>(Left));
 				break;
 
 				case SDLK_d:
 				case SDLK_RIGHT:
 					log_message("Player pressed right!", be_verbose);	
-					event_manager::get_instance().register_event(std::make_shared<PositionChangeEvent>(Right));
+					event_manager::get_instance().register_event(std::make_unique<PositionChangeEvent>(Right));
 				break;
 
 				case SDLK_q:
@@ -75,20 +72,20 @@ void GameStructure::get_input() const
 					break;
 				case SDLK_j:
 					log_message("Change to level 2", be_verbose);
-					event_manager::get_instance().register_event(std::make_shared<scene_changed_event>(1));
+					event_manager::get_instance().register_event(std::make_unique<scene_changed_event>(1));
 					break;
 				case SDLK_k:
 					log_message("Change to level 2", be_verbose);
-					event_manager::get_instance().register_event(std::make_shared<scene_changed_event>(2));
+					event_manager::get_instance().register_event(std::make_unique<scene_changed_event>(2));
 				break;
 				case SDLK_l:
 					log_message("Change to level 3", be_verbose);
-					event_manager::get_instance().register_event(std::make_shared<scene_changed_event>(3));
+					event_manager::get_instance().register_event(std::make_unique<scene_changed_event>(3));
 				break;
 
 				case SDLK_x:
 					log_message("Change to level 4", be_verbose);
-					event_manager::get_instance().register_event(std::make_shared<scene_changed_event>(4));
+					event_manager::get_instance().register_event(std::make_unique<scene_changed_event>(4));
 				break;	
                 case SDLK_1:
 					Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gHigh, 0 );
@@ -141,7 +138,7 @@ void GameStructure::player_update() const
 void GameStructure::update_state()
 {
 	// Ask the event manager to notify event subscribers to update their logic now
-	event_manager::get_instance().register_event(shared_ptr<do_logic_update_event>(new do_logic_update_event()));
+	event_manager::get_instance().register_event(make_unique<do_logic_update_event>());
 }
 
 /***

@@ -29,7 +29,7 @@ public:
 		void removeLayer(std::string name);
 		void sortLayers();
 		void update();
-		vector<shared_ptr<Event>> ProcessEvent(std::shared_ptr<Event> evt);
+		vector<shared_ptr<Event>> process_event(std::shared_ptr<Event> evt) override;
 		/*
 		* Initialize the Current level manager
 		* Subscribe to event system

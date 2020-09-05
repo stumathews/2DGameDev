@@ -8,6 +8,6 @@ using namespace std;
 class IEventSubscriber
 {
 public:
-	virtual vector<shared_ptr<Event>> ProcessEvent(std::shared_ptr<Event> evt) = 0;
+	virtual vector<shared_ptr<Event>> process_event(std::shared_ptr<Event> evt) = 0;
 };
 

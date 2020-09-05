@@ -22,7 +22,7 @@ SDLGraphicsManager::~SDLGraphicsManager()
 }
 
 
-vector<shared_ptr<Event>> SDLGraphicsManager::ProcessEvent(std::shared_ptr<Event> evt)
+vector<shared_ptr<Event>> SDLGraphicsManager::process_event(const std::shared_ptr<Event> evt)
 {
 	if(evt->m_eventType == PlayerMovedEventType)
 	{
@@ -89,13 +89,13 @@ bool SDLGraphicsManager::Initialize(unsigned int width, unsigned int height, con
 	return true;
 }
 
-std::shared_ptr<Resource> SDLGraphicsManager::MakeResource(tinyxml2::XMLElement * element)
+std::shared_ptr<Resource> SDLGraphicsManager::make_resource(tinyxml2::XMLElement * element)
 {
 	
 	int uuid;
 	const char* type;
 	const char* path;
-	const char* name;
+	const char* name_c;
 	int level;
 	bool isAnimated = false;
 	int numKeyFrames = 12, keyFrameHeight = 64, keyFrameWidth = 64;
@@ -103,7 +103,7 @@ std::shared_ptr<Resource> SDLGraphicsManager::MakeResource(tinyxml2::XMLElement 
 	element->QueryIntAttribute("uid", &uuid);
 	element->QueryStringAttribute("type", &type);
 	element->QueryStringAttribute("filename", &path);
-	element->QueryStringAttribute("name", &name);
+	element->QueryStringAttribute("name", &name_c);
 	element->QueryIntAttribute("scene", &level);
 	
 	for(const XMLAttribute* elementAttr = element->FirstAttribute(); elementAttr; elementAttr = elementAttr->Next())
@@ -130,12 +130,12 @@ std::shared_ptr<Resource> SDLGraphicsManager::MakeResource(tinyxml2::XMLElement 
 	}
 
 
-	auto graphicsResource = isAnimated
-		                        ? std::make_shared<GraphicsResource>(uuid, name, path, type, level, numKeyFrames, keyFrameHeight, keyFrameWidth,  isAnimated)
-		                        : std::make_shared<GraphicsResource>(uuid, name, path, type, level, isAnimated);
+	auto resource = isAnimated
+		                        ? std::make_shared<GraphicsResource>(uuid, name_c, path, type, level, numKeyFrames, keyFrameHeight, keyFrameWidth,  isAnimated)
+		                        : std::make_shared<GraphicsResource>(uuid, name_c, path, type, level, isAnimated);
 		
 	
-	return graphicsResource;
+	return resource;
 }
 
 void SDLGraphicsManager::DrawAllActors()

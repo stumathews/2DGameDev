@@ -53,7 +53,7 @@ void ResourceManager::LoadCurrentSceneResources(int newLevel)
 	}
 }
 
-vector<shared_ptr<Event>> ResourceManager::ProcessEvent(const std::shared_ptr<Event> evt)
+vector<shared_ptr<Event>> ResourceManager::process_event(const std::shared_ptr<Event> evt)
 {
 	switch(evt->m_eventType)
 	{
@@ -81,23 +81,23 @@ void ResourceManager::ReadInResources()
 			
 		if(pResourceTree)
 		{
-			for(tinyxml2::XMLNode* child = pResourceTree->FirstChild(); child; child = child->NextSibling())
+			for(auto child = pResourceTree->FirstChild(); child; child = child->NextSibling())
 			{
-				XMLElement* element = child->ToElement();
+				const auto element = child->ToElement();
 				if(element)
 				{
-					shared_ptr<Resource> resource = NULL;
+					shared_ptr<Resource> resource = nullptr;
 					const char* type;
 
 					element->QueryStringAttribute("type", &type);			
 
 					if(strcmp(type, "graphic") == 0)
 					{
-						resource = SDLGraphicsManager::GetInstance().MakeResource(element);						
+						resource = SDLGraphicsManager::make_resource(element);						
 					}
 					if(strcmp(type, "fx") == 0)
 					{					
-						resource = AudioManager::GetInstance().MakeResource(element);						
+						resource = AudioManager::GetInstance().make_resource(element);						
 					}
 						
 					if(resource)

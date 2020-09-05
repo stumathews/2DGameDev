@@ -9,8 +9,8 @@ class event_manager  // NOLINT(cppcoreguidelines-special-member-functions, hicpp
 {
 	event_manager() = default;
 	~event_manager() = default;;
-	std::vector<std::shared_ptr<Event>> primary_event_queue_;
-	vector<shared_ptr<Event>> secondary_event_queue_;
+	std::vector<shared_ptr<Event>> primary_event_queue_;
+	std::vector<shared_ptr<Event>> secondary_event_queue_;
 	map<event_type, std::vector<IEventSubscriber*>> event_subscribers_;
 	
 	public:
@@ -22,7 +22,7 @@ class event_manager  // NOLINT(cppcoreguidelines-special-member-functions, hicpp
 		event_manager(event_manager const&) = delete;
 		void operator=(event_manager const&) = delete;
 		
-		void register_event(std::shared_ptr<Event> evt);
+		void register_event(const std::shared_ptr<Event> event);
 		void subscribe_to_event(event_type type, IEventSubscriber* you);		
 		void process_all_events();
 

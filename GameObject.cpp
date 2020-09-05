@@ -6,7 +6,7 @@
 #include "GlobalConfig.h"
 
 
-vector<shared_ptr<Event>> GameObject::ProcessEvent(const std::shared_ptr<Event> evt)
+vector<shared_ptr<Event>> GameObject::process_event(const std::shared_ptr<Event> evt)
 {
 	// Change the object's position
 	if(evt->m_eventType == PositionChangeEventType)

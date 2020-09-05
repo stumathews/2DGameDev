@@ -12,17 +12,9 @@
 #include "Component.h"
 #include <map>
 #include "constants.h"
-#include "Single.h"
 #include "GlobalConfig.h"
 
-//extern Mix_Chunk *gScratch;
-//extern Mix_Chunk *gHigh;
-//extern Mix_Chunk *gMedium;
-//extern Mix_Chunk *gLow;
 
-/*
-	A game Object 
-*/
 class GameObject : public IEventSubscriber
 {
 public:
@@ -61,12 +53,12 @@ public:
 
 	void RaiseEvent(Event event)
 	{		
-		event_manager::get_instance().register_event(std::shared_ptr<Event>(&event));
+		event_manager::get_instance().register_event(make_unique<Event>(event));
 	}
 
-	void RaiseEvent(shared_ptr<Event> event)
+	static void raise_event(const shared_ptr<Event> the_event)
 	{		
-		event_manager::get_instance().register_event(event);
+		event_manager::get_instance().register_event(the_event);
 	}
 
 	shared_ptr<GraphicsResource> GetResource() { return m_GraphicsResource; }
@@ -84,7 +76,7 @@ public:
 	virtual void MoveRight() { m_xPos += moveInterval; }
 	virtual void DrawResource(SDL_Renderer* renderer);	
 
-	vector<shared_ptr<Event>> ProcessEvent(const std::shared_ptr<Event> event);
+	vector<shared_ptr<Event>> process_event(const std::shared_ptr<Event> event) override;
 	void DetectSideColission();
 	virtual ~GameObject() { }
 	

@@ -6,15 +6,13 @@
 
 
 AudioManager::AudioManager()
-{
-}
+= default;
 
 
 AudioManager::~AudioManager()
-{
-}
+= default;
 
-std::shared_ptr<Resource> AudioManager::MakeResource(tinyxml2::XMLElement * element)
+std::shared_ptr<Resource> AudioManager::make_resource(tinyxml2::XMLElement * element)
 {
 	int uuid;
 	const char* type;

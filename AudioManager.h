@@ -19,7 +19,7 @@ public:
         void operator=(AudioManager const&)  = delete;
 		
 		// Creates an audio Resource
-		std::shared_ptr<Resource> MakeResource(tinyxml2::XMLElement * assetXmlElement);
+		std::shared_ptr<Resource> make_resource(tinyxml2::XMLElement * assetXmlElement);
 private:	
 
 	std::vector<shared_ptr<AudioResource>> m_AudioResources;

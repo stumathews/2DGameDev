@@ -9,9 +9,9 @@ using namespace std;
 Square::Square(int x, int y, int rw, bool fill, bool supportMoveLogic) 
 	: GameObject(m_xPos, m_yPos), 
 		fill(fill), 
-		width(rw), playerBounds({}), myBounds({x, y, rw, rw})
+		width(rw), player_bounds_({}), my_bounds_({x, y, rw, rw})
 { 
-  this->rectDetails = new RectDetails(x, y, rw, rw);  
+  this->rect_details_ = new RectDetails(x, y, rw, rw);  
   this->m_DoMoveLogic = supportMoveLogic;   
   walls[0] = true;
   walls[1] = true;
@@ -21,7 +21,7 @@ Square::Square(int x, int y, int rw, bool fill, bool supportMoveLogic)
 
 void Square::show(SDL_Renderer* renderer) 
 { 
-  auto rect = GetRectDetails();
+  auto rect = get_rect_details();
   int ax = rect->getAx();
   int ay = rect->getAy();
   int bx = rect->getBx();
@@ -53,18 +53,18 @@ void Square::show(SDL_Renderer* renderer)
   	 SDL_RenderFillRect(renderer, &myBounds);*/
     
   if(Singleton<GlobalConfig>::GetInstance().object.printDebuggingText)
-	  RectDebugging::printInRect(renderer, GetTag().c_str(), &myBounds); 
+	  RectDebugging::printInRect(renderer, GetTag().c_str(), &my_bounds_); 
 }
 
-vector<shared_ptr<Event>> Square::ProcessEvent(const std::shared_ptr<Event> event)
+vector<shared_ptr<Event>> Square::process_event(const std::shared_ptr<Event> event)
 {	
-	auto newEvents(GameObject::ProcessEvent(event));  // Moves the square, if its set to to movable
+	auto newEvents(GameObject::process_event(event));  // Moves the square, if its set to to movable
 
 	if(event->m_eventType == PlayerMovedEventType)
 	{	
 		auto playerMovedEvent = std::static_pointer_cast<PlayerMovedEvent>(event);
 		
-		playerBounds = 	{ 
+		player_bounds_ = 	{ 
 			playerMovedEvent->GetPlayerComponent()->x, 
 			playerMovedEvent->GetPlayerComponent()->y, 
 			playerMovedEvent->GetPlayerComponent()->w, 	
@@ -74,8 +74,8 @@ vector<shared_ptr<Event>> Square::ProcessEvent(const std::shared_ptr<Event> even
 
 	if(event->m_eventType == PositionChangeEventType)
 	{
-		rectDetails->Init(GetX(), GetY(), GetW(), GetH());
-		myBounds = { GetX(), GetY(), GetW(), GetH() };
+		rect_details_->Init(get_x(), get_y(), get_w(), get_h());
+		my_bounds_ = { get_x(), get_y(), get_w(), get_h() };
 	}
 	
 	return newEvents;

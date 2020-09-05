@@ -50,28 +50,14 @@ bool initialize()
 
 bool load_content()
 {
-	for (const auto& square : Single<LevelGenerator>().GenerateLevel())
+	for (const auto& square : level_generator::generate_level())
 	{
 		std::shared_ptr<GameObject> gameObject = std::dynamic_pointer_cast<Square>(square);
 		//gameObject->SubScribeToEvent(PlayerMovedEventType);
 		//gameObject->RaiseEvent(std::make_shared<AddGameObjectToCurrentSceneEvent>(&gameObject));		
 	}
 
-	/* Schedule adding the player to the screen */
-	auto player_width = Single<GlobalConfig>().squareWidth / 2;
-	auto playerPosX = 0;
-	auto playerPosY = 0;
-	auto playerComponent = std::make_shared<PlayerComponent>(constants::playerComponentName, playerPosX, playerPosY, player_width, player_width);
-	auto playerObject = std::static_pointer_cast<GameObject>(std::make_shared<Player>(playerComponent->x, playerComponent->y, playerComponent->w));
-
-	playerObject->SetTag(constants::playerTag);
-	playerObject->AddComponent(shared_ptr<Component>(playerComponent));
-	playerObject->SubScribeToEvent(PositionChangeEventType);
-
-	/* Add player to scene */
-	const auto add_to_scene_event = std::make_shared<AddGameObjectToCurrentSceneEvent>(&playerObject);
-	add_to_scene_event->eventId = 100;
-	playerObject->RaiseEvent(add_to_scene_event);
+	Player::add_player_to_game();
 	return true;
 }
 

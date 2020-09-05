@@ -37,7 +37,7 @@ class ResourceManager : IEventSubscriber
 		void LoadCurrentSceneResources(int level);
 
 		// Process an incoming event
-		vector<shared_ptr<Event>> ProcessEvent(std::shared_ptr<Event> evt);
+		vector<shared_ptr<Event>> process_event(std::shared_ptr<Event> evt) override;
 		
 		/*
 		* Initialize the resource manager. 
@@ -46,13 +46,13 @@ class ResourceManager : IEventSubscriber
 		*/
 		void Initialize()
 		{
-			// Subscribe to scene changed Event
 			event_manager::get_instance().subscribe_to_event(LevelChangedEventType, this);
 			
-			m_ResourceCount, m_CountLoadedResources, m_CountUnloadedResources = 0;
-			// Load the resources on creation of the Resource Manager
+			m_ResourceCount = 0;
+			m_CountLoadedResources = 0;
+			m_CountUnloadedResources = 0;
+			
 			ReadInResources();
-			// Load all the global game rsources - default is set to level 0
 		}
     private:
 		

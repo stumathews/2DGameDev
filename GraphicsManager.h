@@ -22,9 +22,9 @@ public:
 		SDLGraphicsManager(SDLGraphicsManager const&)  = delete;
         void operator=(SDLGraphicsManager const&)  = delete;
 		
-		SDL_Window* m_Window = NULL;
-		SDL_Renderer* m_Renderer = NULL;
-		SDL_Surface* m_WindowSurface = NULL;
+		SDL_Window* m_Window = nullptr;
+		SDL_Renderer* m_Renderer = nullptr;
+		SDL_Surface* m_WindowSurface = nullptr;
 		
 		/* Initializes the graphics system
 		* Creates Main Window
@@ -32,7 +32,7 @@ public:
 		*/
 		bool Initialize(unsigned int width = 800, unsigned int height=600, const char* windowTitle=0);
 		// Creates a graphics Resource
-	 static std::shared_ptr<Resource> MakeResource(tinyxml2::XMLElement * assetXmlElement);
+	 static std::shared_ptr<Resource> make_resource(tinyxml2::XMLElement * assetXmlElement);
 		
 		// Draw all the Actors we know about onto the surface
 		void DrawAllActors();
@@ -55,7 +55,7 @@ private:
 
 
 	// Inherited via IEventSubscriber
-	virtual vector<shared_ptr<Event>> ProcessEvent(std::shared_ptr<Event> evt) override;
+	vector<shared_ptr<Event>> process_event(const std::shared_ptr<Event> evt) override;
 
 };
 

@@ -27,7 +27,7 @@ CurrentLevelManager::CurrentLevelManager()
 		m_Initialized = true;
 };
 
-vector<shared_ptr<Event>> CurrentLevelManager::ProcessEvent(const std::shared_ptr<Event> evt)
+vector<shared_ptr<Event>> CurrentLevelManager::process_event(const std::shared_ptr<Event> evt)
 {
 	// As a Scene/Level manager I'll load the scene/level's resources when I get a level/scene event
 	if(evt->m_eventType == LevelChangedEventType)
@@ -206,7 +206,7 @@ bool CurrentLevelManager::LoadScene(std::string filename)
 
 		// Notify that a new scene has been loaded. 
 		// One noticible subscriber ill be the resource manager to load the scene's resources in memory
-		event_manager::get_instance().register_event(shared_ptr<scene_changed_event>(new scene_changed_event(atoi(sceneId))));
+		event_manager::get_instance().register_event(make_unique<scene_changed_event>(atoi(sceneId)));
 	}
 	return false;
 }
