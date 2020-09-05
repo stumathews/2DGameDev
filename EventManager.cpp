@@ -3,7 +3,7 @@
 #include "EventSubscriber.h"
 
 
-void event_manager::register_event(const shared_ptr<Event> event)  // NOLINT(performance-unnecessary-value-param)
+void event_manager::raise_event(const shared_ptr<Event> event)  // NOLINT(performance-unnecessary-value-param)
 {
 	primary_event_queue_.push_back(event);
 }

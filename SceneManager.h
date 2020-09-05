@@ -22,13 +22,13 @@ public:
 		/* Collects all actors defined in a scene and represents them as layers within the SceneManager
 		*  Notifies the resource manager of the new scene and the resource manager will load in/out appropriate scene resources
 		*/
-		bool LoadScene(std::string filename);
+		bool load_scene(const std::string& filename);
 		
 		shared_ptr<Layer> addLayer(std::string name);
-		shared_ptr<Layer> findLayer(std::string name);
+		const shared_ptr<Layer> findLayer(const std::string name);
 		void removeLayer(std::string name);
-		void sortLayers();
-		void update();
+		void sort_layers();
+		static void update() {}
 		vector<shared_ptr<Event>> process_event(std::shared_ptr<Event> evt) override;
 		/*
 		* Initialize the Current level manager

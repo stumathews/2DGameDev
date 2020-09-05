@@ -43,7 +43,7 @@ bool initialize()
 	if (!GameStructure::initialize(screen_width, screen_height))
 		return false;
 
-	event_manager::get_instance().register_event(std::make_shared<scene_changed_event>(1)); // Trigger the first level by kicking the event manager
+	event_manager::get_instance().raise_event(std::make_shared<scene_changed_event>(1)); // Trigger the first level by kicking the event manager
 	return true;
 }
 
@@ -53,8 +53,8 @@ bool load_content()
 	for (const auto& square : level_generator::generate_level())
 	{
 		std::shared_ptr<GameObject> gameObject = std::dynamic_pointer_cast<Square>(square);
-		//gameObject->SubScribeToEvent(PlayerMovedEventType);
-		//gameObject->RaiseEvent(std::make_shared<AddGameObjectToCurrentSceneEvent>(&gameObject));		
+		gameObject->SubScribeToEvent(PlayerMovedEventType);
+		gameObject->raise_event(std::make_shared<AddGameObjectToCurrentSceneEvent>(gameObject));		
 	}
 
 	Player::add_player_to_game();

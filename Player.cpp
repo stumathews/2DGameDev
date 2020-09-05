@@ -54,7 +54,7 @@ void Player::add_player_to_game()
 	player_object->SubScribeToEvent(PositionChangeEventType);
 
 	/* Add player to scene */
-	const auto add_to_scene_event = std::make_shared<AddGameObjectToCurrentSceneEvent>(&player_object);
+	const auto add_to_scene_event = std::make_shared<AddGameObjectToCurrentSceneEvent>(player_object);
 	add_to_scene_event->eventId = 100;
 	player_object->raise_event(add_to_scene_event);
 }

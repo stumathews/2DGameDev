@@ -53,12 +53,12 @@ public:
 
 	void RaiseEvent(Event event)
 	{		
-		event_manager::get_instance().register_event(make_unique<Event>(event));
+		event_manager::get_instance().raise_event(make_unique<Event>(event));
 	}
 
 	static void raise_event(const shared_ptr<Event> the_event)
 	{		
-		event_manager::get_instance().register_event(the_event);
+		event_manager::get_instance().raise_event(the_event);
 	}
 
 	shared_ptr<GraphicsResource> GetResource() { return m_GraphicsResource; }
