@@ -1,14 +1,14 @@
 #pragma once
 #include "Events.h"
-class SceneChangedEvent : public Event
+class scene_changed_event final : public Event
 {
 public:
-	SceneChangedEvent(int level) : Event(LevelChangedEventType)
+	scene_changed_event(int level) : Event(LevelChangedEventType)
 	{
-		SetData((void*)level);
+		Event::SetData(reinterpret_cast<void*>(level));
 		m_Level = level;
 	}
-	~SceneChangedEvent();
+	~scene_changed_event();
 	int m_Level;
 
 };

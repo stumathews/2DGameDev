@@ -18,311 +18,141 @@
 #include <SDL_ttf.h>
 #include "GlobalConfig.h"
 #include "GameStructure.h"
+#include <functional>
 using namespace std;
-
-
 
 int main(int argc, char * args[]);
 
-
-
 // Create our global copy of the game data
-std::shared_ptr<GameWorldData> g_pGameWorldData = std::shared_ptr<GameWorldData>(new GameWorldData());
+std::shared_ptr<GameWorldData> g_pGameWorldData = std::make_shared<GameWorldData>();
 
 
-/***
- * Check for interaction requests from controllers
- */
-void GameStructure::sense_player_input()
+void log_message(const string &message, const bool be_verbose = Single<GlobalConfig>().verbose)
 {
-	
-	//Map controller actions to meanings for the game:
-	// left button was pushed and button A was pressed MEANS -> request to move character left
-	// while shooting active weapon.
+	if (be_verbose) std::cout << message << std::endl;
+}
 
-	auto beVerbose = Singleton<GlobalConfig>::GetInstance().object.verbose;
-
-	//Event handler
-	int interval = 10;
+void GameStructure::get_input() const
+{
+	const auto be_verbose = Singleton<GlobalConfig>::GetInstance().object.verbose;	
 	SDL_Event e;
+	
 	while(SDL_PollEvent(&e) != 0)
 	{
-		if(e.type == SDL_QUIT)
+		if(e.type == SDL_QUIT) 
 		{
-			g_pGameWorldData->bGameDone = 1;
-		} else if( e.type == SDL_KEYDOWN ) {
+			g_pGameWorldData->bGameDone = true;
+		}
+		else if( e.type == SDL_KEYDOWN ) 
+		{
 			switch( e.key.keysym.sym )
 			{
 				case SDLK_w:
 				case SDLK_UP:
-					if(beVerbose)
-						std::cout << "Player pressed up!" << std::endl;	
-					EventManager::GetInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Up)));
+					log_message("Player pressed up!", be_verbose);
+					event_manager::get_instance().register_event(std::make_shared<PositionChangeEvent>(Up));
 				break;
 				case SDLK_s:
 				case SDLK_DOWN:
-					if(beVerbose)
-						std::cout << "Player pressed down!" << std::endl;		
-					EventManager::GetInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Down)));
+					log_message("Player pressed down!", be_verbose);	
+					event_manager::get_instance().register_event(std::make_shared<PositionChangeEvent>(Down));
 				break;
 				case SDLK_a:
 				case SDLK_LEFT:
-					if(beVerbose)
-						std::cout << "Player pressed left!" << std::endl;					
-					EventManager::GetInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Left)));
+					log_message("Player pressed left!", be_verbose);					
+					event_manager::get_instance().register_event(std::make_shared<PositionChangeEvent>(Left));
 				break;
 
 				case SDLK_d:
 				case SDLK_RIGHT:
-					if(beVerbose)
-						std::cout << "Player pressed right!" << std::endl;	
-					EventManager::GetInstance().RegisterEvent( shared_ptr<PositionChangeEvent>(new PositionChangeEvent(Right)));
+					log_message("Player pressed right!", be_verbose);	
+					event_manager::get_instance().register_event(std::make_shared<PositionChangeEvent>(Right));
 				break;
 
 				case SDLK_q:
-					if(beVerbose)
-						std::cout << "Player pressed Quit key !" << std::endl;
+					log_message("Player pressed quit!", be_verbose);
 					g_pGameWorldData->bGameDone = 1;
 					break;
 				case SDLK_j:
-					// simluate a level change
-					std::cout << "Level change to 1" << std::endl;
-					EventManager::GetInstance().RegisterEvent( shared_ptr<SceneChangedEvent>(new SceneChangedEvent(1)));
+					log_message("Change to level 2", be_verbose);
+					event_manager::get_instance().register_event(std::make_shared<scene_changed_event>(1));
 					break;
 				case SDLK_k:
-				// simluate a level change
-				std::cout << "Level change to 2" << std::endl;
-				EventManager::GetInstance().RegisterEvent( shared_ptr<SceneChangedEvent>(new SceneChangedEvent(2)));
+					log_message("Change to level 2", be_verbose);
+					event_manager::get_instance().register_event(std::make_shared<scene_changed_event>(2));
 				break;
 				case SDLK_l:
-				// simluate a level change
-				std::cout << "Level change to 3" << std::endl;
-				EventManager::GetInstance().RegisterEvent( shared_ptr<SceneChangedEvent>(new SceneChangedEvent(3)));
+					log_message("Change to level 3", be_verbose);
+					event_manager::get_instance().register_event(std::make_shared<scene_changed_event>(3));
 				break;
 
 				case SDLK_x:
-				std::cout << "Level change to 4" << std::endl;
-				EventManager::GetInstance().RegisterEvent( shared_ptr<SceneChangedEvent>(new SceneChangedEvent(4)));
+					log_message("Change to level 4", be_verbose);
+					event_manager::get_instance().register_event(std::make_shared<scene_changed_event>(4));
 				break;	
-				 //Play high sound effect
                 case SDLK_1:
-                Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gHigh, 0 );
-                break;
-                            
-                //Play medium sound effect
+					Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gHigh, 0 );
+                break;                            
                 case SDLK_2:
-                Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gMedium, 0 );
+					Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gMedium, 0 );
                 break;
-                            
-                //Play low sound effect
                 case SDLK_3:
-                Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gLow, 0 );
+					Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gLow, 0 );
                 break;
-                            
-                //Play scratch sound effect
                 case SDLK_4:
-                Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gScratch, 0 );
+					Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gScratch, 0 );
                 break;
 				case SDLK_9:
-				//If there is no music playing
-				if( Mix_PlayingMusic() == 0 )
-				{
-					//Play the music
-					Mix_PlayMusic( Singleton<GlobalConfig>::GetInstance().object.gMusic, -1 );
-				}
-				//If music is being played
-				else
-				{
-					//If the music is paused
-					if( Mix_PausedMusic() == 1 )
-					{
-						//Resume the music
-						Mix_ResumeMusic();
+					if( Mix_PlayingMusic() == 0 ) {
+						Mix_PlayMusic( Singleton<GlobalConfig>::GetInstance().object.gMusic, -1 );
+					} else 	{
+						if( Mix_PausedMusic() == 1 )
+							Mix_ResumeMusic();
+						else
+							Mix_PauseMusic();
 					}
-					//If the music is playing
-					else
-					{
-						//Pause the music
-						Mix_PauseMusic();
-					}
-				}
 				break;
 				case SDLK_0:
-                //Stop the music
-                Mix_HaltMusic();
+					Mix_HaltMusic();
                 break;
 
-
 				default:
-					/*SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-                         "Unkown control key",
-                         "press up, down, left, right or 'q' to quit",
-                         NULL);*/
-					std::cout << "Unknown control key" << std::endl;	
+					std::cout << "Unknown control key" << std::endl;
+					log_message("Unknown control key", be_verbose);
 				break;
 			}
 		}
 	}
 }
 
-/***
- * Collision detection, no key for door etc...
- */
-void GameStructure::determine_restrictions()
-{
-	// check for geometric restrictions via the gameworld data to determine whats around the character physically
-	// ie. collision detection
-
-	// check for logical restrictions ie the state the player must be in to perform certain interactions
-	// ie do i have a door key to even though i'm trying to open the door in fron of me?
-
-	// use the gameworld data to understand where the player is (level) and what he has around him
-
-	// easy restrictions for tetris: 
-	// 1) bricks cannot move outside the screen, 
-	// 2) cannot fall beyond ground level
-	// 3) cannot continue falling if current brick is directly above any other previously fallen brick
-}
-
-/***
- * show player result of their interaction.
- * Map the restrictions to the interactions and generate the right world-level responses
- */
-void GameStructure::update_player_state()
-{
-	// Trigger the moving animation, if :
-	// 1. the controller is used in such a way that it MEANS move character left
-	// 2. There is no restriction to move left.
-
-	// Update the player's resultant state.
-
-	// Tetris: move/rotate the brick according to players input
-
-	// then: AddDefaultBehavior() for idle
-
-}
 
 /***
  * Keeps and updated snapshot of the player state
  */
-void GameStructure::player_update()
+void GameStructure::player_update() const
 {
 	// Read from game controller
-	sense_player_input();
-	
-	// First see if we can perform what the payer wants us to do (we might be unable to, next to wall ie. cant move forward)
-	determine_restrictions();
-	
-	// Do what we can to update the players state based on the above and what the player tied to do
-	// so move the player's position if he asked to move and there was no obstacle etc.
-	update_player_state();
-
-	// If networked game:
-	// broadcast players state(position eg) to other players on the network
-}
-
-/***
- * Select passive elements
- */
-void GameStructure::pre_select_active_zones()
-{
-
-}
-
-/***
- * Update elements such as walls, and scenario items. These belong to the game world but dont have any
- * attached behavior
- */
-void GameStructure::update_passive_elements()
-{
-	pre_select_active_zones(); // only select elments that will affect gameplay
+	get_input();	
 }
 
 
 
-void GameStructure::logic_sort_according_to_relevance(){}
-void GameStructure::execute_control_mechanism(){}
+
 void GameStructure::update_state()
 {
 	// Ask the event manager to notify event subscribers to update their logic now
-	EventManager::GetInstance().RegisterEvent(shared_ptr<DoLogicUpdateEvent>(new DoLogicUpdateEvent()));
+	event_manager::get_instance().register_event(shared_ptr<do_logic_update_event>(new do_logic_update_event()));
 }
 
 /***
  * Update simple logical elements such as doors, elevators or moving platforms
  */
 void GameStructure::update_logic_based_elements()
-{
-	//not used yet
-	logic_sort_according_to_relevance(); // only select elements that are important to the gameplay
-	// not used yet
-	execute_control_mechanism();
+{	
 	update_state();
 }
 
 
-
-/***
- * update the word state based on all the above having been done/happened/occured
- * If shot, mark enemy as hit
- */
-void GameStructure::update_world_data_structure()
-{
-
-}
-
-/***
- * Generate behavior rules. The plane will turn, then try to shoot
- */
-void GameStructure::decision_engine()
-{
-
-}
-
-
-/***
- * the overall restrictions that apply
- */
-void GameStructure::sense_restrictions()
-{
-
-}
-
-/***
- * goals and current state must be analysed
- *	goals: shoot down aircraft.
- *	state: amount of ammo, direction of aircraft, state of weaponry
- */
-void GameStructure::sense_internal_state_and_goals()
-{
-
-}
-
-/***
- * An enemy 10 miles away is not important, nor is a door on another level - filter it out.
- */
-void GameStructure::ai_sort_according_to_gamplay_relevance()
-{
-
-}
-
-/**
- * Update elements that have intelligence like enemies with distinctive behavior
- */
-void GameStructure::update_ai_based_elements()
-{
-	ai_sort_according_to_gamplay_relevance();
-	sense_internal_state_and_goals(); // goal: shoot down the player. internal state of element: position and heading, state of weapons systems and sustained damage
-	sense_restrictions(); // avoid collisions with wall if im an enemy ai element
-	// we know about our state and the players state now...
-	
-	// determine what the ai elements will do next (ai decisions may span several seconds or minutes of gameplay, probably refining
-	// the strategy/decision on each subsequent cycle here)
-	decision_engine();
-
-	// store that the enemy moved, or it ws shot so remove it from world data structure
-	update_world_data_structure();
-}
 
 /***
  * Update active elements such as decorative flying birds or doors that open and close
@@ -330,7 +160,6 @@ void GameStructure::update_ai_based_elements()
 void GameStructure::update_active_elements()
 {
 	update_logic_based_elements(); // doors, elevators, movng platforms, real enemies with a distinctive behavior (simple)
-	update_ai_based_elements(); // real enemies with artificial intelligence behavior (more complex)
 }
 
 /***
@@ -338,8 +167,6 @@ void GameStructure::update_active_elements()
  */
 void GameStructure::world_update()
 {
-	// not used yet
-	update_passive_elements(); //walls and most scenario items - have no attached behavior but play a key role in player restrictions
 	update_active_elements(); // flying birds, doors that open and close - must be checked to keep consistent, meaningful experiance
 
 }
@@ -347,7 +174,7 @@ void GameStructure::world_update()
 // This is basically the update functions which is run x FPS to maintain a timed series on constant updates 
 // that simulates constant movement for example or time intervals in a non-time related game (turn based game eg)
 // This is where you would make state changes in the game such as decreasing ammo etc
-void GameStructure::Update()
+void GameStructure::update()
 {	
 	// This game logic keeps the world simulator running:
 	player_update();
@@ -358,283 +185,70 @@ void GameStructure::Update()
 }
 
 // Gets time in milliseconds now
-long GameStructure::ticks()
+long GameStructure::get_tick_now()
 {
 	return timeGetTime();
 }
 
-void GameStructure::SpareTime(long frameTime)
+void GameStructure::spare_time(long frameTime)
 {
-	EventManager::GetInstance().ProcessEvents();
+	event_manager::get_instance().process_all_events();
 }
 
-/***
- * Main graphics pipe line for NPC rendering.
- * Send packed NPC geometry to hardware.
- */
-void GameStructure::npc_render_data()
+void GameStructure::draw(float percentWithinTick)
 {
-
-}
-
-/***
- * Pack generated NPC geometry data (from the animation step) for this frame into an efficient format
- */
-void GameStructure::npc_pack_data()
-{
-
-}
-
-/***
- * Produce static geometry data that represents the current snapshot of how the character must look
- * for a given frame.
- *
- * The main animation routines are computed.
- * keyframed to skeletal animations *
- */
-void GameStructure::npc_animate()
-{
-
-}
-
-/***
- * Select NPCs that are visible as they should be rendered only. Ignore those behind you or on other levels
- */
-void GameStructure::npc_select_visible_subset()
-{
-
-}
-
-/*
-  Render characters (Non player Characters)
-  These are animated active elements, usually characters such as enemies
- */
-void GameStructure::NPC_Presentation()
-{
-	npc_select_visible_subset(); //only thoe close to the player or affecting him are to be processed. Visibility check is usually used
-	npc_animate(); // keyframed to skeletal animations represent a current snapshot of how the character must look for a given frame
+	const auto use_3d_renderer = Singleton<GlobalConfig>::GetInstance().object.use3dRengerManager;
 	
-				   // some animation methods will require specific rendering algorithms to characters will need to be rendered seperately from passive world geometry
-	npc_pack_data();
-	npc_render_data();
-}
+	SDLGraphicsManager::GetInstance().draw_current_scene(false);
 
-/*
- Send player's geometry to the hardware for processing
- */
-void GameStructure::player_render_data()
-{
-
-}
-/***
- * Pack player's geometry into efficient format
- */
-void GameStructure::player_data_pack()
-{
-
-}
-/***
- * Produce static geometry data that represents the current snapshot of how the player must look
- * for a given frame.
- *
- * The main animation routines are computed.
- * keyframed to skeletal animations
- */
-void GameStructure::player_animate()
-{
-
-}
-
-/***
- * Render player.
- * The player is always visible.
- * Simplier graphics pipeline to NPC and Passive elements
- * no LOD determination - hero is always drawn in High-resoluton meshes
- */
-void GameStructure::Player_Presentation()
-{
-	player_animate();
-	player_data_pack();
-	player_render_data();
-}
-
-
-/***
- * Send packed audio data to sound hardware(sound card)
- */
-void GameStructure::world_send_audio_data_to_audio_hardware()
-{
-	
-}
-
-/***
- * Pack audio data into efficient format
- */
-void GameStructure::world_pack_audio_data()
-{
-
-}
-/***
- * Select audible sources using typically distance vs volume metric
- */
-void GameStructure::world_select_audible_sound_sources()
-{
-
-}
-/**
- * Store geometry in an efficient format
- */
-void GameStructure::world_pack_geometry()
-{
-
-}
-
-
-/***
- * Send packed goemetry to hardware for processing.
- * Eg. OpenGL,Direct3D
- */
-void GameStructure::world_render_geometry()
-{
-	
-}
-
-// chop off items outside of the players view
-void GameStructure::world_elements_clip()
-{
-
-}
-
-// remove hidden objects - such as backward facing surfaces
-void GameStructure::world_elements_cull()
-{
-
-}
-void GameStructure::world_elements_occulude()
-{
-
-}
-
-// filter away invisible or irrelevant elements to reduce render overhead. Main graphics pipeline.
-void GameStructure::world_select_visible_graphic_elements()
-{
-	world_elements_clip();
-	world_elements_cull();
-	world_elements_occulude();
-}
-
-
-//Determine from elements'd chacracteristics (distance etc) the LOD to be used 
-void GameStructure::world_select_resolution()
-{
-
-}
-
-/***
- * Send audio to sound card
- */
-void GameStructure::send_audio_to_hardware()
-{
-
-	world_select_audible_sound_sources(); // distance vs volume metric + attenuation calcs to determine whats is audible to player
-	world_pack_audio_data();
-	world_send_audio_data_to_audio_hardware();
-}
-
-/***
- * Send graphics to graphics card
- */
-void GameStructure::send_geometry_to_hardware()
-{
-	/* not used yet */ world_pack_geometry(); // vertexes are packed into memory
-	world_render_geometry(); //  send to card via OpenGL or DirectX
-}
-
-/***
- * Render the game work visually and sonically
- */
-void GameStructure::World_Presentation()
-{
-	// show just the visible part of the gameworld from the player's perspective
-	/* not used yet */ world_select_visible_graphic_elements(); // This will contain the 3d Rendering pipeline!
-	/* not used yet */world_select_resolution(); // Choose suitable level of detail
-
-	send_geometry_to_hardware();  //paint it onto the screen
-	/* not used yet */send_audio_to_hardware(); 
-}
-
-/***
- * Render the game world (Presentation) ie represent changes in the gameworld data
- * @param percentWithinTick
- */
-void GameStructure::Draw(float percentWithinTick)
-{	
-	// Draw all objects in the current scene
-	SDLGraphicsManager::GetInstance().DrawCurrentScene(false /* updateWindowSurfaceAfterDrawing */);
-	
-	// Tick 3d Render manager
-	if(Singleton<GlobalConfig>::GetInstance().object.use3dRengerManager)
+	if(use_3d_renderer)
 		D3DRenderManager::GetInstance().update();
-
-	// Render the game work visually and sonically
-	World_Presentation();
-	
-	// Render non player characters next (not used yet)
-	NPC_Presentation();
-
-	// Render the player (not used yet)
-	Player_Presentation();
-
-	
 }
 
-
-/*
-* Initialize the Graphics subsystem incl. Main Window
-* Initialize the Audio subsystem
-*/
-bool GameStructure::InitSDL(int screenWidth, int screenHeight)
+bool GameStructure::init_sdl(int screenWidth, int screenHeight)
 {
-	// Initialise SDL	
-	if(!SDLGraphicsManager::GetInstance().Initialize( screenWidth, screenHeight))
+	typedef unique_ptr<string> string_ptr;
+	
+	if(!SDLGraphicsManager::GetInstance().Initialize( screenWidth, screenHeight)){
+		log_message("Failed to initialize SDL graphics manager");
 		return false;
-
-	// Initialize SDL_mixer 
-    if( Mix_OpenAudio( 44100 /*sound frequency*/, MIX_DEFAULT_FORMAT/*sample format*/, 2 /*hardware channels*/, 2048 /*sample size*/ ) < 0 )
+	}
+	
+    if(Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0 )
     {
-		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: " << (char*)Mix_GetError() << std::endl;
+	    const string message("SDL_mixer could not initialize! SDL_mixer Error: ");
+		log_message(message + Mix_GetError());
         return false;
     }
 
-	// init TTF
-
-	TTF_Init();
-
-	Singleton<GlobalConfig>::GetInstance().object.font = 
-
-	TTF_OpenFont("arial.ttf", 25);
+	/*if(!TTF_Init())
+	{
+		const string message("Could not initialize TTF");
+		log_message(message);
+		return false;
+	}*/
 
 	return true;
 }
 
-void GameStructure::CleanupResources()
+void GameStructure::cleanup_resources()
 {
 	Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gScratch );
     Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gHigh );
     Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gMedium );
     Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gLow );
 
-    Singleton<GlobalConfig>::GetInstance().object.gScratch = NULL;
-    Singleton<GlobalConfig>::GetInstance().object.gHigh = NULL;
-    Singleton<GlobalConfig>::GetInstance().object.gMedium = NULL;
-    Singleton<GlobalConfig>::GetInstance().object.gLow = NULL;
+    Singleton<GlobalConfig>::GetInstance().object.gScratch = nullptr;
+    Singleton<GlobalConfig>::GetInstance().object.gHigh = nullptr;
+    Singleton<GlobalConfig>::GetInstance().object.gMedium = nullptr;
+    Singleton<GlobalConfig>::GetInstance().object.gLow = nullptr;
     
     //Free the music
     Mix_FreeMusic( Singleton<GlobalConfig>::GetInstance().object.gMusic );
-    Singleton<GlobalConfig>::GetInstance().object.gMusic = NULL;
+    Singleton<GlobalConfig>::GetInstance().object.gMusic = nullptr;
 
 	TTF_CloseFont(Singleton<GlobalConfig>::GetInstance().object.font);
-	Singleton<GlobalConfig>::GetInstance().object.font  = NULL;
+	Singleton<GlobalConfig>::GetInstance().object.font  = nullptr;
 	
 	
 	TTF_Quit();
@@ -646,46 +260,95 @@ void GameStructure::CleanupResources()
 }
 
 
-bool GameStructure::loadMedia()
+// Load audio game files
+bool GameStructure::load_media()
 {
-	//Load music
     Singleton<GlobalConfig>::GetInstance().object.gMusic = Mix_LoadMUS( ResourceManager::GetInstance().GetResourceByName("MainTheme.wav")->m_path.c_str() );
-    
-	//Load sound effects
     Singleton<GlobalConfig>::GetInstance().object.gScratch = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("scratch.wav")->m_path.c_str() );
 	Singleton<GlobalConfig>::GetInstance().object.gHigh = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("high.wav")->m_path.c_str() );
 	Singleton<GlobalConfig>::GetInstance().object.gMedium = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("medium.wav")->m_path.c_str() );
 	Singleton<GlobalConfig>::GetInstance().object.gLow = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("low.wav")->m_path.c_str() );
+	//Singleton<GlobalConfig>::GetInstance().object.font = TTF_OpenFont("arial.ttf", 25);
 
-	if( Singleton<GlobalConfig>::GetInstance().object.gMusic == NULL )
+	string msg;
+
+	auto dynamic_string = [&](string &base, const char* c_string) -> string&
+	{
+		if(strlen(c_string) > base.size() && !base.empty())
+			base.resize( base.size() *2);
+		base = c_string;
+		return base;
+	};
+	
+	if(Singleton<GlobalConfig>::GetInstance().object.gMusic == nullptr)
     {
-        printf( "Failed to load beat music! SDL_mixer Error: %s\n", Mix_GetError() );
+		log_message(dynamic_string(msg,  "Failed to load beat music! SDL_mixer Error: ") + Mix_GetError());
         return false;
     }  
     
-    if( Singleton<GlobalConfig>::GetInstance().object.gScratch == NULL )
+    if(Singleton<GlobalConfig>::GetInstance().object.gScratch == nullptr)
     {
-        printf( "Failed to load scratch sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+    	log_message(dynamic_string(msg,  "Failed to load scratch sound effect! SDL_mixer Error:") + Mix_GetError());
         return false;
     }
     
-    if( Singleton<GlobalConfig>::GetInstance().object.gHigh == NULL )
+    if(Singleton<GlobalConfig>::GetInstance().object.gHigh == nullptr)
     {
-        printf( "Failed to load high sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+    	log_message(dynamic_string(msg,  "Failed to load high sound effect! SDL_mixer Error:") + Mix_GetError());
         return false;
     }
     
-    if( Singleton<GlobalConfig>::GetInstance().object.gMedium == NULL )
+    if(Singleton<GlobalConfig>::GetInstance().object.gMedium == nullptr)
     {
-        printf( "Failed to load medium sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+    	log_message(dynamic_string(msg,  "Failed to load medium sound effect! SDL_mixer Error:") + Mix_GetError());
         return false;
     }
     
-    if( Singleton<GlobalConfig>::GetInstance().object.gLow == NULL )
+    if(Singleton<GlobalConfig>::GetInstance().object.gLow == nullptr )
     {
-        printf( "Failed to load low sound effect! SDL_mixer Error: %s\n", Mix_GetError() );
+    	log_message(dynamic_string(msg,  "Failed to load low sound effect! SDL_mixer Error:") + Mix_GetError());
         return false;
     }
+
+	
 	return true;
 }
+
+/* Initialize resource, level manager, and load game audio files
+*
+*/
+bool GameStructure::initialize(int screen_width, int screen_height)
+{
+	const auto use_3d_renderer = Singleton<GlobalConfig>::GetInstance().object.use3dRengerManager;
+
+	ResourceManager::GetInstance().Initialize();	
+	CurrentLevelManager::GetInstance().Initialize();
+		
+	if (!init_sdl(screen_width, screen_height))
+	{
+		log_message("Could not initialize SDL, aborting.");
+		return false;
+	}
+		
+	if (!load_media())
+	{
+		log_message("Could not load media, aborting.");
+		return false;
+	}
+	
+	if(use_3d_renderer)
+		init3d_render_manager();	
+		
+	return true;
+}
+
+void GameStructure::init3d_render_manager()
+{
+	D3DRenderManager& renderManager = D3DRenderManager::GetInstance();
+	renderManager.Initialize(GetModuleHandle(NULL), 800, 600, false, "My Window");
+	Mesh3D* mesh = new Mesh3D();
+	mesh->create();
+	D3DRenderManager::GetInstance().meshes.push_back(mesh);
+}
+
 

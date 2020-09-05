@@ -47,7 +47,7 @@ class ResourceManager : IEventSubscriber
 		void Initialize()
 		{
 			// Subscribe to scene changed Event
-			EventManager::GetInstance().SubscribeToEvent(LevelChangedEventType, this);
+			event_manager::get_instance().subscribe_to_event(LevelChangedEventType, this);
 			
 			m_ResourceCount, m_CountLoadedResources, m_CountUnloadedResources = 0;
 			// Load the resources on creation of the Resource Manager

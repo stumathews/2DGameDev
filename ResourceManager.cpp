@@ -32,10 +32,10 @@ void ResourceManager::LoadCurrentSceneResources(int newLevel)
 		auto level = levelResources.first;
 		auto resources = levelResources.second;
 		
-		for(auto resource : resources)
+		for(const auto& resource : resources)
 		{
-			auto IsAlreadyLoaded = resource->m_IsLoaded;
-			if((resource->m_scene == newLevel || resource->m_scene == 0) && !IsAlreadyLoaded){
+			const auto is_already_loaded = resource->m_IsLoaded;
+			if((resource->m_scene == newLevel || resource->m_scene == 0) && !is_already_loaded){
 				std::cout << "(" << resource->m_scene << ")" << "MEM_LOAD:" << resource->m_name << std::endl;
 				resource->VLoad();
 				m_CountLoadedResources++;
@@ -59,7 +59,7 @@ vector<shared_ptr<Event>> ResourceManager::ProcessEvent(const std::shared_ptr<Ev
 	{
 		case LevelChangedEventType:
 			// As a resource manager I'll actually Load the resources for the scene into memory
-			auto cpe = std::dynamic_pointer_cast<SceneChangedEvent>(evt);
+			auto cpe = std::dynamic_pointer_cast<scene_changed_event>(evt);
 			LoadCurrentSceneResources(cpe->m_Level);
 			break;
 	}

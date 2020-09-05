@@ -99,7 +99,6 @@ public:
 	Sprites3D sprites;
 	std::list<Texture3D*> textures;
 	std::list<Mesh3D*> meshes;
-	~D3DRenderManager(){};
 	bool Initialize(HINSTANCE hInstance, unsigned int width, unsigned int height, bool fullScreen, const char* windowTitle);
 	HRESULT CreateSwapChainAndDevice();
 	void free();

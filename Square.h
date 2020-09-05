@@ -9,9 +9,9 @@ class Square : public GameObject
 {
 private: 
     int width;
-    bool walls[4];
-	RectDetails* rectDetails;
 protected:
+	bool walls[4];
+	RectDetails* rectDetails;
 	RectDetails* GetRectDetails(){ return rectDetails; };
 	int fill;
 	SDL_Rect playerBounds;
@@ -29,7 +29,7 @@ public:
 	inline void removeWall(int wall) { this->walls[wall-1] = false; }
 
 	virtual vector<shared_ptr<Event>> ProcessEvent(std::shared_ptr<Event> event);
-	virtual void VDraw(SDL_Renderer* renderer) override { show(renderer);};
+    virtual void VDraw(SDL_Renderer* renderer) override { show(renderer); };
 	inline virtual ~Square() { delete rectDetails;	}
 	virtual void VDoLogic(){}
 };

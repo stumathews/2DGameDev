@@ -12,6 +12,8 @@
 #include "Component.h"
 #include <map>
 #include "constants.h"
+#include "Single.h"
+#include "GlobalConfig.h"
 
 //extern Mix_Chunk *gScratch;
 //extern Mix_Chunk *gHigh;
@@ -52,19 +54,19 @@ public:
 	int m_xPos;
 	int m_yPos;
 
-	void SubScribeToEvent(EventType type) 
+	void SubScribeToEvent(event_type type) 
 	{ 
-		EventManager::GetInstance().SubscribeToEvent(type, this);
+		event_manager::get_instance().subscribe_to_event(type, this);
 	}
 
 	void RaiseEvent(Event event)
 	{		
-		EventManager::GetInstance().RegisterEvent(std::shared_ptr<Event>(&event));
+		event_manager::get_instance().register_event(std::shared_ptr<Event>(&event));
 	}
 
 	void RaiseEvent(shared_ptr<Event> event)
 	{		
-		EventManager::GetInstance().RegisterEvent(event);
+		event_manager::get_instance().register_event(event);
 	}
 
 	shared_ptr<GraphicsResource> GetResource() { return m_GraphicsResource; }
@@ -104,6 +106,12 @@ public:
 	{
 		return m_Components[name];
 	}
+
+	bool HasComponent(string name)
+	{
+		
+		return m_Components.find(name) != m_Components.end();		
+	}
 	string GetTag() { return this->Tag;}
 	void SetTag(string tag) { this->Tag = tag;}
 private:
@@ -114,6 +122,6 @@ private:
 	map<string, shared_ptr<Component>> m_Components;
 	SDL_Rect mBounds = {};	
 	SDL_Color m_ColorKey = {};
-	int moveInterval = 5; // move by intervals of 10 pixels
+	int moveInterval = Singleton<GlobalConfig>::GetInstance().object.moveInterval; // move by intervals of 10 pixels
 };
 

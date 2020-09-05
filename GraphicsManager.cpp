@@ -84,7 +84,7 @@ bool SDLGraphicsManager::Initialize(unsigned int width, unsigned int height, con
 	m_ScreenHeight = height;
 	m_ScreenWidth = width;
 
-	EventManager::GetInstance().SubscribeToEvent(PlayerMovedEventType, this);
+	event_manager::get_instance().subscribe_to_event(PlayerMovedEventType, this);
 	
 	return true;
 }
@@ -128,12 +128,11 @@ std::shared_ptr<Resource> SDLGraphicsManager::MakeResource(tinyxml2::XMLElement 
 			keyFrameWidth = atoi(value.c_str());
 		}
 	}
-	
-	
-	shared_ptr<GraphicsResource> graphicsResource;
-	graphicsResource= isAnimated 
-		? 	shared_ptr<GraphicsResource>(new GraphicsResource(uuid, name, path, type, level, numKeyFrames, keyFrameHeight, keyFrameWidth, isAnimated))
-		:   shared_ptr<GraphicsResource>(new GraphicsResource(uuid, name, path, type, level, isAnimated));
+
+
+	auto graphicsResource = isAnimated
+		                        ? std::make_shared<GraphicsResource>(uuid, name, path, type, level, numKeyFrames, keyFrameHeight, keyFrameWidth,  isAnimated)
+		                        : std::make_shared<GraphicsResource>(uuid, name, path, type, level, isAnimated);
 		
 	
 	return graphicsResource;
@@ -154,7 +153,7 @@ void SDLGraphicsManager::DrawAllActors()
 }
 
 // Draws all the actors in the scene
-void SDLGraphicsManager::DrawCurrentScene(bool updateWindowSurfaceAfterDrawing)
+void SDLGraphicsManager::draw_current_scene(bool updateWindowSurfaceAfterDrawing) const
 {
 	
 	SDL_SetRenderDrawColor(m_Renderer, 0x255, 0x255, 0x55, 0xFF);
@@ -167,13 +166,13 @@ void SDLGraphicsManager::DrawCurrentScene(bool updateWindowSurfaceAfterDrawing)
 
 	// Draw objects in layers, which are ordered by z-order
 	
-	for(auto layer : CurrentLevelManager::GetInstance().m_Layers)
+	for(const auto& layer : CurrentLevelManager::GetInstance().m_Layers)
 	{
 		if(layer->m_Visible)
 		{
-			for(auto actor : layer->m_objects)
+			for(const auto& actor : layer->m_objects)
 			{
-				if(actor->m_Visible) {					
+				if(actor->m_Visible && actor->HasComponent(constants::playerComponentName)) {					
 					actor->VDraw(m_Renderer);
 				}
 			}
@@ -181,9 +180,7 @@ void SDLGraphicsManager::DrawCurrentScene(bool updateWindowSurfaceAfterDrawing)
 	}
 	
 	if(updateWindowSurfaceAfterDrawing)
-	{
 		SDL_UpdateWindowSurface(m_Window);
-	}
 	else
 		SDL_RenderPresent(m_Renderer);		
 }

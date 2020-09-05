@@ -1,264 +1,131 @@
 #include <SDL.h>
-#include <SDL_image.h>
 #include <Windows.h>
 #include <iostream>
 #include "Common.h"
 #include "GameObject.h"
-#include "Drawing.h"
 #include <vector>
-#include <SDL.h>
-#include <SDL_mixer.h>
-#include "Events.h"
 #include "ResourceManager.h"
 #include "SceneChangedEvent.h"
-#include "SceneManager.h"
 #include "DoLogicUpdateEvent.h"
 #include "RenderManager3D.h"
 #include "AddGameObjectToCurrentSceneEvent.h"
 #include "Square.h"
-#include <stack>
-#include <time.h>
 #include "PlayerComponent.h"
 #include "Player.h"
-#include "PlayerMovedEvent.h"
 #include "constants.h"
-#include <SDL_ttf.h>
 #include "GlobalConfig.h"
 #include "GameStructure.h"
 #include "Single.h"
+#include "LevelGenerator.h"
 
 using namespace std;
+void game_loop();
+void unload();
+bool load_content();
+bool initialize();
 
-typedef Singleton<GameStructure> MyGameStructure;
-
-// 20 times a second = 50 milliseconds
-// 1 second is 20*50 = 1000 milliseconds
-
-const int TickTime = 50;
-const int MaxLoops = 4;
-
-bool Initialize(int w, int h);
-void Init3dRenderManager();
-void Uninitialize();
-void DoGameLoop();
-const int ScreenWidth = 800;
-const int ScreenHeight = 600;
-
-
-enum RoomSide {TopSide = 1, RightSide = 2, BottomSide = 3, LeftSide = 4};
 
 int main(int argc, char *args[])
-{	
-	// Prepare all sub systems
-	if(!Initialize(ScreenWidth, ScreenHeight))
+{
+	if (!initialize() || !load_content)
 		return -1;
-
-	bool setInitialLevel = false;
-
-	// Trigger the first level by kicking the event manager
-	EventManager::GetInstance().RegisterEvent(std::shared_ptr<SceneChangedEvent>(new SceneChangedEvent(1)));
-
-	srand(time(0));
-
-	auto screenWidth = ScreenWidth;
-	auto screenHeight = ScreenHeight;	
-	auto squareWidth = 30;
-	auto maxRows = screenWidth/squareWidth;
-	auto maxColumns = screenHeight/squareWidth;
-	
-	vector<shared_ptr<Square>> mazeGrid;
-	stack<shared_ptr<Square>> roomStack;
-
-	/* Generate Rooms for the Maze */
-	int count = 0;
-	for(int y = 0; y < maxColumns; y++)
-	{
-		for(int x = 0; x < maxRows; x++)
-		{
-			auto supportMoveLogic = false;
-			auto gameObject = shared_ptr<Square>(new Square(x * squareWidth, y * squareWidth, squareWidth, supportMoveLogic));				
-			gameObject->SetTag(std::to_string(count++));
-			mazeGrid.push_back(gameObject);			
-		}
-	}
-
-	auto totalRooms = mazeGrid.size();	
-	
-	/* Determine which faces/edges can be removed, based on the bounds of the grid i.e within rows x cols of board */
-	for(int i = 0; i < totalRooms; i++)
-	{		
-		auto nextIndex = i + 1;
-		auto prevIndex = i - 1;
-
-		if(nextIndex >= totalRooms)
-			break;
-		
-		auto thisRow = abs(i / maxColumns);		
-		auto lastColumn = (thisRow+1 * maxColumns)-1;
-		auto thisColumn = maxColumns - (lastColumn-i);
-			
-		int roomAboveIndex = i - maxColumns;
-		int roomBelowIndex = i + maxColumns;
-		int roomLeftIndex = i - 1;
-		int roomRightIndex = i + 1;
-
-		bool canRemoveAbove = roomAboveIndex >= 0;
-		bool canRemoveBelow = roomBelowIndex < totalRooms; 
-		bool canRemoveLeft = thisColumn-1 >= 1;
-		bool canRemoveRight = thisColumn+1 <= maxColumns;
-
-		vector<int> removableSides;
-		auto currentRoom = mazeGrid[i];
-		auto nextRoom = mazeGrid[nextIndex];
-
-		if(canRemoveAbove && currentRoom->IsWalled(TopSide) && mazeGrid[roomAboveIndex]->IsWalled(BottomSide))
-			removableSides.push_back(TopSide);
-		if(canRemoveBelow  && currentRoom->IsWalled(BottomSide) && mazeGrid[roomBelowIndex]->IsWalled(TopSide))
-			removableSides.push_back(BottomSide);
-		if(canRemoveLeft  && currentRoom->IsWalled(LeftSide) && mazeGrid[roomLeftIndex]->IsWalled(RightSide))
-			removableSides.push_back(LeftSide);
-		if(canRemoveRight  && currentRoom->IsWalled(RightSide) && mazeGrid[roomRightIndex]->IsWalled(LeftSide))
-			removableSides.push_back(RightSide);
-				
-		int randSideIndex = rand() % removableSides.size(); // Choose a random element wall to remove from possible choices
-		auto removeSidesRandonly = true;
-		if(removeSidesRandonly)
-		{
-			switch(removableSides[randSideIndex])
-			{
-			case TopSide:
-				currentRoom->removeWall(TopSide);
-				nextRoom->removeWall(BottomSide);
-				continue;
-			case RightSide:
-				currentRoom->removeWall(RightSide);
-				nextRoom->removeWall(LeftSide);
-				continue;
-			case BottomSide:
-				currentRoom->removeWall(BottomSide);
-				nextRoom->removeWall(TopSide);
-				continue;
-			case LeftSide:
-				currentRoom->removeWall(LeftSide);				
-				auto prev = mazeGrid[prevIndex];
-				prev->removeWall(RightSide);
-				continue;
-			}
-		}
-	}
-	
-	for(auto object : mazeGrid)
-	{
-		std::shared_ptr<GameObject> gameObject = std::dynamic_pointer_cast<Square>(object);		
-		gameObject->SubScribeToEvent(PlayerMovedEventType);
-		gameObject->RaiseEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&gameObject)));		
-	}
-	
-	/* Schedule adding the player to the screen */
-	auto playerWidth = squareWidth;
-	auto playerPosX = 0;
-	auto playerPosY = 0;
-	auto playerComponent = shared_ptr<PlayerComponent>(new PlayerComponent(constants::playerComponentName, playerPosX, playerPosY, playerWidth, playerWidth));
-	auto playerObject = std::shared_ptr<GameObject>(new Player(playerComponent->x, playerComponent->y, playerComponent->w));	
-
-	playerObject->SetTag(constants::playerTag);	
-	playerObject->AddComponent(shared_ptr<Component>(playerComponent));
-	playerObject->SubScribeToEvent(PositionChangeEventType);
-	
-	auto addToSceneEvent = std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(&playerObject));
-	addToSceneEvent->eventId = 100;	
-	playerObject->RaiseEvent(addToSceneEvent);
-
-	// Process events, render and update
-	DoGameLoop();	
-	Uninitialize();	
+	load_content();	
+	game_loop();	
+	unload();	
 	return 0;
 }
 
+bool initialize()
+{
+	const auto screen_width = Single<GlobalConfig>().ScreenWidth;
+	const auto screen_height = Single<GlobalConfig>().ScreenHeight;
+	
+	if (!GameStructure::initialize(screen_width, screen_height))
+		return false;
 
-/* Cleans up resources
-* Frees surfaces audio files etc
-*/
-void Uninitialize()
-{	
-	Single<GameStructure>().CleanupResources();
+	event_manager::get_instance().register_event(std::make_shared<scene_changed_event>(1)); // Trigger the first level by kicking the event manager
+	return true;
 }
 
 
-
-/* Main game loop
-* Separates Rendering, event processing and logic updates
-*/
-void DoGameLoop()
+bool load_content()
 {
-	int frameTicks; // Number of ticks in the update call	
-	int numLoops; // Number of loops ??
-	long tickCountAtLastCall, newTime;
-	tickCountAtLastCall = Single<GameStructure>().ticks();
+	for (const auto& square : Single<LevelGenerator>().GenerateLevel())
+	{
+		std::shared_ptr<GameObject> gameObject = std::dynamic_pointer_cast<Square>(square);
+		//gameObject->SubScribeToEvent(PlayerMovedEventType);
+		//gameObject->RaiseEvent(std::make_shared<AddGameObjectToCurrentSceneEvent>(&gameObject));		
+	}
+
+	/* Schedule adding the player to the screen */
+	auto player_width = Single<GlobalConfig>().squareWidth / 2;
+	auto playerPosX = 0;
+	auto playerPosY = 0;
+	auto playerComponent = std::make_shared<PlayerComponent>(constants::playerComponentName, playerPosX, playerPosY, player_width, player_width);
+	auto playerObject = std::static_pointer_cast<GameObject>(std::make_shared<Player>(playerComponent->x, playerComponent->y, playerComponent->w));
+
+	playerObject->SetTag(constants::playerTag);
+	playerObject->AddComponent(shared_ptr<Component>(playerComponent));
+	playerObject->SubScribeToEvent(PositionChangeEventType);
+
+	/* Add player to scene */
+	const auto add_to_scene_event = std::make_shared<AddGameObjectToCurrentSceneEvent>(&playerObject);
+	add_to_scene_event->eventId = 100;
+	playerObject->RaiseEvent(add_to_scene_event);
+	return true;
+}
+
+void game_loop()
+{
+	auto tickCountAtLastCall = GameStructure::get_tick_now();
+	auto max_loops = Single<GlobalConfig>().MaxLoops;
 
 	// MAIN GAME LOOP!!
-	while (!Single<GameStructure>().g_pGameWorldData->bGameDone) {
-		newTime = Single<GameStructure>().ticks();
-		frameTicks = 0;
-		numLoops = 0;
-		long ticksSince = newTime - tickCountAtLastCall;
+	while (!Single<GameStructure>().g_pGameWorldData->bGameDone) 
+	{
+		const auto new_time =  GameStructure::get_tick_now();
+		auto frame_ticks = 0;  // Number of ticks in the update call	
+		auto num_loops = 0;  // Number of loops ??
+		auto ticks_since = new_time - tickCountAtLastCall;
 
 		// New frame, happens consistently every 50 milliseconds. Ie 20 times a second.
 		// 20 times a second = 50 milliseconds
 		// 1 second is 20*50 = 1000 milliseconds
-		while ((ticksSince) > TickTime && numLoops < MaxLoops)
+		while (ticks_since > GlobalConfig::TICK_TIME_MS && num_loops < max_loops)
 		{
-			Single<GameStructure>().Update(); // logic/update			
-			tickCountAtLastCall += TickTime; // tickCountAtLastCall is now been +TickTime more since the last time. update it
-			frameTicks += TickTime; numLoops++;
-			ticksSince = newTime - tickCountAtLastCall;
+			Single<GameStructure>().update();		
+			tickCountAtLastCall += GlobalConfig::TICK_TIME_MS; // tickCountAtLastCall is now been +Single<GlobalConfig>().TickTime more since the last time. update it
+			frame_ticks += GlobalConfig::TICK_TIME_MS; num_loops++;
+			ticks_since = new_time - tickCountAtLastCall;
 		}
 
-		Single<GameStructure>().SpareTime(frameTicks); // handle player input, general housekeeping (Event Manager processing)
+		GameStructure::spare_time(frame_ticks); // handle player input, general housekeeping (Event Manager processing)
 
-		if (!Single<GameStructure>().g_pGameWorldData->bNetworkGame && (ticksSince > TickTime)) {
-			tickCountAtLastCall = newTime - TickTime;
+		if (Single<GameStructure>().g_pGameWorldData->bNetworkGame || ticks_since <= GlobalConfig::TICK_TIME_MS)
+		{
+			if (Single<GameStructure>().g_pGameWorldData->bCanRender)
+			{
+				const auto percent_outside_frame = static_cast<float>(ticks_since / GlobalConfig::TICK_TIME_MS) * 100; // NOLINT(bugprone-integer-division)				
+				GameStructure::draw(percent_outside_frame);
+			}
 		}
-		else if (Single<GameStructure>().g_pGameWorldData->bCanRender) {
-			auto percentOutsideFrame = (float)(ticksSince / TickTime) * 100;
-			Single<GameStructure>().Draw(percentOutsideFrame);
+		else
+		{
+			tickCountAtLastCall = new_time - GlobalConfig::TICK_TIME_MS;
 		}
 	}
 	std::cout << "Game done" << std::endl;
 }
 
-/* Initialize resource, level manager, and load game audio files
-*
-*/
-bool Initialize(int screenWidth, int screenHeight)
-{
-	ResourceManager::GetInstance().Initialize();	
-	CurrentLevelManager::GetInstance().Initialize();
-	
-	
-
-	//Single<GameStructure>().InitGameWorldData();
-	
-	if (!Single<GameStructure>().InitSDL(ScreenWidth, ScreenHeight))
-	{
-		std::cout << "Could not initailize SDL, aborting." << std::endl;
-		return false;
-	}
-
-	// Load audio game files
-	if (!Single<GameStructure>().loadMedia())
-		return -1;		
-	if(Singleton<GlobalConfig>::GetInstance().object.use3dRengerManager)
-		Init3dRenderManager();	
-		
-	return true;
+void unload()
+{	
+	GameStructure::cleanup_resources();
 }
 
-void Init3dRenderManager()
-{
-	D3DRenderManager& renderManager = D3DRenderManager::GetInstance();
-	renderManager.Initialize(GetModuleHandle(NULL), 800, 600, false, "My Window");
-	Mesh3D* mesh = new Mesh3D();
-	mesh->create();
-	D3DRenderManager::GetInstance().meshes.push_back(mesh);
-}
+
+
+
+
+
+
+

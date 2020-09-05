@@ -6,5 +6,6 @@ public:
 	Player(int x, int y, int w) 
 		: Square(x, y, w, true, true){}
 	virtual vector<shared_ptr<Event>> ProcessEvent(std::shared_ptr<Event> event);
+	virtual void VDraw(SDL_Renderer* renderer) override;
 };
 

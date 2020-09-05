@@ -3,7 +3,7 @@
 #include <memory>
 #include "Event.h"
 #include <iostream>
-#include "GlobalConfig.h"""
+#include "GlobalConfig.h"
 
 
 vector<shared_ptr<Event>> GameObject::ProcessEvent(const std::shared_ptr<Event> evt)

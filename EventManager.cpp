@@ -4,61 +4,58 @@
 #include <iostream>
 
 
-void EventManager::RegisterEvent(std::shared_ptr<Event> evt)
+void event_manager::register_event(std::shared_ptr<Event> evt)
 {
-	m_primaryEventQ.push_back(evt);
+	primary_event_queue_.push_back(evt);
 }
 
-void EventManager::SubscribeToEvent(EventType type, IEventSubscriber* you)
+void event_manager::subscribe_to_event(event_type type, IEventSubscriber* you)
 {
-	m_EventSubscribers[type].push_back(you);	
+	event_subscribers_[type].push_back(you);	
 }
 
 
-// Go through all the registered events and call all ther subscribers telling them about the event
-void EventManager::ProcessEvents()
-{	
-
-	int eventCount = 0;
-	secondaryEventQ.clear();
-	for(int eventIndex = 0; eventIndex < m_primaryEventQ.size(); eventIndex++)
+// Go through all the registered events and call all their subscribers telling them about the event
+void event_manager::process_all_events()
+{
+	auto event_count = 0;
+	secondary_event_queue_.clear();
+	
+	for (const auto &event : primary_event_queue_)
 	{
-		auto event = m_primaryEventQ.at(eventIndex);
-		
 		if(event->processed) // for safety sake
 			continue;
 
-		event->eventId = eventCount++;
+		event->eventId = event_count++;
 
 		// Allow each subscriber to process the event
-		auto& subscribers = m_EventSubscribers[event->m_eventType];
-		for(int subscriberIndex = 0; subscriberIndex < subscribers.size(); subscriberIndex++)
+		auto& subscribers = event_subscribers_[event->m_eventType];
+		for (const auto& subscriber : subscribers)
 		{	
 			// Process events for subscriber
-			auto newGeneratedEvents = subscribers[subscriberIndex]->ProcessEvent(event);
-			for(auto newEvent : newGeneratedEvents)
+			auto newGeneratedEvents = subscriber->ProcessEvent(event);
+			for(const auto &newEvent : newGeneratedEvents)
 			{
-				auto eventType = newEvent->m_eventType;
-				secondaryEventQ.push_back(newEvent);
+				secondary_event_queue_.push_back(newEvent);
 			}
 		}
 		event->processed = true;
 	}
 
-	eventCount = 0;
-	m_primaryEventQ.clear();
+	event_count = 0;
+	primary_event_queue_.clear();
 
 	// Process any events tat were generated during the last processEvents()
-	if(secondaryEventQ.size() > 0)
+	if(secondary_event_queue_.size() > 0)
 	{
 		// transfer new events to main eventQueue and process again
-		for(auto event : secondaryEventQ)
+		for(auto event : secondary_event_queue_)
 		{
 			auto eventType = event->m_eventType;
-			m_primaryEventQ.push_back(event);
+			primary_event_queue_.push_back(event);
 
 		}
 				
-		ProcessEvents(); // Process again
+		process_all_events(); // Process again
 	}
 }

@@ -46,10 +46,11 @@ void Square::show(SDL_Renderer* renderer)
     SDL_RenderDrawLine(renderer, dx,dy,ax,ay);
    
   SDL_Rect _unused;
-  auto playerWithinSquare = SDL_IntersectRect(&myBounds, &playerBounds, &_unused);
 
-  if(fill)
-  	 SDL_RenderFillRect(renderer, &myBounds);
+  
+  
+ /* if(fill)
+  	 SDL_RenderFillRect(renderer, &myBounds);*/
     
   if(Singleton<GlobalConfig>::GetInstance().object.printDebuggingText)
 	  RectDebugging::printInRect(renderer, GetTag().c_str(), &myBounds); 

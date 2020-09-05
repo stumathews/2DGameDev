@@ -25,6 +25,15 @@ class GlobalConfig
 {
 public:
 	GlobalConfig() {}
+	
+	// 20 times a second = 50 milliseconds
+	// 1 second is 20*50 = 1000 milliseconds
+	static const int TICK_TIME_MS = 50;
+	const int squareWidth = 30;
+	const int MaxLoops = 4;
+	const int ScreenWidth = 800;
+	const int ScreenHeight = 600;
+	const int moveInterval = 1;
 	Mix_Music *gMusic = NULL;
 	Mix_Chunk *gScratch = NULL;
 	Mix_Chunk *gHigh = NULL;

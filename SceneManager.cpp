@@ -15,8 +15,8 @@ using namespace tinyxml2;
 
 void CurrentLevelManager::Initialize()
 {
-	EventManager::GetInstance().SubscribeToEvent(LevelChangedEventType, this);
-	EventManager::GetInstance().SubscribeToEvent(AddGameObjectToCurrentScene, this);
+	event_manager::get_instance().subscribe_to_event(LevelChangedEventType, this);
+	event_manager::get_instance().subscribe_to_event(AddGameObjectToCurrentScene, this);
 	
 	m_Initialized = true;
 }
@@ -32,7 +32,7 @@ vector<shared_ptr<Event>> CurrentLevelManager::ProcessEvent(const std::shared_pt
 	// As a Scene/Level manager I'll load the scene/level's resources when I get a level/scene event
 	if(evt->m_eventType == LevelChangedEventType)
 	{
-		std::shared_ptr<SceneChangedEvent> cpe = std::dynamic_pointer_cast<SceneChangedEvent>(evt);
+		std::shared_ptr<scene_changed_event> cpe = std::dynamic_pointer_cast<scene_changed_event>(evt);
 		std::string filename;
 		if(cpe->m_Level == 1) {
 			filename = "scene1.xml";
@@ -189,8 +189,8 @@ bool CurrentLevelManager::LoadScene(std::string filename)
 								
 								layer->m_objects.push_back(gameObject);	
 
-								EventManager::GetInstance().SubscribeToEvent(PositionChangeEventType, layer->m_objects.back().get());	
-								EventManager::GetInstance().SubscribeToEvent(DoLogicUpdateEventType, layer->m_objects.back().get());	
+								event_manager::get_instance().subscribe_to_event(PositionChangeEventType, layer->m_objects.back().get());	
+								event_manager::get_instance().subscribe_to_event(DoLogicUpdateEventType, layer->m_objects.back().get());	
 								
 							}
 						}
@@ -206,7 +206,7 @@ bool CurrentLevelManager::LoadScene(std::string filename)
 
 		// Notify that a new scene has been loaded. 
 		// One noticible subscriber ill be the resource manager to load the scene's resources in memory
-		EventManager::GetInstance().RegisterEvent(shared_ptr<SceneChangedEvent>(new SceneChangedEvent(atoi(sceneId))));
+		event_manager::get_instance().register_event(shared_ptr<scene_changed_event>(new scene_changed_event(atoi(sceneId))));
 	}
 	return false;
 }

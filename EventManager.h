@@ -3,25 +3,28 @@
 #include <memory>
 #include "Event.h"
 #include "EventSubscriber.h"
-class EventManager
+#include <map>
+
+class event_manager  // NOLINT(cppcoreguidelines-special-member-functions, hicpp-special-member-functions)
 {
-public:
-	static EventManager& GetInstance()
-	{
-		static EventManager instance;
-		return instance;
-	}
-	EventManager(EventManager const&) = delete;
-	void operator=(EventManager const&) = delete;
+	event_manager() = default;
+	~event_manager() = default;;
+	std::vector<std::shared_ptr<Event>> primary_event_queue_;
+	vector<shared_ptr<Event>> secondary_event_queue_;
+	map<event_type, std::vector<IEventSubscriber*>> event_subscribers_;
 	
-	void RegisterEvent(std::shared_ptr<Event> evt);
-	void SubscribeToEvent(EventType type, IEventSubscriber* you);		
-	void ProcessEvents();
-private:	
-	EventManager(){}
-	~EventManager(){};
-	std::vector<std::shared_ptr<Event>> m_primaryEventQ;
-	vector<shared_ptr<Event>> secondaryEventQ;
-	std::map<EventType, std::vector<IEventSubscriber*>> m_EventSubscribers;
+	public:
+		static event_manager& get_instance()
+		{
+			static event_manager instance;
+			return instance;
+		}
+		event_manager(event_manager const&) = delete;
+		void operator=(event_manager const&) = delete;
+		
+		void register_event(std::shared_ptr<Event> evt);
+		void subscribe_to_event(event_type type, IEventSubscriber* you);		
+		void process_all_events();
+
 };
 

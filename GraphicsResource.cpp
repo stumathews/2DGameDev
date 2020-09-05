@@ -53,7 +53,7 @@ void GraphicsResource::VUnload()
 	if(m_Surface)
 	{
 		SDL_FreeSurface(m_Surface);
-		m_Surface = NULL;
+		m_Surface = nullptr;
 	}
 	m_IsLoaded = false;
 }

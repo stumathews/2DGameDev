@@ -22,8 +22,8 @@ public:
 	~GraphicsResource();
 
 	// The binary data that will represent the resource once its loaded.
-	SDL_Surface* m_Surface;
-	SDL_Texture* newTexture = NULL;
+	SDL_Surface* m_Surface = nullptr;
+	SDL_Texture* newTexture = nullptr;
 
 
 	uint m_NumKeyFrames;

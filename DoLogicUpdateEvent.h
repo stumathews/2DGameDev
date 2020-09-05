@@ -1,12 +1,12 @@
 #pragma once
 #include "Event.h"
-class DoLogicUpdateEvent : 	public Event
+class do_logic_update_event : public Event
 {
 public:
-	DoLogicUpdateEvent() : Event(DoLogicUpdateEventType)
+	do_logic_update_event() : Event(DoLogicUpdateEventType)
 	{
-		SetData(NULL);
+		Event::SetData(nullptr);
 	};
-	~DoLogicUpdateEvent();
+	~do_logic_update_event();
 };
 

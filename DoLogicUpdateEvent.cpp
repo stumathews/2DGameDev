@@ -1,10 +1,4 @@
 #include "DoLogicUpdateEvent.h"
-
-
-
-
-
-
-DoLogicUpdateEvent::~DoLogicUpdateEvent()
+do_logic_update_event::~do_logic_update_event()
 {
 }

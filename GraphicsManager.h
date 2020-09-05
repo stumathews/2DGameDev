@@ -32,12 +32,12 @@ public:
 		*/
 		bool Initialize(unsigned int width = 800, unsigned int height=600, const char* windowTitle=0);
 		// Creates a graphics Resource
-		std::shared_ptr<Resource> MakeResource(tinyxml2::XMLElement * assetXmlElement);
+	 static std::shared_ptr<Resource> MakeResource(tinyxml2::XMLElement * assetXmlElement);
 		
 		// Draw all the Actors we know about onto the surface
 		void DrawAllActors();
 
-		void DrawCurrentScene(bool updateWindowSurfaceAfterDrawing = true);
+		void draw_current_scene(bool updateWindowSurfaceAfterDrawing = true) const;
 		unsigned int GetScreenWidth() { return  m_ScreenWidth;}
 		unsigned int GetScreenhEIGHT() { return  m_ScreenHeight;}
 private:	

@@ -33,6 +33,7 @@
     <ClCompile Include="GameStructure.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="GraphicsResource.cpp" />
+    <ClCompile Include="LevelGenerator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh3D.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -75,6 +76,7 @@
     <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="GraphicsResource.h" />
     <ClInclude Include="Layer.h" />
+    <ClInclude Include="LevelGenerator.h" />
     <ClInclude Include="Mesh3D.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerComponent.h" />
