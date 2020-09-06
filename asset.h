@@ -2,11 +2,11 @@
 #include <string>
 using namespace std;
 // Meta data about a resource (uid, name, path, type, scene etc)
-class Resource
+class asset
 {
 public:	
 	
-	Resource(int uid, string name, string path, string type, int scene);
+	asset(int uid, string name, string path, string type, int scene);
 	int m_uid;
 	string m_name;
 	string m_path;
@@ -16,10 +16,10 @@ public:
 	
 
 	// All resources can load themselves
-	virtual void VLoad() = 0;
+	virtual void load() = 0;
 
 	// All resources can unload themselves
-	virtual void VUnload() = 0;
-	virtual ~Resource(){}
+	virtual void unload() = 0;
+	virtual ~asset();
 };
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "GameObject.h"
 class SceneItem :
-	public GameObject
+	public game_object
 {
 public:
 	SceneItem();

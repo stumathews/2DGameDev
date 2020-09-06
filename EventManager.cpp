@@ -1,50 +1,55 @@
 #include "EventManager.h"
 #include <vector>
 #include "EventSubscriber.h"
+#include "Logger.h"
 
 
-void event_manager::raise_event(const shared_ptr<Event> event)  // NOLINT(performance-unnecessary-value-param)
+event_manager::event_manager()
 {
-	primary_event_queue_.push_back(event);
+	logger::log_message("event_manager constructed");
 }
 
-void event_manager::subscribe_to_event(event_type type, IEventSubscriber* you)
+void event_manager::raise_event(const shared_ptr<Event> event, event_subscriber* you)  // NOLINT(performance-unnecessary-value-param)
 {
+	if(event->m_eventType != DoLogicUpdateEventType)
+		logger::log_message("event_manager:" + you->get_subscriber_name()  + string(" raised to event #") + event->m_eventType);
+	primary_event_queue_.push(event);
+}
+
+void event_manager::subscribe_to_event(const event_type type, event_subscriber* you)
+{
+	logger::log_message("event_manager:"+you->get_subscriber_name() + string(" subscribed to event #") + type);
 	event_subscribers_[type].push_back(you);	
 }
 
 void event_manager::process_all_events()
 {
 	auto event_count = 0;
-	secondary_event_queue_.clear();
-	
-	for (const auto &event : primary_event_queue_)
+
+	while(!primary_event_queue_.empty())
 	{
+		const auto event = primary_event_queue_.front();
+		primary_event_queue_.pop();
+		
 		if(event->processed) // for safety sake
 			continue;
 
 		event->eventId = event_count++;
-
+				
 		for (const auto& subscriber :  event_subscribers_[event->m_eventType])
 		{
 			for(const auto &secondary_event : subscriber->process_event(event))
 			{
-				secondary_event_queue_.push_back(secondary_event);
+				secondary_event_queue_.push(secondary_event);
 			}
 		}
 		event->processed = true;
 	}
-	
-	primary_event_queue_.clear();
 
-	if(!secondary_event_queue_.empty())
+	while(!secondary_event_queue_.empty())
 	{
-		for(const auto& event : secondary_event_queue_)
-		{
-			primary_event_queue_.push_back(event);
-		}
-						
-		process_all_events();
+		primary_event_queue_.push(secondary_event_queue_.front());
+		secondary_event_queue_.pop();
 	}
 }
 

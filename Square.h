@@ -1,35 +1,35 @@
 #pragma once
-#include <iostream>
 #include <SDL.h>
 #include "GameObject.h"
-#include <stdbool.h>
 #include "RectDetails.h"
 
-class Square : public GameObject 
+class square : public game_object   // NOLINT(cppcoreguidelines-special-member-functions)
 {
 private: 
     int width;
 protected:
-	bool walls[4];
+	bool walls[4]{};
 	RectDetails* rect_details_;
-	RectDetails* get_rect_details(){ return rect_details_; };
+    RectDetails* get_rect_details() const;;
 	int fill;
 	SDL_Rect player_bounds_;
 	SDL_Rect my_bounds_;
 public: 
-	Square(int m_xPos, int m_yPos, int rw, bool fill = false, bool supportMoveLogic = true);    
-    
-    inline int get_x() const { return this->m_xPos; }
-	inline int get_y() const { return this->m_yPos; }
-	inline int get_w() const { return width; }
-	inline int get_h() const { return width; }
+	square(int x, int y, int rw, bool fill = false, bool supports_move_logic = true);
 
-	bool is_walled(int wall) { return walls[wall-1]; }	
-	void show(SDL_Renderer* renderer);    
-	inline void removeWall(int wall) { this->walls[wall-1] = false; }
+    int get_x() const;
+    int get_y() const;
+    int get_w() const;
+    int get_h() const;
 
-	virtual vector<shared_ptr<Event>> process_event(std::shared_ptr<Event> event);
-    virtual void VDraw(SDL_Renderer* renderer) override { show(renderer); };
-	inline virtual ~Square() { delete rect_details_;	}
-	virtual void VDoLogic(){}
+    bool is_walled(int wall);
+	void show(SDL_Renderer* renderer);
+    void removeWall(int wall);
+
+	vector<shared_ptr<Event>> process_event(std::shared_ptr<Event> event) override;
+    void draw(SDL_Renderer* renderer) override;;
+    virtual ~square();
+    void update() override;
 };
+
+

@@ -15,105 +15,56 @@
 #include "GlobalConfig.h"
 
 
-class GameObject : public IEventSubscriber
+class game_object : public event_subscriber
 {
 public:
-	GameObject(): 
-		red(0x00), 
-		blue(0xFF), 
-		green(0x00), 
-		isTravelingLeft(false), 
-		m_Visible(true), 
-		m_ColourKeyEnabled(false), 
-		m_xPos(0), 
-		m_yPos(0), m_DoMoveLogic(true) {}
+	bool supports_move_logic;
+	bool is_visible;
+	bool is_color_key_enabled;
+	int x;
+	int y;
 
-	GameObject(int m_xPos, int m_yPos): 
-		m_xPos(m_xPos),
-		m_yPos(m_yPos)
-	{
-		red = 0x00;
-		blue = 0xFF;
-		green = 0x00;
-		isTravelingLeft = false; // its traveling right	
-		m_Visible = true;
-		m_ColourKeyEnabled = false;
-	}
+	game_object();
 
-	bool m_DoMoveLogic = true;
-	bool m_Visible;
-	bool m_ColourKeyEnabled = false;
-	int m_xPos;
-	int m_yPos;
+	game_object(int x, int y);
 
-	void SubScribeToEvent(event_type type) 
-	{ 
-		event_manager::get_instance().subscribe_to_event(type, this);
-	}
+	virtual ~game_object();
 
-	void RaiseEvent(Event event)
-	{		
-		event_manager::get_instance().raise_event(make_unique<Event>(event));
-	}
+	void subscribe_to_event(event_type type);
+	void raise_event(Event event);
+	void raise_event(const shared_ptr<Event> the_event);
+	shared_ptr<GraphicsResource> get_resource() const;
+	void set_graphic_resource(shared_ptr<GraphicsResource> graphic_resource);
 
-	static void raise_event(const shared_ptr<Event> the_event)
-	{		
-		event_manager::get_instance().raise_event(the_event);
-	}
 
-	shared_ptr<GraphicsResource> GetResource() { return m_GraphicsResource; }
-	void SetGraphicsResource(shared_ptr<GraphicsResource> graphicsResource)
-	{
-		m_GraphicsResource = graphicsResource;
-	}
-
-	// A game object should know how to draw itself
-	void virtual VDraw(SDL_Renderer* renderer) = 0;	
-	void virtual VDoLogic() = 0;
-	virtual void MoveUp() { m_yPos -= moveInterval; }
-	virtual void MoveDown() { m_yPos += moveInterval; }
-	virtual void MoveLeft() { m_xPos -= moveInterval; }
-	virtual void MoveRight() { m_xPos += moveInterval; }
-	virtual void DrawResource(SDL_Renderer* renderer);	
-
-	vector<shared_ptr<Event>> process_event(const std::shared_ptr<Event> event) override;
-	void DetectSideColission();
-	virtual ~GameObject() { }
+	void virtual draw(SDL_Renderer* renderer) = 0;	
+	void virtual update();
+	virtual void move_up();
+	virtual void move_down();
+	virtual void move_left();
+	virtual void move_right();
 	
-	void SetColourKey(float r, float g, float b)
-	{
-		m_ColorKey.r = r;
-		m_ColorKey.g = g;
-		m_ColorKey.b = b;
-	}
-
-	void AddComponent(shared_ptr<Component> component)
-	{		
-		m_Components[component->GetName()] = component;
-	}
-
-	bool isPlayer() { return FindComponent(constants::playerComponentName) != NULL; }
-
-	shared_ptr<Component> FindComponent(string name)
-	{
-		return m_Components[name];
-	}
-
-	bool HasComponent(string name)
-	{
-		
-		return m_Components.find(name) != m_Components.end();		
-	}
-	string GetTag() { return this->Tag;}
-	void SetTag(string tag) { this->Tag = tag;}
+	vector<shared_ptr<Event>> process_event(const std::shared_ptr<Event> event) override;  // NOLINT(readability-inconsistent-declaration-parameter-name)
+	void DetectSideCollision();
+	void set_color_key(float r, float g, float b);
+	void add_component(shared_ptr<Component> component);
+	bool is_player();
+	shared_ptr<Component> find_component(string name);
+	bool has_component(string name);
+	string get_tag() const;
+	void set_tag(string tag);
+	string get_subscriber_name() override;
+	void draw_resource(SDL_Renderer* renderer) const;
+	bool is_resource_loaded() const;
 private:
-	string Tag;
-	bool isTravelingLeft;
+	string tag;
+	bool is_traveling_left;
 	int red, blue, green;
-	shared_ptr<GraphicsResource> m_GraphicsResource; // can be shared by other actors
-	map<string, shared_ptr<Component>> m_Components;
-	SDL_Rect mBounds = {};	
-	SDL_Color m_ColorKey = {};
-	int moveInterval = Singleton<GlobalConfig>::GetInstance().object.moveInterval; // move by intervals of 10 pixels
+	shared_ptr<GraphicsResource> graphic_resource; // can be shared by other actors
+	map<string, shared_ptr<Component>> components;
+	SDL_Color color_key = {};
+	int move_interval = GlobalConfig::moveInterval; // move by intervals of 10 pixels
 };
+
+
 

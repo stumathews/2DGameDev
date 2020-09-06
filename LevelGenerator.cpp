@@ -2,7 +2,7 @@
 #include <stack>
 #include <ctime>
 
-vector<shared_ptr<Square>> level_generator::generate_level()
+vector<shared_ptr<square>> level_generator::generate_level()
 {
 	srand(time(nullptr));
 
@@ -12,8 +12,8 @@ vector<shared_ptr<Square>> level_generator::generate_level()
 	const auto max_rows = screen_width/square_width;
 	const auto max_columns = screen_height/square_width;
 	
-	vector<shared_ptr<Square>> mazeGrid;
-	stack<shared_ptr<Square>> roomStack;
+	vector<shared_ptr<square>> mazeGrid;
+	stack<shared_ptr<square>> roomStack;
 
 	/* Generate Rooms for the Maze */
 	auto count = 0;
@@ -22,8 +22,8 @@ vector<shared_ptr<Square>> level_generator::generate_level()
 		for(auto x = 0; x < max_rows; x++)
 		{
 			auto support_move_logic = false;
-			auto game_object = std::make_shared<Square>(x * square_width, y * square_width, square_width, support_move_logic);				
-			game_object->SetTag(std::to_string(count++));
+			auto game_object = std::make_shared<square>(x * square_width, y * square_width, square_width, support_move_logic);				
+			game_object->set_tag(std::to_string(count++));
 			mazeGrid.push_back(game_object);			
 		}
 	}

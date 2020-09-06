@@ -24,6 +24,7 @@
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="AudioResource.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="EventSubscriber.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="DoLogicUpdateEvent.cpp" />
     <ClCompile Include="Drawing.cpp" />
@@ -43,7 +44,7 @@
     <ClCompile Include="RectDebugging.cpp" />
     <ClCompile Include="RectDetails.cpp" />
     <ClCompile Include="RenderManager3D.cpp" />
-    <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="asset.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="SceneChangedEvent.cpp" />
     <ClCompile Include="SceneItem.cpp" />
@@ -85,13 +86,13 @@
     <ClInclude Include="RectDebugging.h" />
     <ClInclude Include="RectDetails.h" />
     <ClInclude Include="RenderManager3D.h" />
-    <ClInclude Include="Resource.h" />
+    <ClInclude Include="asset.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="SceneChangedEvent.h" />
     <ClInclude Include="SceneItem.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="Single.h" />
+    <ClInclude Include="singleton.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Sprites3D.h" />
     <ClInclude Include="Square.h" />

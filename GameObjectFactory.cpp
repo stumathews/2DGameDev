@@ -10,7 +10,7 @@ using namespace tinyxml2;
 /*
 Create a Game Object Type from an object's xml definition.
 */
-shared_ptr<GameObject> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement * sceneObjectXml)
+shared_ptr<game_object> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement * sceneObjectXml)
 {
 	uint red = 0, green = 0, blue = 0;	
 	uint m_xPos = 0, m_yPos = 0;
@@ -18,7 +18,7 @@ shared_ptr<GameObject> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement *
 	shared_ptr<GraphicsResource> resource;
 	
 	// The game object we are going to construct
-	auto emptyGameObject = shared_ptr<GameObject>(NULL);
+	auto emptyGameObject = shared_ptr<game_object>(NULL);
 
 	// Traverse the object definition
 	for(const XMLAttribute* sceneObjAtt = sceneObjectXml->FirstAttribute(); sceneObjAtt; sceneObjAtt = sceneObjAtt->Next()) 
@@ -31,7 +31,7 @@ shared_ptr<GameObject> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement *
 		if(detailName == "resourceId") 
 		{
 			// Get the associated resource details referenced by this object
-			auto meta = ResourceManager::GetInstance().GetResourceByUuid(atoi(detailValue.c_str()));
+			auto meta = resource_manager::get().get_resource_by_uuid(atoi(detailValue.c_str()));
 			if(meta != NULL)
 			{
 				if(!meta->m_type._Equal("graphic"))
@@ -94,13 +94,13 @@ shared_ptr<GameObject> GameObjectFactory::BuildGameObject(tinyxml2::XMLElement *
 	return InitGameObject(emptyGameObject, m_xPos, m_yPos, resource, colourKeyEnabled, visible, red, green, blue);		
 }
 
-std::shared_ptr<GameObject>& GameObjectFactory::InitGameObject(std::shared_ptr<GameObject>& gameObject, uint m_xPos, uint m_yPos, std::shared_ptr<GraphicsResource>& resource, bool colourKeyEnabled, bool visible, const uint& red, const uint& green, const uint& blue)
+std::shared_ptr<game_object>& GameObjectFactory::InitGameObject(std::shared_ptr<game_object>& gameObject, uint m_xPos, uint m_yPos, std::shared_ptr<GraphicsResource>& resource, bool colourKeyEnabled, bool visible, const uint& red, const uint& green, const uint& blue)
 {	
 	if(resource == NULL)
 	{ 
 		auto width = 50;
-		gameObject = shared_ptr<GameObject>(new Square(m_xPos, m_yPos, width));
-		gameObject->m_Visible = true;
+		gameObject = shared_ptr<game_object>(new square(m_xPos, m_yPos, width));
+		gameObject->is_visible = true;
 		return gameObject;		
 	}
 
@@ -118,25 +118,26 @@ std::shared_ptr<GameObject>& GameObjectFactory::InitGameObject(std::shared_ptr<G
 	// Special animated game object?	
 	if(resource->m_bIsAnimated)
 	{
-		auto framesPerRow = 3, framesPerColumn = 3;
-		auto sprite = new Sprite(m_xPos, m_yPos, 100, resource->m_NumKeyFrames, framesPerRow, framesPerColumn, resource->m_KeyFrameWidth, resource->m_KeyFrameHeight);
-		gameObject = shared_ptr<Sprite>(sprite);
+		const auto frames_per_row = 3;
+		const auto frames_per_column = 3;
+		const auto the_sprite = new sprite(m_xPos, m_yPos, 100, resource->m_NumKeyFrames, frames_per_row, frames_per_column, resource->m_KeyFrameWidth, resource->m_KeyFrameHeight);
+		gameObject = shared_ptr<sprite>(the_sprite);
 		
 	} 
 	else
 	{
 		// Normal 2d Sprite (no animation)
-		gameObject = shared_ptr<GameObject>(new Sprite(m_xPos, m_yPos));	
+		gameObject = shared_ptr<game_object>(new sprite(m_xPos, m_yPos));	
 	}
-	gameObject->SetGraphicsResource(resource);
-	gameObject->m_ColourKeyEnabled = colourKeyEnabled;
-	gameObject->m_Visible = visible;
+	gameObject->set_graphic_resource(resource);
+	gameObject->is_color_key_enabled = colourKeyEnabled;
+	gameObject->is_visible = visible;
 
-	if (gameObject->m_ColourKeyEnabled)
-		gameObject->SetColourKey(red, green, blue);
+	if (gameObject->is_color_key_enabled)
+		gameObject->set_color_key(red, green, blue);
 
 
 	if (resource->m_bIsAnimated)
-		std::dynamic_pointer_cast<Sprite>(gameObject)->play();
+		std::dynamic_pointer_cast<sprite>(gameObject)->play();
 	return gameObject;
 }

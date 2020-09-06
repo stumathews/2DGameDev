@@ -15,8 +15,8 @@ public:
 	 GameObjectFactory(GameObjectFactory const&)  = delete;
      void operator=(GameObjectFactory const&)  = delete;
 	 ~GameObjectFactory(){};
-	std::shared_ptr<GameObject> BuildGameObject(tinyxml2::XMLElement * sceneObjectXml);
-	std::shared_ptr<GameObject>& InitGameObject(std::shared_ptr<GameObject>& gameObject, uint m_xPos, uint m_yPos, std::shared_ptr<GraphicsResource>& resource, bool colourKeyEnabled, bool visible, const uint& red, const uint& green, const uint& blue);
+	std::shared_ptr<game_object> BuildGameObject(tinyxml2::XMLElement * sceneObjectXml);
+	std::shared_ptr<game_object>& InitGameObject(std::shared_ptr<game_object>& gameObject, uint m_xPos, uint m_yPos, std::shared_ptr<GraphicsResource>& resource, bool colourKeyEnabled, bool visible, const uint& red, const uint& green, const uint& blue);
 private:
 	static GameObjectFactory& m_Instance;
 	GameObjectFactory(){};

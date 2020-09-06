@@ -1,7 +1,7 @@
 #include "AudioManager.h"
 #include <vector>
 #include <memory>
-#include "Resource.h"
+#include "asset.h"
 
 
 
@@ -12,7 +12,7 @@ AudioManager::AudioManager()
 AudioManager::~AudioManager()
 = default;
 
-std::shared_ptr<Resource> AudioManager::make_resource(tinyxml2::XMLElement * element)
+std::shared_ptr<asset> AudioManager::make_resource_spec(tinyxml2::XMLElement * element)
 {
 	int uuid;
 	const char* type;

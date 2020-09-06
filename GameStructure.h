@@ -1,21 +1,11 @@
 #pragma once
 
-class GameStructure 
+class game_structure final : public event_subscriber
 {
 public:
-	GameStructure()
-	{
-		g_pGameWorldData = std::make_shared<GameWorldData>();
-		init_game_world_data();
-		
-	}
+	game_structure();
 	std::shared_ptr<GameWorldData> g_pGameWorldData;
-	void init_game_world_data() const
-	{
-		g_pGameWorldData->bGameDone = false;
-		g_pGameWorldData->bNetworkGame = false;
-		g_pGameWorldData->bCanRender = true;
-	}
+	void init_game_world_data() const;
 
 	static bool load_media();
 	static bool initialize(int screen_width, int screen_height);
@@ -28,10 +18,12 @@ public:
 	static void spare_time(long);
 	static bool init_sdl(int screenWidth, int screenHeight);
 	static void cleanup_resources();
-	void get_input() const;
+	void get_input();
 	
-	void player_update() const;
+	void player_update();
 
 	void update_state();
 	void update_logic_based_elements();
+	vector<shared_ptr<Event>> process_event(std::shared_ptr<Event> evt) override;
+	string get_subscriber_name() override;
 };

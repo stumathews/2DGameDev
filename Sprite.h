@@ -3,14 +3,14 @@
 #include "TypeAliases.h"
 
 
-class Sprite : public GameObject
+class sprite final : public game_object
 {
 private:
 	unsigned long m_TimeLastFrame;
 public:
-	Sprite(uint xPos, uint yPos, uint speed = 0, uint totalFrames = 1, uint framesPerRow = 1, uint framesPerColumn = 1, uint frameWidth = 0, uint frame = 0) : 
+	sprite(uint xPos, uint yPos, uint speed = 0, uint totalFrames = 1, uint framesPerRow = 1, uint framesPerColumn = 1, uint frameWidth = 0, uint frame = 0) : 
 		m_Speed(100), m_TotalFrames(totalFrames), m_FramesPerRow(framesPerRow), m_FramesPerColumn(framesPerColumn),
-		m_CurrentFrame(0), m_FrameHeight(64), m_FrameWidth(64), m_StartFrame(0), m_TimeLastFrame(0), GameObject(xPos, yPos) { }
+		m_CurrentFrame(0), m_FrameHeight(64), m_FrameWidth(64), m_StartFrame(0), m_TimeLastFrame(0), game_object(xPos, yPos) { }
 	
 	uint m_TotalFrames;
 	uint m_FramesPerRow;
@@ -22,22 +22,17 @@ public:
 	uint m_FrameHeight;
 	
 
-	virtual void VDraw(SDL_Renderer* renderer)
+	void draw(SDL_Renderer* renderer) override
 	{
-		update();
-		GameObject::VDraw(renderer);
+		game_object::draw(renderer);
+		update();		
 	}
-
-	virtual void VDoLogic()
-	{
-		GameObject::DetectSideColission();
-	}
-
-	void update();
+		
+	void update() override;
 	void play();
 	void stop();
 	void setFrameRect(uint FrameNumber);
-	~Sprite(){};
+	virtual ~sprite(){};
 	bool stopped = false;
 };
 

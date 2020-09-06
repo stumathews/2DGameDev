@@ -33,14 +33,14 @@ public:
 	static const int MaxLoops = 4;
 	static const int ScreenWidth = 800;
 	static const int ScreenHeight = 600;
-	static const int moveInterval = 1;
+	static const int moveInterval = 30;
 	Mix_Music *gMusic = nullptr;
 	Mix_Chunk *gScratch = nullptr;
 	Mix_Chunk *gHigh = nullptr;
 	Mix_Chunk *gMedium = nullptr;
 	Mix_Chunk *gLow = nullptr;
 	TTF_Font *font = nullptr;
-	bool verbose = true;
-	bool printDebuggingText = false;
-	bool use3dRengerManager = false;
+	const static bool verbose = true;
+	const static bool print_debugging_text = false;
+	const static bool use_3d_render_manager = false;
 };

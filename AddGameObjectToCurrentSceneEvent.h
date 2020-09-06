@@ -5,22 +5,22 @@
 
 class AddGameObjectToCurrentSceneEvent : public Event
 {
-	std::shared_ptr<GameObject> gameObject_;
+	std::shared_ptr<game_object> gameObject_;
 public:
-	AddGameObjectToCurrentSceneEvent(std::shared_ptr<GameObject> gameObject) : Event(AddGameObjectToCurrentScene)
+	AddGameObjectToCurrentSceneEvent(std::shared_ptr<game_object> gameObject) : Event(AddGameObjectToCurrentScene)
 	{
 		SetGameObject(gameObject);
 	}
 
-	void SetGameObject(std::shared_ptr<GameObject> gameObject)
+	void SetGameObject(std::shared_ptr<game_object> gameObject)
 	{
 		this->GameObject = gameObject;
 	}
-	std::shared_ptr<GameObject> GetGameObject()
+	std::shared_ptr<game_object> GetGameObject()
 	{
 		return GameObject;
 	}
 
 private:
-	std::shared_ptr<GameObject> GameObject;
+	std::shared_ptr<game_object> GameObject;
 };

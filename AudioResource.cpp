@@ -1,23 +1,23 @@
 #include "AudioResource.h"
-#include "Resource.h"
+#include "asset.h"
 #include <iostream>
 
 
 
 AudioResource::AudioResource(int uid, string name, string path, string type, int scene) 
-	: Resource(uid, name, path, type, scene)
+	: asset(uid, name, path, type, scene)
 {
 	
 }
 
-void AudioResource::VLoad()
+void AudioResource::load()
 {
 
 	m_IsLoaded = true;
 }
 
 
-void AudioResource::VUnload()
+void AudioResource::unload()
 {
 	m_IsLoaded = false;
 }

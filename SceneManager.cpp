@@ -11,23 +11,31 @@
 #include "GameObjectFactory.h"
 #include "AddGameObjectToCurrentSceneEvent.h"
 #include "constants.h"
+#include "Logger.h"
 using namespace tinyxml2;
 
-void CurrentLevelManager::Initialize()
+void scene_manager::initialize()
 {
-	event_manager::get_instance().subscribe_to_event(LevelChangedEventType, this);
-	event_manager::get_instance().subscribe_to_event(AddGameObjectToCurrentScene, this);
+	logger::log_message("scene_manager::initialize()");	
+	event_manager::get().raise_event(std::make_shared<scene_changed_event>(1), this); 
+	event_manager::get().subscribe_to_event(LevelChangedEventType, this);
+	event_manager::get().subscribe_to_event(AddGameObjectToCurrentScene, this);
 	
-	m_Initialized = true;
+	is_initialized = true;
 }
 
-CurrentLevelManager::CurrentLevelManager()
+scene_manager::scene_manager()
 {
-	if(!m_Initialized)
-		m_Initialized = true;
+	if(!is_initialized)
+		is_initialized = true;
+}
+
+string scene_manager::get_subscriber_name()
+{
+	return "scene_manager";
 };
 
-vector<shared_ptr<Event>> CurrentLevelManager::process_event(const std::shared_ptr<Event> evt)
+vector<shared_ptr<Event>> scene_manager::process_event(const std::shared_ptr<Event> evt)
 {	
 	if(LevelChangedEventType == evt->m_eventType) // As a Scene/Level manager I'll load the scene/level's resources when I get a level/scene event
 	{
@@ -64,9 +72,9 @@ vector<shared_ptr<Event>> CurrentLevelManager::process_event(const std::shared_p
 	return vector<shared_ptr<Event>>();
 }
 
-shared_ptr<Layer> CurrentLevelManager::addLayer(const std::string name)
+shared_ptr<Layer> scene_manager::add_layer(const std::string name)
 {
-	auto layer = findLayer(name);
+	auto layer = find_layer(name);
 	if(!layer)
 	{
 		layer = std::make_shared<Layer>();
@@ -76,7 +84,7 @@ shared_ptr<Layer> CurrentLevelManager::addLayer(const std::string name)
 	return layer;
 }
 
-const shared_ptr<Layer> CurrentLevelManager::findLayer(const std::string name)
+const shared_ptr<Layer> scene_manager::find_layer(const std::string name)
 {
 	for(const auto& layer : m_Layers)
 		if(layer->m_Name == name)
@@ -85,7 +93,7 @@ const shared_ptr<Layer> CurrentLevelManager::findLayer(const std::string name)
 	return nullptr;
 }
 
-void CurrentLevelManager::removeLayer(std::string name)
+void scene_manager::remove_layer(std::string name)
 {
 	for(const auto& layer : m_Layers)
 		if(layer->m_Name == name)
@@ -97,13 +105,13 @@ bool compare_layer_order(shared_ptr<Layer> rhs, shared_ptr<Layer> lhs)
 	return lhs->m_ZOrder < rhs->m_ZOrder;
 }
 
-void CurrentLevelManager::sort_layers()
+void scene_manager::sort_layers()
 {
 	m_Layers.sort(compare_layer_order);
 }
 
 // Reads the scene data from the scene file
-bool CurrentLevelManager::load_scene(const std::string& filename)
+bool scene_manager::load_scene(const std::string& filename)
 {
 	/*
 
@@ -192,8 +200,8 @@ bool CurrentLevelManager::load_scene(const std::string& filename)
 								layer->m_objects.push_back(game_object);	
 
 								// Subscribe all game objects to some basic event types
-								event_manager::get_instance().subscribe_to_event(PositionChangeEventType, game_object.get());	
-								event_manager::get_instance().subscribe_to_event(DoLogicUpdateEventType, game_object.get());								
+								event_manager::get().subscribe_to_event(PositionChangeEventType, game_object.get());	
+								event_manager::get().subscribe_to_event(DoLogicUpdateEventType, game_object.get());								
 							}
 						}
 					}
@@ -206,7 +214,7 @@ bool CurrentLevelManager::load_scene(const std::string& filename)
 
 		}
 		
-		event_manager::get_instance().raise_event(make_unique<scene_changed_event>(atoi(scene_id)));
+		event_manager::get().raise_event(make_unique<scene_changed_event>(atoi(scene_id)), this);
 	}
 	return false;
 }

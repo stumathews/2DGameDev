@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 enum event_type { PositionChangeEventType, LevelChangedEventType, DoLogicUpdateEventType, AddGameObjectToCurrentScene, PlayerMovedEventType };
 
@@ -15,6 +16,9 @@ public:
 	event_type m_eventType;
 	int eventId;
 	bool processed;
-	
 };
+
+std::string operator+(const std::string& str, const event_type type);
+
+
 

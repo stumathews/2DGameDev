@@ -3,7 +3,7 @@
 #include "windows.h"
 
 
-void Sprite::update()
+void sprite::update()
 {
 	unsigned long timeSincelastFrame = timeGetTime() - m_TimeLastFrame;
 	if(timeSincelastFrame >= m_Speed) {
@@ -18,9 +18,11 @@ void Sprite::update()
 	}
 }
 
-void Sprite::play()
+void sprite::play()
 {
-	auto resource = GetResource();
+	const auto resource = get_resource();
+	if(!is_resource_loaded())
+		return;
 	auto TmpSurface = resource->m_Surface;
 	//m_FrameWidth =  TmpSurface->w/m_FramesPerRow;
 	//m_FrameHeight = TmpSurface->h/m_FramesPerColumn;
@@ -29,13 +31,15 @@ void Sprite::play()
 	m_TimeLastFrame = timeGetTime();
 }
 
-void Sprite::stop()
+void sprite::stop()
 {
 	stopped = true;
 }
 
-void Sprite::setFrameRect(uint FrameNumber)
+void sprite::setFrameRect(uint FrameNumber)
 {
+	if(!is_resource_loaded())
+		return;
 	/*uint RowNumber = floor(FrameNumber/m_FramesPerRow);
 	uint ColumnNumber = FrameNumber;
 
@@ -61,8 +65,8 @@ void Sprite::setFrameRect(uint FrameNumber)
 	GetResource()->m_viewPort.w = m_FrameWidth;
 	GetResource()->m_viewPort.h = m_FrameHeight;*/
 
-	GetResource()->m_viewPort.x = typicalFrame[FrameNumber].x;
-	GetResource()->m_viewPort.y = typicalFrame[FrameNumber].y;
-	GetResource()->m_viewPort.w = typicalFrame[FrameNumber].w;
-	GetResource()->m_viewPort.h = typicalFrame[FrameNumber].h;
+	get_resource()->m_viewPort.x = typicalFrame[FrameNumber].x;
+	get_resource()->m_viewPort.y = typicalFrame[FrameNumber].y;
+	get_resource()->m_viewPort.w = typicalFrame[FrameNumber].w;
+	get_resource()->m_viewPort.h = typicalFrame[FrameNumber].h;
 }

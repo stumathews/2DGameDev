@@ -4,7 +4,6 @@
 #include <Windows.h>
 #include <iostream>
 #include "Common.h"
-#include "Single.h"
 #include <SDL_mixer.h>
 #include "Events.h"
 #include "ResourceManager.h"
@@ -16,22 +15,23 @@
 #include "GlobalConfig.h"
 #include "GameStructure.h"
 #include <functional>
+#include "Logger.h"
 using namespace std;
-
-int main(int argc, char * args[]);
 
 // Create our global copy of the game data
 std::shared_ptr<GameWorldData> g_pGameWorldData = std::make_shared<GameWorldData>();
 
 
-void log_message(const string &message, const bool be_verbose = Single<GlobalConfig>().verbose)
+void log_message(const string &message, const bool be_verbose = GlobalConfig::verbose)
 {
-	if (be_verbose) std::cout << message << std::endl;
+	logger::log_message(message, be_verbose);
 }
 
-void GameStructure::get_input() const
+
+
+void game_structure::get_input()
 {
-	const auto be_verbose = Singleton<GlobalConfig>::GetInstance().object.verbose;	
+	const auto be_verbose = GlobalConfig::verbose;	
 	SDL_Event e;
 	
 	while(SDL_PollEvent(&e) != 0)
@@ -47,23 +47,23 @@ void GameStructure::get_input() const
 				case SDLK_w:
 				case SDLK_UP:
 					log_message("Player pressed up!", be_verbose);
-					event_manager::get_instance().raise_event(std::make_unique<PositionChangeEvent>(Up));
+					event_manager::get().raise_event(std::make_unique<PositionChangeEvent>(Up), this);
 				break;
 				case SDLK_s:
 				case SDLK_DOWN:
 					log_message("Player pressed down!", be_verbose);	
-					event_manager::get_instance().raise_event(std::make_unique<PositionChangeEvent>(Down));
+					event_manager::get().raise_event(std::make_unique<PositionChangeEvent>(Down), this);
 				break;
 				case SDLK_a:
 				case SDLK_LEFT:
 					log_message("Player pressed left!", be_verbose);					
-					event_manager::get_instance().raise_event(std::make_unique<PositionChangeEvent>(Left));
+					event_manager::get().raise_event(std::make_unique<PositionChangeEvent>(Left), this);
 				break;
 
 				case SDLK_d:
 				case SDLK_RIGHT:
 					log_message("Player pressed right!", be_verbose);	
-					event_manager::get_instance().raise_event(std::make_unique<PositionChangeEvent>(Right));
+					event_manager::get().raise_event(std::make_unique<PositionChangeEvent>(Right), this);
 				break;
 
 				case SDLK_q:
@@ -72,20 +72,20 @@ void GameStructure::get_input() const
 					break;
 				case SDLK_j:
 					log_message("Change to level 2", be_verbose);
-					event_manager::get_instance().raise_event(std::make_unique<scene_changed_event>(1));
+					event_manager::get().raise_event(std::make_unique<scene_changed_event>(1), this);
 					break;
 				case SDLK_k:
 					log_message("Change to level 2", be_verbose);
-					event_manager::get_instance().raise_event(std::make_unique<scene_changed_event>(2));
+					event_manager::get().raise_event(std::make_unique<scene_changed_event>(2), this);
 				break;
 				case SDLK_l:
 					log_message("Change to level 3", be_verbose);
-					event_manager::get_instance().raise_event(std::make_unique<scene_changed_event>(3));
+					event_manager::get().raise_event(std::make_unique<scene_changed_event>(3),this);
 				break;
 
 				case SDLK_x:
 					log_message("Change to level 4", be_verbose);
-					event_manager::get_instance().raise_event(std::make_unique<scene_changed_event>(4));
+					event_manager::get().raise_event(std::make_unique<scene_changed_event>(4), this);
 				break;	
                 case SDLK_1:
 					Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gHigh, 0 );
@@ -126,7 +126,7 @@ void GameStructure::get_input() const
 /***
  * Keeps and updated snapshot of the player state
  */
-void GameStructure::player_update() const
+void game_structure::player_update()
 {
 	// Read from game controller
 	get_input();	
@@ -135,26 +135,35 @@ void GameStructure::player_update() const
 
 
 
-void GameStructure::update_state()
+void game_structure::update_state()
 {
 	// Ask the event manager to notify event subscribers to update their logic now
-	event_manager::get_instance().raise_event(make_unique<do_logic_update_event>());
+	event_manager::get().raise_event(make_unique<do_logic_update_event>(), this);
 }
 
 /***
  * Update simple logical elements such as doors, elevators or moving platforms
  */
-void GameStructure::update_logic_based_elements()
+void game_structure::update_logic_based_elements()
 {	
 	update_state();
 }
 
+vector<shared_ptr<Event>> game_structure::process_event(std::shared_ptr<Event> evt)
+{
+	return vector<shared_ptr<Event>>();
+}
+
+string game_structure::get_subscriber_name()
+{
+	return "game_structure";
+}
 
 
 /***
  * Update active elements such as decorative flying birds or doors that open and close
  */
-void GameStructure::update_active_elements()
+void game_structure::update_active_elements()
 {
 	update_logic_based_elements(); // doors, elevators, movng platforms, real enemies with a distinctive behavior (simple)
 }
@@ -162,7 +171,7 @@ void GameStructure::update_active_elements()
 /***
  * Updates, monitors what the world is doing around the player. This is usually what the player reacts to
  */
-void GameStructure::world_update()
+void game_structure::world_update()
 {
 	update_active_elements(); // flying birds, doors that open and close - must be checked to keep consistent, meaningful experiance
 
@@ -171,7 +180,7 @@ void GameStructure::world_update()
 // This is basically the update functions which is run x FPS to maintain a timed series on constant updates 
 // that simulates constant movement for example or time intervals in a non-time related game (turn based game eg)
 // This is where you would make state changes in the game such as decreasing ammo etc
-void GameStructure::update()
+void game_structure::update()
 {	
 	// This game logic keeps the world simulator running:
 	player_update();
@@ -182,31 +191,31 @@ void GameStructure::update()
 }
 
 // Gets time in milliseconds now
-long GameStructure::get_tick_now()
+long game_structure::get_tick_now()
 {
 	return timeGetTime();
 }
 
-void GameStructure::spare_time(long frameTime)
+void game_structure::spare_time(long frameTime)
 {
-	event_manager::get_instance().process_all_events();
+	event_manager::get().process_all_events();
 }
 
-void GameStructure::draw(float percentWithinTick)
+void game_structure::draw(float percentWithinTick)
 {
-	const auto use_3d_renderer = Singleton<GlobalConfig>::GetInstance().object.use3dRengerManager;
+	const auto use_3d_renderer = GlobalConfig::use_3d_render_manager;
 	
-	SDLGraphicsManager::GetInstance().draw_current_scene(false);
+	sdl_graphics_manager::get().draw_current_scene(false);
 
 	if(use_3d_renderer)
 		D3DRenderManager::GetInstance().update();
 }
 
-bool GameStructure::init_sdl(int screenWidth, int screenHeight)
+bool game_structure::init_sdl(int screenWidth, int screenHeight)
 {
 	typedef unique_ptr<string> string_ptr;
 	
-	if(!SDLGraphicsManager::GetInstance().Initialize( screenWidth, screenHeight)){
+	if(!sdl_graphics_manager::get().Initialize( screenWidth, screenHeight)){
 		log_message("Failed to initialize SDL graphics manager");
 		return false;
 	}
@@ -228,7 +237,7 @@ bool GameStructure::init_sdl(int screenWidth, int screenHeight)
 	return true;
 }
 
-void GameStructure::cleanup_resources()
+void game_structure::cleanup_resources()
 {
 	Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gScratch );
     Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gHigh );
@@ -257,14 +266,25 @@ void GameStructure::cleanup_resources()
 }
 
 
-// Load audio game files
-bool GameStructure::load_media()
+game_structure::game_structure()
 {
-    Singleton<GlobalConfig>::GetInstance().object.gMusic = Mix_LoadMUS( ResourceManager::GetInstance().GetResourceByName("MainTheme.wav")->m_path.c_str() );
-    Singleton<GlobalConfig>::GetInstance().object.gScratch = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("scratch.wav")->m_path.c_str() );
-	Singleton<GlobalConfig>::GetInstance().object.gHigh = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("high.wav")->m_path.c_str() );
-	Singleton<GlobalConfig>::GetInstance().object.gMedium = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("medium.wav")->m_path.c_str() );
-	Singleton<GlobalConfig>::GetInstance().object.gLow = Mix_LoadWAV( ResourceManager::GetInstance().GetResourceByName("low.wav")->m_path.c_str() );
+	g_pGameWorldData = std::make_shared<GameWorldData>();
+	init_game_world_data();
+}
+
+void game_structure::init_game_world_data() const
+{
+	g_pGameWorldData->bGameDone = false;
+	g_pGameWorldData->bNetworkGame = false;
+	g_pGameWorldData->bCanRender = true;
+} // Load audio game files
+bool game_structure::load_media()
+{
+    Singleton<GlobalConfig>::GetInstance().object.gMusic = Mix_LoadMUS( resource_manager::get().get_resource_by_name("MainTheme.wav")->m_path.c_str() );
+    Singleton<GlobalConfig>::GetInstance().object.gScratch = Mix_LoadWAV( resource_manager::get().get_resource_by_name("scratch.wav")->m_path.c_str() );
+	Singleton<GlobalConfig>::GetInstance().object.gHigh = Mix_LoadWAV( resource_manager::get().get_resource_by_name("high.wav")->m_path.c_str() );
+	Singleton<GlobalConfig>::GetInstance().object.gMedium = Mix_LoadWAV( resource_manager::get().get_resource_by_name("medium.wav")->m_path.c_str() );
+	Singleton<GlobalConfig>::GetInstance().object.gLow = Mix_LoadWAV( resource_manager::get().get_resource_by_name("low.wav")->m_path.c_str() );
 	//Singleton<GlobalConfig>::GetInstance().object.font = TTF_OpenFont("arial.ttf", 25);
 
 	string msg;
@@ -314,12 +334,12 @@ bool GameStructure::load_media()
 /* Initialize resource, level manager, and load game audio files
 *
 */
-bool GameStructure::initialize(int screen_width, int screen_height)
+bool game_structure::initialize(int screen_width, int screen_height)
 {
-	const auto use_3d_renderer = Singleton<GlobalConfig>::GetInstance().object.use3dRengerManager;
-
-	ResourceManager::GetInstance().Initialize();	
-	CurrentLevelManager::GetInstance().Initialize();
+	log_message("game_structure::initialize()");
+	
+	resource_manager::get().initialize();	
+	scene_manager::get().initialize();
 		
 	if (!init_sdl(screen_width, screen_height))
 	{
@@ -333,17 +353,17 @@ bool GameStructure::initialize(int screen_width, int screen_height)
 		return false;
 	}
 	
-	if(use_3d_renderer)
+	if(GlobalConfig::use_3d_render_manager)
 		init3d_render_manager();	
 		
 	return true;
 }
 
-void GameStructure::init3d_render_manager()
+void game_structure::init3d_render_manager()
 {
-	D3DRenderManager& renderManager = D3DRenderManager::GetInstance();
+	auto& renderManager = D3DRenderManager::GetInstance();
 	renderManager.Initialize(GetModuleHandle(NULL), 800, 600, false, "My Window");
-	Mesh3D* mesh = new Mesh3D();
+	auto mesh = new Mesh3D();
 	mesh->create();
 	D3DRenderManager::GetInstance().meshes.push_back(mesh);
 }

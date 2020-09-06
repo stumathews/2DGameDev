@@ -7,41 +7,36 @@
 
 // Scene manager deals with managing the actors that make up a scene.
 // Actors are chlidren to layers
-class CurrentLevelManager : public IEventSubscriber
+class scene_manager final : public event_subscriber
 {
 public:
-	 static CurrentLevelManager& GetInstance()
+	 static scene_manager& get()
         {
-            static CurrentLevelManager instance;			
+            static scene_manager instance;			
             return instance;
         }
-		CurrentLevelManager(CurrentLevelManager const&)  = delete;
-        void operator=(CurrentLevelManager const&)  = delete;
+		scene_manager(scene_manager const&)  = delete;
+        void operator=(scene_manager const&)  = delete;
 		std::list<shared_ptr<Layer>> m_Layers;
-		
-		/* Collects all actors defined in a scene and represents them as layers within the SceneManager
-		*  Notifies the resource manager of the new scene and the resource manager will load in/out appropriate scene resources
-		*/
 		bool load_scene(const std::string& filename);
 		
-		shared_ptr<Layer> addLayer(std::string name);
-		const shared_ptr<Layer> findLayer(const std::string name);
-		void removeLayer(std::string name);
+		shared_ptr<Layer> add_layer(std::string name);
+		const shared_ptr<Layer> find_layer(const std::string name);
+		void remove_layer(std::string name);
 		void sort_layers();
 		static void update() {}
 		vector<shared_ptr<Event>> process_event(std::shared_ptr<Event> evt) override;
-		/*
-		* Initialize the Current level manager
-		* Subscribe to event system
-		*/
-		void Initialize();
-		bool m_Initialized;
+		
+		void initialize();
+		bool is_initialized = false;
 protected:
 	
 		
 private:	
 		
-	CurrentLevelManager();
-	~CurrentLevelManager(){};
+	scene_manager();
+
+ public:
+	 string get_subscriber_name() override;
 };
 

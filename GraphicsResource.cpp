@@ -22,32 +22,28 @@ GraphicsResource::~GraphicsResource()
 	if(m_IsLoaded){
 		std::cout << "Destroying graphics resource: " << m_name << std::endl;
 	}
-	VUnload();
+	GraphicsResource::unload();
 }
 
-void GraphicsResource::VLoad()
+void GraphicsResource::load()
 {
-	VUnload(); // unload if its already loaded
-	
+	unload(); // unload if its already loaded
 
-	SDL_Surface* tmpSurface = IMG_Load(m_path.c_str());
-	if(tmpSurface)
+	const auto tmp_surface = IMG_Load(m_path.c_str());
+	if(tmp_surface)
 	{
-		auto r = SDLGraphicsManager::GetInstance().m_WindowSurface;
+		auto r = sdl_graphics_manager::get().m_WindowSurface;
+				
+		m_Surface =  SDL_ConvertSurface(tmp_surface, r->format, NULL);
+		newTexture = SDL_CreateTextureFromSurface( sdl_graphics_manager::get().m_Renderer, m_Surface );
 		
-		
-		m_Surface =  SDL_ConvertSurface(tmpSurface, r->format, NULL);
-		newTexture = SDL_CreateTextureFromSurface( SDLGraphicsManager::GetInstance().m_Renderer, m_Surface );
-		
-		SDL_FreeSurface(tmpSurface);
+		SDL_FreeSurface(tmp_surface);
 		if(m_Surface)
-		{
 			m_IsLoaded = true;
-		}		
 	}
 }
 
-void GraphicsResource::VUnload()
+void GraphicsResource::unload()
 {
 
 	if(m_Surface)
