@@ -1,7 +1,7 @@
-#include "SceneManager.h"
+#include "scene_manager.h"
 #include <list>
 #include "tinyxml2.h"
-#include "ResourceManager.h"
+#include "resource_manager.h"
 #include <memory>
 #include <list>
 #include "SceneChangedEvent.h"

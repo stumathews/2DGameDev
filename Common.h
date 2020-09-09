@@ -3,8 +3,8 @@
 #include <SDL.h>
 #include <vector>
 #include <memory>
-#include "EventManager.h"
-#include "GameObject.h"
+#include "event_manager.h"
+#include "game_object.h"
 
 #include <iostream>
 

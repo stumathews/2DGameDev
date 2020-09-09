@@ -1,11 +1,11 @@
-#include "GameObject.h"
+#include "game_object.h"
 #include "Events.h"
 #include <memory>
 #include "Event.h"
 #include <iostream>
 #include "global_config.h"
 #include "constants.h"
-#include "ResourceManager.h"
+#include "resource_manager.h"
 
 extern shared_ptr<event_manager> event_admin;
 

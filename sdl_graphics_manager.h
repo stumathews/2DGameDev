@@ -3,7 +3,7 @@
 #include "GraphicsResource.h"
 #include "tinyxml2.h"
 #include <memory>
-#include "EventSubscriber.h"
+#include "event_subscriber.h"
 #include "SDL.h"
 
 class game_object;

@@ -4,8 +4,8 @@
 #include "asset.h"
 #include "tinyxml2.h"
 #include <memory>
-#include "EventSubscriber.h"
-#include "EventManager.h"
+#include "event_subscriber.h"
+#include "event_manager.h"
 #include <iostream>
 using namespace std;
 using namespace tinyxml2;

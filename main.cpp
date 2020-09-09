@@ -2,9 +2,9 @@
 #include <Windows.h>
 #include <iostream>
 #include "Common.h"
-#include "GameObject.h"
+#include "game_object.h"
 #include <vector>
-#include "ResourceManager.h"
+#include "resource_manager.h"
 #include "SceneChangedEvent.h"
 #include "DoLogicUpdateEvent.h"
 #include "RenderManager3D.h"
@@ -14,11 +14,11 @@
 #include "Player.h"
 #include "constants.h"
 #include "global_config.h"
-#include "GameStructure.h"
+#include "game_structure.h"
 #include "singleton.h"
 #include "LevelGenerator.h"
 #include "Logger.h"
-#include "SceneManager.h"
+#include "scene_manager.h"
 
 using namespace std;
 void game_loop();

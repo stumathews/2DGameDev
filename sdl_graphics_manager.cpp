@@ -1,14 +1,14 @@
-#include "GraphicsManager.h"
-#include "ResourceManager.h"
+#include "sdl_graphics_manager.h"
+#include "resource_manager.h"
 #include "asset.h"
 #include <memory>
-#include "SceneManager.h"
+#include "scene_manager.h"
 #include "SceneItem.h"
 #include "SDL_image.h"
 #include "GraphicsResource.h"
 #include <iostream>
 #include <SDL.h>
-#include "EventSubscriber.h"
+#include "event_subscriber.h"
 #include "Logger.h"
 using namespace std;
 

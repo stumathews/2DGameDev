@@ -1,9 +1,9 @@
 #include "game_object_factory.h"
-#include "ResourceManager.h"
-#include "GameObject.h"
+#include "resource_manager.h"
+#include "game_object.h"
 #include "Sprite.h"
 #include  "TypeAliases.h"
-#include "GameObject.h"
+#include "game_object.h"
 #include "Square.h"
 using namespace tinyxml2;
 

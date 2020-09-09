@@ -1,7 +1,7 @@
 #include "GraphicsResource.h"
 #include <iostream>
 #include <SDL_image.h>
-#include "GraphicsManager.h"
+#include "sdl_graphics_manager.h"
 #include <SDL.h>
 
 

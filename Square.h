@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL.h>
-#include "GameObject.h"
-#include "RectDetails.h"
+#include "game_object.h"
+#include "rect_details.h"
 
 class square : public game_object   // NOLINT(cppcoreguidelines-special-member-functions)
 {

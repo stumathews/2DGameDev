@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObject.h"
+#include "game_object.h"
 #include "TypeAliases.h"
 
 

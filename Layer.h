@@ -2,7 +2,7 @@
 #include <string>
 #include <list>
 #include <memory>
-#include "GameObject.h"
+#include "game_object.h"
 class Layer
 {
 public:

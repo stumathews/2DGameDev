@@ -2,9 +2,9 @@
 
 #include <SDL.h>
 #include "Event.h"
-#include "GraphicsManager.h"
-#include "EventSubscriber.h"
-#include "EventManager.h"
+#include "sdl_graphics_manager.h"
+#include "event_subscriber.h"
+#include "event_manager.h"
 #include "Component.h"
 #include <map>
 #include "global_config.h"

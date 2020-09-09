@@ -6,14 +6,14 @@
 #include "Common.h"
 #include <SDL_mixer.h>
 #include "Events.h"
-#include "ResourceManager.h"
+#include "resource_manager.h"
 #include "SceneChangedEvent.h"
-#include "SceneManager.h"
+#include "scene_manager.h"
 #include "DoLogicUpdateEvent.h"
 #include "RenderManager3D.h"
 #include <SDL_ttf.h>
 #include "global_config.h"
-#include "GameStructure.h"
+#include "game_structure.h"
 #include <functional>
 #include "Logger.h"
 using namespace std;

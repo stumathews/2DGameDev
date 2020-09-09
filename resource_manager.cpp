@@ -1,9 +1,9 @@
-#include "ResourceManager.h"
+#include "resource_manager.h"
 #include "tinyxml2.h"
 #include <iostream>
 #include <map>
 #include "asset.h"
-#include "GraphicsManager.h"
+#include "sdl_graphics_manager.h"
 #include <memory>
 #include "AudioManager.h"
 #include "SceneChangedEvent.h"

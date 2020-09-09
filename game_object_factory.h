@@ -2,7 +2,7 @@
 #include <memory>
 #include "tinyxml2.h"
 #include "TypeAliases.h"
-#include "GameObject.h"
+#include "game_object.h"
 
 class game_object_factory
 {

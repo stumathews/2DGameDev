@@ -1,6 +1,6 @@
-#include "EventManager.h"
+#include "event_manager.h"
 #include <vector>
-#include "EventSubscriber.h"
+#include "event_subscriber.h"
 #include "Logger.h"
 
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "Event.h"
 #include <memory>
-#include "GameObject.h"
+#include "game_object.h"
 
 class AddGameObjectToCurrentSceneEvent : public Event
 {

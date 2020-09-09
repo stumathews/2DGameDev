@@ -1,4 +1,4 @@
-#include "RectDetails.h"
+#include "rect_details.h"
 
 int rect_details::get_ax() const
 {
