@@ -8,18 +8,14 @@
 
 class event_manager  // NOLINT(cppcoreguidelines-special-member-functions, hicpp-special-member-functions)
 {
-	event_manager();
-	~event_manager() = default;;
+	
 	queue<shared_ptr<Event>> primary_event_queue_;
 	queue<shared_ptr<Event>> secondary_event_queue_;
 	map<event_type, std::vector<event_subscriber*>> event_subscribers_;
 	
 	public:
-		static event_manager& get()
-		{
-			static event_manager instance;
-			return instance;
-		}
+	event_manager();
+	~event_manager() = default;
 		event_manager(event_manager const&) = delete;
 		void operator=(event_manager const&) = delete;
 		

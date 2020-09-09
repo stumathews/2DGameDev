@@ -21,24 +21,27 @@ private:
 	~Singleton(){}
 };
 
-class GlobalConfig
+class global_config
 {
 public:
-	GlobalConfig() {}
+	global_config() {}
 	
 	// 20 times a second = 50 milliseconds
 	// 1 second is 20*50 = 1000 milliseconds
 	static const int TICK_TIME_MS = 50;
-	static const int squareWidth = 30;
-	static const int MaxLoops = 4;
-	static const int ScreenWidth = 800;
-	static const int ScreenHeight = 600;
-	static const int moveInterval = 30;
-	Mix_Music *gMusic = nullptr;
-	Mix_Chunk *gScratch = nullptr;
-	Mix_Chunk *gHigh = nullptr;
-	Mix_Chunk *gMedium = nullptr;
-	Mix_Chunk *gLow = nullptr;
+	static const int square_width = 30;
+	static const int sprite_width = 100;
+	static const int max_loops = 4;
+	static const int screen_width = 800;
+	static const int screen_height = 600;
+	static const int move_interval = 30;
+	static const auto frames_per_row = 3;
+	static const auto frames_per_column = 3;
+	Mix_Music *music = nullptr;
+	Mix_Chunk *scratch_fx = nullptr;
+	Mix_Chunk *high_sound_fx = nullptr;
+	Mix_Chunk *medium_sound_fx = nullptr;
+	Mix_Chunk *low_sound_fx = nullptr;
 	TTF_Font *font = nullptr;
 	const static bool verbose = true;
 	const static bool print_debugging_text = false;

@@ -7,6 +7,7 @@ class asset
 public:	
 	
 	asset(int uid, string name, string path, string type, int scene);
+	asset() = default;
 	int m_uid;
 	string m_name;
 	string m_path;

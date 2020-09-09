@@ -32,10 +32,10 @@ void GraphicsResource::load()
 	const auto tmp_surface = IMG_Load(m_path.c_str());
 	if(tmp_surface)
 	{
-		auto r = sdl_graphics_manager::get().m_WindowSurface;
+		auto r = sdl_graphics_manager::get().window_surface;
 				
 		m_Surface =  SDL_ConvertSurface(tmp_surface, r->format, NULL);
-		newTexture = SDL_CreateTextureFromSurface( sdl_graphics_manager::get().m_Renderer, m_Surface );
+		newTexture = SDL_CreateTextureFromSurface( sdl_graphics_manager::get().renderer, m_Surface );
 		
 		SDL_FreeSurface(tmp_surface);
 		if(m_Surface)

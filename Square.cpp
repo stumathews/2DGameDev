@@ -6,14 +6,14 @@
 
 using namespace std;
 
-RectDetails* square::get_rect_details() const
+rect_details* square::get_rect_details() const
 {
 	return rect_details_;
 }
 
-square::square(int x, int y, int rw, bool fill, bool supports_move_logic) : game_object(x, y), width(rw), fill(fill), player_bounds_({}), my_bounds_({x, y, rw, rw})
+square::square(int x, int y, int rw, bool fill, bool supports_move_logic, bool is_visible) : game_object(x, y), width(rw), fill(fill), player_bounds_({}), my_bounds_({x, y, rw, rw})
 { 
-  this->rect_details_ = new RectDetails(x, y, rw, rw);  
+  this->rect_details_ = new rect_details(x, y, rw, rw);  
   this->supports_move_logic = supports_move_logic;   
   walls[0] = true;
   walls[1] = true;
@@ -63,14 +63,14 @@ void square::removeWall(int wall)
 void square::show(SDL_Renderer* renderer) 
 { 
   auto rect = get_rect_details();
-  int ax = rect->getAx();
-  int ay = rect->getAy();
-  int bx = rect->getBx();
-  int by = rect->getBy();
-  int cx = rect->getCx();
-  int cy = rect->getCy();
-  int dx = rect->getDx();
-  int dy = rect->getDy();
+  int ax = rect->get_ax();
+  int ay = rect->get_ay();
+  int bx = rect->get_bx();
+  int by = rect->get_by();
+  int cx = rect->get_cx();
+  int cy = rect->get_cy();
+  int dx = rect->get_dx();
+  int dy = rect->get_dy();
   
   auto haveTopWall = this->walls[0];
   auto haveRightWall = this->walls[1];
@@ -93,7 +93,7 @@ void square::show(SDL_Renderer* renderer)
  /* if(fill)
   	 SDL_RenderFillRect(renderer, &myBounds);*/
     
-  if(GlobalConfig::print_debugging_text)
+  if(global_config::print_debugging_text)
 	  RectDebugging::printInRect(renderer, get_tag().c_str(), &my_bounds_); 
 }
 
@@ -115,7 +115,7 @@ vector<shared_ptr<Event>> square::process_event(const std::shared_ptr<Event> eve
 
 	if(event->m_eventType == PositionChangeEventType)
 	{
-		rect_details_->Init(get_x(), get_y(), get_w(), get_h());
+		rect_details_->init(get_x(), get_y(), get_w(), get_h());
 		my_bounds_ = { get_x(), get_y(), get_w(), get_h() };
 	}
 	

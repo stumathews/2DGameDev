@@ -6,9 +6,9 @@ vector<shared_ptr<square>> level_generator::generate_level()
 {
 	srand(time(nullptr));
 
-	const auto screen_width = GlobalConfig::ScreenWidth;
-	const auto screen_height = GlobalConfig::ScreenHeight;	
-	const auto square_width = GlobalConfig::squareWidth;
+	const auto screen_width = global_config::screen_width;
+	const auto screen_height = global_config::screen_height;	
+	const auto square_width = global_config::square_width;
 	const auto max_rows = screen_width/square_width;
 	const auto max_columns = screen_height/square_width;
 	

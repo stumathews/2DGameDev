@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
-#include "GlobalConfig.h"
+#include "global_config.h"
 using namespace std;
 
 //extern TTF_Font *font;
@@ -13,7 +13,7 @@ public:
 	static void printInRect(SDL_Renderer* renderer, std::string text, SDL_Rect* bounds)
 	{
 		SDL_Color color = { 255, 255, 255 };
-		SDL_Surface * surface = TTF_RenderText_Solid(Singleton<GlobalConfig>::GetInstance().object.font, text.c_str(), color);
+		SDL_Surface * surface = TTF_RenderText_Solid(Singleton<global_config>::GetInstance().object.font, text.c_str(), color);
 		SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);	
 		SDL_RenderCopy(renderer, texture, NULL, bounds);
 		SDL_DestroyTexture(texture);

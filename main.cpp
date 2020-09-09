@@ -13,11 +13,12 @@
 #include "PlayerComponent.h"
 #include "Player.h"
 #include "constants.h"
-#include "GlobalConfig.h"
+#include "global_config.h"
 #include "GameStructure.h"
 #include "singleton.h"
 #include "LevelGenerator.h"
 #include "Logger.h"
+#include "SceneManager.h"
 
 using namespace std;
 void game_loop();
@@ -25,10 +26,12 @@ void unload();
 bool load_content();
 bool initialize();
 
+shared_ptr<event_manager> event_admin(new event_manager);
+shared_ptr<scene_manager> scene_admin(new scene_manager);
+shared_ptr<resource_manager> resource_admin(new resource_manager);
 
 int main(int argc, char *args[])
 {
-
 	if (!initialize() || !load_content())
 		return -1;	
 	
@@ -40,8 +43,8 @@ int main(int argc, char *args[])
 
 bool initialize()
 {
-	const auto screen_width = GlobalConfig::ScreenWidth;
-	const auto screen_height = GlobalConfig::ScreenHeight;
+	const auto screen_width = global_config::screen_width;
+	const auto screen_height = global_config::screen_height;
 	
 	if (!game_structure::initialize(screen_width, screen_height))
 		return false;
@@ -61,14 +64,13 @@ bool load_content()
 		//game_object->raise_event(std::make_shared<AddGameObjectToCurrentSceneEvent>(game_object));		
 	}
 
-	Player::add_player_to_game();
 	return true;
 }
 
 void game_loop()
 {
 	auto tick_count_at_last_call = game_structure::get_tick_now();
-	const auto max_loops = GlobalConfig::MaxLoops;
+	const auto max_loops = global_config::max_loops;
 
 	// MAIN GAME LOOP!!
 	while (!singleton<game_structure>().g_pGameWorldData->bGameDone) 
@@ -81,27 +83,27 @@ void game_loop()
 		// New frame, happens consistently every 50 milliseconds. Ie 20 times a second.
 		// 20 times a second = 50 milliseconds
 		// 1 second is 20*50 = 1000 milliseconds
-		while (ticks_since > GlobalConfig::TICK_TIME_MS && num_loops < max_loops)
+		while (ticks_since > global_config::TICK_TIME_MS && num_loops < max_loops)
 		{
 			singleton<game_structure>().update();		
-			tick_count_at_last_call += GlobalConfig::TICK_TIME_MS; // tickCountAtLastCall is now been +Single<GlobalConfig>().TickTime more since the last time. update it
-			frame_ticks += GlobalConfig::TICK_TIME_MS; num_loops++;
+			tick_count_at_last_call += global_config::TICK_TIME_MS; // tickCountAtLastCall is now been +Single<GlobalConfig>().TickTime more since the last time. update it
+			frame_ticks += global_config::TICK_TIME_MS; num_loops++;
 			ticks_since = new_time - tick_count_at_last_call;
 		}
 
 		game_structure::spare_time(frame_ticks); // handle player input, general housekeeping (Event Manager processing)
 
-		if (singleton<game_structure>().g_pGameWorldData->bNetworkGame || ticks_since <= GlobalConfig::TICK_TIME_MS)
+		if (singleton<game_structure>().g_pGameWorldData->bNetworkGame || ticks_since <= global_config::TICK_TIME_MS)
 		{
 			if (singleton<game_structure>().g_pGameWorldData->bCanRender)
 			{
-				const auto percent_outside_frame = static_cast<float>(ticks_since / GlobalConfig::TICK_TIME_MS) * 100; // NOLINT(bugprone-integer-division)				
+				const auto percent_outside_frame = static_cast<float>(ticks_since / global_config::TICK_TIME_MS) * 100; // NOLINT(bugprone-integer-division)				
 				game_structure::draw(percent_outside_frame);
 			}
 		}
 		else
 		{
-			tick_count_at_last_call = new_time - GlobalConfig::TICK_TIME_MS;
+			tick_count_at_last_call = new_time - global_config::TICK_TIME_MS;
 		}
 	}
 	std::cout << "Game done" << std::endl;

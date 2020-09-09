@@ -30,7 +30,7 @@
     <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="EventManager.cpp" />
-    <ClCompile Include="GameObjectFactory.cpp" />
+    <ClCompile Include="game_object_factory.cpp" />
     <ClCompile Include="GameStructure.cpp" />
     <ClCompile Include="GraphicsManager.cpp" />
     <ClCompile Include="GraphicsResource.cpp" />
@@ -71,9 +71,9 @@
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="Events.h" />
     <ClInclude Include="EventSubscriber.h" />
-    <ClInclude Include="GameObjectFactory.h" />
+    <ClInclude Include="game_object_factory.h" />
     <ClInclude Include="GameStructure.h" />
-    <ClInclude Include="GlobalConfig.h" />
+    <ClInclude Include="global_config.h" />
     <ClInclude Include="GraphicsManager.h" />
     <ClInclude Include="GraphicsResource.h" />
     <ClInclude Include="Layer.h" />

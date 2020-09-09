@@ -1,61 +1,43 @@
 #pragma once
 #include <SDL.h>
 #include "Tuple.h"
-class RectDetails
+class rect_details
 {
 public:
-	RectDetails(SDL_Rect rect) : RectDetails(rect.x, rect.y, rect.w, rect.h){}
-	RectDetails(int x, int y, int w, int h) : x(x), y(y),w(w),h(h){}
-	int getAx(){ return this->x; }
-	int getAy(){ return this->y; }
-	int getBx(){ return getAx()+w;}
-	int getBy(){ return getAy();}
-	int getCx(){ return getBx();}
-	int getCy(){ return getBy()+w;}
-	int getDx(){ return getAx();}
-	int getDy(){ return getAy()+w;}
+	rect_details(const SDL_Rect rect) : rect_details(rect.x, rect.y, rect.w, rect.h){}
+	rect_details(int x, int y, int w, int h) : x(x), y(y),w(w),h(h){}
+	int get_ax() const;
+	int get_ay() const;
+	int get_bx() const;
+	int get_by() const;
+	int get_cx() const;
+	int get_cy() const;
+	int get_dx() const;
+	int get_dy() const;
 
-	void SetX(int x) { this->x = x;}
-	void SetY(int y) { this->y = y;}
-	void SetH(int h) { this->h = h;}
-	void SetW(int w) {this->w = w; }
+	void set_x(int x);
+	void set_y(int y);
+	void set_h(int h);
+	void set_w(int w);
 
-	inline void Init(int x, int y, int w, int h) { 	SetX(x); SetY(y); SetW(w);SetH(h); }
+	void init(int x, int y, int w, int h);
 
-	Coordinate<float> GetA1(float intervalOfWOrH) 
-	{
-		return Coordinate<float>(getAx() + (this->w * intervalOfWOrH), getAy() );
-	}
-	Coordinate<float> GetB1(float intervalOfWOrH)
-	{
-		return Coordinate<float>(getBx() - (this->w * intervalOfWOrH), getBy());
-	}
-	Coordinate<float> GetC1(float intervalOfWOrH)	
-	{
-		return Coordinate<float>(getCx() - (this->w * intervalOfWOrH), getCy());
-	}
-	Coordinate<float> GetD1(float intervalOfWOrH)
-	{
-		return Coordinate<float>(getDx() + (this->w * intervalOfWOrH), getDy());
-	}
+	coordinate<int> get_a1(int intervalOfWOrH) const;
 
-	Coordinate<float> GetA2(float intervalOfWOrH) 
-	{
-		return Coordinate<float>(getAx(), getAy() + (this->w * intervalOfWOrH) );
-	}
-	Coordinate<float> GetB2(float intervalOfWOrH)
-	{
-		return Coordinate<float>(getBx(), getBy() + (this->w * intervalOfWOrH));
-	}
-	Coordinate<float> GetC2(float intervalOfWOrH)	
-	{
-		return Coordinate<float>(getCx(), getCy() - (this->w * intervalOfWOrH));
-	}
-	Coordinate<float> GetD2(float intervalOfWOrH)
-	{
-		return Coordinate<float>(getDx(),  getDy() - (this->w * intervalOfWOrH));
-	}
-	
+	coordinate<int> get_b1(int intervalOfWOrH) const;
+
+	coordinate<int> get_c1(int intervalOfWOrH) const;
+
+	coordinate<int> get_d1(int intervalOfWOrH) const;
+
+	coordinate<int> get_a2(int intervalOfWOrH) const;
+
+	coordinate<int> get_b2(int intervalOfWOrH) const;
+
+	coordinate<int> get_c2(int intervalOfWOrH) const;
+
+	coordinate<int> get_d2(int intervalOfWOrH) const;
+
 private:
 	int x,y,w,h;
 

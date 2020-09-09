@@ -4,6 +4,17 @@
 #include "constants.h"
 #include "AddGameObjectToCurrentSceneEvent.h"
 
+Player::Player(int x, int y, int w): square(x, y, w, true, true)
+{
+	const auto player_component = std::make_shared<PlayerComponent>(constants::playerComponentName, x, y, w, w);
+	set_tag(constants::playerTag);
+	add_component(player_component);
+	subscribe_to_event(PositionChangeEventType);
+
+	add_player_to_scene();
+	
+}
+
 vector<shared_ptr<Event>> Player::process_event(const std::shared_ptr<Event> event)
 {	
 	// Process GameObject events
@@ -40,18 +51,13 @@ void Player::draw(SDL_Renderer* renderer)
 	SDL_RenderDrawRect(renderer, &player_bounds_);
 }
 
-void Player::add_player_to_game()
+void Player::add_player_to_scene() const
 {
 	/* Schedule adding the player to the screen */
-	auto player_width = GlobalConfig::squareWidth / 2;
+	auto player_width = global_config::square_width / 2;
 	auto player_pos_x = 100;
 	auto player_pos_y = 100;
-	auto player_component = std::make_shared<PlayerComponent>(constants::playerComponentName, player_pos_x, player_pos_y, player_width, player_width);
-	auto player_object = std::static_pointer_cast<game_object>(std::make_shared<Player>(player_component->x, player_component->y, player_component->w));
-
-	player_object->set_tag(constants::playerTag);
-	player_object->add_component(player_component);
-	player_object->subscribe_to_event(PositionChangeEventType);
+	auto player_object = std::static_pointer_cast<game_object>(std::make_shared<Player>(player_pos_x, player_pos_y, player_width));
 
 	/* Add player to scene */
 	const auto add_to_scene_event = std::make_shared<AddGameObjectToCurrentSceneEvent>(player_object);

@@ -12,17 +12,20 @@
 #include "DoLogicUpdateEvent.h"
 #include "RenderManager3D.h"
 #include <SDL_ttf.h>
-#include "GlobalConfig.h"
+#include "global_config.h"
 #include "GameStructure.h"
 #include <functional>
 #include "Logger.h"
 using namespace std;
 
+extern shared_ptr<event_manager> event_admin;
+extern shared_ptr<resource_manager> resource_admin;
+
 // Create our global copy of the game data
 std::shared_ptr<GameWorldData> g_pGameWorldData = std::make_shared<GameWorldData>();
 
 
-void log_message(const string &message, const bool be_verbose = GlobalConfig::verbose)
+void log_message(const string &message, const bool be_verbose = global_config::verbose)
 {
 	logger::log_message(message, be_verbose);
 }
@@ -31,7 +34,7 @@ void log_message(const string &message, const bool be_verbose = GlobalConfig::ve
 
 void game_structure::get_input()
 {
-	const auto be_verbose = GlobalConfig::verbose;	
+	const auto be_verbose = global_config::verbose;	
 	SDL_Event e;
 	
 	while(SDL_PollEvent(&e) != 0)
@@ -47,23 +50,23 @@ void game_structure::get_input()
 				case SDLK_w:
 				case SDLK_UP:
 					log_message("Player pressed up!", be_verbose);
-					event_manager::get().raise_event(std::make_unique<PositionChangeEvent>(Up), this);
+					event_admin->raise_event(std::make_unique<PositionChangeEvent>(Up), this);
 				break;
 				case SDLK_s:
 				case SDLK_DOWN:
 					log_message("Player pressed down!", be_verbose);	
-					event_manager::get().raise_event(std::make_unique<PositionChangeEvent>(Down), this);
+					event_admin->raise_event(std::make_unique<PositionChangeEvent>(Down), this);
 				break;
 				case SDLK_a:
 				case SDLK_LEFT:
 					log_message("Player pressed left!", be_verbose);					
-					event_manager::get().raise_event(std::make_unique<PositionChangeEvent>(Left), this);
+					event_admin->raise_event(std::make_unique<PositionChangeEvent>(Left), this);
 				break;
 
 				case SDLK_d:
 				case SDLK_RIGHT:
 					log_message("Player pressed right!", be_verbose);	
-					event_manager::get().raise_event(std::make_unique<PositionChangeEvent>(Right), this);
+					event_admin->raise_event(std::make_unique<PositionChangeEvent>(Right), this);
 				break;
 
 				case SDLK_q:
@@ -72,36 +75,36 @@ void game_structure::get_input()
 					break;
 				case SDLK_j:
 					log_message("Change to level 2", be_verbose);
-					event_manager::get().raise_event(std::make_unique<scene_changed_event>(1), this);
+					event_admin->raise_event(std::make_unique<scene_changed_event>(1), this);
 					break;
 				case SDLK_k:
 					log_message("Change to level 2", be_verbose);
-					event_manager::get().raise_event(std::make_unique<scene_changed_event>(2), this);
+					event_admin->raise_event(std::make_unique<scene_changed_event>(2), this);
 				break;
 				case SDLK_l:
 					log_message("Change to level 3", be_verbose);
-					event_manager::get().raise_event(std::make_unique<scene_changed_event>(3),this);
+					event_admin->raise_event(std::make_unique<scene_changed_event>(3),this);
 				break;
 
 				case SDLK_x:
 					log_message("Change to level 4", be_verbose);
-					event_manager::get().raise_event(std::make_unique<scene_changed_event>(4), this);
+					event_admin->raise_event(std::make_unique<scene_changed_event>(4), this);
 				break;	
                 case SDLK_1:
-					Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gHigh, 0 );
+					Mix_PlayChannel( -1, Singleton<global_config>::GetInstance().object.high_sound_fx, 0 );
                 break;                            
                 case SDLK_2:
-					Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gMedium, 0 );
+					Mix_PlayChannel( -1, Singleton<global_config>::GetInstance().object.medium_sound_fx, 0 );
                 break;
                 case SDLK_3:
-					Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gLow, 0 );
+					Mix_PlayChannel( -1, Singleton<global_config>::GetInstance().object.low_sound_fx, 0 );
                 break;
                 case SDLK_4:
-					Mix_PlayChannel( -1, Singleton<GlobalConfig>::GetInstance().object.gScratch, 0 );
+					Mix_PlayChannel( -1, Singleton<global_config>::GetInstance().object.scratch_fx, 0 );
                 break;
 				case SDLK_9:
 					if( Mix_PlayingMusic() == 0 ) {
-						Mix_PlayMusic( Singleton<GlobalConfig>::GetInstance().object.gMusic, -1 );
+						Mix_PlayMusic( Singleton<global_config>::GetInstance().object.music, -1 );
 					} else 	{
 						if( Mix_PausedMusic() == 1 )
 							Mix_ResumeMusic();
@@ -138,7 +141,7 @@ void game_structure::player_update()
 void game_structure::update_state()
 {
 	// Ask the event manager to notify event subscribers to update their logic now
-	event_manager::get().raise_event(make_unique<do_logic_update_event>(), this);
+	event_admin->raise_event(make_unique<do_logic_update_event>(), this);
 }
 
 /***
@@ -198,12 +201,12 @@ long game_structure::get_tick_now()
 
 void game_structure::spare_time(long frameTime)
 {
-	event_manager::get().process_all_events();
+	event_admin->process_all_events();
 }
 
 void game_structure::draw(float percentWithinTick)
 {
-	const auto use_3d_renderer = GlobalConfig::use_3d_render_manager;
+	const auto use_3d_renderer = global_config::use_3d_render_manager;
 	
 	sdl_graphics_manager::get().draw_current_scene(false);
 
@@ -215,7 +218,7 @@ bool game_structure::init_sdl(int screenWidth, int screenHeight)
 {
 	typedef unique_ptr<string> string_ptr;
 	
-	if(!sdl_graphics_manager::get().Initialize( screenWidth, screenHeight)){
+	if(!sdl_graphics_manager::get().initialize( screenWidth, screenHeight)){
 		log_message("Failed to initialize SDL graphics manager");
 		return false;
 	}
@@ -239,30 +242,27 @@ bool game_structure::init_sdl(int screenWidth, int screenHeight)
 
 void game_structure::cleanup_resources()
 {
-	Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gScratch );
-    Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gHigh );
-    Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gMedium );
-    Mix_FreeChunk( Singleton<GlobalConfig>::GetInstance().object.gLow );
+	Mix_FreeChunk( Singleton<global_config>::GetInstance().object.scratch_fx );
+    Mix_FreeChunk( Singleton<global_config>::GetInstance().object.high_sound_fx );
+    Mix_FreeChunk( Singleton<global_config>::GetInstance().object.medium_sound_fx );
+    Mix_FreeChunk( Singleton<global_config>::GetInstance().object.low_sound_fx );
 
-    Singleton<GlobalConfig>::GetInstance().object.gScratch = nullptr;
-    Singleton<GlobalConfig>::GetInstance().object.gHigh = nullptr;
-    Singleton<GlobalConfig>::GetInstance().object.gMedium = nullptr;
-    Singleton<GlobalConfig>::GetInstance().object.gLow = nullptr;
+    Singleton<global_config>::GetInstance().object.scratch_fx = nullptr;
+    Singleton<global_config>::GetInstance().object.high_sound_fx = nullptr;
+    Singleton<global_config>::GetInstance().object.medium_sound_fx = nullptr;
+    Singleton<global_config>::GetInstance().object.low_sound_fx = nullptr;
     
     //Free the music
-    Mix_FreeMusic( Singleton<GlobalConfig>::GetInstance().object.gMusic );
-    Singleton<GlobalConfig>::GetInstance().object.gMusic = nullptr;
+    Mix_FreeMusic( Singleton<global_config>::GetInstance().object.music );
+    Singleton<global_config>::GetInstance().object.music = nullptr;
 
-	TTF_CloseFont(Singleton<GlobalConfig>::GetInstance().object.font);
-	Singleton<GlobalConfig>::GetInstance().object.font  = nullptr;
-	
-	
+	TTF_CloseFont(Singleton<global_config>::GetInstance().object.font);
+	Singleton<global_config>::GetInstance().object.font  = nullptr;
+		
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
-
-
-	
+		
 }
 
 
@@ -280,11 +280,11 @@ void game_structure::init_game_world_data() const
 } // Load audio game files
 bool game_structure::load_media()
 {
-    Singleton<GlobalConfig>::GetInstance().object.gMusic = Mix_LoadMUS( resource_manager::get().get_resource_by_name("MainTheme.wav")->m_path.c_str() );
-    Singleton<GlobalConfig>::GetInstance().object.gScratch = Mix_LoadWAV( resource_manager::get().get_resource_by_name("scratch.wav")->m_path.c_str() );
-	Singleton<GlobalConfig>::GetInstance().object.gHigh = Mix_LoadWAV( resource_manager::get().get_resource_by_name("high.wav")->m_path.c_str() );
-	Singleton<GlobalConfig>::GetInstance().object.gMedium = Mix_LoadWAV( resource_manager::get().get_resource_by_name("medium.wav")->m_path.c_str() );
-	Singleton<GlobalConfig>::GetInstance().object.gLow = Mix_LoadWAV( resource_manager::get().get_resource_by_name("low.wav")->m_path.c_str() );
+    Singleton<global_config>::GetInstance().object.music = Mix_LoadMUS( resource_admin->get_resource_by_name("MainTheme.wav")->m_path.c_str() );
+    Singleton<global_config>::GetInstance().object.scratch_fx = Mix_LoadWAV( resource_admin->get_resource_by_name("scratch.wav")->m_path.c_str() );
+	Singleton<global_config>::GetInstance().object.high_sound_fx = Mix_LoadWAV( resource_admin->get_resource_by_name("high.wav")->m_path.c_str() );
+	Singleton<global_config>::GetInstance().object.medium_sound_fx = Mix_LoadWAV( resource_admin->get_resource_by_name("medium.wav")->m_path.c_str() );
+	Singleton<global_config>::GetInstance().object.low_sound_fx = Mix_LoadWAV( resource_admin->get_resource_by_name("low.wav")->m_path.c_str() );
 	//Singleton<GlobalConfig>::GetInstance().object.font = TTF_OpenFont("arial.ttf", 25);
 
 	string msg;
@@ -297,31 +297,31 @@ bool game_structure::load_media()
 		return base;
 	};
 	
-	if(Singleton<GlobalConfig>::GetInstance().object.gMusic == nullptr)
+	if(Singleton<global_config>::GetInstance().object.music == nullptr)
     {
 		log_message(dynamic_string(msg,  "Failed to load beat music! SDL_mixer Error: ") + Mix_GetError());
         return false;
     }  
     
-    if(Singleton<GlobalConfig>::GetInstance().object.gScratch == nullptr)
+    if(Singleton<global_config>::GetInstance().object.scratch_fx == nullptr)
     {
     	log_message(dynamic_string(msg,  "Failed to load scratch sound effect! SDL_mixer Error:") + Mix_GetError());
         return false;
     }
     
-    if(Singleton<GlobalConfig>::GetInstance().object.gHigh == nullptr)
+    if(Singleton<global_config>::GetInstance().object.high_sound_fx == nullptr)
     {
     	log_message(dynamic_string(msg,  "Failed to load high sound effect! SDL_mixer Error:") + Mix_GetError());
         return false;
     }
     
-    if(Singleton<GlobalConfig>::GetInstance().object.gMedium == nullptr)
+    if(Singleton<global_config>::GetInstance().object.medium_sound_fx == nullptr)
     {
     	log_message(dynamic_string(msg,  "Failed to load medium sound effect! SDL_mixer Error:") + Mix_GetError());
         return false;
     }
     
-    if(Singleton<GlobalConfig>::GetInstance().object.gLow == nullptr )
+    if(Singleton<global_config>::GetInstance().object.low_sound_fx == nullptr )
     {
     	log_message(dynamic_string(msg,  "Failed to load low sound effect! SDL_mixer Error:") + Mix_GetError());
         return false;
@@ -338,9 +338,8 @@ bool game_structure::initialize(int screen_width, int screen_height)
 {
 	log_message("game_structure::initialize()");
 	
-	resource_manager::get().initialize();	
-	scene_manager::get().initialize();
-		
+	resource_admin->initialize();	
+			
 	if (!init_sdl(screen_width, screen_height))
 	{
 		log_message("Could not initialize SDL, aborting.");
@@ -353,7 +352,7 @@ bool game_structure::initialize(int screen_width, int screen_height)
 		return false;
 	}
 	
-	if(GlobalConfig::use_3d_render_manager)
+	if(global_config::use_3d_render_manager)
 		init3d_render_manager();	
 		
 	return true;

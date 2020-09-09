@@ -9,13 +9,13 @@ private:
     int width;
 protected:
 	bool walls[4]{};
-	RectDetails* rect_details_;
-    RectDetails* get_rect_details() const;;
+	rect_details* rect_details_;
+    rect_details* get_rect_details() const;;
 	int fill;
 	SDL_Rect player_bounds_;
 	SDL_Rect my_bounds_;
 public: 
-	square(int x, int y, int rw, bool fill = false, bool supports_move_logic = true);
+	square(int x, int y, int rw, bool fill = false, bool supports_move_logic = true, bool is_visible = true);
 
     int get_x() const;
     int get_y() const;

@@ -12,26 +12,22 @@
 #include "Logger.h"
 using namespace std;
 
-sdl_graphics_manager::~sdl_graphics_manager()
+extern shared_ptr<event_manager> event_admin;
+extern shared_ptr<scene_manager> scene_admin;
+
+sdl_graphics_manager::sdl_graphics_manager() : event_subscriber()
 {
-	
-	// get rid of renderer
-	SDL_DestroyRenderer(m_Renderer);	
-	
-	// get rid of window and this will also cleanup the screen surface
-	SDL_DestroyWindow(m_Window);
+	event_admin->subscribe_to_event(PlayerMovedEventType, this);
 }
 
-
-vector<shared_ptr<Event>> sdl_graphics_manager::process_event(const std::shared_ptr<Event> evt)
+vector<shared_ptr<Event>> sdl_graphics_manager::process_event(const std::shared_ptr<Event> the_event)
 {
-	if(evt->m_eventType == PlayerMovedEventType)
+	if(the_event->m_eventType == PlayerMovedEventType)
 	{
-		SDL_SetRenderDrawColor(m_Renderer, 0, 0, 0, 0);
-		SDL_FillRect(m_WindowSurface, 0, 0);
-		SDL_RenderClear(m_Renderer);
-		draw_current_scene();
-		
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+		SDL_FillRect(window_surface, nullptr, 0);
+		SDL_RenderClear(renderer);
+		draw_current_scene();		
 	}
 	return vector<shared_ptr<Event>>();
 }
@@ -41,70 +37,61 @@ string sdl_graphics_manager::get_subscriber_name()
 	return "sdl_graphics_manager";
 }
 
-SDL_Window* GetSDLWindow(const int SCREEN_WIDTH, const int SCREEN_HEIGHT, const char* title)
+SDL_Window* get_sdl_window(const int SCREEN_WIDTH, const int SCREEN_HEIGHT, const char* title)
 {
-	SDL_Window* outWindow = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
-				SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
-				SDL_WINDOW_SHOWN);	
-	if(outWindow == NULL)
+	const auto out_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,SDL_WINDOW_SHOWN);	
+	if(out_window == nullptr)
 	{
-		std::cout << "Window could not be created:" << (char*)SDL_GetError() << std::endl;
+		std::cout << "Window could not be created:" << const_cast<char*>(SDL_GetError()) << std::endl;
 	}
-	return outWindow;
+	return out_window;
 }
 
-SDL_Renderer* GetSDLWindowRenderer(SDL_Window* window)
+SDL_Renderer* get_sdl_window_renderer(SDL_Window* window)
 {
-	SDL_Renderer* outRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	if(outRenderer == NULL)
+	const auto window_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	if(window_renderer == nullptr)
 	{
-		std::cout << "Renderer could not be created: " << (char*)SDL_GetError() << std::endl;
+		std::cout << "Renderer could not be created: " << const_cast<char*>(SDL_GetError()) << std::endl;
 	}
-	SDL_SetRenderDrawColor(outRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	return outRenderer;
+	SDL_SetRenderDrawColor(window_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	return window_renderer;
 }
 
 
-
-bool sdl_graphics_manager::Initialize(unsigned int width, unsigned int height, const char * windowTitle)
+bool sdl_graphics_manager::initialize(unsigned int width, unsigned int height, const char * window_title)
 {
 	logger::log_message("sdl_graphics_manager::Initialize()");
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0)
 	{
-		std::cout << "SDL could not initialize!" << (char*)SDL_GetError() << std::endl;
+		logger::log_message(string("SDL could not initialize:") + const_cast<char*>(SDL_GetError()));
 		return false;
 	}
 
-	// Initialize SDL Image extension	
 	if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
 	{
-		std::cout << "SDL_image could not initialize!" << (char*)SDL_GetError() << std::endl;
+		logger::log_message(string("SDL_image could not initialize:") + const_cast<char*>(SDL_GetError()));
 		return false;
 	}
 
-	m_Window = GetSDLWindow(width, height, windowTitle);
-	
-	m_WindowSurface = SDL_GetWindowSurface(m_Window);
-	m_Renderer = GetSDLWindowRenderer(m_Window);
-
-	m_ScreenHeight = height;
-	m_ScreenWidth = width;
-
-	event_manager::get().subscribe_to_event(PlayerMovedEventType, this);
+	window = get_sdl_window(static_cast<int>(width), static_cast<int>(height), window_title);	
+	window_surface = SDL_GetWindowSurface(window);
+	renderer = get_sdl_window_renderer(window);
+	screen_height = height;
+	screen_width = width;
 	
 	return true;
 }
 
-std::shared_ptr<asset> sdl_graphics_manager::make_resource_spec(tinyxml2::XMLElement * element)
-{
-	
+std::shared_ptr<asset> sdl_graphics_manager::create_asset(tinyxml2::XMLElement * element)
+{	
 	int uuid;
 	const char* type;
 	const char* path;
 	const char* name_c;
 	int level;
-	bool isAnimated = false;
-	int numKeyFrames = 12, keyFrameHeight = 64, keyFrameWidth = 64;
+	auto is_animated = false;
+	auto num_key_frames = 12, keyFrameHeight = 64, keyFrameWidth = 64;
 
 	element->QueryIntAttribute("uid", &uuid);
 	element->QueryStringAttribute("type", &type);
@@ -119,11 +106,11 @@ std::shared_ptr<asset> sdl_graphics_manager::make_resource_spec(tinyxml2::XMLEle
 
 		if(name == "isAnimated")
 		{
-			isAnimated = value == "true" ? true : false;
+			is_animated = value == "true" ? true : false;
  		}
 		if(name == "numKeyFrames")
 		{
-			numKeyFrames = atoi(value.c_str());
+			num_key_frames = atoi(value.c_str());
 		}
 		if(name == "keyFrameHeight")
 		{
@@ -136,9 +123,9 @@ std::shared_ptr<asset> sdl_graphics_manager::make_resource_spec(tinyxml2::XMLEle
 	}
 
 
-	auto resource = isAnimated
-		                        ? std::make_shared<GraphicsResource>(uuid, name_c, path, type, level, numKeyFrames, keyFrameHeight, keyFrameWidth,  isAnimated)
-		                        : std::make_shared<GraphicsResource>(uuid, name_c, path, type, level, isAnimated);
+	auto resource = is_animated
+		                        ? std::make_shared<GraphicsResource>(uuid, name_c, path, type, level, num_key_frames, keyFrameHeight, keyFrameWidth,  is_animated)
+		                        : std::make_shared<GraphicsResource>(uuid, name_c, path, type, level, is_animated);
 		
 	
 	return resource;
@@ -146,14 +133,9 @@ std::shared_ptr<asset> sdl_graphics_manager::make_resource_spec(tinyxml2::XMLEle
 
 void sdl_graphics_manager::DrawAllActors()
 {
-	for(auto actor : m_Actors)
-	{
+	for(const auto &actor : game_objects)
 		if(actor->is_visible)
-		{
-			// Ask the actors to draw themselves please
-			actor->draw(m_Renderer);
-		}
-	}
+			actor->draw(renderer);
 	//SDL_RenderPresent(m_Renderer);
 	//SDL_UpdateWindowSurface(m_Window);
 }
@@ -162,20 +144,29 @@ void sdl_graphics_manager::DrawAllActors()
 void sdl_graphics_manager::draw_current_scene(bool updateWindowSurfaceAfterDrawing) const
 {
 	
-	SDL_SetRenderDrawColor(m_Renderer, 0x255, 0x255, 0x55, 0xFF);
+	SDL_SetRenderDrawColor(renderer, 0x255, 0x255, 0x55, 0xFF);
 	
-	for(const auto& layer : scene_manager::get().m_Layers)
+	for(const auto& layer : scene_admin->layers)
 	{
 		if(layer->m_Visible)
 		{
-			for(const auto& game_object : layer->m_objects)
+			for(const auto& game_object : layer->game_objects)
 			{
 				if(game_object->is_visible) {					
-					game_object->draw(m_Renderer);
+					game_object->draw(renderer);
 				}
 			}
 		}
 	}
 	
-	SDL_UpdateWindowSurface(m_Window);	
+	SDL_UpdateWindowSurface(window);	
+}
+
+sdl_graphics_manager::~sdl_graphics_manager()
+{
+	// get rid of renderer
+	SDL_DestroyRenderer(renderer);	
+	
+	// get rid of window and this will also cleanup the screen surface
+	SDL_DestroyWindow(window);
 }

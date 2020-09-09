@@ -12,10 +12,10 @@ class GraphicsResource : public asset
 public:
 		
 	GraphicsResource(int uid, string name, string path, string type, int level, bool isAnimated) 
-		: asset(uid, name, path, type, level), m_NumKeyFrames(0), m_KeyFrameHeight(64), m_KeyFrameWidth(64), m_bIsAnimated(isAnimated)
+		: asset(uid, name, path, type, level), num_key_frames(0), key_frame_height(64), key_frame_width(64), m_bIsAnimated(isAnimated)
 	{}
 	GraphicsResource(int uid, string name, string path, string type, int level, uint numKeyFrames, uint keyFrameHeight, uint keyFrameWidth, bool isAnimated)
-		: m_NumKeyFrames(numKeyFrames), m_KeyFrameHeight(keyFrameHeight), m_KeyFrameWidth(keyFrameWidth),  m_viewPort({ 0, 0, (int)keyFrameWidth, (int)keyFrameHeight }), m_bIsAnimated(isAnimated),
+		: num_key_frames(numKeyFrames), key_frame_height(keyFrameHeight), key_frame_width(keyFrameWidth),  m_viewPort({ 0, 0, (int)keyFrameWidth, (int)keyFrameHeight }), m_bIsAnimated(isAnimated),
 		asset(uid, name, path, type, level)
 	{};	
 	
@@ -26,9 +26,9 @@ public:
 	SDL_Texture* newTexture = nullptr;
 
 
-	uint m_NumKeyFrames;
-	uint m_KeyFrameHeight;
-	uint m_KeyFrameWidth;
+	uint num_key_frames;
+	uint key_frame_height;
+	uint key_frame_width;
 	bool m_bIsAnimated = false;
 	SDL_Rect m_viewPort = {};
 

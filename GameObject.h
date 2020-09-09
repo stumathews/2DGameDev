@@ -1,18 +1,13 @@
 #pragma once
 
 #include <SDL.h>
-#include "Drawing.h"
-#include <iostream>
-#include <SDL_mixer.h>
-#include "Events.h"
 #include "Event.h"
 #include "GraphicsManager.h"
 #include "EventSubscriber.h"
 #include "EventManager.h"
 #include "Component.h"
 #include <map>
-#include "constants.h"
-#include "GlobalConfig.h"
+#include "global_config.h"
 
 
 class game_object : public event_subscriber
@@ -24,18 +19,14 @@ public:
 	int x;
 	int y;
 
-	game_object();
-
-	game_object(int x, int y);
-
-	virtual ~game_object();
+	game_object(bool is_visible = true);
+	game_object(int x, int y, bool is_visible = true);
 
 	void subscribe_to_event(event_type type);
-	void raise_event(Event event);
-	void raise_event(const shared_ptr<Event> the_event);
+	void raise_event(const Event& event);
+	void raise_event(const shared_ptr<Event>& the_event);
 	shared_ptr<GraphicsResource> get_resource() const;
 	void set_graphic_resource(shared_ptr<GraphicsResource> graphic_resource);
-
 
 	void virtual draw(SDL_Renderer* renderer) = 0;	
 	void virtual update();
@@ -47,7 +38,7 @@ public:
 	vector<shared_ptr<Event>> process_event(const std::shared_ptr<Event> event) override;  // NOLINT(readability-inconsistent-declaration-parameter-name)
 	void DetectSideCollision();
 	void set_color_key(float r, float g, float b);
-	void add_component(shared_ptr<Component> component);
+	void add_component(const shared_ptr<Component>& component);
 	bool is_player();
 	shared_ptr<Component> find_component(string name);
 	bool has_component(string name);
@@ -56,6 +47,7 @@ public:
 	string get_subscriber_name() override;
 	void draw_resource(SDL_Renderer* renderer) const;
 	bool is_resource_loaded() const;
+
 private:
 	string tag;
 	bool is_traveling_left;
@@ -63,7 +55,8 @@ private:
 	shared_ptr<GraphicsResource> graphic_resource; // can be shared by other actors
 	map<string, shared_ptr<Component>> components;
 	SDL_Color color_key = {};
-	int move_interval = GlobalConfig::moveInterval; // move by intervals of 10 pixels
+	int move_interval = global_config::move_interval; // move by intervals of 10 pixels
+	void setup_default_subscriptions();
 };
 
 

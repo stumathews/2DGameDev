@@ -1,39 +1,29 @@
 #include "SceneManager.h"
-#include "SceneManager.h"
 #include <list>
 #include "tinyxml2.h"
-#include "GameObject.h"
 #include "ResourceManager.h"
 #include <memory>
 #include <list>
-#include "SceneManager.h"
 #include "SceneChangedEvent.h"
-#include "GameObjectFactory.h"
+#include "game_object_factory.h"
 #include "AddGameObjectToCurrentSceneEvent.h"
-#include "constants.h"
-#include "Logger.h"
 using namespace tinyxml2;
 
-void scene_manager::initialize()
-{
-	logger::log_message("scene_manager::initialize()");	
-	event_manager::get().raise_event(std::make_shared<scene_changed_event>(1), this); 
-	event_manager::get().subscribe_to_event(LevelChangedEventType, this);
-	event_manager::get().subscribe_to_event(AddGameObjectToCurrentScene, this);
-	
-	is_initialized = true;
-}
+extern shared_ptr<event_manager> event_admin;
 
 scene_manager::scene_manager()
-{
+{	
+	event_admin->raise_event(std::make_shared<scene_changed_event>(1), this); 
+	event_admin->subscribe_to_event(LevelChangedEventType, this);
+	event_admin->subscribe_to_event(AddGameObjectToCurrentScene, this);
+	
 	if(!is_initialized)
 		is_initialized = true;
 }
 
-string scene_manager::get_subscriber_name()
+scene_manager::scene_manager(scene_manager const&)
 {
-	return "scene_manager";
-};
+}
 
 vector<shared_ptr<Event>> scene_manager::process_event(const std::shared_ptr<Event> evt)
 {	
@@ -44,19 +34,19 @@ vector<shared_ptr<Event>> scene_manager::process_event(const std::shared_ptr<Eve
 		switch(changed_event->m_Level)
 		{
 			case 1:			
-				load_scene("scene1.xml");
+				load_scene_file("scene1.xml");
 				break;
 			case 2:
-				load_scene("scene2.xml");
+				load_scene_file("scene2.xml");
 				break;
 			case 3:
-				load_scene("scene3.xml");
+				load_scene_file("scene3.xml");
 				break;
 			case 4:
-				load_scene("scene4.xml");
+				load_scene_file("scene4.xml");
 				break;
 			default:
-				load_scene("scene1.xml");
+				load_scene_file("scene1.xml");
 		}
 	}
 	
@@ -66,52 +56,51 @@ vector<shared_ptr<Event>> scene_manager::process_event(const std::shared_ptr<Eve
 		const auto gameObject = object_added_event->GetGameObject();
 
 		// add to last layer of the scene
-		m_Layers.back()->m_objects.push_back(gameObject);	
+		layers.back()->game_objects.push_back(gameObject);	
 	}
 
 	return vector<shared_ptr<Event>>();
 }
 
-shared_ptr<Layer> scene_manager::add_layer(const std::string name)
+shared_ptr<Layer> scene_manager::add_layer(const std::string& name)
 {
 	auto layer = find_layer(name);
 	if(!layer)
 	{
 		layer = std::make_shared<Layer>();
 		layer->m_Name = name;
-		m_Layers.push_back(layer);
+		layers.push_back(layer);
 	}
 	return layer;
 }
 
-const shared_ptr<Layer> scene_manager::find_layer(const std::string name)
+const shared_ptr<Layer> scene_manager::find_layer(const std::string& name)
 {
-	for(const auto& layer : m_Layers)
+	for(const auto& layer : layers)
 		if(layer->m_Name == name)
 			return layer;		
 	
 	return nullptr;
 }
 
-void scene_manager::remove_layer(std::string name)
+void scene_manager::remove_layer(const std::string& name)
 {
-	for(const auto& layer : m_Layers)
+	for(const auto& layer : layers)
 		if(layer->m_Name == name)
-			m_Layers.remove(layer);
+			layers.remove(layer);
 }
 
-bool compare_layer_order(shared_ptr<Layer> rhs, shared_ptr<Layer> lhs)
+bool compare_layer_order(const shared_ptr<Layer> rhs, const shared_ptr<Layer> lhs)
 {
 	return lhs->m_ZOrder < rhs->m_ZOrder;
 }
 
 void scene_manager::sort_layers()
 {
-	m_Layers.sort(compare_layer_order);
+	layers.sort(compare_layer_order);
 }
 
-// Reads the scene data from the scene file
-bool scene_manager::load_scene(const std::string& filename)
+bool scene_manager::load_scene_file(const std::string& filename)
 {
 	/*
 
@@ -138,57 +127,44 @@ bool scene_manager::load_scene(const std::string& filename)
 		
 		if(scene_node) 
 		{
-			// Traverse the multiple layers within the scene
 			for(auto layer_node = scene_node->FirstChild(); layer_node; layer_node = layer_node->NextSibling()) 
 			{				
 				auto layer_element = layer_node->ToElement();
 				if(layer_element) 
 				{
-					// We'll build up the layer object with the discovered details
 					auto layer = std::make_shared<Layer>();
+					layer->m_ZOrder = layers.size();					
 
-					layer->m_ZOrder = m_Layers.size();					
-					
-					// Traverse layer's details/attributes
-					for(auto attributes = layer_element->FirstAttribute(); attributes; attributes = attributes->Next()) 
+					for(auto layer_attributes = layer_element->FirstAttribute(); layer_attributes; layer_attributes = layer_attributes->Next()) 
 					{
-						std::string name = attributes->Name();
-						std::string value = attributes->Value();						
+						std::string name(layer_attributes->Name());
+						std::string value(layer_attributes->Value());						
 						
-						// Populate the layer with the layer's details as we come across them
-						if(name._Equal("name"))
+						if(name == "name")
 						{
 							layer->m_Name = name;
 							continue;
 						}
 
-						if(name._Equal("posx"))
+						if(name == "posx")
 						{
 							layer->m_PosX = 0;
 							continue;
 						}
 
-						if(name._Equal("posy")) 
+						if(name == "posy") 
 						{
 							layer->m_PosY = 0;
 							continue;
 						}
 
-						if(name._Equal("visible")) 
-						{
-							if(value == "true")
-								layer->m_Visible = true;
-							else
-								layer->m_Visible = false;
-							continue;
-						}
-						
-					} // Done with traversing layer attributes
+						if(name == "visible")
+							layer->m_Visible = value == "true" ? true : false;
+					}
 					
-					/* Now traverse the constituents of the layer, ie the game objects (which reference resources) */
 					for(auto layer_item = layer_node->FirstChild(); layer_item; layer_item = layer_item->NextSibling()) 
 					{
-						if(std::string(layer_item->Value())._Equal("objects")) 
+						if(std::string(layer_item->Value()) == "objects") 
 						{
 							for(auto object_node = layer_item->FirstChild(); object_node; object_node = object_node->NextSibling())
 							{	
@@ -196,26 +172,25 @@ bool scene_manager::load_scene(const std::string& filename)
 								if(object == nullptr)
 									continue;
 
-								auto game_object = GameObjectFactory::GetInstance().BuildGameObject(object);
-								layer->m_objects.push_back(game_object);	
-
-								// Subscribe all game objects to some basic event types
-								event_manager::get().subscribe_to_event(PositionChangeEventType, game_object.get());	
-								event_manager::get().subscribe_to_event(DoLogicUpdateEventType, game_object.get());								
+								layer->game_objects.push_back(game_object_factory::get_instance().build_game_object(object));																
 							}
 						}
 					}
-					m_Layers.push_back(layer);
+					layers.push_back(layer);
 				}
 			}
 			
 			sort_layers(); // We want to draw from zOrder 0 -> onwards (in order)
 			return true;
-
 		}
 		
-		event_manager::get().raise_event(make_unique<scene_changed_event>(atoi(scene_id)), this);
+		event_admin->raise_event(make_unique<scene_changed_event>(std::stoi(scene_id)), this);
 	}
 	return false;
+}
+
+string scene_manager::get_subscriber_name()
+{
+	return "scene_manager";
 }
 
