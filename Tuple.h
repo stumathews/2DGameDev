@@ -1,12 +1,28 @@
 #pragma once
 template <class T>
-class Coordinate
+class coordinate
 {
 public:
-	Coordinate(T x, T y) : x(x), y(y){}
-	T GetX(){ return this->x;}
-	T GetY(){ return this->y;}
+	coordinate(T x, T y);
+	T get_x();
+	T get_y();
 private: 
 	T x, y;
 };
 
+template <class T>
+coordinate<T>::coordinate(T x, T y): x(x), y(y)
+{
+}
+
+template <class T>
+T coordinate<T>::get_x()
+{
+	return this->x;
+}
+
+template <class T>
+T coordinate<T>::get_y()
+{
+	return this->y;
+}
