@@ -10,7 +10,7 @@
 #include "RenderManager3D.h"
 #include "AddGameObjectToCurrentSceneEvent.h"
 #include "Square.h"
-#include "PlayerComponent.h"
+#include "player_component.h"
 #include "Player.h"
 #include "constants.h"
 #include "global_config.h"
@@ -54,7 +54,7 @@ bool load_content()
 	for (const auto& sq : level_generator::generate_level())
 	{
 		std::shared_ptr<game_object> game_object = std::dynamic_pointer_cast<square>(sq);
-		game_object->subscribe_to_event(PlayerMovedEventType);
+		game_object->subscribe_to_event(event_type::PlayerMovedEventType);
 		game_object->raise_event(std::make_shared<AddGameObjectToCurrentSceneEvent>(game_object));		
 	}
 

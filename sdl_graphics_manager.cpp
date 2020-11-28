@@ -19,12 +19,12 @@ extern shared_ptr<scene_manager> scene_admin;
 
 sdl_graphics_manager::sdl_graphics_manager() : event_subscriber()
 {
-	event_admin->subscribe_to_event(PlayerMovedEventType, this);
+	event_admin->subscribe_to_event(event_type::PlayerMovedEventType, this);
 }
 
 vector<shared_ptr<event>> sdl_graphics_manager::process_event(const std::shared_ptr<event> the_event)
 {
-	if(the_event->type == PlayerMovedEventType)
+	if(the_event->type == event_type::PlayerMovedEventType)
 	{
 		draw_current_scene();		
 	}

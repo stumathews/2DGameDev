@@ -1,7 +1,7 @@
 #include "Square.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include "PlayerMovedEvent.h"
+#include "player_moved_event.h"
 #include "RectDebugging.h"
 
 using namespace std;
@@ -64,19 +64,19 @@ vector<shared_ptr<event>> square::process_event(const std::shared_ptr<event> eve
 {	
 	auto newEvents(game_object::process_event(event));  // Moves the square, if its set to to movable
 
-	if(event->type == PlayerMovedEventType)
+	if(event->type == event_type::PlayerMovedEventType)
 	{	
-		auto playerMovedEvent = std::static_pointer_cast<PlayerMovedEvent>(event);
+		auto playerMovedEvent = std::static_pointer_cast<player_moved_event>(event);
 		
 		player_bounds_ = 	{ 
-			playerMovedEvent->GetPlayerComponent()->x, 
-			playerMovedEvent->GetPlayerComponent()->y, 
-			playerMovedEvent->GetPlayerComponent()->w, 	
-			playerMovedEvent->GetPlayerComponent()->h 
+			playerMovedEvent->get_player_component()->x, 
+			playerMovedEvent->get_player_component()->y, 
+			playerMovedEvent->get_player_component()->w, 	
+			playerMovedEvent->get_player_component()->h 
 		};
 	}
 
-	if(event->type == PositionChangeEventType)
+	if(event->type == event_type::PositionChangeEventType)
 	{
 		rect_details_->init(get_x(), get_y(), get_w(), get_h());
 		my_bounds_ = { get_x(), get_y(), get_w(), get_h() };

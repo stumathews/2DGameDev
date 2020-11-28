@@ -1,63 +1,64 @@
 #include "Player.h"
-#include "PlayerComponent.h"
-#include "PlayerMovedEvent.h"
+#include "player_component.h"
+#include "player_moved_event.h"
 #include "constants.h"
 #include "AddGameObjectToCurrentSceneEvent.h"
+#include <memory>
+using namespace std;
 
-Player::Player(int x, int y, int w): square(x, y, w, true, true)
+
+player::player(int x, int y, int w): square(x, y, w, true, true)
 {
-	const auto player_component = std::make_shared<PlayerComponent>(constants::playerComponentName, x, y, w, w);
+	const auto player = std::make_shared<player_component>(constants::playerComponentName, x, y, w, w);
 	set_tag(constants::playerTag);
-	add_component(player_component);
-	subscribe_to_event(PositionChangeEventType);
+	add_component(player);
+	subscribe_to_event(event_type::PositionChangeEventType);
 
 	add_player_to_scene();
 	
 }
 
-vector<shared_ptr<event>> Player::process_event(const std::shared_ptr<event> event)
+vector<shared_ptr<event>> player::process_event(const std::shared_ptr<event> the_event)
 {	
 	// Process GameObject events
-	auto createdEvents(game_object::process_event(event));
+	auto createdEvents(game_object::process_event(the_event));
 
 	// Process Square events
-	for(auto e : square::process_event(event)) 
+	for(auto &e : square::process_event(the_event)) 
 		createdEvents.push_back(e);
 	
 	// Process Player events
-	if(PositionChangeEventType == event->type)
+	if(event_type::PositionChangeEventType == the_event->type)
 	{
-		auto player_component = static_pointer_cast<PlayerComponent>(find_component(constants::playerComponentName));
-		const auto player_moved_event = std::make_shared<PlayerMovedEvent>(player_component);
-
+		auto player = static_pointer_cast<player_component>(find_component(constants::playerComponentName));
 		
-		player_component->x = get_x();
-		player_component->y = get_y();
-		player_component->w = get_w();
-		player_component->h = get_h();
-		player_bounds_.x = player_component->x;
-		player_bounds_.y = player_component->y;
-		player_bounds_.w = player_component->w;
-		player_bounds_.h = player_component->h;
+		player->x = get_x();
+		player->y = get_y();
+		player->w = get_w();
+		player->h = get_h();
+		player_bounds_.x = player->x;
+		player_bounds_.y = player->y;
+		player_bounds_.w = player->w;
+		player_bounds_.h = player->h;
 
-		createdEvents.push_back(player_moved_event);	
+		createdEvents.push_back(make_shared<player_moved_event>(player));	
 	}
 	return createdEvents;
 }
 
-void Player::draw(SDL_Renderer* renderer)
+void player::draw(SDL_Renderer* renderer)
 {
   // Let the player draw itself
 	SDL_RenderDrawRect(renderer, &player_bounds_);
 }
 
-void Player::add_player_to_scene() const
+void player::add_player_to_scene() const
 {
 	/* Schedule adding the player to the screen */
 	auto player_width = global_config::square_width / 2;
 	auto player_pos_x = 100;
 	auto player_pos_y = 100;
-	auto player_object = std::static_pointer_cast<game_object>(std::make_shared<Player>(player_pos_x, player_pos_y, player_width));
+	auto player_object = std::static_pointer_cast<game_object>(std::make_shared<player>(player_pos_x, player_pos_y, player_width));
 
 	/* Add player to scene */
 	const auto add_to_scene_event = std::make_shared<AddGameObjectToCurrentSceneEvent>(player_object);

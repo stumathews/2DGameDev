@@ -16,7 +16,7 @@ extern shared_ptr<event_manager> event_admin;
 
 resource_manager::resource_manager()
 {
-	event_admin->subscribe_to_event(LevelChangedEventType, this);
+	event_admin->subscribe_to_event(event_type::LevelChangedEventType, this);
 }
 
 
@@ -32,7 +32,7 @@ std::shared_ptr<asset> resource_manager::get_resource_by_uuid(const int uuid)
 
 vector<shared_ptr<event>> resource_manager::process_event(const std::shared_ptr<event> evt)
 {
-	if(evt->type == LevelChangedEventType)
+	if(evt->type == event_type::LevelChangedEventType)
 	{
 		const auto level = dynamic_pointer_cast<scene_changed_event>(evt)->scene;
 		

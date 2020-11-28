@@ -2,7 +2,7 @@
 #include <string>
 using namespace std;
 
-enum event_type
+enum class event_type
 {
 	PositionChangeEventType,
 	LevelChangedEventType,
@@ -19,6 +19,8 @@ public:
 	bool processed = false;
 	event_type type;
 	virtual event_type get_type();
+	virtual string to_str() = 0;
+	virtual ~event() = default;
 };
 
 std::string operator+(const std::string& str, const event_type type);

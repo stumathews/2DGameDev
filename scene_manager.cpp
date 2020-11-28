@@ -18,10 +18,10 @@ scene_manager::scene_manager()
 	event_admin->raise_event(std::make_shared<scene_changed_event>(1), this);
 
 	// I care about when the level changes
-	event_admin->subscribe_to_event(LevelChangedEventType, this);
+	event_admin->subscribe_to_event(event_type::LevelChangedEventType, this);
 
 	// I care about when I'm asked to add game object to current scene
-	event_admin->subscribe_to_event(AddGameObjectToCurrentScene, this);
+	event_admin->subscribe_to_event(event_type::AddGameObjectToCurrentScene, this);
 	
 	if(!is_initialized)
 		is_initialized = true;
@@ -30,11 +30,11 @@ scene_manager::scene_manager()
 vector<shared_ptr<event>> scene_manager::process_event(const std::shared_ptr<event> evt)
 {
 	// load in new scene
-	if(LevelChangedEventType == evt->type) 
+	if(event_type::LevelChangedEventType == evt->type) 
 		load_new_scene(evt);	
 
 	// add new object to scene (last layer)
-	if(AddGameObjectToCurrentScene == evt->type)
+	if(event_type::AddGameObjectToCurrentScene == evt->type)
 		add_to_scene(std::dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(evt)->GetGameObject());	
 	
 	return vector<shared_ptr<event>>();

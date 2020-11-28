@@ -38,8 +38,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh3D.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PlayerComponent.cpp" />
-    <ClCompile Include="PlayerMovedEvent.cpp" />
+    <ClCompile Include="player_component.cpp" />
+    <ClCompile Include="player_moved_event.cpp" />
     <ClCompile Include="PositionChangeEvent.cpp" />
     <ClCompile Include="RectDebugging.cpp" />
     <ClCompile Include="rect_details.cpp" />
@@ -81,8 +81,8 @@
     <ClInclude Include="LevelGenerator.h" />
     <ClInclude Include="Mesh3D.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="PlayerComponent.h" />
-    <ClInclude Include="PlayerMovedEvent.h" />
+    <ClInclude Include="player_component.h" />
+    <ClInclude Include="player_moved_event.h" />
     <ClInclude Include="PositionChangeEvent.h" />
     <ClInclude Include="RectDebugging.h" />
     <ClInclude Include="rect_details.h" />

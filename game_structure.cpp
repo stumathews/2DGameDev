@@ -16,6 +16,7 @@
 #include "game_structure.h"
 #include <functional>
 #include "Logger.h"
+
 using namespace std;
 
 extern shared_ptr<event_manager> event_admin;
@@ -23,11 +24,6 @@ extern shared_ptr<resource_manager> resource_admin;
 
 // Create our global copy of the game data
 std::shared_ptr<game_world_data> g_pGameWorldData = std::make_shared<game_world_data>();
-
-void log_message(const string &message, const bool be_verbose = global_config::verbose)
-{
-	logger::log_message(message, be_verbose);
-}
 
 void game_structure::get_input()
 {
@@ -46,46 +42,64 @@ void game_structure::get_input()
 			{
 				case SDLK_w:
 				case SDLK_UP:
-					log_message("Player pressed up!", be_verbose);
-					event_admin->raise_event(std::make_unique<position_change_event>(Up), this);
+					run_and_log("Player pressed up!", be_verbose, [&]()
+					{
+						event_admin->raise_event(std::make_unique<position_change_event>(Up), this);
+					});
 				break;
 				case SDLK_s:
 				case SDLK_DOWN:
-					log_message("Player pressed down!", be_verbose);	
-					event_admin->raise_event(std::make_unique<position_change_event>(Down), this);
+					run_and_log("Player pressed down!", be_verbose, [&]()
+					{
+						event_admin->raise_event(std::make_unique<position_change_event>(Down), this);
+					});
 				break;
 				case SDLK_a:
 				case SDLK_LEFT:
-					log_message("Player pressed left!", be_verbose);					
-					event_admin->raise_event(std::make_unique<position_change_event>(Left), this);
+					run_and_log("Player pressed left!", be_verbose, [&]()
+					{				
+						event_admin->raise_event(std::make_unique<position_change_event>(Left), this);
+					});
 				break;
 
 				case SDLK_d:
 				case SDLK_RIGHT:
-					log_message("Player pressed right!", be_verbose);	
-					event_admin->raise_event(std::make_unique<position_change_event>(Right), this);
+					run_and_log("Player pressed right!", be_verbose, [&]()
+					{	
+						event_admin->raise_event(std::make_unique<position_change_event>(Right), this);
+					});
 				break;
 
 				case SDLK_q:
-					log_message("Player pressed quit!", be_verbose);
-					g_pGameWorldData->is_game_done = 1;
+					run_and_log("Player pressed quit!", be_verbose, [&]()
+					{	
+						g_pGameWorldData->is_game_done = 1;
+					});
 					break;
 				case SDLK_j:
-					log_message("Change to level 1", be_verbose);
-					event_admin->raise_event(std::make_unique<scene_changed_event>(1), this);
+					run_and_log("Change to level 1", be_verbose, [&]()
+					{	
+						event_admin->raise_event(std::make_unique<scene_changed_event>(1), this);
+					});
 					break;
 				case SDLK_k:
-					log_message("Change to level 2", be_verbose);
-					event_admin->raise_event(std::make_unique<scene_changed_event>(2), this);
+					run_and_log("Change to level 2", be_verbose, [&]()
+					{
+						event_admin->raise_event(std::make_unique<scene_changed_event>(2), this);
+					});
 				break;
 				case SDLK_l:
-					log_message("Change to level 3", be_verbose);
-					event_admin->raise_event(std::make_unique<scene_changed_event>(3),this);
+					run_and_log("Change to level 3", be_verbose, [&]()
+					{
+						event_admin->raise_event(std::make_unique<scene_changed_event>(3),this);
+					});
 				break;
 
 				case SDLK_x:
-					log_message("Change to level 4", be_verbose);
-					event_admin->raise_event(std::make_unique<scene_changed_event>(4), this);
+					run_and_log("Change to level 4", be_verbose, [&]()
+					{
+						event_admin->raise_event(std::make_unique<scene_changed_event>(4), this);
+					});
 				break;	
                 case SDLK_1:
 					Mix_PlayChannel( -1, Singleton<global_config>::GetInstance().object.high_sound_fx, 0 );
@@ -103,7 +117,7 @@ void game_structure::get_input()
 					if( Mix_PlayingMusic() == 0 ) {
 						Mix_PlayMusic( Singleton<global_config>::GetInstance().object.music, -1 );
 					} else 	{
-						if( Mix_PausedMusic() == 1 )
+						if(Mix_PausedMusic() == 1)
 							Mix_ResumeMusic();
 						else
 							Mix_PauseMusic();

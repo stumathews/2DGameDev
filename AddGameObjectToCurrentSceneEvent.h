@@ -7,7 +7,7 @@ class AddGameObjectToCurrentSceneEvent : public event
 {
 	std::shared_ptr<game_object> gameObject_;
 public:
-	AddGameObjectToCurrentSceneEvent(std::shared_ptr<game_object> gameObject) : event(AddGameObjectToCurrentScene)
+	AddGameObjectToCurrentSceneEvent(std::shared_ptr<game_object> gameObject) : event(event_type::AddGameObjectToCurrentScene)
 	{
 		SetGameObject(gameObject);
 	}
@@ -20,7 +20,13 @@ public:
 	{
 		return GameObject;
 	}
+	string to_str() override;
 
 private:
 	std::shared_ptr<game_object> GameObject;
 };
+
+inline string AddGameObjectToCurrentSceneEvent::to_str()
+{
+	return "add_game_object_to_current_scene_event";
+}

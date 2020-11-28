@@ -18,7 +18,7 @@ void game_object::setup_default_subscriptions()
 vector<shared_ptr<event>> game_object::process_event(const std::shared_ptr<event> the_event)
 {
 	// Change the object's position
-	if(the_event->type == PositionChangeEventType)
+	if(the_event->type == event_type::PositionChangeEventType)
 	{
 		const auto event = std::dynamic_pointer_cast<position_change_event>(the_event);
 		if(event->direction == Up && supports_move_logic)					
@@ -34,7 +34,7 @@ vector<shared_ptr<event>> game_object::process_event(const std::shared_ptr<event
 			move_right();		
 	}
 
-	if(the_event->type == DoLogicUpdateEventType)
+	if(the_event->type == event_type::DoLogicUpdateEventType)
 		update();
 	return vector<shared_ptr<event>>();
 }
@@ -46,7 +46,7 @@ void game_object::subscribe_to_event(event_type type)
 
 void game_object::raise_event(const event& the_event)
 {
-	event_admin->raise_event(make_unique<event>(the_event), this);
+	//event_admin->raise_event(make_unique<event>(the_event), this);
 }
 
 void game_object::raise_event(const shared_ptr<event>& the_event)

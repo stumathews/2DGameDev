@@ -2,6 +2,7 @@
 #include <vector>
 #include "event_subscriber.h"
 #include "Logger.h"
+#include "Common.h"
 
 
 event_manager::event_manager()
@@ -12,14 +13,19 @@ event_manager::event_manager()
 
 void event_manager::raise_event(const shared_ptr<event> event, event_subscriber* you)  // NOLINT(performance-unnecessary-value-param)
 {
-	if(event->type != DoLogicUpdateEventType)
-		logger::log_message("event_manager:" + you->get_subscriber_name()  + string(" raised to event #") + event->type);
+	auto const log = "event_manager: " + you->get_subscriber_name()  + string(" raised to event ") + event->to_str();
+	
+	if(event->type != event_type::DoLogicUpdateEventType)
+		logger::log_message(log);
+
 	primary_event_queue_.push(event);
 }
 
 void event_manager::subscribe_to_event(const event_type type, event_subscriber* you)
 {
-	logger::log_message("event_manager:"+you->get_subscriber_name() + string(" subscribed to event #") + type);
+	auto const message = "event_manager: "+you->get_subscriber_name() + string(" subscribed to event ") + type;
+	logger::log_message(message);
+	
 	event_subscribers_[type].push_back(you);	
 }
 
