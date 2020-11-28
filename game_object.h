@@ -23,10 +23,10 @@ public:
 	game_object(int x, int y, bool is_visible = true);
 
 	void subscribe_to_event(event_type type);
-	void raise_event(const Event& event);
-	void raise_event(const shared_ptr<Event>& the_event);
-	shared_ptr<GraphicsResource> get_resource() const;
-	void set_graphic_resource(shared_ptr<GraphicsResource> graphic_resource);
+	void raise_event(const event& event);
+	void raise_event(const shared_ptr<event>& the_event);
+	shared_ptr<graphic_asset> get_graphic_asset() const;
+	void set_graphic_resource(shared_ptr<graphic_asset> graphic_resource);
 
 	void virtual draw(SDL_Renderer* renderer) = 0;	
 	void virtual update();
@@ -35,9 +35,9 @@ public:
 	virtual void move_left();
 	virtual void move_right();
 	
-	vector<shared_ptr<Event>> process_event(const std::shared_ptr<Event> event) override;  // NOLINT(readability-inconsistent-declaration-parameter-name)
+	vector<shared_ptr<event>> process_event(const std::shared_ptr<event> event) override;  // NOLINT(readability-inconsistent-declaration-parameter-name)
 	void DetectSideCollision();
-	void set_color_key(float r, float g, float b);
+	void set_color_key(Uint8 r, Uint8 g, Uint8 b);
 	void add_component(const shared_ptr<Component>& component);
 	bool is_player();
 	shared_ptr<Component> find_component(string name);
@@ -52,7 +52,7 @@ private:
 	string tag;
 	bool is_traveling_left;
 	int red, blue, green;
-	shared_ptr<GraphicsResource> graphic_resource; // can be shared by other actors
+	shared_ptr<graphic_asset> graphic_resource; // can be shared by other actors
 	map<string, shared_ptr<Component>> components;
 	SDL_Color color_key = {};
 	int move_interval = global_config::move_interval; // move by intervals of 10 pixels

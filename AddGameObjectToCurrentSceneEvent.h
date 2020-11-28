@@ -3,11 +3,11 @@
 #include <memory>
 #include "game_object.h"
 
-class AddGameObjectToCurrentSceneEvent : public Event
+class AddGameObjectToCurrentSceneEvent : public event
 {
 	std::shared_ptr<game_object> gameObject_;
 public:
-	AddGameObjectToCurrentSceneEvent(std::shared_ptr<game_object> gameObject) : Event(AddGameObjectToCurrentScene)
+	AddGameObjectToCurrentSceneEvent(std::shared_ptr<game_object> gameObject) : event(AddGameObjectToCurrentScene)
 	{
 		SetGameObject(gameObject);
 	}

@@ -1,11 +1,6 @@
 #include "PositionChangeEvent.h"
-#include "Event.h"
 
-
-
-
-
-
-PositionChangeEvent::~PositionChangeEvent()
+position_change_event::position_change_event(Direction dir): event(PositionChangeEventType)
 {
+	direction = dir;
 }

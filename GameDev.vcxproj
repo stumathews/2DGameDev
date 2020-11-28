@@ -33,7 +33,7 @@
     <ClCompile Include="game_object_factory.cpp" />
     <ClCompile Include="game_structure.cpp" />
     <ClCompile Include="sdl_graphics_manager.cpp" />
-    <ClCompile Include="GraphicsResource.cpp" />
+    <ClCompile Include="graphic_asset.cpp" />
     <ClCompile Include="LevelGenerator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh3D.cpp" />
@@ -57,6 +57,7 @@
     <ClCompile Include="Tuple.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="aliases.h" />
     <ClInclude Include="AnimatedActor.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="AudioResource.h" />
@@ -75,7 +76,7 @@
     <ClInclude Include="game_structure.h" />
     <ClInclude Include="global_config.h" />
     <ClInclude Include="sdl_graphics_manager.h" />
-    <ClInclude Include="GraphicsResource.h" />
+    <ClInclude Include="graphic_asset.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="LevelGenerator.h" />
     <ClInclude Include="Mesh3D.h" />

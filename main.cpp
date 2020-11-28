@@ -24,15 +24,16 @@ using namespace std;
 void game_loop();
 void unload();
 bool load_content();
-bool initialize();
+bool initialize_game();
 
+// Globals
 shared_ptr<event_manager> event_admin(new event_manager);
 shared_ptr<scene_manager> scene_admin(new scene_manager);
 shared_ptr<resource_manager> resource_admin(new resource_manager);
 
 int main(int argc, char *args[])
 {
-	if (!initialize() || !load_content())
+	if (failed(initialize_game()) || failed(load_content()))
 		return -1;	
 	
 	game_loop();
@@ -41,16 +42,9 @@ int main(int argc, char *args[])
 	return 0;
 }
 
-bool initialize()
+bool initialize_game()
 {
-	const auto screen_width = global_config::screen_width;
-	const auto screen_height = global_config::screen_height;
-	
-	if (!game_structure::initialize(screen_width, screen_height))
-		return false;
-
-	
-	return true;
+	return game_structure::initialize(global_config::screen_width, global_config::screen_height) ? true : false;
 }
 
 
@@ -59,9 +53,9 @@ bool load_content()
 	logger::log_message("load_content()");
 	for (const auto& sq : level_generator::generate_level())
 	{
-		//std::shared_ptr<game_object> game_object = std::dynamic_pointer_cast<square>(sq);
-		//game_object->subscribe_to_event(PlayerMovedEventType);
-		//game_object->raise_event(std::make_shared<AddGameObjectToCurrentSceneEvent>(game_object));		
+		std::shared_ptr<game_object> game_object = std::dynamic_pointer_cast<square>(sq);
+		game_object->subscribe_to_event(PlayerMovedEventType);
+		game_object->raise_event(std::make_shared<AddGameObjectToCurrentSceneEvent>(game_object));		
 	}
 
 	return true;
@@ -73,7 +67,7 @@ void game_loop()
 	const auto max_loops = global_config::max_loops;
 
 	// MAIN GAME LOOP!!
-	while (!singleton<game_structure>().g_pGameWorldData->bGameDone) 
+	while (!singleton<game_structure>().g_pGameWorldData->is_game_done) 
 	{
 		const auto new_time =  game_structure::get_tick_now();
 		auto frame_ticks = 0;  // Number of ticks in the update call	
@@ -93,9 +87,9 @@ void game_loop()
 
 		game_structure::spare_time(frame_ticks); // handle player input, general housekeeping (Event Manager processing)
 
-		if (singleton<game_structure>().g_pGameWorldData->bNetworkGame || ticks_since <= global_config::TICK_TIME_MS)
+		if (singleton<game_structure>().g_pGameWorldData->is_network_game || ticks_since <= global_config::TICK_TIME_MS)
 		{
-			if (singleton<game_structure>().g_pGameWorldData->bCanRender)
+			if (singleton<game_structure>().g_pGameWorldData->can_render)
 			{
 				const auto percent_outside_frame = static_cast<float>(ticks_since / global_config::TICK_TIME_MS) * 100; // NOLINT(bugprone-integer-division)				
 				game_structure::draw(percent_outside_frame);

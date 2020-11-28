@@ -4,7 +4,7 @@ class game_structure final : public event_subscriber
 {
 public:
 	game_structure();
-	std::shared_ptr<GameWorldData> g_pGameWorldData;
+	std::shared_ptr<game_world_data> g_pGameWorldData;
 	void init_game_world_data() const;
 
 	static bool load_media();
@@ -24,6 +24,6 @@ public:
 
 	void update_state();
 	void update_logic_based_elements();
-	vector<shared_ptr<Event>> process_event(std::shared_ptr<Event> evt) override;
+	vector<shared_ptr<event>> process_event(std::shared_ptr<event> evt) override;
 	string get_subscriber_name() override;
 };

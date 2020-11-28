@@ -7,77 +7,92 @@
 #include "SceneChangedEvent.h"
 #include "game_object_factory.h"
 #include "AddGameObjectToCurrentSceneEvent.h"
-using namespace tinyxml2;
+#include <algorithm>
 
+using namespace tinyxml2;
 extern shared_ptr<event_manager> event_admin;
 
 scene_manager::scene_manager()
-{	
-	event_admin->raise_event(std::make_shared<scene_changed_event>(1), this); 
+{
+	// Emit event to switch to scene 1 on initial construction of scene manager
+	event_admin->raise_event(std::make_shared<scene_changed_event>(1), this);
+
+	// I care about when the level changes
 	event_admin->subscribe_to_event(LevelChangedEventType, this);
+
+	// I care about when I'm asked to add game object to current scene
 	event_admin->subscribe_to_event(AddGameObjectToCurrentScene, this);
 	
 	if(!is_initialized)
 		is_initialized = true;
 }
 
-scene_manager::scene_manager(scene_manager const&)
+vector<shared_ptr<event>> scene_manager::process_event(const std::shared_ptr<event> evt)
 {
-}
+	// load in new scene
+	if(LevelChangedEventType == evt->type) 
+		load_new_scene(evt);	
 
-vector<shared_ptr<Event>> scene_manager::process_event(const std::shared_ptr<Event> evt)
-{	
-	if(LevelChangedEventType == evt->m_eventType) // As a Scene/Level manager I'll load the scene/level's resources when I get a level/scene event
-	{
-		const auto changed_event = std::dynamic_pointer_cast<scene_changed_event>(evt);
-		std::string filename;
-		switch(changed_event->m_Level)
-		{
-			case 1:			
-				load_scene_file("scene1.xml");
-				break;
-			case 2:
-				load_scene_file("scene2.xml");
-				break;
-			case 3:
-				load_scene_file("scene3.xml");
-				break;
-			case 4:
-				load_scene_file("scene4.xml");
-				break;
-			default:
-				load_scene_file("scene1.xml");
-		}
-	}
+	// add new object to scene (last layer)
+	if(AddGameObjectToCurrentScene == evt->type)
+		add_to_scene(std::dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(evt)->GetGameObject());	
 	
-	if(AddGameObjectToCurrentScene == evt->m_eventType)
-	{
-		auto object_added_event = std::dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(evt);
-		const auto gameObject = object_added_event->GetGameObject();
-
-		// add to last layer of the scene
-		layers.back()->game_objects.push_back(gameObject);	
-	}
-
-	return vector<shared_ptr<Event>>();
+	return vector<shared_ptr<event>>();
 }
 
-shared_ptr<Layer> scene_manager::add_layer(const std::string& name)
+
+void scene_manager::load_new_scene(const std::shared_ptr<event> evt)
 {
-	auto layer = find_layer(name);
-	if(!layer)
+	const auto scene =  std::dynamic_pointer_cast<scene_changed_event>(evt)->scene;
+
+	auto raise_scene_loaded_event = [this](int scene_id){ /* event_admin->raise_event(make_unique<scene_changed_event>(scene_id), this);*/ };
+	
+	switch(scene)
 	{
-		layer = std::make_shared<Layer>();
-		layer->m_Name = name;
-		layers.push_back(layer);
+	case 1:			
+		load_scene_file("scene1.xml");
+		raise_scene_loaded_event(scene);
+		break;
+	case 2:
+		load_scene_file("scene2.xml");
+		raise_scene_loaded_event(scene);
+		break;
+	case 3:
+		load_scene_file("scene3.xml");
+		raise_scene_loaded_event(scene);
+		break;
+	case 4:
+		load_scene_file("scene4.xml");
+		raise_scene_loaded_event(scene);
+		break;
+	default:
+		load_scene_file("scene1.xml");
+		raise_scene_loaded_event(scene);
 	}
-	return layer;
 }
 
-const shared_ptr<Layer> scene_manager::find_layer(const std::string& name)
+void scene_manager::add_to_scene(const std::shared_ptr<game_object> game_object)
+{
+	// add to last layer of the scene
+	layers.back()->game_objects.push_back(game_object);
+}
+
+shared_ptr<layer> scene_manager::add_layer(const std::string& name)
+{
+	auto the_layer = find_layer(name);
+	if(!the_layer)
+	{
+		the_layer = std::make_shared<layer>();
+		the_layer->name = name;
+		layers.push_back(the_layer);
+	}
+	return the_layer;
+}
+
+shared_ptr<layer> scene_manager::find_layer(const std::string& name)
 {
 	for(const auto& layer : layers)
-		if(layer->m_Name == name)
+		if(layer->name == name)
 			return layer;		
 	
 	return nullptr;
@@ -86,25 +101,29 @@ const shared_ptr<Layer> scene_manager::find_layer(const std::string& name)
 void scene_manager::remove_layer(const std::string& name)
 {
 	for(const auto& layer : layers)
-		if(layer->m_Name == name)
+		if(layer->name == name)
 			layers.remove(layer);
 }
 
-bool compare_layer_order(const shared_ptr<Layer> rhs, const shared_ptr<Layer> lhs)
+bool compare_layer_order(const shared_ptr<layer> rhs, const shared_ptr<layer> lhs)
 {
-	return lhs->m_ZOrder < rhs->m_ZOrder;
+	return lhs->zorder < rhs->zorder;
 }
 
 void scene_manager::sort_layers()
 {
+	//std::sort(begin(layers), end(layers)); // can we use this?
 	layers.sort(compare_layer_order);
 }
 
-bool scene_manager::load_scene_file(const std::string& filename)
+std::list<shared_ptr<layer>> scene_manager::get_layers() const
 {
-	/*
+	return layers;
+}
 
-	A Scene is composed of a) resources at b) various positions c) visibility
+bool scene_manager::load_scene_file(const std::string& filename)
+{	
+	/* A Scene is composed of a) resources at b) various positions c) visibility
 	
 	<scene id="2">
 	  <layer name="layer0" posx="0" posy="0" visible="true">
@@ -122,47 +141,51 @@ bool scene_manager::load_scene_file(const std::string& filename)
 	doc.LoadFile(filename.c_str());
 	if(doc.ErrorID() == 0) 	
 	{				
-		XMLNode* scene_node = doc.FirstChildElement("scene");
-		auto scene_id = scene_node->ToElement()->Attribute("id");
+		XMLNode* scene = doc.FirstChildElement("scene");
+		auto scene_id = scene->ToElement()->Attribute("id");
 		
-		if(scene_node) 
+		if(scene) // <scene id="2">
 		{
-			for(auto layer_node = scene_node->FirstChild(); layer_node; layer_node = layer_node->NextSibling()) 
+			for(auto layer_node = scene->FirstChild(); layer_node; layer_node = layer_node->NextSibling()) //  <layer ...>
 			{				
 				auto layer_element = layer_node->ToElement();
 				if(layer_element) 
 				{
-					auto layer = std::make_shared<Layer>();
-					layer->m_ZOrder = layers.size();					
+					// build up a layer object from scene file
+					auto the_layer = std::make_shared<layer>();
+					the_layer->zorder = layers.size();					
 
-					for(auto layer_attributes = layer_element->FirstAttribute(); layer_attributes; layer_attributes = layer_attributes->Next()) 
-					{
-						std::string name(layer_attributes->Name());
-						std::string value(layer_attributes->Value());						
+					for(auto layer_attributes = layer_element->FirstAttribute(); layer_attributes; layer_attributes = layer_attributes->Next()) // // <layer name="layer0" posx="0" posy="0" visible="true"
+					{						
+						// populate the new layer object:
 						
-						if(name == "name")
+						const string key(layer_attributes->Name());
+						const string value(layer_attributes->Value());						
+
+						if(key == "name")
 						{
-							layer->m_Name = name;
+							the_layer->name = key;
 							continue;
 						}
 
-						if(name == "posx")
+						if(key == "posx")
 						{
-							layer->m_PosX = 0;
+							the_layer->x = 0;
 							continue;
 						}
 
-						if(name == "posy") 
+						if(key == "posy") 
 						{
-							layer->m_PosY = 0;
+							the_layer->y = 0;
 							continue;
 						}
 
-						if(name == "visible")
-							layer->m_Visible = value == "true" ? true : false;
+						if(key == "visible")
+							the_layer->visible = value == "true" ? true : false;
 					}
-					
-					for(auto layer_item = layer_node->FirstChild(); layer_item; layer_item = layer_item->NextSibling()) 
+
+					// Process contents of the layer 
+					for(auto layer_item = layer_node->FirstChild(); layer_item; layer_item = layer_item->NextSibling()) // <object ...
 					{
 						if(std::string(layer_item->Value()) == "objects") 
 						{
@@ -172,19 +195,21 @@ bool scene_manager::load_scene_file(const std::string& filename)
 								if(object == nullptr)
 									continue;
 
-								layer->game_objects.push_back(game_object_factory::get_instance().build_game_object(object));																
+								// populate the list of game objects in this layer
+								the_layer->game_objects.push_back(game_object_factory::get_instance().build_game_object(object));																
 							}
 						}
 					}
-					layers.push_back(layer);
+
+					// populate the number of layers in this scene
+					layers.push_back(the_layer);
 				}
 			}
 			
 			sort_layers(); // We want to draw from zOrder 0 -> onwards (in order)
 			return true;
-		}
-		
-		event_admin->raise_event(make_unique<scene_changed_event>(std::stoi(scene_id)), this);
+		} // finished processing scene, layers populated
+
 	}
 	return false;
 }

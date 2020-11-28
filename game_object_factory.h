@@ -13,7 +13,7 @@ public:
 	void operator=(game_object_factory const&)  = delete;
 	 
 	std::shared_ptr<game_object> build_game_object(tinyxml2::XMLElement * scene_object_xml) const;
-	std::shared_ptr<game_object>& initialize_game_object(std::shared_ptr<game_object>& game_object, uint x, uint y, std::shared_ptr<GraphicsResource>& resource, bool color_key_enabled, bool visible, const uint& red, const uint& green, const uint& blue) const;
+	std::shared_ptr<game_object>& initialize_game_object(std::shared_ptr<game_object>& game_object, uint x, uint y, std::shared_ptr<graphic_asset>& resource, bool color_key_enabled, bool visible, const uint& red, const uint& green, const uint& blue) const;
 private:
 	static game_object_factory& m_Instance;
 	 game_object_factory();

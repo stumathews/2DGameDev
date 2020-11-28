@@ -23,7 +23,7 @@ shared_ptr<game_object> game_object_factory::build_game_object(tinyxml2::XMLElem
 	uint red = 0, green = 0, blue = 0;	
 	uint x = 0, y = 0;
 	auto visible = false, color_key_enabled = false;
-	shared_ptr<GraphicsResource> resource;
+	shared_ptr<graphic_asset> resource;
 	
 	auto empty_game_object = shared_ptr<game_object>(nullptr);
 
@@ -43,7 +43,7 @@ shared_ptr<game_object> game_object_factory::build_game_object(tinyxml2::XMLElem
 				if(meta == nullptr)
 					throw exception(("Could not load resource meta data for resource id:" + detail_value).c_str());
 
-				resource = std::dynamic_pointer_cast<GraphicsResource>(meta);
+				resource = std::dynamic_pointer_cast<graphic_asset>(meta);
 			}
 		}
 
@@ -76,21 +76,21 @@ shared_ptr<game_object> game_object_factory::build_game_object(tinyxml2::XMLElem
 
 		// Objects color
 		if(detail_name._Equal("r")) {
-			red = stof(detail_value);
+			red = stoi(detail_value);
 			continue;
 		}
 		if(detail_name == "g") {
-			green = std::stof(detail_value);
+			green = std::stoi(detail_value);
 			continue;
 		}
 		if(detail_name == "b")
-			blue = std::stof(detail_value);
+			blue = std::stoi(detail_value);
 	}
 		
 	return initialize_game_object(empty_game_object, x, y, resource, color_key_enabled, visible, red, green, blue);		
 }
 
-std::shared_ptr<game_object>& game_object_factory::initialize_game_object(std::shared_ptr<game_object>& game_object, uint x, uint y, std::shared_ptr<GraphicsResource>& resource, const bool color_key_enabled, bool visible, const uint& red, const uint& green, const uint& blue) const
+std::shared_ptr<game_object>& game_object_factory::initialize_game_object(std::shared_ptr<game_object>& game_object, uint x, uint y, std::shared_ptr<graphic_asset>& resource, const bool color_key_enabled, bool visible, const uint& red, const uint& green, const uint& blue) const
 {	
 	if(resource == nullptr)
 	{

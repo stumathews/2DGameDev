@@ -22,15 +22,12 @@ extern shared_ptr<event_manager> event_admin;
 extern shared_ptr<resource_manager> resource_admin;
 
 // Create our global copy of the game data
-std::shared_ptr<GameWorldData> g_pGameWorldData = std::make_shared<GameWorldData>();
-
+std::shared_ptr<game_world_data> g_pGameWorldData = std::make_shared<game_world_data>();
 
 void log_message(const string &message, const bool be_verbose = global_config::verbose)
 {
 	logger::log_message(message, be_verbose);
 }
-
-
 
 void game_structure::get_input()
 {
@@ -41,7 +38,7 @@ void game_structure::get_input()
 	{
 		if(e.type == SDL_QUIT) 
 		{
-			g_pGameWorldData->bGameDone = true;
+			g_pGameWorldData->is_game_done = true;
 		}
 		else if( e.type == SDL_KEYDOWN ) 
 		{
@@ -50,31 +47,31 @@ void game_structure::get_input()
 				case SDLK_w:
 				case SDLK_UP:
 					log_message("Player pressed up!", be_verbose);
-					event_admin->raise_event(std::make_unique<PositionChangeEvent>(Up), this);
+					event_admin->raise_event(std::make_unique<position_change_event>(Up), this);
 				break;
 				case SDLK_s:
 				case SDLK_DOWN:
 					log_message("Player pressed down!", be_verbose);	
-					event_admin->raise_event(std::make_unique<PositionChangeEvent>(Down), this);
+					event_admin->raise_event(std::make_unique<position_change_event>(Down), this);
 				break;
 				case SDLK_a:
 				case SDLK_LEFT:
 					log_message("Player pressed left!", be_verbose);					
-					event_admin->raise_event(std::make_unique<PositionChangeEvent>(Left), this);
+					event_admin->raise_event(std::make_unique<position_change_event>(Left), this);
 				break;
 
 				case SDLK_d:
 				case SDLK_RIGHT:
 					log_message("Player pressed right!", be_verbose);	
-					event_admin->raise_event(std::make_unique<PositionChangeEvent>(Right), this);
+					event_admin->raise_event(std::make_unique<position_change_event>(Right), this);
 				break;
 
 				case SDLK_q:
 					log_message("Player pressed quit!", be_verbose);
-					g_pGameWorldData->bGameDone = 1;
+					g_pGameWorldData->is_game_done = 1;
 					break;
 				case SDLK_j:
-					log_message("Change to level 2", be_verbose);
+					log_message("Change to level 1", be_verbose);
 					event_admin->raise_event(std::make_unique<scene_changed_event>(1), this);
 					break;
 				case SDLK_k:
@@ -125,7 +122,6 @@ void game_structure::get_input()
 	}
 }
 
-
 /***
  * Keeps and updated snapshot of the player state
  */
@@ -134,9 +130,6 @@ void game_structure::player_update()
 	// Read from game controller
 	get_input();	
 }
-
-
-
 
 void game_structure::update_state()
 {
@@ -152,16 +145,15 @@ void game_structure::update_logic_based_elements()
 	update_state();
 }
 
-vector<shared_ptr<Event>> game_structure::process_event(std::shared_ptr<Event> evt)
+vector<shared_ptr<event>> game_structure::process_event(std::shared_ptr<event> evt)
 {
-	return vector<shared_ptr<Event>>();
+	return vector<shared_ptr<event>>();
 }
 
 string game_structure::get_subscriber_name()
 {
 	return "game_structure";
 }
-
 
 /***
  * Update active elements such as decorative flying birds or doors that open and close
@@ -177,7 +169,6 @@ void game_structure::update_active_elements()
 void game_structure::world_update()
 {
 	update_active_elements(); // flying birds, doors that open and close - must be checked to keep consistent, meaningful experiance
-
 }
 
 // This is basically the update functions which is run x FPS to maintain a timed series on constant updates 
@@ -204,14 +195,12 @@ void game_structure::spare_time(long frameTime)
 	event_admin->process_all_events();
 }
 
-void game_structure::draw(float percentWithinTick)
+void game_structure::draw(float percent_within_tick)
 {
-	const auto use_3d_renderer = global_config::use_3d_render_manager;
-	
-	sdl_graphics_manager::get().draw_current_scene(false);
-
-	if(use_3d_renderer)
+	if(global_config::use_3d_render_manager)
 		D3DRenderManager::GetInstance().update();
+	else
+		sdl_graphics_manager::get().draw_current_scene(false);
 }
 
 bool game_structure::init_sdl(int screenWidth, int screenHeight)
@@ -268,15 +257,15 @@ void game_structure::cleanup_resources()
 
 game_structure::game_structure()
 {
-	g_pGameWorldData = std::make_shared<GameWorldData>();
+	g_pGameWorldData = std::make_shared<game_world_data>();
 	init_game_world_data();
 }
 
 void game_structure::init_game_world_data() const
 {
-	g_pGameWorldData->bGameDone = false;
-	g_pGameWorldData->bNetworkGame = false;
-	g_pGameWorldData->bCanRender = true;
+	g_pGameWorldData->is_game_done = false;
+	g_pGameWorldData->is_network_game = false;
+	g_pGameWorldData->can_render = true;
 } // Load audio game files
 bool game_structure::load_media()
 {

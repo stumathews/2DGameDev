@@ -15,28 +15,28 @@ void game_object::setup_default_subscriptions()
 	//event_admin->subscribe_to_event(DoLogicUpdateEventType, this);	
 }
 
-vector<shared_ptr<Event>> game_object::process_event(const std::shared_ptr<Event> the_event)
+vector<shared_ptr<event>> game_object::process_event(const std::shared_ptr<event> the_event)
 {
 	// Change the object's position
-	if(the_event->m_eventType == PositionChangeEventType)
+	if(the_event->type == PositionChangeEventType)
 	{
-		const auto event = std::dynamic_pointer_cast<PositionChangeEvent>(the_event);
-		if(event->m_direction == Up && supports_move_logic)					
+		const auto event = std::dynamic_pointer_cast<position_change_event>(the_event);
+		if(event->direction == Up && supports_move_logic)					
 			move_up();			
 		
-		if(event->m_direction == Down && supports_move_logic)
+		if(event->direction == Down && supports_move_logic)
 			move_down();			
 		
-		if(event->m_direction == Left && supports_move_logic)
+		if(event->direction == Left && supports_move_logic)
 			move_left();			
 		
-		if(event->m_direction == Right && supports_move_logic)
+		if(event->direction == Right && supports_move_logic)
 			move_right();		
 	}
 
-	if(the_event->m_eventType == DoLogicUpdateEventType)
+	if(the_event->type == DoLogicUpdateEventType)
 		update();
-	return vector<shared_ptr<Event>>();
+	return vector<shared_ptr<event>>();
 }
 
 void game_object::subscribe_to_event(event_type type)
@@ -44,30 +44,27 @@ void game_object::subscribe_to_event(event_type type)
 	event_admin->subscribe_to_event(type, this);
 }
 
-void game_object::raise_event(const Event& event)
+void game_object::raise_event(const event& the_event)
 {
-	event_admin->raise_event(make_unique<Event>(event), this);
+	event_admin->raise_event(make_unique<event>(the_event), this);
 }
 
-void game_object::raise_event(const shared_ptr<Event>& the_event)
+void game_object::raise_event(const shared_ptr<event>& the_event)
 {
 	event_admin->raise_event(the_event, this);
 }
 
-shared_ptr<GraphicsResource> game_object::get_resource() const
+shared_ptr<graphic_asset> game_object::get_graphic_asset() const
 {
 	return graphic_resource;
 }
 
 void game_object::draw(SDL_Renderer * renderer)
 {
-	// Include base drawing functionality
-	// On move draw the entire screen again
-	SDL_SetRenderDrawColor(sdl_graphics_manager::get().renderer, 0,0,0,0);
-	SDL_RenderClear(sdl_graphics_manager::get().renderer);
+	if(!is_visible)
+		return;
 	
 	draw_resource(renderer);
-	// Custom drawing afterwards occurs here
 }
 
 void game_object::update()
@@ -130,7 +127,7 @@ game_object::game_object(const int x, const int y, bool is_visible): event_subsc
 }
 
 
-void game_object::set_color_key(const float r, const float g, const float b)
+void game_object::set_color_key(const Uint8 r, const Uint8 g, const Uint8 b)
 {
 	color_key.r = r;
 	color_key.g = g;
@@ -170,12 +167,15 @@ string game_object::get_subscriber_name()
 
 void game_object::draw_resource(SDL_Renderer* renderer) const
 {
-	const auto resource = get_resource();
-	if(resource != nullptr && resource->m_type._Equal("graphic") /*Blit only resources to the screen*/)
+	const auto resource = get_graphic_asset();
+	if(resource != nullptr && resource->m_type == "graphic")
 	{
 		SDL_Rect draw_location = { x, y, 100,100 };
-		const auto rect = get_resource()->m_bIsAnimated  ?  &graphic_resource->m_viewPort : nullptr;
-		SDL_BlitSurface(graphic_resource->m_Surface, rect, sdl_graphics_manager::get().window_surface, &draw_location);	
+		const auto rect = get_graphic_asset()->m_bIsAnimated
+						?  &graphic_resource->m_viewPort
+						: nullptr;
+		SDL_RenderCopy( sdl_graphics_manager::get().window_renderer, graphic_resource->texture, rect, &draw_location );
+		//SDL_RenderCopy( sdl_graphics_manager::get().window_renderer, graphic_resource->texture, NULL, NULL );
 	}
 }
 
@@ -191,7 +191,7 @@ string game_object::get_tag() const
 	return this->tag;
 }
 
-void game_object::set_graphic_resource(shared_ptr<GraphicsResource> graphic_resource)
+void game_object::set_graphic_resource(shared_ptr<graphic_asset> resource)
 {
-	this->graphic_resource = graphic_resource;
+	this->graphic_resource = resource;
 }

@@ -60,48 +60,11 @@ void square::removeWall(int wall)
 	this->walls[wall - 1] = false;
 }
 
-void square::show(SDL_Renderer* renderer) 
-{ 
-  auto rect = get_rect_details();
-  int ax = rect->get_ax();
-  int ay = rect->get_ay();
-  int bx = rect->get_bx();
-  int by = rect->get_by();
-  int cx = rect->get_cx();
-  int cy = rect->get_cy();
-  int dx = rect->get_dx();
-  int dy = rect->get_dy();
-  
-  auto haveTopWall = this->walls[0];
-  auto haveRightWall = this->walls[1];
-  auto haveBottomWall = this->walls[2];
-  auto haveLeftWall = this->walls[3];
-
-  if (haveTopWall) 
-	SDL_RenderDrawLine(renderer, ax,ay,bx,by);    
-  if (haveRightWall) 
-    SDL_RenderDrawLine(renderer, bx,by,cx,cy);	
-  if (haveBottomWall) 
-    SDL_RenderDrawLine(renderer, cx,cy,dx,dy);
-  if (haveLeftWall) 
-    SDL_RenderDrawLine(renderer, dx,dy,ax,ay);
-   
-  SDL_Rect _unused;
-
-  
-  
- /* if(fill)
-  	 SDL_RenderFillRect(renderer, &myBounds);*/
-    
-  if(global_config::print_debugging_text)
-	  RectDebugging::printInRect(renderer, get_tag().c_str(), &my_bounds_); 
-}
-
-vector<shared_ptr<Event>> square::process_event(const std::shared_ptr<Event> event)
+vector<shared_ptr<event>> square::process_event(const std::shared_ptr<event> event)
 {	
 	auto newEvents(game_object::process_event(event));  // Moves the square, if its set to to movable
 
-	if(event->m_eventType == PlayerMovedEventType)
+	if(event->type == PlayerMovedEventType)
 	{	
 		auto playerMovedEvent = std::static_pointer_cast<PlayerMovedEvent>(event);
 		
@@ -113,7 +76,7 @@ vector<shared_ptr<Event>> square::process_event(const std::shared_ptr<Event> eve
 		};
 	}
 
-	if(event->m_eventType == PositionChangeEventType)
+	if(event->type == PositionChangeEventType)
 	{
 		rect_details_->init(get_x(), get_y(), get_w(), get_h());
 		my_bounds_ = { get_x(), get_y(), get_w(), get_h() };
@@ -124,7 +87,45 @@ vector<shared_ptr<Event>> square::process_event(const std::shared_ptr<Event> eve
 
 void square::draw(SDL_Renderer* renderer)
 {
-	show(renderer);
+	// black
+	SDL_SetRenderDrawColor(renderer, 0, 0,0,0);
+	
+	const auto rect = get_rect_details();
+	const int ax = rect->get_ax();
+	const int ay = rect->get_ay();
+	const int bx = rect->get_bx();
+	const int by = rect->get_by();
+	const int cx = rect->get_cx();
+	const int cy = rect->get_cy();
+	const int dx = rect->get_dx();
+	const int dy = rect->get_dy();
+
+	const auto have_top_wall = this->walls[0];
+	const auto have_right_wall = this->walls[1];
+	const auto have_bottom_wall = this->walls[2];
+	const auto have_left_wall = this->walls[3];
+
+	if (have_top_wall) 
+		SDL_RenderDrawLine(renderer, ax,ay,bx,by);
+	
+	if (have_right_wall) 
+		SDL_RenderDrawLine(renderer, bx,by,cx,cy);
+	
+	if (have_bottom_wall) 
+		SDL_RenderDrawLine(renderer, cx,cy,dx,dy);
+	
+	if (have_left_wall) 
+		SDL_RenderDrawLine(renderer, dx,dy,ax,ay);
+
+	SDL_Rect _unused;
+
+
+
+	if(fill)
+	 SDL_RenderFillRect(renderer, &my_bounds_);
+
+	if(global_config::print_debugging_text)
+	  RectDebugging::printInRect(renderer, get_tag().c_str(), &my_bounds_); 
 }
 
 

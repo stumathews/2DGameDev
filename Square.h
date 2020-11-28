@@ -11,7 +11,7 @@ protected:
 	bool walls[4]{};
 	rect_details* rect_details_;
     rect_details* get_rect_details() const;;
-	int fill;
+	int fill = true;
 	SDL_Rect player_bounds_;
 	SDL_Rect my_bounds_;
 public: 
@@ -23,10 +23,9 @@ public:
     int get_h() const;
 
     bool is_walled(int wall);
-	void show(SDL_Renderer* renderer);
     void removeWall(int wall);
 
-	vector<shared_ptr<Event>> process_event(std::shared_ptr<Event> event) override;
+	vector<shared_ptr<event>> process_event(std::shared_ptr<event> event) override;
     void draw(SDL_Renderer* renderer) override;;
     virtual ~square();
     void update() override;

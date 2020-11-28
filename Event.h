@@ -1,21 +1,24 @@
 #pragma once
 #include <string>
+using namespace std;
 
-enum event_type { PositionChangeEventType, LevelChangedEventType, DoLogicUpdateEventType, AddGameObjectToCurrentScene, PlayerMovedEventType };
+enum event_type
+{
+	PositionChangeEventType,
+	LevelChangedEventType,
+	DoLogicUpdateEventType,
+	AddGameObjectToCurrentScene,
+	PlayerMovedEventType
+};
 
-class Event
+class event
 {
 public:
-	explicit Event(event_type type) : m_eventType(type), data(nullptr), eventId(-1), processed(false){}
-	virtual ~Event();
-	virtual void SetData(void* data)
-	{
-		data = data;
-	}
-	void* data;
-	event_type m_eventType;
-	int eventId;
-	bool processed;
+	explicit event(event_type type);
+	int event_id = 0;
+	bool processed = false;
+	event_type type;
+	virtual event_type get_type();
 };
 
 std::string operator+(const std::string& str, const event_type type);

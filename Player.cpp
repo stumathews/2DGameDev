@@ -15,7 +15,7 @@ Player::Player(int x, int y, int w): square(x, y, w, true, true)
 	
 }
 
-vector<shared_ptr<Event>> Player::process_event(const std::shared_ptr<Event> event)
+vector<shared_ptr<event>> Player::process_event(const std::shared_ptr<event> event)
 {	
 	// Process GameObject events
 	auto createdEvents(game_object::process_event(event));
@@ -25,7 +25,7 @@ vector<shared_ptr<Event>> Player::process_event(const std::shared_ptr<Event> eve
 		createdEvents.push_back(e);
 	
 	// Process Player events
-	if(PositionChangeEventType == event->m_eventType)
+	if(PositionChangeEventType == event->type)
 	{
 		auto player_component = static_pointer_cast<PlayerComponent>(find_component(constants::playerComponentName));
 		const auto player_moved_event = std::make_shared<PlayerMovedEvent>(player_component);
@@ -61,6 +61,6 @@ void Player::add_player_to_scene() const
 
 	/* Add player to scene */
 	const auto add_to_scene_event = std::make_shared<AddGameObjectToCurrentSceneEvent>(player_object);
-	add_to_scene_event->eventId = 100;
+	add_to_scene_event->event_id = 100;
 	player_object->raise_event(add_to_scene_event);
 }

@@ -8,23 +8,23 @@
 
 #include <iostream>
 
-struct GameWorldData 
+inline bool failed(bool result)
 {
-	int m_xPos;
-	int m_yPos;
-	int w;
-	int h;
+	return result == false;
+}
+
+struct game_world_data 
+{
+	int x = 0;
+	int y = 0;
+	int w = 0;
+	int h = 0;
 	
-	bool bGameDone;
-	bool bNetworkGame;
-	bool bCanRender;
+	bool is_game_done;
+	bool is_network_game;
+	bool can_render;
 		
 	// List of game objects
 	std::vector<std::shared_ptr<game_object>> actors;
-
-	~GameWorldData()
-	{
-		std::cout << "Deleting game world data!" << std::endl;
-	}
 };
 

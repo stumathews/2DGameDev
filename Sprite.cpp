@@ -20,10 +20,10 @@ void sprite::update()
 
 void sprite::play()
 {
-	const auto resource = get_resource();
+	const auto resource = get_graphic_asset();
 	if(!is_resource_loaded())
 		return;
-	auto TmpSurface = resource->m_Surface;
+	//auto TmpSurface = resource->m_Surface;
 	//m_FrameWidth =  TmpSurface->w/m_FramesPerRow;
 	//m_FrameHeight = TmpSurface->h/m_FramesPerColumn;
 	m_CurrentFrame = m_StartFrame;
@@ -65,8 +65,8 @@ void sprite::setFrameRect(uint FrameNumber)
 	GetResource()->m_viewPort.w = m_FrameWidth;
 	GetResource()->m_viewPort.h = m_FrameHeight;*/
 
-	get_resource()->m_viewPort.x = typicalFrame[FrameNumber].x;
-	get_resource()->m_viewPort.y = typicalFrame[FrameNumber].y;
-	get_resource()->m_viewPort.w = typicalFrame[FrameNumber].w;
-	get_resource()->m_viewPort.h = typicalFrame[FrameNumber].h;
+	get_graphic_asset()->m_viewPort.x = typicalFrame[FrameNumber].x;
+	get_graphic_asset()->m_viewPort.y = typicalFrame[FrameNumber].y;
+	get_graphic_asset()->m_viewPort.w = typicalFrame[FrameNumber].w;
+	get_graphic_asset()->m_viewPort.h = typicalFrame[FrameNumber].h;
 }

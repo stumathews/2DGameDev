@@ -3,16 +3,11 @@
 enum Direction {Up, Down, Left, Right};
 
 
-class PositionChangeEvent : public Event
+class position_change_event : public event
 {
 public:
-	PositionChangeEvent(Direction dir) : Event(PositionChangeEventType)
-	{
-		SetData((void*) dir);
-		m_direction = dir;
-	}
-	Direction m_direction;
-	~PositionChangeEvent();
+	explicit position_change_event(Direction dir);
+	Direction direction;
 };
 
 

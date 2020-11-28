@@ -11,7 +11,7 @@ class event_subscriber  // NOLINT(cppcoreguidelines-special-member-functions, hi
 	public:
 	event_subscriber()=default;
 	virtual ~event_subscriber();
-	virtual vector<shared_ptr<Event>> process_event(std::shared_ptr<Event> evt) = 0;
+	virtual vector<shared_ptr<event>> process_event(std::shared_ptr<event> evt) = 0;
 	virtual string get_subscriber_name() = 0;
 };
 

@@ -3,11 +3,11 @@
 #include "PlayerComponent.h"
 #include <memory>
 #include "Player.h"
-class PlayerMovedEvent : public Event
+class PlayerMovedEvent : public event
 {
 public:
 	PlayerMovedEvent(shared_ptr<PlayerComponent> playerComponent) 
-		: Event(PlayerMovedEventType), m_PlayerComponent(playerComponent) { }
+		: event(PlayerMovedEventType), m_PlayerComponent(playerComponent) { }
 	shared_ptr<PlayerComponent> GetPlayerComponent() { return m_PlayerComponent; }
 
 private:

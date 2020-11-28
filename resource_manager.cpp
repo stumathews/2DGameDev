@@ -20,69 +20,59 @@ resource_manager::resource_manager()
 }
 
 
-std::shared_ptr<asset> resource_manager::get_resource_by_name(string name)
+std::shared_ptr<asset> resource_manager::get_resource_by_name(const string& name)
 {
-	auto resource = resource_by_name[name];	
-	return resource;
+	return resource_by_name[name];		
 }
 
-std::shared_ptr<asset> resource_manager::get_resource_by_uuid(int uuid)
+std::shared_ptr<asset> resource_manager::get_resource_by_uuid(const int uuid)
 {
-	auto resource = resources_by_uuid[uuid];
-	return resource;
+	return resources_by_uuid[uuid];
 }
 
-void resource_manager::load_current_scene_resources(const int new_level)
+vector<shared_ptr<event>> resource_manager::process_event(const std::shared_ptr<event> evt)
 {
-	// Load all the resources required by the scene and unload all those that don't
-	for(const auto& level_resources : resources_by_scene)
-	{		
-		for(const auto& spec : level_resources.second)
-		{
-			if((spec->m_scene == new_level || spec->m_scene == 0) && !spec->m_IsLoaded)
-			{				
-				spec->load();
-				logger::log_message(string("scene: ") + std::to_string(spec->m_scene)  + " asset loaded." + spec->m_name);
-				
-				loaded_resources_count++;
-				unloaded_resources_count--;
-			} 
-			// Don't unload level 0 resources - they are always needed irrespective of the level
-			else if(spec->m_IsLoaded && spec->m_scene != 0 && spec->m_scene != new_level)
-			{
-				spec->unload();
-				logger::log_message(string("scene: ") + std::to_string(spec->m_scene)  + " asset unloaded." + spec->m_name);
-				unloaded_resources_count++;
-				loaded_resources_count--;
-			}
-		}		
-	}
-}
-
-vector<shared_ptr<Event>> resource_manager::process_event(const std::shared_ptr<Event> evt)
-{
-	switch(evt->m_eventType)
+	if(evt->type == LevelChangedEventType)
 	{
-		case LevelChangedEventType:
-			// As a resource manager I'll actually Load the resources for the scene into memory
-			auto cpe = std::dynamic_pointer_cast<scene_changed_event>(evt);
-			load_current_scene_resources(cpe->m_Level);
-			break;
+		const auto level = dynamic_pointer_cast<scene_changed_event>(evt)->scene;
+		
+		// Load all the resources required by the scene and unload out all those that are not in the scene
+		for(const auto& level_resources : resources_by_scene)
+		{		
+			for(const auto& spec : level_resources.second)
+			{
+				const auto always_load_resource = spec->m_scene == 0;
+				if((spec->m_scene == level || always_load_resource) && !spec->m_IsLoaded)
+				{				
+					spec->load();
+					
+					logger::log_message(string("scene: " + std::to_string(spec->m_scene) ) + string(spec->m_name) + " asset loaded.");
+					
+					loaded_resources_count++;
+					unloaded_resources_count--;
+				} 
+				else if(spec->m_IsLoaded && spec->m_scene != level && !always_load_resource )
+				{
+					spec->unload();
+					
+					logger::log_message(string("scene: " + std::to_string(spec->m_scene))  + string(spec->m_name) + " asset unloaded.");
+					unloaded_resources_count++;
+					loaded_resources_count--;
+				}
+			}		
+		}
 	}
-	return vector<shared_ptr<Event>>();
+
+	return vector<shared_ptr<event>>();
 }
 
 void resource_manager::initialize()
 {
 	logger::log_message("resource_manager::initialize()");
-	
-	
-
-	resource_count = 0;
-	loaded_resources_count = 0;
-	unloaded_resources_count = 0;
 
 	parse_game_resources();
+
+	logger::log_message("resource_manager ready.");
 }
 
 
@@ -111,27 +101,22 @@ void resource_manager::parse_game_resources()
 					element->QueryStringAttribute("type", &type);			
 
 					if(strcmp(type, "graphic") == 0)
-					{
-						the_asset = sdl_graphics_manager::create_asset(element);						
-					}
-					
+						the_asset = sdl_graphics_manager::create_asset(element);
+
 					if(strcmp(type, "fx") == 0)
-					{					
-						the_asset = AudioManager::GetInstance().create_asset(element);						
-					}
-						
+						the_asset = AudioManager::GetInstance().create_asset(element);
+
 					if(the_asset)
-					{
 						store_asset(the_asset);
-						continue;
-					}
+					else
+						logger::log_message(string("No asset manager defined for ") + type);
 				}
 			}
 		}
 	}
 }
 
-void resource_manager::store_asset(std::shared_ptr<asset> the_asset)
+void resource_manager::store_asset(const std::shared_ptr<asset>& the_asset)
 {
 	resources_by_scene[the_asset->m_scene].push_back(the_asset);
 	resource_by_name.insert(std::pair<string, std::shared_ptr<asset>>(the_asset->m_name, the_asset));

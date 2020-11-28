@@ -3,19 +3,15 @@
 #include <list>
 #include <memory>
 #include "game_object.h"
-class Layer
+class layer
 {
 public:
-	Layer();
-	bool m_Visible{};
-	unsigned int m_ZOrder{};
-	float m_PosX{};
-	float m_PosY{};
-	std::string m_Name;
-	std::list<shared_ptr<game_object>> game_objects;
+	bool visible = false;
+	unsigned int zorder = 0;
+	float x = 0;
+	float y = 0;
+	std::string name = {};
+	std::list<shared_ptr<game_object>> game_objects = {};
 };
-
-inline Layer::Layer()
-= default;
 
 
