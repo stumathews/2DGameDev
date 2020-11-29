@@ -253,33 +253,6 @@ void game_structure::init_game_world_data() const
 	game_world->can_render = true;
 }
 
-bool game_structure::load_media()
-{
-	
-	//Load Font
-	config->font =  TTF_OpenFont( "arial.ttf", 28 );
-
-	string msg;
-
-	auto dynamic_string_func = [&](string &base, const char* c_string) -> string&
-	{
-		if(strlen(c_string) > base.size() && !base.empty())
-			base.resize( base.size() *2);
-		base = c_string;
-		return base;
-	};
-
-	// Error reporting
-
-	if(config->font == nullptr)
-	{
-		log_message(dynamic_string_func(msg,  "Failed to load arial font! TTF_OpenFont Error:") + TTF_GetError());
-        return false;
-	}
-	
-	return true;
-}
-
 bool game_structure::initialize(int screen_width, int screen_height)
 {
 	return run_and_log("game_structure::initialize()", config->verbose, [&]()
@@ -390,12 +363,7 @@ void game_structure::game_loop()
 bool game_structure::load_content() const
 {
 	resource_admin->parse_game_resources();
-	
-	const auto load_media_ok = log_if_false(load_media(), "Could not load media, aborting.");
-
-	if(!load_media_ok)
-		return false;
-	
+		
 	// Generate the level 
 	for (const auto& room: level_generator::generate_level())
 	{

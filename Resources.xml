@@ -11,4 +11,5 @@
   <Asset uid="9" scene="3" name="p1.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p1_walk/p1_walk.png" isAnimated="true" numKeyFrames="11" keyFrameHeight="97" keyFrameWidth="73"></Asset>
   <Asset uid="10" scene="3" name="p2.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p2_walk/p2_walk.png" isAnimated="true" numKeyFrames="11" keyFrameHeight="97" keyFrameWidth="73"></Asset>
   <Asset uid="11" scene="3" name="p3.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p3_walk/p3_walk.png" isAnimated="true" numKeyFrames="11" keyFrameHeight="97" keyFrameWidth="73"></Asset>
+  <Asset uid="12" scene="0" name="arial.ttf" type="font" filename="arial.ttf"></Asset>
 </Assets>

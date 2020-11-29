@@ -8,6 +8,7 @@
 #include "AudioManager.h"
 #include "SceneChangedEvent.h"
 #include "common.h"
+#include "font_manager.h"
 
 using namespace tinyxml2;
 using namespace std;
@@ -113,6 +114,9 @@ void resource_manager::parse_game_resources()
 
 					if(strcmp(type, "fx") == 0 || strcmp(type, "music") == 0)
 						the_asset = AudioManager::GetInstance().create_asset(element);
+
+					if(strcmp(type, "font") == 0)
+						the_asset = font_manager::get_instance().create_asset(element);
 
 					if(the_asset)
 						store_asset(the_asset);

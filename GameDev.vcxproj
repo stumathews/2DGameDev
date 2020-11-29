@@ -25,6 +25,8 @@
     <ClCompile Include="AudioResource.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="event_subscriber.cpp" />
+    <ClCompile Include="font_manager.cpp" />
+    <ClCompile Include="font_resource.cpp" />
     <ClCompile Include="game_object.cpp" />
     <ClCompile Include="DoLogicUpdateEvent.cpp" />
     <ClCompile Include="Drawing.cpp" />
@@ -64,6 +66,8 @@
     <ClInclude Include="AudioResource.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="constants.h" />
+    <ClInclude Include="font_manager.h" />
+    <ClInclude Include="font_resource.h" />
     <ClInclude Include="game_object.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="COMUtils.h" />

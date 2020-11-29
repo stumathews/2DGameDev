@@ -19,7 +19,6 @@ public:
 	static const auto frames_per_column = 3;
 	static const auto player_init_pos_x = 100;
 	static const auto player_init_pos_y = 100;
-	TTF_Font *font;
 	static const bool verbose = true;
 	static const bool print_debugging_text = false;
 	static const bool use_3d_render_manager = false;

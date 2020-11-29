@@ -7,7 +7,6 @@ public:
 	game_structure();
 	void init_game_world_data() const;
 
-	static bool load_media();
 	bool initialize(int screen_width, int screen_height);
 	static bool init3d_render_manager();
 	shared_ptr<player> create_player() const;

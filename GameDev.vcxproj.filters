@@ -126,6 +126,12 @@
     <ClCompile Include="scene_loaded_event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="font_resource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="font_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedActor.h">
@@ -258,6 +264,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="scene_loaded_event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="font_resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="font_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
