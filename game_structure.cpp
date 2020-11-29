@@ -24,127 +24,129 @@ using namespace std;
 extern shared_ptr<event_manager> event_admin;
 extern shared_ptr<resource_manager> resource_admin;
 extern shared_ptr<global_config> config;
-
-
-// Create our global copy of the game data
-std::shared_ptr<game_world_data> g_pGameWorldData = std::make_shared<game_world_data>();
+extern shared_ptr<game_world_data> game_world;
 
 void game_structure::get_input()
 {
-	const auto be_verbose = config->verbose;	
-	SDL_Event e;
+	SDL_Event sdl_event;
 	
-	while(SDL_PollEvent(&e) != 0)
+	while(SDL_PollEvent(&sdl_event) != 0)
 	{
-		if(e.type == SDL_QUIT) 
+		if(sdl_event.type != SDL_QUIT)
 		{
-			g_pGameWorldData->is_game_done = true;
-		}
-		else if( e.type == SDL_KEYDOWN ) 
-		{
-			switch( e.key.keysym.sym )
+			if (sdl_event.type == SDL_KEYDOWN)
 			{
+				switch (sdl_event.key.keysym.sym)
+				{
 				case SDLK_w:
 				case SDLK_UP:
-					run_and_log("Player pressed up!", be_verbose, [&]()
+					run_and_log("Player pressed up!", config->verbose, [&]()
 					{
 						event_admin->raise_event(std::make_unique<position_change_event>(Up), this);
 						return true;
 					});
-				break;
+					break;
 				case SDLK_s:
 				case SDLK_DOWN:
-					run_and_log("Player pressed down!", be_verbose, [&]()
+					run_and_log("Player pressed down!", config->verbose, [&]()
 					{
 						event_admin->raise_event(std::make_unique<position_change_event>(Down), this);
 						return true;
 					});
-				break;
+					break;
 				case SDLK_a:
 				case SDLK_LEFT:
-					run_and_log("Player pressed left!", be_verbose, [&]()
-					{				
+					run_and_log("Player pressed left!", config->verbose, [&]()
+					{
 						event_admin->raise_event(std::make_unique<position_change_event>(Left), this);
 						return true;
 					});
-				break;
+					break;
 
 				case SDLK_d:
 				case SDLK_RIGHT:
-					run_and_log("Player pressed right!", be_verbose, [&]()
-					{	
+					run_and_log("Player pressed right!", config->verbose, [&]()
+					{
 						event_admin->raise_event(std::make_unique<position_change_event>(Right), this);
 						return true;
 					});
-				break;
+					break;
 
 				case SDLK_q:
-					run_and_log("Player pressed quit!", be_verbose, [&]()
-					{	
-						g_pGameWorldData->is_game_done = 1;
+					run_and_log("Player pressed quit!", config->verbose, [&]()
+					{
+						game_world->is_game_done = 1;
 						return true;
 					});
 					break;
 				case SDLK_j:
-					run_and_log("Change to level 1", be_verbose, [&]()
-					{	
+					run_and_log("Change to level 1", config->verbose, [&]()
+					{
 						event_admin->raise_event(std::make_unique<scene_changed_event>(1), this);
 						return true;
 					});
 					break;
 				case SDLK_k:
-					run_and_log("Change to level 2", be_verbose, [&]()
+					run_and_log("Change to level 2", config->verbose, [&]()
 					{
 						event_admin->raise_event(std::make_unique<scene_changed_event>(2), this);
 						return true;
 					});
-				break;
+					break;
 				case SDLK_l:
-					run_and_log("Change to level 3", be_verbose, [&]()
+					run_and_log("Change to level 3", config->verbose, [&]()
 					{
-						event_admin->raise_event(std::make_unique<scene_changed_event>(3),this);
+						event_admin->raise_event(std::make_unique<scene_changed_event>(3), this);
 						return true;
 					});
-				break;
+					break;
 
 				case SDLK_x:
-					run_and_log("Change to level 4", be_verbose, [&]()
+					run_and_log("Change to level 4", config->verbose, [&]()
 					{
 						event_admin->raise_event(std::make_unique<scene_changed_event>(4), this);
 						return true;
 					});
-				break;	
-                case SDLK_1:
-					Mix_PlayChannel( -1, config->high_sound_fx, 0 );
-                break;                            
-                case SDLK_2:
-					Mix_PlayChannel( -1, config->medium_sound_fx, 0 );
-                break;
-                case SDLK_3:
-					Mix_PlayChannel( -1, config->low_sound_fx, 0 );
-                break;
-                case SDLK_4:
-					Mix_PlayChannel( -1, config->scratch_fx, 0 );
-                break;
+					break;
+				case SDLK_1:
+					Mix_PlayChannel(-1, config->high_sound_fx, 0);
+					break;
+				case SDLK_2:
+					Mix_PlayChannel(-1, config->medium_sound_fx, 0);
+					break;
+				case SDLK_3:
+					Mix_PlayChannel(-1, config->low_sound_fx, 0);
+					break;
+				case SDLK_4:
+					Mix_PlayChannel(-1, config->scratch_fx, 0);
+					break;
 				case SDLK_9:
-					if( Mix_PlayingMusic() == 0 ) {
-						Mix_PlayMusic( config->music, -1 );
-					} else 	{
-						if(Mix_PausedMusic() == 1)
+					if (Mix_PlayingMusic() == 0)
+					{
+						Mix_PlayMusic(config->music, -1);
+					}
+					else
+					{
+						if (Mix_PausedMusic() == 1)
 							Mix_ResumeMusic();
 						else
 							Mix_PauseMusic();
 					}
-				break;
+					break;
 				case SDLK_0:
 					Mix_HaltMusic();
-                break;
+					break;
 
 				default:
 					std::cout << "Unknown control key" << std::endl;
-					log_message("Unknown control key", be_verbose);
-				break;
+					log_message("Unknown control key", config->verbose);
+					break;
+				}
 			}
+		}
+		else
+		{
+			game_world->is_game_done = true;
 		}
 	}
 }
@@ -158,22 +160,10 @@ void game_structure::player_update()
 	get_input();	
 }
 
-void game_structure::update_state()
-{
-	// Ask the event manager to notify event subscribers to update their logic now
-	event_admin->raise_event(make_unique<do_logic_update_event>(), this);
-}
-
-/***
- * Update simple logical elements such as doors, elevators or moving platforms
- */
-void game_structure::update_logic_based_elements()
-{	
-	update_state();
-}
 
 vector<shared_ptr<event>> game_structure::process_event(std::shared_ptr<event> evt)
 {
+	// game_structure does not subscribe to any events
 	return vector<shared_ptr<event>>();
 }
 
@@ -183,19 +173,12 @@ string game_structure::get_subscriber_name()
 }
 
 /***
- * Update active elements such as decorative flying birds or doors that open and close
- */
-void game_structure::update_active_elements()
-{
-	update_logic_based_elements(); // doors, elevators, movng platforms, real enemies with a distinctive behavior (simple)
-}
-
-/***
  * Updates, monitors what the world is doing around the player. This is usually what the player reacts to
  */
 void game_structure::world_update()
 {
-	update_active_elements(); // flying birds, doors that open and close - must be checked to keep consistent, meaningful experiance
+	// Ask the event manager to notify event subscribers to update their logic now
+	event_admin->raise_event(make_unique<do_logic_update_event>(), this);
 }
 
 // This is basically the update functions which is run x FPS to maintain a timed series on constant updates 
@@ -236,6 +219,8 @@ bool game_structure::initialize_sdl(int screenWidth, int screenHeight)
 		log_message("Failed to initialize SDL graphics manager");
 		return false;
 	}
+
+
 			
     
 	return true;
@@ -269,16 +254,15 @@ void game_structure::unload()
 
 game_structure::game_structure()
 {
-	g_pGameWorldData = std::make_shared<game_world_data>();
 	init_game_world_data();
 }
 
 void game_structure::init_game_world_data() const
 {
-	g_pGameWorldData->is_game_done = false;
-	g_pGameWorldData->is_network_game = false;
-	g_pGameWorldData->can_render = true;
-} // Load audio game files
+	game_world->is_game_done = false;
+	game_world->is_network_game = false;
+	game_world->can_render = true;
+}
 
 bool game_structure::load_media()
 {
@@ -341,19 +325,10 @@ bool game_structure::load_media()
 		log_message(dynamic_string_func(msg,  "Failed to load arial font! TTF_OpenFont Error:") + TTF_GetError());
         return false;
 	}
-
 	
 	return true;
 }
 
-bool log_if_false(bool condition, string message)
-{
-	if(condition == false)
-		log_message(message);
-	return condition;
-}
-
-// Initialize resource, level manager, and load game audio files
 bool game_structure::initialize(int screen_width, int screen_height)
 {
 	return run_and_log("game_structure::initialize()", config->verbose, [&]()
@@ -381,13 +356,13 @@ void game_structure::init3d_render_manager()
 	D3DRenderManager::GetInstance().meshes.push_back(mesh);
 }
 
-shared_ptr<player> game_structure::create_player()
+shared_ptr<player> game_structure::create_player() const
 {
 	return make_shared<player>(player(config->player_init_pos_x, config->player_init_pos_y,
 	                                  config->square_width / 2));
 }
 
-void game_structure::add_player_to_scene()
+void game_structure::setup_player() const
 {
 	const auto the_player = create_player();	
 	the_player->subscribe_to_event(event_type::PositionChangeEventType);	
@@ -400,9 +375,9 @@ bool game_structure::initialize()
 	{
 		resource_admin->initialize();
 
-		const auto sdl_ok = log_if_false(initialize_sdl(config->screen_width, config->screen_height), "Could not initialize SDL, aborting.");
+		const auto sdl_initialize_ok = log_if_false(initialize_sdl(config->screen_width, config->screen_height), "Could not initialize SDL, aborting.");
 		
-		if(!sdl_ok)
+		if(!sdl_initialize_ok)
 			return false;
 		
 		if(config->use_3d_render_manager)
@@ -418,7 +393,7 @@ void game_structure::game_loop()
 	const auto max_loops = config->max_loops;
 
 	// MAIN GAME LOOP!!
-	while (!g_pGameWorldData->is_game_done) 
+	while (!game_world->is_game_done) 
 	{
 		const auto new_time =  get_tick_now();
 		auto frame_ticks = 0;  // Number of ticks in the update call	
@@ -438,9 +413,9 @@ void game_structure::game_loop()
 
 		spare_time(frame_ticks); // handle player input, general housekeeping (Event Manager processing)
 
-		if (g_pGameWorldData->is_network_game || ticks_since <= config->TICK_TIME_MS)
+		if (game_world->is_network_game || ticks_since <= config->TICK_TIME_MS)
 		{
-			if (g_pGameWorldData->can_render)
+			if (game_world->can_render)
 			{
 				const auto percent_outside_frame = static_cast<float>(ticks_since / config->TICK_TIME_MS) * 100; // NOLINT(bugprone-integer-division)				
 				draw(percent_outside_frame);
@@ -454,7 +429,7 @@ void game_structure::game_loop()
 	std::cout << "Game done" << std::endl;
 }
 
-bool game_structure::load_content()
+bool game_structure::load_content() const
 {
 	resource_admin->parse_game_resources();
 	
@@ -474,7 +449,7 @@ bool game_structure::load_content()
 	}
 
 	// Create the player
-	add_player_to_scene();
+	setup_player();
 
 	return true;
 }

@@ -10,6 +10,7 @@
 
 using namespace std;
 
+shared_ptr<game_world_data> game_world(new game_world_data);
 shared_ptr<event_manager> event_admin(new event_manager);
 shared_ptr<scene_manager> scene_admin(new scene_manager);
 shared_ptr<resource_manager> resource_admin(new resource_manager);

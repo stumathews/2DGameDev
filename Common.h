@@ -50,4 +50,11 @@ auto as_integer(ENUM const value)
 	return static_cast<typename std::underlying_type<ENUM>::type>(value);
 }
 
+inline bool log_if_false(bool condition, string message)
+{
+	if(condition == false)
+		log_message(message);
+	return condition;
+}
+
 #endif
