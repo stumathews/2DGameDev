@@ -19,11 +19,11 @@ player::player(int x, int y, int w): square(x, y, w, true, true)
 vector<shared_ptr<event>> player::process_event(const std::shared_ptr<event> the_event)
 {	
 	// Process GameObject events
-	auto createdEvents(game_object::process_event(the_event));
+	auto created_events(game_object::process_event(the_event));
 
 	// Process Square events
 	for(auto &e : square::process_event(the_event)) 
-		createdEvents.push_back(e);
+		created_events.push_back(e);
 	
 	// Process Player events
 	if(event_type::PositionChangeEventType == the_event->type)
@@ -39,14 +39,19 @@ vector<shared_ptr<event>> player::process_event(const std::shared_ptr<event> the
 		player_bounds_.w = player->w;
 		player_bounds_.h = player->h;
 
-		createdEvents.push_back(make_shared<player_moved_event>(player));	
+		created_events.push_back(make_shared<player_moved_event>(player));	
 	}
-	return createdEvents;
+	return created_events;
 }
 
 void player::draw(SDL_Renderer* renderer)
 {
   // Let the player draw itself
 	SDL_RenderDrawRect(renderer, &player_bounds_);
+}
+
+string player::get_identifier()
+{
+	return "square";
 }
 

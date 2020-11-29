@@ -59,6 +59,11 @@ void square::removeWall(int wall)
 	this->walls[wall - 1] = false;
 }
 
+string square::get_identifier()
+{
+	return "square";
+}
+
 vector<shared_ptr<event>> square::process_event(const std::shared_ptr<event> event)
 {	
 	auto newEvents(game_object::process_event(event));  // Moves the square, if its set to to movable

@@ -7,7 +7,6 @@ public:
 	player(int x, int y, int w);
 	vector<shared_ptr<event>> process_event(std::shared_ptr<event> event) override;
 	void draw(SDL_Renderer* renderer) override;
-private:
-	void add_player_to_scene() const;
+	string get_identifier() override;
 };
 

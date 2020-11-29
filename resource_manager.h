@@ -13,7 +13,8 @@ using namespace tinyxml2;
 class resource_manager final : public event_subscriber
 {	
     public:
-	resource_manager();	
+	resource_manager();
+	void load_level_assets(int level);
 	shared_ptr<asset> get_resource_by_name(const string& name);
 	shared_ptr<asset> get_resource_by_uuid(int uuid);
 	int get_resource_count() const { return resource_count; }

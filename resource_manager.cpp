@@ -26,37 +26,42 @@ vector<shared_ptr<event>> resource_manager::process_event(const shared_ptr<event
 	if(evt->type == event_type::LevelChangedEventType)
 	{
 		log_message("Detected level change. Loading level assets...");
-		const auto level = dynamic_pointer_cast<scene_changed_event>(evt)->scene;
-		
-		// Load all the resources required by the scene and unload out all those that are not in the scene
-		for(const auto& level_resources : resources_by_scene)
-		{		
-			for(const auto& asset : level_resources.second)
-			{
-				const auto always_load_resource = asset->scene == 0;
-				if((asset->scene == level || always_load_resource) && !asset->is_loaded)
-				{				
-					asset->load();
-					
-					logger::log_message(string("scene: " + to_string(asset->scene) ) + string(asset->name) + " asset loaded.");
-					
-					loaded_resources_count++;
-					unloaded_resources_count--;
-				} 
-				else if(asset->is_loaded && asset->scene != level && !always_load_resource )
-				{
-					asset->unload();
-					
-					logger::log_message(string("scene: " + to_string(asset->scene))  + string(asset->name) + " asset unloaded.");
-					unloaded_resources_count++;
-					loaded_resources_count--;
-				}
-			}		
-		}
+		load_level_assets(dynamic_pointer_cast<scene_changed_event>(evt)->scene_id);
 		log_message("Level assets loaded.");
 	}
 
 	return vector<shared_ptr<event>>();
+}
+
+/**
+ Load all the resources required by the scene and unload out all those that are not in the scene.
+ */
+void resource_manager::load_level_assets(const int level)
+{	
+	for(const auto& level_resources : resources_by_scene) // we need access to all resources to swap in/out resources
+	{
+		for(const auto& asset : level_resources.second)
+		{
+			const auto always_load_resource = asset->scene == 0;
+			if((asset->scene == level || always_load_resource) && !asset->is_loaded)
+			{				
+				asset->load();
+					
+				logger::log_message(string("scene: " + to_string(asset->scene) ) + string(asset->name) + " asset loaded.");
+					
+				loaded_resources_count++;
+				unloaded_resources_count--;
+			} 
+			else if(asset->is_loaded && asset->scene != level && !always_load_resource )
+			{
+				asset->unload();
+					
+				logger::log_message(string("scene: " + to_string(asset->scene))  + string(asset->name) + " asset unloaded.");
+				unloaded_resources_count++;
+				loaded_resources_count--;
+			}
+		}		
+	}
 }
 
 void resource_manager::unload()
@@ -64,10 +69,12 @@ void resource_manager::unload()
 	log_message("Unloading all resources...");
 	for(auto iterator = begin(resource_by_name); iterator != end(resource_by_name); ++iterator)
 	{
-		auto &name = iterator->first;
+		auto &asset_name = iterator->first;
 		auto &asset = iterator->second;
+		
 		asset->unload();
-		log_message("Unloaded asset " + name);
+		
+		log_message("Unloaded asset '" + asset_name + string("'."));
 	}	
 }
 
@@ -78,15 +85,17 @@ bool resource_manager::initialize()
 	return true;
 }
 
-
+/**
+ Index Resources.xml file
+ */
 void resource_manager::parse_game_resources()
 {	
 	logger::log_message("resource_manager: reading resources.xml.");
 	
 	XMLDocument doc;
-
-	// Load the list of resources 
-	doc.LoadFile( "resources.xml" );
+	
+	doc.LoadFile( "resources.xml" ); // Load the list of resources
+	
 	if(doc.ErrorID() == 0)
 	{		
 		XMLNode* pResourceTree = doc.FirstChildElement("Assets");
@@ -107,7 +116,7 @@ void resource_manager::parse_game_resources()
 						the_asset = sdl_graphics_manager::create_asset(element);
 
 					if(strcmp(type, "fx") == 0 || strcmp(type, "music") == 0)
-						the_asset = AudioManager::GetInstance().create_asset(element);
+						the_asset = AudioManager::get_instance().create_asset(element);
 
 					if(strcmp(type, "font") == 0)
 						the_asset = font_manager::get_instance().create_asset(element);
@@ -135,7 +144,7 @@ void resource_manager::store_asset(const shared_ptr<asset>& the_asset)
 	// Index the asset by its id
 	resources_by_uuid.insert(pair<int, shared_ptr<asset>>(the_asset->uid, the_asset));
 
-	log_message("Discovered " + string(the_asset->type) + string(" asset: ") + to_string(the_asset->uid) + string(" ") + string(the_asset->name));
+	log_message("Discovered " + string(the_asset->type) + string(" asset#: ") + to_string(the_asset->uid) + string(" ") + string(the_asset->name));
 	resource_count++;
 }
 

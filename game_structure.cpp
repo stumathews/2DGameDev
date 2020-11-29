@@ -354,14 +354,14 @@ bool game_structure::load_content() const
 {
 	resource_admin->parse_game_resources();
 		
-	// Generate the level 
+	// Generate the level's rooms
 	for (const auto& room: level_generator::generate_level())
-	{
-		auto game_object = std::dynamic_pointer_cast<square>(room);
-
+	{	
+		// room's will want to know when the player moved
+		room->subscribe_to_event(event_type::PlayerMovedEventType);
+		
 		// Add each room to the scene
-		game_object->subscribe_to_event(event_type::PlayerMovedEventType);
-		game_object->raise_event(std::make_shared<add_game_object_to_current_scene_event>(game_object));
+		room->raise_event(std::make_shared<add_game_object_to_current_scene_event>(std::dynamic_pointer_cast<square>(room)));	
 	}
 
 	// Create the player

@@ -80,7 +80,12 @@ void game_object::move_right()
 	x += move_interval;
 }
 
-void game_object::DetectSideCollision()
+string game_object::get_identifier()
+{
+	return "game_object";
+}
+
+void game_object::detect_side_collision()
 {
 	if (is_traveling_left)
 	{

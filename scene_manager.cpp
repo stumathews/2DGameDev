@@ -45,7 +45,7 @@ vector<shared_ptr<event>> scene_manager::process_event(const std::shared_ptr<eve
 
 void scene_manager::load_new_scene(const std::shared_ptr<event> evt)
 {
-	const auto scene =  std::dynamic_pointer_cast<scene_changed_event>(evt)->scene;
+	const auto scene =  std::dynamic_pointer_cast<scene_changed_event>(evt)->scene_id;
 
 	auto raise_scene_loaded_event = [this](int scene_id, string scene_name)
 	{

@@ -24,6 +24,7 @@ public:
 
     bool is_walled(int wall);
     void removeWall(int wall);
+	string get_identifier() override;
 
 	vector<shared_ptr<event>> process_event(std::shared_ptr<event> event) override;
     void draw(SDL_Renderer* renderer) override;;

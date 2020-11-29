@@ -23,7 +23,6 @@ public:
 	game_object(int x, int y, bool is_visible = true);
 
 	void subscribe_to_event(event_type type);
-	void raise_event(const event& event);
 	void raise_event(const shared_ptr<event>& the_event);
 	shared_ptr<graphic_asset> get_graphic_asset() const;
 	void set_graphic_resource(shared_ptr<graphic_asset> graphic_resource);
@@ -34,9 +33,10 @@ public:
 	virtual void move_down();
 	virtual void move_left();
 	virtual void move_right();
+	virtual string get_identifier();
 	
 	vector<shared_ptr<event>> process_event(const std::shared_ptr<event> event) override;  // NOLINT(readability-inconsistent-declaration-parameter-name)
-	void DetectSideCollision();
+	void detect_side_collision();
 	void set_color_key(Uint8 r, Uint8 g, Uint8 b);
 	void add_component(const shared_ptr<Component>& component);
 	bool is_player();
