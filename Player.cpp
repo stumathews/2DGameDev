@@ -61,7 +61,7 @@ void player::add_player_to_scene() const
 	auto player_object = std::static_pointer_cast<game_object>(std::make_shared<player>(player_pos_x, player_pos_y, player_width));
 
 	/* Add player to scene */
-	const auto add_to_scene_event = std::make_shared<AddGameObjectToCurrentSceneEvent>(player_object);
+	const auto add_to_scene_event = std::make_shared<add_game_object_to_current_scene_event>(player_object);
 	add_to_scene_event->event_id = 100;
 	player_object->raise_event(add_to_scene_event);
 }

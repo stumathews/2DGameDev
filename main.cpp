@@ -55,7 +55,7 @@ bool load_content()
 	{
 		std::shared_ptr<game_object> game_object = std::dynamic_pointer_cast<square>(sq);
 		game_object->subscribe_to_event(event_type::PlayerMovedEventType);
-		game_object->raise_event(std::make_shared<AddGameObjectToCurrentSceneEvent>(game_object));		
+		game_object->raise_event(std::make_shared<add_game_object_to_current_scene_event>(game_object));
 	}
 
 	return true;

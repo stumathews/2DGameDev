@@ -8,6 +8,7 @@
 #include "game_object_factory.h"
 #include "AddGameObjectToCurrentSceneEvent.h"
 #include <algorithm>
+#include "Common.h"
 
 using namespace tinyxml2;
 extern shared_ptr<event_manager> event_admin;
@@ -35,7 +36,7 @@ vector<shared_ptr<event>> scene_manager::process_event(const std::shared_ptr<eve
 
 	// add new object to scene (last layer)
 	if(event_type::AddGameObjectToCurrentScene == evt->type)
-		add_to_scene(std::dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(evt)->GetGameObject());	
+		add_to_scene(std::dynamic_pointer_cast<add_game_object_to_current_scene_event>(evt)->get_game_object());	
 	
 	return vector<shared_ptr<event>>();
 }
@@ -122,7 +123,12 @@ std::list<shared_ptr<layer>> scene_manager::get_layers() const
 }
 
 bool scene_manager::load_scene_file(const std::string& filename)
-{	
+{
+	if(current_scene_name == filename)
+	{
+		log_message(string("Scene already loaded. Skipping."));
+		return true;
+	}
 	/* A Scene is composed of a) resources at b) various positions c) visibility
 	
 	<scene id="2">
@@ -207,6 +213,7 @@ bool scene_manager::load_scene_file(const std::string& filename)
 			}
 			
 			sort_layers(); // We want to draw from zOrder 0 -> onwards (in order)
+			current_scene_name = filename;
 			return true;
 		} // finished processing scene, layers populated
 

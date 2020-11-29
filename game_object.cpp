@@ -175,7 +175,6 @@ void game_object::draw_resource(SDL_Renderer* renderer) const
 						?  &graphic_resource->m_viewPort
 						: nullptr;
 		SDL_RenderCopy( sdl_graphics_manager::get().window_renderer, graphic_resource->texture, rect, &draw_location );
-		//SDL_RenderCopy( sdl_graphics_manager::get().window_renderer, graphic_resource->texture, NULL, NULL );
 	}
 }
 

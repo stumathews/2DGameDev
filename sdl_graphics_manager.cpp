@@ -180,8 +180,13 @@ void sdl_graphics_manager::draw_all_actors()
 
 void sdl_graphics_manager::clear_draw_present(std::function<void(SDL_Renderer* renderer)> &render_routine) const
 {
+	// backup current render color
+	Uint8 r, g, b, a;
+	SDL_GetRenderDrawColor(window_renderer, &r, &g, &b, &a);
+	
 	SDL_RenderClear(window_renderer);
-	render_routine(window_renderer);
+		render_routine(window_renderer);
+		SDL_SetRenderDrawColor(window_renderer, r, g, b, a); // nb: restore whatever the render routine set as the draw color to
 	SDL_RenderPresent(window_renderer);
 }
 

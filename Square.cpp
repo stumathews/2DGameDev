@@ -119,7 +119,7 @@ void square::draw(SDL_Renderer* renderer)
 
 	SDL_Rect _unused;
 
-
+	//SDL_SetRenderDrawColor(renderer, 192, 192,192,0);
 
 	if(fill)
 	 SDL_RenderFillRect(renderer, &my_bounds_);

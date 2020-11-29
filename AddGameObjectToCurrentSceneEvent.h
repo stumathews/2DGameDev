@@ -2,31 +2,32 @@
 #include "Event.h"
 #include <memory>
 #include "game_object.h"
+using namespace std;
 
-class AddGameObjectToCurrentSceneEvent : public event
+class add_game_object_to_current_scene_event : public event
 {
-	std::shared_ptr<game_object> gameObject_;
 public:
-	AddGameObjectToCurrentSceneEvent(std::shared_ptr<game_object> gameObject) : event(event_type::AddGameObjectToCurrentScene)
+	add_game_object_to_current_scene_event(std::shared_ptr<game_object> game_object) : event(event_type::AddGameObjectToCurrentScene)
 	{
-		SetGameObject(gameObject);
+		set_game_object(game_object);
 	}
 
-	void SetGameObject(std::shared_ptr<game_object> gameObject)
+	void set_game_object(std::shared_ptr<game_object> game_object)
 	{
-		this->GameObject = gameObject;
+		this->game_object = game_object;
 	}
-	std::shared_ptr<game_object> GetGameObject()
+	
+	shared_ptr<game_object> get_game_object()
 	{
-		return GameObject;
+		return game_object;
 	}
 	string to_str() override;
 
 private:
-	std::shared_ptr<game_object> GameObject;
+	shared_ptr<game_object> game_object;
 };
 
-inline string AddGameObjectToCurrentSceneEvent::to_str()
+inline string add_game_object_to_current_scene_event::to_str()
 {
 	return "add_game_object_to_current_scene_event";
 }

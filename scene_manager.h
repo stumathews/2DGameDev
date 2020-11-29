@@ -34,5 +34,6 @@ private:
 
 	bool is_initialized = false;	
 	list<shared_ptr<layer>> layers;
+	string current_scene_name = {};
 };
 

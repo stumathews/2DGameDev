@@ -167,9 +167,9 @@ HRESULT D3DRenderManager::CreateSwapChainAndDevice()
 	UINT createDeviceFlags = 0;
 
 	for (UINT i = 0; i < numDriverTypes; i++) {
-		hr = D3D10CreateDeviceAndSwapChain(NULL, driverTypes[i], NULL, createDeviceFlags, D3D10_SDK_VERSION, &swapChain.GetDescription(), &swapChain.D3DInterface, &d3dDevice);
+		/*hr = D3D10CreateDeviceAndSwapChain(NULL, driverTypes[i], NULL, createDeviceFlags, D3D10_SDK_VERSION, &swapChain.GetDescription(), &swapChain.D3DInterface, &d3dDevice);
 		if (SUCCEEDED(hr))
-			break;
+			break;*/
 	}
 	return hr;
 }
