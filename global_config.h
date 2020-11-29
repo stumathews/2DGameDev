@@ -37,6 +37,8 @@ public:
 	static const int move_interval = 30;
 	static const auto frames_per_row = 3;
 	static const auto frames_per_column = 3;
+	static const auto player_init_pos_x = 100;
+	static const auto player_init_pos_y = 100;
 	Mix_Music *music = nullptr;
 	Mix_Chunk *scratch_fx = nullptr;
 	Mix_Chunk *high_sound_fx = nullptr;

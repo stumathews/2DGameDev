@@ -12,9 +12,7 @@ player::player(int x, int y, int w): square(x, y, w, true, true)
 	const auto player = std::make_shared<player_component>(constants::playerComponentName, x, y, w, w);
 	set_tag(constants::playerTag);
 	add_component(player);
-	subscribe_to_event(event_type::PositionChangeEventType);
 
-	add_player_to_scene();
 	
 }
 
@@ -54,14 +52,5 @@ void player::draw(SDL_Renderer* renderer)
 
 void player::add_player_to_scene() const
 {
-	/* Schedule adding the player to the screen */
-	auto player_width = global_config::square_width / 2;
-	auto player_pos_x = 100;
-	auto player_pos_y = 100;
-	auto player_object = std::static_pointer_cast<game_object>(std::make_shared<player>(player_pos_x, player_pos_y, player_width));
-
-	/* Add player to scene */
-	const auto add_to_scene_event = std::make_shared<add_game_object_to_current_scene_event>(player_object);
-	add_to_scene_event->event_id = 100;
-	player_object->raise_event(add_to_scene_event);
+	
 }

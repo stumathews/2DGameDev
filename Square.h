@@ -9,8 +9,8 @@ private:
     int width;
 protected:
 	bool walls[4]{};
-	rect_details* rect_details_;
-    rect_details* get_rect_details() const;;
+	shared_ptr<rect_details> rect_details_;
+    shared_ptr<rect_details> get_rect_details() const;;
 	int fill = true;
 	SDL_Rect player_bounds_;
 	SDL_Rect my_bounds_;

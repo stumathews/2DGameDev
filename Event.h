@@ -14,7 +14,7 @@ enum class event_type
 class event
 {
 public:
-	explicit event(event_type type);
+	explicit event(event_type type, int event_id = 0);
 	int event_id = 0;
 	bool processed = false;
 	event_type type;

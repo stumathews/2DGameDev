@@ -7,7 +7,7 @@ using namespace std;
 class add_game_object_to_current_scene_event : public event
 {
 public:
-	add_game_object_to_current_scene_event(std::shared_ptr<game_object> game_object) : event(event_type::AddGameObjectToCurrentScene)
+	add_game_object_to_current_scene_event(std::shared_ptr<game_object> game_object, int event_id = 0) : event(event_type::AddGameObjectToCurrentScene, event_id)
 	{
 		set_game_object(game_object);
 	}

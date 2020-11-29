@@ -9,9 +9,9 @@
 #include <iostream>
 #include "Logger.h"
 
-inline bool failed(const bool result)
+inline bool succeeded(const bool result)
 {
-	return result == false;
+	return result == true;
 }
 
 struct game_world_data 

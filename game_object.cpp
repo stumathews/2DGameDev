@@ -46,7 +46,7 @@ void game_object::subscribe_to_event(event_type type)
 
 void game_object::raise_event(const event& the_event)
 {
-	//event_admin->raise_event(make_unique<event>(the_event), this);
+//	event_admin->raise_event(make_unique<event>(the_event), this);
 }
 
 void game_object::raise_event(const shared_ptr<event>& the_event)

@@ -6,14 +6,14 @@
 
 using namespace std;
 
-rect_details* square::get_rect_details() const
+shared_ptr<rect_details> square::get_rect_details() const
 {
 	return rect_details_;
 }
 
 square::square(int x, int y, int rw, bool fill, bool supports_move_logic, bool is_visible) : game_object(x, y), width(rw), fill(fill), player_bounds_({}), my_bounds_({x, y, rw, rw})
 { 
-  this->rect_details_ = new rect_details(x, y, rw, rw);  
+  this->rect_details_ = make_shared<rect_details>(x, y, rw, rw);  
   this->supports_move_logic = supports_move_logic;   
   walls[0] = true;
   walls[1] = true;
@@ -52,7 +52,6 @@ void square::update()
 
 square::~square()
 {
-	delete rect_details_;
 }
 
 void square::removeWall(int wall)
@@ -118,8 +117,6 @@ void square::draw(SDL_Renderer* renderer)
 		SDL_RenderDrawLine(renderer, dx,dy,ax,ay);
 
 	SDL_Rect _unused;
-
-	//SDL_SetRenderDrawColor(renderer, 192, 192,192,0);
 
 	if(fill)
 	 SDL_RenderFillRect(renderer, &my_bounds_);

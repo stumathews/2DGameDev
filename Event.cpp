@@ -1,7 +1,7 @@
 #include "Event.h"
 #include "Common.h"
 
-event::event(event_type type): type(type)
+event::event(event_type type, int event_id): type(type), event_id(event_id)
 {
 	// using member init only
 }

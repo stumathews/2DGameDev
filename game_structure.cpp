@@ -16,6 +16,10 @@
 #include "game_structure.h"
 #include <functional>
 #include "Logger.h"
+#include "player_moved_event.h"
+#include "AddGameObjectToCurrentSceneEvent.h"
+#include "LevelGenerator.h"
+#include "singleton.h"
 
 using namespace std;
 
@@ -243,7 +247,7 @@ bool game_structure::init_sdl(int screenWidth, int screenHeight)
 	return true;
 }
 
-void game_structure::cleanup_resources()
+void game_structure::unload()
 {
 	Mix_FreeChunk( Singleton<global_config>::GetInstance().object.scratch_fx );
     Mix_FreeChunk( Singleton<global_config>::GetInstance().object.high_sound_fx );
@@ -334,14 +338,14 @@ bool game_structure::load_media()
 	return true;
 }
 
-/* Initialize resource, level manager, and load game audio files
-*
-*/
+// Initialize resource, level manager, and load game audio files
 bool game_structure::initialize(int screen_width, int screen_height)
 {
-	log_message("game_structure::initialize()");
-	
-	resource_admin->initialize();	
+	run_and_log("game_structure::initialize()", global_config::verbose, [&]()
+	{
+		resource_admin->initialize();
+	});
+		
 			
 	if (!init_sdl(screen_width, screen_height))
 	{
@@ -368,6 +372,83 @@ void game_structure::init3d_render_manager()
 	auto mesh = new Mesh3D();
 	mesh->create();
 	D3DRenderManager::GetInstance().meshes.push_back(mesh);
+}
+
+shared_ptr<player> game_structure::create_player()
+{
+	return make_shared<player>(player(global_config::player_init_pos_x, global_config::player_init_pos_y,
+	                                  global_config::square_width / 2));
+}
+
+void game_structure::add_player_to_scene()
+{
+	const auto the_player = create_player();	
+	the_player->subscribe_to_event(event_type::PositionChangeEventType);	
+	the_player->raise_event(std::make_shared<add_game_object_to_current_scene_event>(the_player, 100));
+}
+
+bool game_structure::initialize()
+{
+	return initialize(global_config::screen_width, global_config::screen_height) ? true : false;
+}
+
+void game_structure::game_loop()
+{
+	auto tick_count_at_last_call = game_structure::get_tick_now();
+	const auto max_loops = global_config::max_loops;
+
+	// MAIN GAME LOOP!!
+	while (!singleton<game_structure>().g_pGameWorldData->is_game_done) 
+	{
+		const auto new_time =  game_structure::get_tick_now();
+		auto frame_ticks = 0;  // Number of ticks in the update call	
+		auto num_loops = 0;  // Number of loops ??
+		auto ticks_since = new_time - tick_count_at_last_call;
+
+		// New frame, happens consistently every 50 milliseconds. Ie 20 times a second.
+		// 20 times a second = 50 milliseconds
+		// 1 second is 20*50 = 1000 milliseconds
+		while (ticks_since > global_config::TICK_TIME_MS && num_loops < max_loops)
+		{
+			singleton<game_structure>().update();		
+			tick_count_at_last_call += global_config::TICK_TIME_MS; // tickCountAtLastCall is now been +Single<GlobalConfig>().TickTime more since the last time. update it
+			frame_ticks += global_config::TICK_TIME_MS; num_loops++;
+			ticks_since = new_time - tick_count_at_last_call;
+		}
+
+		game_structure::spare_time(frame_ticks); // handle player input, general housekeeping (Event Manager processing)
+
+		if (singleton<game_structure>().g_pGameWorldData->is_network_game || ticks_since <= global_config::TICK_TIME_MS)
+		{
+			if (singleton<game_structure>().g_pGameWorldData->can_render)
+			{
+				const auto percent_outside_frame = static_cast<float>(ticks_since / global_config::TICK_TIME_MS) * 100; // NOLINT(bugprone-integer-division)				
+				game_structure::draw(percent_outside_frame);
+			}
+		}
+		else
+		{
+			tick_count_at_last_call = new_time - global_config::TICK_TIME_MS;
+		}
+	}
+	std::cout << "Game done" << std::endl;
+}
+
+bool game_structure::load_content()
+{
+	// Generate the level 
+	logger::log_message("load_content()");
+	for (const auto& sq : level_generator::generate_level())
+	{
+		std::shared_ptr<game_object> game_object = std::dynamic_pointer_cast<square>(sq);
+		game_object->subscribe_to_event(event_type::PlayerMovedEventType);
+		game_object->raise_event(std::make_shared<add_game_object_to_current_scene_event>(game_object));
+	}
+
+	// Create the player
+	add_player_to_scene();
+
+	return true;
 }
 
 
