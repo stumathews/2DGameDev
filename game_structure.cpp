@@ -347,13 +347,14 @@ bool game_structure::initialize(int screen_width, int screen_height)
 	});
 }
 
-void game_structure::init3d_render_manager()
+bool game_structure::init3d_render_manager()
 {
 	auto& renderManager = D3DRenderManager::GetInstance();
 	renderManager.Initialize(GetModuleHandle(NULL), 800, 600, false, "My Window");
 	auto mesh = new Mesh3D();
 	mesh->create();
 	D3DRenderManager::GetInstance().meshes.push_back(mesh);
+	return true;
 }
 
 shared_ptr<player> game_structure::create_player() const
@@ -373,15 +374,12 @@ bool game_structure::initialize()
 {
 	return run_and_log("game_structure::initialize()", config->verbose, [&]()
 	{
-		resource_admin->initialize();
-
+		const auto resource_admin_initialized_ok = log_if_false(resource_admin->initialize(), "Could not initialize resource manager");
 		const auto sdl_initialize_ok = log_if_false(initialize_sdl(config->screen_width, config->screen_height), "Could not initialize SDL, aborting.");
+		const auto dx_render_manager_initialized_ok = config->use_3d_render_manager && init3d_render_manager();
 		
-		if(!sdl_initialize_ok)
-			return false;
-		
-		if(config->use_3d_render_manager)
-			init3d_render_manager();
+		if(failed(sdl_initialize_ok) || failed(resource_admin_initialized_ok) || failed(dx_render_manager_initialized_ok, "Ignoring dx renderer for now", true) )
+			return false;		
 
 		return true;
 	});

@@ -10,12 +10,20 @@
 #include "Logger.h"
 #include "Common.h"
 
-inline bool succeeded(const bool result, string message = "")
+inline bool succeeded(const bool condition, string message = "")
 {
-	const auto is = result == true;
+	const auto is = condition == true;
 	if(is == true)
 		logger::log_message(message);
 	return is;
+}
+
+inline bool failed(bool condition,  string message = "", bool ignore = false)
+{
+	const auto is = condition == false;
+	if(is == false)
+		logger::log_message(message);
+	return ignore == true ? !ignore : is;
 }
 
 struct game_world_data 
@@ -56,5 +64,7 @@ inline bool log_if_false(bool condition, string message)
 		log_message(message);
 	return condition;
 }
+
+
 
 #endif

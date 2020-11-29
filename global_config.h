@@ -7,8 +7,6 @@
 class global_config
 {
 public:
-	global_config() = default;
-
 	// 20 times a second = 50 milliseconds
 	// 1 second is 20*50 = 1000 milliseconds
 	static const int TICK_TIME_MS = 50;
@@ -17,7 +15,7 @@ public:
 	static const int max_loops = 4;
 	static const int screen_width = 800;
 	static const int screen_height = 600;
-	static const int move_interval = 30;
+	static const int move_interval = 1;
 	static const auto frames_per_row = 3;
 	static const auto frames_per_column = 3;
 	static const auto player_init_pos_x = 100;
@@ -29,6 +27,6 @@ public:
 	Mix_Chunk *low_sound_fx;
 	TTF_Font *font;
 	static const bool verbose = true;
-	const static bool print_debugging_text = false;
-	const static bool use_3d_render_manager = false;
+	static const bool print_debugging_text = false;
+	static const bool use_3d_render_manager = false;
 };

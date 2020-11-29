@@ -19,7 +19,7 @@ class resource_manager final : public event_subscriber
 	int get_resource_count() const { return resource_count; }
 	vector<shared_ptr<event>> process_event(std::shared_ptr<event> evt) override;
 
-	static void initialize();
+	static bool initialize();
     string get_subscriber_name() override;
 	void parse_game_resources();
 private:

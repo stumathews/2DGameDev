@@ -6,6 +6,7 @@
 #include "global_config.h"
 #include "constants.h"
 #include "resource_manager.h"
+#include <SDL_mixer.h>
 
 extern shared_ptr<event_manager> event_admin;
 extern shared_ptr<global_config> config;

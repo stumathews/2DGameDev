@@ -12,6 +12,8 @@
 #include "Logger.h"
 #include <functional>
 #include "Common.h"
+#include <SDL_mixer.h>
+#include <SDL_ttf.h>
 
 using namespace std;
 

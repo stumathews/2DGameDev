@@ -9,7 +9,7 @@ public:
 
 	static bool load_media();
 	bool initialize(int screen_width, int screen_height);
-	static void init3d_render_manager();
+	static bool init3d_render_manager();
 	shared_ptr<player> create_player() const;
 	void setup_player() const;
 	static bool initialize();

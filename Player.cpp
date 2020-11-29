@@ -50,7 +50,3 @@ void player::draw(SDL_Renderer* renderer)
 	SDL_RenderDrawRect(renderer, &player_bounds_);
 }
 
-void player::add_player_to_scene() const
-{
-	
-}

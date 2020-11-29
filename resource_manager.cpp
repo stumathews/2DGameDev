@@ -66,10 +66,11 @@ vector<shared_ptr<event>> resource_manager::process_event(const std::shared_ptr<
 	return vector<shared_ptr<event>>();
 }
 
-void resource_manager::initialize()
+bool resource_manager::initialize()
 {
 	logger::log_message("resource_manager::initialize()");
 	logger::log_message("resource_manager ready.");
+	return true;
 }
 
 
