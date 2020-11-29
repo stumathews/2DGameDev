@@ -11,6 +11,7 @@
 #include "event_subscriber.h"
 #include "Logger.h"
 #include <functional>
+#include "Common.h"
 
 using namespace std;
 
@@ -121,6 +122,21 @@ bool sdl_graphics_manager::initialize(const uint width, const uint height, const
 
 	// Grey background
 	SDL_SetRenderDrawColor(window_renderer, 192,192,192, 0);
+
+	if(Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0 )
+    {
+	    const string message("SDL_mixer could not initialize! SDL_mixer Error: ");
+		log_message(message + Mix_GetError());
+        return false;
+    }
+
+	if(TTF_Init() == -1)
+	{
+		const string message("Could not initialize TTF");
+		log_message(message);
+		return false;
+	}
+
 
 	logger::log_message("sdl_graphics_manager ready.");
 	return true;

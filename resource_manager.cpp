@@ -69,9 +69,6 @@ vector<shared_ptr<event>> resource_manager::process_event(const std::shared_ptr<
 void resource_manager::initialize()
 {
 	logger::log_message("resource_manager::initialize()");
-
-	parse_game_resources();
-
 	logger::log_message("resource_manager ready.");
 }
 

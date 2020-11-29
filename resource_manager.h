@@ -19,13 +19,12 @@ class resource_manager final : public event_subscriber
 	int get_resource_count() const { return resource_count; }
 	vector<shared_ptr<event>> process_event(std::shared_ptr<event> evt) override;
 
-    void initialize();
+	static void initialize();
     string get_subscriber_name() override;
-	
-private:			
 	void parse_game_resources();
+private:
+	
     void store_asset(const std::shared_ptr<asset>& the_asset);
-
 	std::map<int, std::vector<std::shared_ptr<asset>>> resources_by_scene;   
 	std::map<std::string, std::shared_ptr<asset>> resource_by_name;   
 	std::map<int,shared_ptr<asset>> resources_by_uuid;

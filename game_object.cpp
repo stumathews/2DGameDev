@@ -8,6 +8,7 @@
 #include "resource_manager.h"
 
 extern shared_ptr<event_manager> event_admin;
+extern shared_ptr<global_config> config;
 
 void game_object::setup_default_subscriptions()
 {
@@ -97,14 +98,14 @@ void game_object::DetectSideCollision()
 	{
 		if (x == 0) {
 			is_traveling_left = false;
-			Mix_PlayChannel(-1, Singleton<global_config>::GetInstance().object.low_sound_fx, 0);
+			Mix_PlayChannel(-1,config->low_sound_fx, 0);
 		}
 	}
 	else
 	{
 		if (x == sdl_graphics_manager::get().get_screen_width())
 		{
-			Mix_PlayChannel(-1, Singleton<global_config>::GetInstance().object.low_sound_fx, 0);
+			Mix_PlayChannel(-1,config->low_sound_fx, 0);
 			is_traveling_left = true;
 		}
 	}

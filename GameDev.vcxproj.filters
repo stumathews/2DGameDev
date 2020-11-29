@@ -209,9 +209,6 @@
     <ClInclude Include="Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="singleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="asset.h">
       <Filter>Header Files</Filter>
     </ClInclude>

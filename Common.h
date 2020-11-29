@@ -8,10 +8,14 @@
 #include "game_object.h"
 #include <iostream>
 #include "Logger.h"
+#include "Common.h"
 
-inline bool succeeded(const bool result)
+inline bool succeeded(const bool result, string message = "")
 {
-	return result == true;
+	const auto is = result == true;
+	if(is == true)
+		logger::log_message(message);
+	return is;
 }
 
 struct game_world_data 
@@ -21,9 +25,9 @@ struct game_world_data
 	int w = 0;
 	int h = 0;
 	
-	bool is_game_done;
-	bool is_network_game;
-	bool can_render;
+	bool is_game_done = false;
+	bool is_network_game = false;
+	bool can_render = true;
 		
 	// List of game objects
 	std::vector<std::shared_ptr<game_object>> game_objects;
@@ -34,10 +38,10 @@ inline void log_message(const string &message, const bool be_verbose = global_co
 	logger::log_message(message, be_verbose);
 }
 
-inline void run_and_log(const string &message, bool verbose, const std::function<void()>& action)
+inline bool run_and_log(const string &message, bool verbose, const std::function<bool()>& action)
 {
 	log_message(message);
-	action();
+	return action();
 }
 
 template <typename ENUM>

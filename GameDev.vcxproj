@@ -93,7 +93,6 @@
     <ClInclude Include="SceneChangedEvent.h" />
     <ClInclude Include="SceneItem.h" />
     <ClInclude Include="scene_manager.h" />
-    <ClInclude Include="singleton.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Sprites3D.h" />
     <ClInclude Include="Square.h" />
