@@ -6,8 +6,7 @@
 
 class global_config
 {
-public:
-	
+public:	
 	static const int tick_time_ms = 50; // 20 times a second = 50 milliseconds, 1 second is 20*50 = 1000 milliseconds
 	static const int square_width = 30;
 	static const int sprite_width = 100;

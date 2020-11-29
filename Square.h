@@ -23,7 +23,7 @@ public:
     int get_h() const;
 
     bool is_walled(int wall);
-    void removeWall(int wall);
+    void remove_wall(int wall);
 	string get_identifier() override;
 
 	vector<shared_ptr<event>> process_event(std::shared_ptr<event> event) override;

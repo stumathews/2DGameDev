@@ -54,7 +54,7 @@ square::~square()
 {
 }
 
-void square::removeWall(int wall)
+void square::remove_wall(int wall)
 {
 	this->walls[wall - 1] = false;
 }
@@ -66,17 +66,19 @@ string square::get_identifier()
 
 vector<shared_ptr<event>> square::process_event(const std::shared_ptr<event> event)
 {	
-	auto newEvents(game_object::process_event(event));  // Moves the square, if its set to to movable
+	auto new_events(game_object::process_event(event));  // Moves the square, if its set to to movable
 
 	if(event->type == event_type::PlayerMovedEventType)
-	{	
-		auto playerMovedEvent = std::static_pointer_cast<player_moved_event>(event);
-		
-		player_bounds_ = 	{ 
-			playerMovedEvent->get_player_component()->x, 
-			playerMovedEvent->get_player_component()->y, 
-			playerMovedEvent->get_player_component()->w, 	
-			playerMovedEvent->get_player_component()->h 
+	{
+		const auto moved_event = std::static_pointer_cast<player_moved_event>(event);
+
+		// determine where the player is
+		player_bounds_ = 	
+		{ 
+			moved_event->get_player_component()->x, 
+			moved_event->get_player_component()->y, 
+			moved_event->get_player_component()->w, 	
+			moved_event->get_player_component()->h 
 		};
 	}
 
@@ -86,7 +88,7 @@ vector<shared_ptr<event>> square::process_event(const std::shared_ptr<event> eve
 		my_bounds_ = { get_x(), get_y(), get_w(), get_h() };
 	}
 	
-	return newEvents;
+	return new_events;
 }
 
 void square::draw(SDL_Renderer* renderer)

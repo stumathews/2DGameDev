@@ -30,14 +30,10 @@ vector<shared_ptr<event>> player::process_event(const std::shared_ptr<event> the
 	{
 		auto player = static_pointer_cast<player_component>(find_component(constants::playerComponentName));
 		
-		player->x = get_x();
-		player->y = get_y();
-		player->w = get_w();
-		player->h = get_h();
-		player_bounds_.x = player->x;
-		player_bounds_.y = player->y;
-		player_bounds_.w = player->w;
-		player_bounds_.h = player->h;
+		player_bounds_.x = player->x = get_x();
+		player_bounds_.y = player->y = get_y();
+		player_bounds_.w = player->w = get_w();
+		player_bounds_.h = player->h = get_h();
 
 		created_events.push_back(make_shared<player_moved_event>(player));	
 	}

@@ -73,21 +73,21 @@ vector<shared_ptr<square>> level_generator::generate_level()
 			switch(removableSides[rand_side_index])
 			{
 			case top_side:
-				current_room->removeWall(top_side);
-				next_room->removeWall(bottom_side);
+				current_room->remove_wall(top_side);
+				next_room->remove_wall(bottom_side);
 				continue;
 			case right_side:
-				current_room->removeWall(right_side);
-				next_room->removeWall(left_side);
+				current_room->remove_wall(right_side);
+				next_room->remove_wall(left_side);
 				continue;
 			case bottom_side:
-				current_room->removeWall(bottom_side);
-				next_room->removeWall(top_side);
+				current_room->remove_wall(bottom_side);
+				next_room->remove_wall(top_side);
 				continue;
 			case left_side:
-				current_room->removeWall(left_side);				
+				current_room->remove_wall(left_side);				
 				auto prev = mazeGrid[prevIndex];
-				prev->removeWall(right_side);
+				prev->remove_wall(right_side);
 				continue;
 			}
 		}

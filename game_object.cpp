@@ -13,27 +13,38 @@ extern shared_ptr<event_manager> event_admin;
 extern shared_ptr<global_config> config;
 extern shared_ptr<resource_manager> resource_admin;
 
+void game_object::change_object_position(const std::shared_ptr<event> the_event)
+{
+	const auto event = std::dynamic_pointer_cast<position_change_event>(the_event);
+	if(event->direction == Direction::Up && supports_move_logic)					
+		move_up();			
+		
+	if(event->direction == Direction::Down && supports_move_logic)
+		move_down();			
+		
+	if(event->direction == Direction::Left && supports_move_logic)
+		move_left();			
+		
+	if(event->direction == Direction::Right && supports_move_logic)
+		move_right();
+}
+
 vector<shared_ptr<event>> game_object::process_event(const std::shared_ptr<event> the_event)
 {
-	// Change the object's position
-	if(the_event->type == event_type::PositionChangeEventType)
+	switch(the_event->type)
 	{
-		const auto event = std::dynamic_pointer_cast<position_change_event>(the_event);
-		if(event->direction == Direction::Up && supports_move_logic)					
-			move_up();			
-		
-		if(event->direction == Direction::Down && supports_move_logic)
-			move_down();			
-		
-		if(event->direction == Direction::Left && supports_move_logic)
-			move_left();			
-		
-		if(event->direction == Direction::Right && supports_move_logic)
-			move_right();		
-	}
-
-	if(the_event->type == event_type::DoLogicUpdateEventType)
+	case event_type::PositionChangeEventType:
+		change_object_position(the_event);	
+		break;
+	case event_type::LevelChangedEventType: break;
+	case event_type::DoLogicUpdateEventType:
 		update();
+		break;
+	case event_type::AddGameObjectToCurrentScene: break;
+	case event_type::PlayerMovedEventType: break;
+	case event_type::scene_loaded: break;
+	default: ;
+	}
 	return vector<shared_ptr<event>>();
 }
 
