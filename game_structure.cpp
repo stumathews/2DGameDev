@@ -43,7 +43,7 @@ void game_structure::get_input()
 				case SDLK_UP:
 					run_and_log("Player pressed up!", config->verbose, [&]()
 					{
-						event_admin->raise_event(std::make_unique<position_change_event>(Up), this);
+						event_admin->raise_event(std::make_unique<position_change_event>(Direction::Up), this);
 						return true;
 					});
 					break;
@@ -51,7 +51,7 @@ void game_structure::get_input()
 				case SDLK_DOWN:
 					run_and_log("Player pressed down!", config->verbose, [&]()
 					{
-						event_admin->raise_event(std::make_unique<position_change_event>(Down), this);
+						event_admin->raise_event(std::make_unique<position_change_event>(Direction::Down), this);
 						return true;
 					});
 					break;
@@ -59,7 +59,7 @@ void game_structure::get_input()
 				case SDLK_LEFT:
 					run_and_log("Player pressed left!", config->verbose, [&]()
 					{
-						event_admin->raise_event(std::make_unique<position_change_event>(Left), this);
+						event_admin->raise_event(std::make_unique<position_change_event>(Direction::Left), this);
 						return true;
 					});
 					break;
@@ -68,7 +68,7 @@ void game_structure::get_input()
 				case SDLK_RIGHT:
 					run_and_log("Player pressed right!", config->verbose, [&]()
 					{
-						event_admin->raise_event(std::make_unique<position_change_event>(Right), this);
+						event_admin->raise_event(std::make_unique<position_change_event>(Direction::Right), this);
 						return true;
 					});
 					break;
@@ -191,7 +191,7 @@ void game_structure::update()
 	player_update();
 	
 	// make the game do something now...show game activity that the user will then respond to
-	// this generates gameplay
+	// this generates game play
 	world_update();
 }
 
@@ -216,15 +216,7 @@ void game_structure::draw(float percent_within_tick)
 
 bool game_structure::initialize_sdl(int screenWidth, int screenHeight)
 {
-	if(!sdl_graphics_manager::get().initialize( screenWidth, screenHeight)){
-		log_message("Failed to initialize SDL graphics manager");
-		return false;
-	}
-
-
-			
-    
-	return true;
+	return log_if_false(sdl_graphics_manager::get().initialize( screenWidth, screenHeight),"Failed to initialize SDL graphics manager");
 }
 
 /**
@@ -232,12 +224,10 @@ bool game_structure::initialize_sdl(int screenWidth, int screenHeight)
  */
 void game_structure::unload()
 {
-	resource_admin->unload();
-		
+	resource_admin->unload();		
 	TTF_Quit();
 	IMG_Quit();
-	SDL_Quit();
-		
+	SDL_Quit();		
 }
 
 
@@ -246,7 +236,7 @@ game_structure::game_structure()
 	init_game_world_data();
 }
 
-void game_structure::init_game_world_data() const
+void game_structure::init_game_world_data()
 {
 	game_world->is_game_done = false;
 	game_world->is_network_game = false;

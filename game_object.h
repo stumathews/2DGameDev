@@ -29,7 +29,7 @@ public:
 	void set_graphic_resource(shared_ptr<graphic_asset> graphic_resource);
 
 	void virtual draw(SDL_Renderer* renderer) = 0;	
-	void virtual update();
+	void virtual update() = 0;
 	virtual void move_up();
 	virtual void move_down();
 	virtual void move_left();
@@ -56,7 +56,7 @@ private:
 	map<string, shared_ptr<Component>> components;
 	SDL_Color color_key = {};
 	int move_interval = global_config::move_interval; // move by intervals of 10 pixels
-	void setup_default_subscriptions();
+
 };
 
 

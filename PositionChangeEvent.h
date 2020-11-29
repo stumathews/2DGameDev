@@ -1,6 +1,6 @@
 #pragma once
 #include "Event.h"
-enum Direction {Up, Down, Left, Right};
+enum class Direction {Up, Down, Left, Right};
 
 
 class position_change_event : public event

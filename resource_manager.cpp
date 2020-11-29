@@ -7,7 +7,7 @@
 #include <memory>
 #include "AudioManager.h"
 #include "SceneChangedEvent.h"
-#include "common.h"
+#include "Common.h"
 #include "font_manager.h"
 
 using namespace tinyxml2;
@@ -17,51 +17,43 @@ extern shared_ptr<event_manager> event_admin;
 
 resource_manager::resource_manager()
 {
+	// we will load the resources for the level that has been loaded
 	event_admin->subscribe_to_event(event_type::LevelChangedEventType, this);
-}
-
-
-shared_ptr<asset> resource_manager::get_resource_by_name(const string& name)
-{
-	return resource_by_name[name];		
-}
-
-shared_ptr<asset> resource_manager::get_resource_by_uuid(const int uuid)
-{
-	return resources_by_uuid[uuid];
 }
 
 vector<shared_ptr<event>> resource_manager::process_event(const shared_ptr<event> evt)
 {
 	if(evt->type == event_type::LevelChangedEventType)
 	{
+		log_message("Detected level change. Loading level assets...");
 		const auto level = dynamic_pointer_cast<scene_changed_event>(evt)->scene;
 		
 		// Load all the resources required by the scene and unload out all those that are not in the scene
 		for(const auto& level_resources : resources_by_scene)
 		{		
-			for(const auto& spec : level_resources.second)
+			for(const auto& asset : level_resources.second)
 			{
-				const auto always_load_resource = spec->scene == 0;
-				if((spec->scene == level || always_load_resource) && !spec->is_loaded)
+				const auto always_load_resource = asset->scene == 0;
+				if((asset->scene == level || always_load_resource) && !asset->is_loaded)
 				{				
-					spec->load();
+					asset->load();
 					
-					logger::log_message(string("scene: " + to_string(spec->scene) ) + string(spec->name) + " asset loaded.");
+					logger::log_message(string("scene: " + to_string(asset->scene) ) + string(asset->name) + " asset loaded.");
 					
 					loaded_resources_count++;
 					unloaded_resources_count--;
 				} 
-				else if(spec->is_loaded && spec->scene != level && !always_load_resource )
+				else if(asset->is_loaded && asset->scene != level && !always_load_resource )
 				{
-					spec->unload();
+					asset->unload();
 					
-					logger::log_message(string("scene: " + to_string(spec->scene))  + string(spec->name) + " asset unloaded.");
+					logger::log_message(string("scene: " + to_string(asset->scene))  + string(asset->name) + " asset unloaded.");
 					unloaded_resources_count++;
 					loaded_resources_count--;
 				}
 			}		
 		}
+		log_message("Level assets loaded.");
 	}
 
 	return vector<shared_ptr<event>>();
@@ -72,8 +64,10 @@ void resource_manager::unload()
 	log_message("Unloading all resources...");
 	for(auto iterator = begin(resource_by_name); iterator != end(resource_by_name); ++iterator)
 	{
-		auto asset = iterator->second;
+		auto &name = iterator->first;
+		auto &asset = iterator->second;
 		asset->unload();
+		log_message("Unloaded asset " + name);
 	}	
 }
 
@@ -148,4 +142,14 @@ void resource_manager::store_asset(const shared_ptr<asset>& the_asset)
 string resource_manager::get_subscriber_name()
 {
 	return "resource manager";	
+}
+
+shared_ptr<asset> resource_manager::get_resource_by_name(const string& name)
+{
+	return resource_by_name[name];		
+}
+
+shared_ptr<asset> resource_manager::get_resource_by_uuid(const int uuid)
+{
+	return resources_by_uuid[uuid];
 }

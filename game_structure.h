@@ -5,9 +5,9 @@ class game_structure final : public event_subscriber
 {
 public:
 	game_structure();
-	void init_game_world_data() const;
+	static void init_game_world_data();
 
-	bool initialize(int screen_width, int screen_height);
+	static bool initialize(int screen_width, int screen_height);
 	static bool init3d_render_manager();
 	shared_ptr<player> create_player() const;
 	void setup_player() const;
