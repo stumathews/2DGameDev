@@ -28,7 +28,7 @@ std::shared_ptr<asset> AudioManager::create_asset(tinyxml2::XMLElement * element
 
 	// Read anything specific to audio in the element here...
 
-	auto audioResource = std::shared_ptr<AudioResource>(new AudioResource(uuid, name, path, type, scene));
+	auto audioResource = std::shared_ptr<audio_resource>(new audio_resource(uuid, name, path, type, scene));
 	
 	m_AudioResources.push_back(audioResource);
 	return audioResource;

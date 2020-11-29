@@ -22,7 +22,7 @@ public:
 		std::shared_ptr<asset> create_asset(tinyxml2::XMLElement * assetXmlElement);
 private:	
 
-	std::vector<shared_ptr<AudioResource>> m_AudioResources;
+	std::vector<shared_ptr<audio_resource>> m_AudioResources;
 	AudioManager();
 	~AudioManager();
 

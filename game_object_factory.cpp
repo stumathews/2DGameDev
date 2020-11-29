@@ -37,8 +37,8 @@ shared_ptr<game_object> game_object_factory::build_game_object(tinyxml2::XMLElem
 			auto meta = resource_admin->get_resource_by_uuid(atoi(detail_value.c_str()));
 			if(meta != nullptr)
 			{
-				if(!meta->m_type._Equal("graphic"))
-					throw exception(("Cannot load non graphic resource: " + meta->m_name + " type=" + meta->m_type).c_str());
+				if(!meta->type._Equal("graphic"))
+					throw exception(("Cannot load non graphic resource: " + meta->name + " type=" + meta->type).c_str());
 
 				if(meta == nullptr)
 					throw exception(("Could not load resource meta data for resource id:" + detail_value).c_str());

@@ -9,6 +9,7 @@
 #include "AddGameObjectToCurrentSceneEvent.h"
 #include <algorithm>
 #include "Common.h"
+#include "scene_loaded_event.h"
 
 using namespace tinyxml2;
 extern shared_ptr<event_manager> event_admin;
@@ -46,29 +47,36 @@ void scene_manager::load_new_scene(const std::shared_ptr<event> evt)
 {
 	const auto scene =  std::dynamic_pointer_cast<scene_changed_event>(evt)->scene;
 
-	auto raise_scene_loaded_event = [this](int scene_id){ /* event_admin->raise_event(make_unique<scene_changed_event>(scene_id), this);*/ };
+	auto raise_scene_loaded_event = [this](int scene_id, string scene_name)
+	{
+		log_message("Scene "+ to_string(scene_id) +" : "+ scene_name +" loaded.");
+		event_admin->raise_event(make_unique<scene_loaded_event>(scene_id), this);
+	};
+
+	string scene_name;
 	
 	switch(scene)
 	{
 	case 1:			
-		load_scene_file("scene1.xml");
-		raise_scene_loaded_event(scene);
+		scene_name = "scene1.xml";
 		break;
 	case 2:
-		load_scene_file("scene2.xml");
-		raise_scene_loaded_event(scene);
+		scene_name = "scene2.xml";
 		break;
 	case 3:
-		load_scene_file("scene3.xml");
-		raise_scene_loaded_event(scene);
+		scene_name = "scene3.xml";
 		break;
 	case 4:
-		load_scene_file("scene4.xml");
-		raise_scene_loaded_event(scene);
+		scene_name = "scene4.xml";
 		break;
 	default:
-		load_scene_file("scene1.xml");
-		raise_scene_loaded_event(scene);
+		scene_name = "scene1.xml";
+	}
+
+	if(!scene_name.empty())
+	{
+		load_scene_file(scene_name);
+		raise_scene_loaded_event(scene, scene_name);
 	}
 }
 
@@ -129,6 +137,8 @@ bool scene_manager::load_scene_file(const std::string& filename)
 		log_message(string("Scene already loaded. Skipping."));
 		return true;
 	}
+	log_message("Loading scene: " + string(filename));
+	
 	/* A Scene is composed of a) resources at b) various positions c) visibility
 	
 	<scene id="2">

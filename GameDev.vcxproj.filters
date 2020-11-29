@@ -123,6 +123,9 @@
     <ClCompile Include="player_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="scene_loaded_event.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedActor.h">
@@ -252,6 +255,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="player_component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scene_loaded_event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

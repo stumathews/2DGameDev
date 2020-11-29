@@ -7,7 +7,7 @@
 #include <memory>
 #include "AudioManager.h"
 #include "SceneChangedEvent.h"
-#include "Logger.h"
+#include "common.h"
 
 using namespace tinyxml2;
 using namespace std;
@@ -20,17 +20,17 @@ resource_manager::resource_manager()
 }
 
 
-std::shared_ptr<asset> resource_manager::get_resource_by_name(const string& name)
+shared_ptr<asset> resource_manager::get_resource_by_name(const string& name)
 {
 	return resource_by_name[name];		
 }
 
-std::shared_ptr<asset> resource_manager::get_resource_by_uuid(const int uuid)
+shared_ptr<asset> resource_manager::get_resource_by_uuid(const int uuid)
 {
 	return resources_by_uuid[uuid];
 }
 
-vector<shared_ptr<event>> resource_manager::process_event(const std::shared_ptr<event> evt)
+vector<shared_ptr<event>> resource_manager::process_event(const shared_ptr<event> evt)
 {
 	if(evt->type == event_type::LevelChangedEventType)
 	{
@@ -41,21 +41,21 @@ vector<shared_ptr<event>> resource_manager::process_event(const std::shared_ptr<
 		{		
 			for(const auto& spec : level_resources.second)
 			{
-				const auto always_load_resource = spec->m_scene == 0;
-				if((spec->m_scene == level || always_load_resource) && !spec->m_IsLoaded)
+				const auto always_load_resource = spec->scene == 0;
+				if((spec->scene == level || always_load_resource) && !spec->is_loaded)
 				{				
 					spec->load();
 					
-					logger::log_message(string("scene: " + std::to_string(spec->m_scene) ) + string(spec->m_name) + " asset loaded.");
+					logger::log_message(string("scene: " + to_string(spec->scene) ) + string(spec->name) + " asset loaded.");
 					
 					loaded_resources_count++;
 					unloaded_resources_count--;
 				} 
-				else if(spec->m_IsLoaded && spec->m_scene != level && !always_load_resource )
+				else if(spec->is_loaded && spec->scene != level && !always_load_resource )
 				{
 					spec->unload();
 					
-					logger::log_message(string("scene: " + std::to_string(spec->m_scene))  + string(spec->m_name) + " asset unloaded.");
+					logger::log_message(string("scene: " + to_string(spec->scene))  + string(spec->name) + " asset unloaded.");
 					unloaded_resources_count++;
 					loaded_resources_count--;
 				}
@@ -64,6 +64,16 @@ vector<shared_ptr<event>> resource_manager::process_event(const std::shared_ptr<
 	}
 
 	return vector<shared_ptr<event>>();
+}
+
+void resource_manager::unload()
+{
+	log_message("Unloading all resources...");
+	for(auto iterator = begin(resource_by_name); iterator != end(resource_by_name); ++iterator)
+	{
+		auto asset = iterator->second;
+		asset->unload();
+	}	
 }
 
 bool resource_manager::initialize()
@@ -101,7 +111,7 @@ void resource_manager::parse_game_resources()
 					if(strcmp(type, "graphic") == 0)
 						the_asset = sdl_graphics_manager::create_asset(element);
 
-					if(strcmp(type, "fx") == 0)
+					if(strcmp(type, "fx") == 0 || strcmp(type, "music") == 0)
 						the_asset = AudioManager::GetInstance().create_asset(element);
 
 					if(the_asset)
@@ -112,13 +122,22 @@ void resource_manager::parse_game_resources()
 			}
 		}
 	}
+
+	log_message(to_string(resource_count) + string(" assets available in resource manager."));
 }
 
-void resource_manager::store_asset(const std::shared_ptr<asset>& the_asset)
+void resource_manager::store_asset(const shared_ptr<asset>& the_asset)
 {
-	resources_by_scene[the_asset->m_scene].push_back(the_asset);
-	resource_by_name.insert(std::pair<string, std::shared_ptr<asset>>(the_asset->m_name, the_asset));
-	resources_by_uuid.insert(std::pair<int, std::shared_ptr<asset>>(the_asset->m_uid, the_asset));
+	// assets are explicitly associated with a scene that it will work in
+	resources_by_scene[the_asset->scene].push_back(the_asset);
+
+	// Index asset by its name
+	resource_by_name.insert(pair<string, shared_ptr<asset>>(the_asset->name, the_asset));
+
+	// Index the asset by its id
+	resources_by_uuid.insert(pair<int, shared_ptr<asset>>(the_asset->uid, the_asset));
+
+	log_message("Discovered " + string(the_asset->type) + string(" asset: ") + to_string(the_asset->uid) + string(" ") + string(the_asset->name));
 	resource_count++;
 }
 

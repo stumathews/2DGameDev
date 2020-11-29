@@ -18,6 +18,7 @@
 #include "player_moved_event.h"
 #include "AddGameObjectToCurrentSceneEvent.h"
 #include "LevelGenerator.h"
+#include "AudioResource.h"
 
 using namespace std;
 
@@ -109,21 +110,21 @@ void game_structure::get_input()
 					});
 					break;
 				case SDLK_1:
-					Mix_PlayChannel(-1, config->high_sound_fx, 0);
+					Mix_PlayChannel(-1, static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("high.wav"))->as_fx(), 0);
 					break;
 				case SDLK_2:
-					Mix_PlayChannel(-1, config->medium_sound_fx, 0);
+					Mix_PlayChannel(-1, static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("medium.wav"))->as_fx(), 0);
 					break;
 				case SDLK_3:
-					Mix_PlayChannel(-1, config->low_sound_fx, 0);
+					Mix_PlayChannel(-1,  static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("low.wav"))->as_fx(), 0);
 					break;
 				case SDLK_4:
-					Mix_PlayChannel(-1, config->scratch_fx, 0);
+					Mix_PlayChannel(-1, static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("scratch.wav"))->as_fx(), 0);
 					break;
 				case SDLK_9:
 					if (Mix_PlayingMusic() == 0)
 					{
-						Mix_PlayMusic(config->music, -1);
+						Mix_PlayMusic(static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("MainTheme.wav"))->as_music(), -1);
 					}
 					else
 					{
@@ -226,24 +227,12 @@ bool game_structure::initialize_sdl(int screenWidth, int screenHeight)
 	return true;
 }
 
+/**
+ * Frees static content not managed by resource manager
+ */
 void game_structure::unload()
 {
-	Mix_FreeChunk(config->scratch_fx );
-    Mix_FreeChunk(config->high_sound_fx );
-    Mix_FreeChunk(config->medium_sound_fx );
-    Mix_FreeChunk(config->low_sound_fx );
-
-    config->scratch_fx = nullptr;
-    config->high_sound_fx = nullptr;
-    config->medium_sound_fx = nullptr;
-    config->low_sound_fx = nullptr;
-    
-    //Free the music
-    Mix_FreeMusic( config->music );
-    config->music = nullptr;
-
-	TTF_CloseFont(config->font);
-	config->font  = nullptr;
+	resource_admin->unload();
 		
 	TTF_Quit();
 	IMG_Quit();
@@ -266,15 +255,7 @@ void game_structure::init_game_world_data() const
 
 bool game_structure::load_media()
 {
-	// Load Music
-    config->music = Mix_LoadMUS(resource_admin->get_resource_by_name("MainTheme.wav")->m_path.c_str());
-
-	// Load Audio Fx
-    config->scratch_fx = Mix_LoadWAV(resource_admin->get_resource_by_name("scratch.wav")->m_path.c_str());
-	config->high_sound_fx = Mix_LoadWAV(resource_admin->get_resource_by_name("high.wav")->m_path.c_str());
-	config->medium_sound_fx = Mix_LoadWAV(resource_admin->get_resource_by_name("medium.wav")->m_path.c_str());
-	config->low_sound_fx = Mix_LoadWAV(resource_admin->get_resource_by_name("low.wav")->m_path.c_str());
-
+	
 	//Load Font
 	config->font =  TTF_OpenFont( "arial.ttf", 28 );
 
@@ -289,36 +270,6 @@ bool game_structure::load_media()
 	};
 
 	// Error reporting
-	
-	if(config->music == nullptr)
-    {
-		log_message(dynamic_string_func(msg,  "Failed to load beat music! SDL_mixer Error: ") + Mix_GetError());
-        return false;
-    }  
-    
-    if(config->scratch_fx == nullptr)
-    {
-    	log_message(dynamic_string_func(msg,  "Failed to load scratch sound effect! SDL_mixer Error:") + Mix_GetError());
-        return false;
-    }
-    
-    if(config->high_sound_fx == nullptr)
-    {
-    	log_message(dynamic_string_func(msg,  "Failed to load high sound effect! SDL_mixer Error:") + Mix_GetError());
-        return false;
-    }
-    
-    if(config->medium_sound_fx == nullptr)
-    {
-    	log_message(dynamic_string_func(msg,  "Failed to load medium sound effect! SDL_mixer Error:") + Mix_GetError());
-        return false;
-    }
-    
-    if(config->low_sound_fx == nullptr )
-    {
-    	log_message(dynamic_string_func(msg,  "Failed to load low sound effect! SDL_mixer Error:") + Mix_GetError());
-        return false;
-    }
 
 	if(config->font == nullptr)
 	{
@@ -370,6 +321,9 @@ void game_structure::setup_player() const
 	the_player->raise_event(std::make_shared<add_game_object_to_current_scene_event>(the_player, 100));
 }
 
+/**
+ Initializes resource manager and SDL
+ */
 bool game_structure::initialize()
 {
 	return run_and_log("game_structure::initialize()", config->verbose, [&]()
@@ -385,6 +339,9 @@ bool game_structure::initialize()
 	});
 }
 
+/**
+ * Update & Draw until the game ends
+ */
 void game_structure::game_loop()
 {
 	auto tick_count_at_last_call = get_tick_now();
@@ -401,32 +358,35 @@ void game_structure::game_loop()
 		// New frame, happens consistently every 50 milliseconds. Ie 20 times a second.
 		// 20 times a second = 50 milliseconds
 		// 1 second is 20*50 = 1000 milliseconds
-		while (ticks_since > config->TICK_TIME_MS && num_loops < max_loops)
+		while (ticks_since > config->tick_time_ms && num_loops < max_loops)
 		{
 			update();		
-			tick_count_at_last_call += config->TICK_TIME_MS; // tickCountAtLastCall is now been +Single<GlobalConfig>().TickTime more since the last time. update it
-			frame_ticks += config->TICK_TIME_MS; num_loops++;
+			tick_count_at_last_call += config->tick_time_ms; // tickCountAtLastCall is now been +Single<GlobalConfig>().TickTime more since the last time. update it
+			frame_ticks += config->tick_time_ms; num_loops++;
 			ticks_since = new_time - tick_count_at_last_call;
 		}
 
 		spare_time(frame_ticks); // handle player input, general housekeeping (Event Manager processing)
 
-		if (game_world->is_network_game || ticks_since <= config->TICK_TIME_MS)
+		if (game_world->is_network_game || ticks_since <= config->tick_time_ms)
 		{
 			if (game_world->can_render)
 			{
-				const auto percent_outside_frame = static_cast<float>(ticks_since / config->TICK_TIME_MS) * 100; // NOLINT(bugprone-integer-division)				
+				const auto percent_outside_frame = static_cast<float>(ticks_since / config->tick_time_ms) * 100; // NOLINT(bugprone-integer-division)				
 				draw(percent_outside_frame);
 			}
 		}
 		else
 		{
-			tick_count_at_last_call = new_time - config->TICK_TIME_MS;
+			tick_count_at_last_call = new_time - config->tick_time_ms;
 		}
 	}
 	std::cout << "Game done" << std::endl;
 }
 
+/**
+ * Parses game resources, generates level and adds player to scene
+ */
 bool game_structure::load_content() const
 {
 	resource_admin->parse_game_resources();

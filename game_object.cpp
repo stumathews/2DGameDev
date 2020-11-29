@@ -7,9 +7,11 @@
 #include "constants.h"
 #include "resource_manager.h"
 #include <SDL_mixer.h>
+#include "AudioResource.h"
 
 extern shared_ptr<event_manager> event_admin;
 extern shared_ptr<global_config> config;
+extern shared_ptr<resource_manager> resource_admin;
 
 void game_object::setup_default_subscriptions()
 {
@@ -97,16 +99,17 @@ void game_object::DetectSideCollision()
 {
 	if (is_traveling_left)
 	{
-		if (x == 0) {
+		if (x == 0) 
+		{
 			is_traveling_left = false;
-			Mix_PlayChannel(-1,config->low_sound_fx, 0);
+			Mix_PlayChannel(-1, static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("high.wav"))->as_fx(), 0);
 		}
 	}
 	else
 	{
 		if (x == sdl_graphics_manager::get().get_screen_width())
 		{
-			Mix_PlayChannel(-1,config->low_sound_fx, 0);
+			Mix_PlayChannel(-1, static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("low.wav"))->as_fx(), 0);
 			is_traveling_left = true;
 		}
 	}
@@ -170,7 +173,7 @@ string game_object::get_subscriber_name()
 void game_object::draw_resource(SDL_Renderer* renderer) const
 {
 	const auto resource = get_graphic_asset();
-	if(resource != nullptr && resource->m_type == "graphic")
+	if(resource != nullptr && resource->type == "graphic")
 	{
 		SDL_Rect draw_location = { x, y, 100,100 };
 		const auto rect = get_graphic_asset()->m_bIsAnimated

@@ -8,7 +8,8 @@ enum class event_type
 	LevelChangedEventType,
 	DoLogicUpdateEventType,
 	AddGameObjectToCurrentScene,
-	PlayerMovedEventType
+	PlayerMovedEventType,
+	scene_loaded
 };
 
 class event
