@@ -13,6 +13,7 @@
 using namespace tinyxml2;
 using namespace std;
 
+extern shared_ptr<global_config> config;
 extern shared_ptr<event_manager> event_admin;
 
 resource_manager::resource_manager() = default;
@@ -76,13 +77,12 @@ void resource_manager::unload()
 
 bool resource_manager::initialize()
 {
-	logger::log_message("resource_manager::initialize()");
-	
-	// we will load the resources for the level that has been loaded
-	event_admin->subscribe_to_event(event_type::LevelChangedEventType, this);
-	
-	logger::log_message("resource_manager ready.");
-	return true;
+	return run_and_log("resource_manager::initialize()", config->verbose, [&]()
+	{	
+		// we will load the resources for the level that has been loaded
+		event_admin->subscribe_to_event(event_type::LevelChangedEventType, this);
+		return true;
+	});
 }
 
 /**

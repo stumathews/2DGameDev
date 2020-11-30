@@ -4,15 +4,16 @@
 #include "Logger.h"
 #include "Common.h"
 
+extern shared_ptr<global_config> config;
 
 event_manager::event_manager() = default;
 
-
 bool event_manager::initialize()
 {
-	logger::log_message("event_manager::initialize()");
-	logger::log_message("event_manager ready.");
-	return true;
+	return run_and_log("event_manager::initialize()", config->verbose, [&]()
+	{
+		return true;
+	});
 }
 
 void event_manager::raise_event(const shared_ptr<event> event, event_subscriber* you)  // NOLINT(performance-unnecessary-value-param)

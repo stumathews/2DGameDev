@@ -20,7 +20,7 @@ public:
 	void load_new_scene(std::shared_ptr<event> evt);
 	void add_to_scene(std::shared_ptr<game_object> game_object);	
 	std::list<shared_ptr<layer>> get_layers() const;
-	
+	void start_scene(int scene_id);
 private:
 	bool load_scene_file(const std::string& filename);	
 	shared_ptr<layer> add_layer(const std::string& name);

@@ -19,9 +19,6 @@ bool scene_manager::initialize()
 {
 	is_initialized = run_and_log("scene_manager::initialize()", config->verbose, [&]()
 	{
-		// Emit event to switch to scene 1 on initial construction of scene manager
-		event_admin->raise_event(std::make_shared<scene_changed_event>(1), this);
-
 		// I care about when the level changes
 		event_admin->subscribe_to_event(event_type::LevelChangedEventType, this);
 
@@ -32,6 +29,14 @@ bool scene_manager::initialize()
 	});
 	return is_initialized;
 }
+
+void scene_manager::start_scene(int scene_id)
+{
+	// Emit event to switch to scene 1 on initialization of scene manager.
+	// This triggers usually the resource_manager that loads the resources in for the scene (see resource_manager::process_events etc..)
+	event_admin->raise_event(std::make_shared<scene_changed_event>(scene_id), this);
+}
+
 
 scene_manager::scene_manager() = default;
 
@@ -47,9 +52,6 @@ vector<shared_ptr<event>> scene_manager::process_event(const std::shared_ptr<eve
 	
 	return vector<shared_ptr<event>>();
 }
-
-
-
 
 void scene_manager::load_new_scene(const std::shared_ptr<event> evt)
 {
@@ -137,6 +139,7 @@ std::list<shared_ptr<layer>> scene_manager::get_layers() const
 {
 	return layers;
 }
+
 
 bool scene_manager::load_scene_file(const std::string& filename)
 {

@@ -313,6 +313,9 @@ bool game_structure::initialize()
 		   failed(scene_admin_initialized_ok)) 
 			return false;		
 
+		// Start the first scene
+		scene_admin->start_scene(1);
+		
 		return true;
 	});
 }
