@@ -18,7 +18,7 @@ extern shared_ptr<event_manager> event_admin;
 
 resource_manager::resource_manager() = default;
 
-vector<shared_ptr<event>> resource_manager::process_event(const shared_ptr<event> evt)
+vector<shared_ptr<event>> resource_manager::handle_event(const shared_ptr<event> evt)
 {
 	if(evt->type == event_type::LevelChangedEventType)
 	{
@@ -88,7 +88,7 @@ bool resource_manager::initialize()
 /**
  Index Resources.xml file
  */
-void resource_manager::parse_game_resources()
+void resource_manager::read_resources()
 {	
 	logger::log_message("resource_manager: reading resources.xml.");
 	

@@ -18,12 +18,12 @@ class resource_manager final : public event_subscriber
 	shared_ptr<asset> get(const string& name);
 	shared_ptr<asset> get(int uuid);
 	int get_resource_count() const { return resource_count; }
-	vector<shared_ptr<event>> process_event(shared_ptr<event> evt) override;
+	vector<shared_ptr<event>> handle_event(shared_ptr<event> evt) override;
 	void unload();
 
 	bool initialize();
     string get_subscriber_name() override;
-	void parse_game_resources();
+	void read_resources();
 private:
 
 	void load_level_assets(int level);

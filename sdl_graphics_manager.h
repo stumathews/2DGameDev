@@ -48,7 +48,7 @@ private:
 	uint screen_height = 0;
 	void clear_draw_present(function<void(SDL_Renderer* renderer)> &draw_routine_2) const;
 	
-	events process_event(const std::shared_ptr<event> the_event) override;
+	events handle_event(const std::shared_ptr<event> the_event) override;
 	
 };
 

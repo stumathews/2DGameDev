@@ -25,6 +25,6 @@ public:
 	
 	void player_update();
 
-	vector<shared_ptr<event>> process_event(std::shared_ptr<event> evt) override;
+	vector<shared_ptr<event>> handle_event(std::shared_ptr<event> evt) override;
 	string get_subscriber_name() override;
 };

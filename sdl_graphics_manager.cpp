@@ -25,7 +25,7 @@ sdl_graphics_manager::sdl_graphics_manager() : event_subscriber()
 	event_admin->subscribe_to_event(event_type::PlayerMovedEventType, this);
 }
 
-vector<shared_ptr<event>> sdl_graphics_manager::process_event(const std::shared_ptr<event> the_event)
+vector<shared_ptr<event>> sdl_graphics_manager::handle_event(const std::shared_ptr<event> the_event)
 {
 	if(the_event->type == event_type::PlayerMovedEventType)
 	{

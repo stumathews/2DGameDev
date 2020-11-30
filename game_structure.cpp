@@ -164,7 +164,7 @@ void game_structure::player_update()
 }
 
 
-vector<shared_ptr<event>> game_structure::process_event(std::shared_ptr<event> evt)
+vector<shared_ptr<event>> game_structure::handle_event(std::shared_ptr<event> evt)
 {
 	// game_structure does not subscribe to any events
 	return vector<shared_ptr<event>>();
@@ -328,21 +328,21 @@ void game_structure::game_loop()
 	auto tick_count_at_last_call = get_tick_now();
 	const auto max_loops = config->max_loops;
 
-	// MAIN GAME LOOP!!
-	while (!game_world->is_game_done) 
+	while (!game_world->is_game_done) // main game loop
 	{
 		const auto new_time =  get_tick_now();
 		auto frame_ticks = 0;  // Number of ticks in the update call	
 		auto num_loops = 0;  // Number of loops ??
 		auto ticks_since = new_time - tick_count_at_last_call;
 
-		// New frame, happens consistently every 50 milliseconds. Ie 20 times a second.
-		// 20 times a second = 50 milliseconds
-		// 1 second is 20*50 = 1000 milliseconds
+		/* New frame, happens consistently every 50 milliseconds. Ie 20 times a second.
+		  20 times a second = 50 milliseconds
+		  1 second is 20*50 = 1000 milliseconds
+		*/
 		while (ticks_since > config->tick_time_ms && num_loops < max_loops)
 		{
 			update();		
-			tick_count_at_last_call += config->tick_time_ms; // tickCountAtLastCall is now been +Single<GlobalConfig>().TickTime more since the last time. update it
+			tick_count_at_last_call += config->tick_time_ms; // tickCountAtLastCall is now been +TickTime more since the last time. update it
 			frame_ticks += config->tick_time_ms; num_loops++;
 			ticks_since = new_time - tick_count_at_last_call;
 		}
@@ -370,12 +370,12 @@ void game_structure::game_loop()
  */
 bool game_structure::load_content() const
 {
-	resource_admin->parse_game_resources();
+	resource_admin->read_resources();
 		
 	// Generate the level's rooms
 	for (const auto& room: level_generator::generate_level())
 	{	
-		// room's will want to know when the player moved
+		// room's will want to know when the player moved for collision detection etc
 		room->subscribe_to_event(event_type::PlayerMovedEventType);
 		
 		// Add each room to the scene

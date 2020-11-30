@@ -16,13 +16,13 @@ player::player(int x, int y, int w): square(x, y, w, true, true)
 	
 }
 
-vector<shared_ptr<event>> player::process_event(const std::shared_ptr<event> the_event)
+vector<shared_ptr<event>> player::handle_event(const std::shared_ptr<event> the_event)
 {	
 	// Process GameObject events
-	auto created_events(game_object::process_event(the_event));
+	auto created_events(game_object::handle_event(the_event));
 
 	// Process Square events
-	for(auto &e : square::process_event(the_event)) 
+	for(auto &e : square::handle_event(the_event)) 
 		created_events.push_back(e);
 	
 	// Process Player events

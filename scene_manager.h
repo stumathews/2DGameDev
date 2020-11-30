@@ -1,7 +1,8 @@
 #pragma once
 #include <list>
 #include "event_subscriber.h"
-#include "layer.h"
+#include "Layer.h"
+
 using namespace std;
 
 // Represents the current scene
@@ -29,7 +30,7 @@ private:
 
 	// Event management
 	static void update();
-	vector<shared_ptr<event>> process_event(shared_ptr<event> the_event) override;	
+	vector<shared_ptr<event>> handle_event(shared_ptr<event> the_event) override;	
     string get_subscriber_name() override;
 		
 	list<shared_ptr<layer>> layers;

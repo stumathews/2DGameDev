@@ -53,7 +53,7 @@ void event_manager::process_all_events()
 		for (const auto& subscriber :  event_subscribers_[event->type])
 		{
 			// allow subscriber to process the event
-			for(const auto &secondary_event : subscriber->process_event(event))
+			for(const auto &secondary_event : subscriber->handle_event(event))
 			{
 				// any results from processing are put onto the secondary queue
 				secondary_event_queue_.push(secondary_event);

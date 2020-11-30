@@ -29,7 +29,7 @@ void game_object::change_object_position(const std::shared_ptr<event> the_event)
 		move_right();
 }
 
-vector<shared_ptr<event>> game_object::process_event(const std::shared_ptr<event> the_event)
+vector<shared_ptr<event>> game_object::handle_event(const std::shared_ptr<event> the_event)
 {
 	switch(the_event->type)
 	{

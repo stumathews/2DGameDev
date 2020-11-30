@@ -39,7 +39,7 @@ void scene_manager::start_scene(int scene_id)
 
 scene_manager::scene_manager() = default;
 
-vector<shared_ptr<event>> scene_manager::process_event(const std::shared_ptr<event> the_event)
+vector<shared_ptr<event>> scene_manager::handle_event(const std::shared_ptr<event> the_event)
 {
 	switch(the_event->type)
 	{

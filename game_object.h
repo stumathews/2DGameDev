@@ -36,7 +36,7 @@ public:
 	virtual string get_identifier();
 
 	void change_object_position(std::shared_ptr<event> the_event);
-	vector<shared_ptr<event>> process_event(const std::shared_ptr<event> event) override;  // NOLINT(readability-inconsistent-declaration-parameter-name)
+	vector<shared_ptr<event>> handle_event(const std::shared_ptr<event> event) override;  // NOLINT(readability-inconsistent-declaration-parameter-name)
 	void detect_side_collision();
 	void set_color_key(Uint8 r, Uint8 g, Uint8 b);
 	void add_component(const shared_ptr<Component>& component);

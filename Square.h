@@ -26,7 +26,7 @@ public:
     void remove_wall(int wall);
 	string get_identifier() override;
 
-	vector<shared_ptr<event>> process_event(std::shared_ptr<event> event) override;
+	vector<shared_ptr<event>> handle_event(std::shared_ptr<event> event) override;
     void draw(SDL_Renderer* renderer) override;;
     virtual ~square();
     void update() override;
