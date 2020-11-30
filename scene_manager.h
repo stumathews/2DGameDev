@@ -1,8 +1,7 @@
 #pragma once
-#include "layer.h"
 #include <list>
 #include "event_subscriber.h"
-#include <iostream>
+#include "layer.h"
 using namespace std;
 
 // Represents the current scene
@@ -16,25 +15,25 @@ public:
 	scene_manager& operator=(scene_manager &&) = default;
 	~scene_manager() = default;
 
-	bool initialize();
-	void load_new_scene(std::shared_ptr<event> evt);
-	void add_to_scene(std::shared_ptr<game_object> game_object);	
-	std::list<shared_ptr<layer>> get_layers() const;
+	bool initialize();	
 	void start_scene(int scene_id);
+	list<shared_ptr<layer>> get_scene_layers() const;
 private:
-	bool load_scene_file(const std::string& filename);	
-	shared_ptr<layer> add_layer(const std::string& name);
-	shared_ptr<layer> find_layer(const std::string& name);
-	void remove_layer(const std::string& name);
+	void add_to_scene(const shared_ptr<game_object>& game_object);	
+	void load_new_scene(const shared_ptr<event> &the_event);
+	bool load_scene_file(const string &filename);		
+	void remove_layer(const string &name);
 	void sort_layers();
+	shared_ptr<layer> add_layer(const string &name);
+	shared_ptr<layer> find_layer(const string &name);
 
-	// event management
-	static void update() {}
-	vector<shared_ptr<event>> process_event(std::shared_ptr<event> evt) override;	
+	// Event management
+	static void update();
+	vector<shared_ptr<event>> process_event(shared_ptr<event> the_event) override;	
     string get_subscriber_name() override;
-
-	bool is_initialized = false;	
+		
 	list<shared_ptr<layer>> layers;
 	string current_scene_name = {};
+	bool is_initialized = false;	
 };
 

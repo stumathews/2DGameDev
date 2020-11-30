@@ -7,7 +7,6 @@
 #include "SceneChangedEvent.h"
 #include "game_object_factory.h"
 #include "AddGameObjectToCurrentSceneEvent.h"
-#include <algorithm>
 #include "Common.h"
 #include "scene_loaded_event.h"
 
@@ -40,24 +39,35 @@ void scene_manager::start_scene(int scene_id)
 
 scene_manager::scene_manager() = default;
 
-vector<shared_ptr<event>> scene_manager::process_event(const std::shared_ptr<event> evt)
+vector<shared_ptr<event>> scene_manager::process_event(const std::shared_ptr<event> the_event)
 {
-	// load in new scene
-	if(event_type::LevelChangedEventType == evt->type) 
-		load_new_scene(evt);	
-
-	// add new object to scene (last layer)
-	if(event_type::AddGameObjectToCurrentScene == evt->type)
-		add_to_scene(std::dynamic_pointer_cast<add_game_object_to_current_scene_event>(evt)->get_game_object());	
+	switch(the_event->type)
+	{
+		case event_type::PositionChangeEventType: break;
+		case event_type::LevelChangedEventType: // load in new scene
+		{
+			load_new_scene(the_event);
+		}
+		break;
+		case event_type::DoLogicUpdateEventType: break;	
+		case event_type::AddGameObjectToCurrentScene:  // add new object to scene (last layer)
+		{
+			const auto the_game_object = std::dynamic_pointer_cast<add_game_object_to_current_scene_event>(the_event)->get_game_object();
+			add_to_scene(the_game_object);
+		}
+		break;
+		case event_type::PlayerMovedEventType: break;
+		case event_type::scene_loaded: break;
+	}
 	
 	return vector<shared_ptr<event>>();
 }
 
-void scene_manager::load_new_scene(const std::shared_ptr<event> evt)
+void scene_manager::load_new_scene(const std::shared_ptr<event>& the_event)
 {
-	const auto scene =  std::dynamic_pointer_cast<scene_changed_event>(evt)->scene_id;
+	const auto scene =  std::dynamic_pointer_cast<scene_changed_event>(the_event)->scene_id;
 
-	auto raise_scene_loaded_event = [this](int scene_id, string scene_name)
+	auto raise_scene_loaded_event = [this](int scene_id, const string& scene_name)
 	{
 		log_message("Scene "+ to_string(scene_id) +" : "+ scene_name +" loaded.");
 		event_admin->raise_event(make_unique<scene_loaded_event>(scene_id), this);
@@ -90,7 +100,7 @@ void scene_manager::load_new_scene(const std::shared_ptr<event> evt)
 	}
 }
 
-void scene_manager::add_to_scene(const std::shared_ptr<game_object> game_object)
+void scene_manager::add_to_scene(const std::shared_ptr<game_object>& game_object)
 {
 	// add to last layer of the scene
 	layers.back()->game_objects.push_back(game_object);
@@ -135,7 +145,12 @@ void scene_manager::sort_layers()
 	layers.sort(compare_layer_order);
 }
 
-std::list<shared_ptr<layer>> scene_manager::get_layers() const
+void scene_manager::update()
+{
+	// Scene manager does not need updating
+}
+
+std::list<shared_ptr<layer>> scene_manager::get_scene_layers() const
 {
 	return layers;
 }

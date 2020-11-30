@@ -215,7 +215,7 @@ void sdl_graphics_manager::draw_current_scene(bool update_window_surface_after_d
 	{
 		const auto current_scene = scene_admin;
 		// Draw all objects in the layer
-		for (const auto& layer : current_scene->get_layers())
+		for (const auto& layer : current_scene->get_scene_layers())
 		{
 			if (layer->visible)
 			{

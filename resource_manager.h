@@ -14,7 +14,7 @@ class resource_manager final : public event_subscriber
 {	
     public:
 	resource_manager();
-	void load_level_assets(int level);
+		
 	shared_ptr<asset> get(const string& name);
 	shared_ptr<asset> get(int uuid);
 	int get_resource_count() const { return resource_count; }
@@ -25,7 +25,8 @@ class resource_manager final : public event_subscriber
     string get_subscriber_name() override;
 	void parse_game_resources();
 private:
-	
+
+	void load_level_assets(int level);
     void store_asset(const shared_ptr<asset>& the_asset);
 	map<int, vector<shared_ptr<asset>>> resources_by_scene;   
 	map<string, shared_ptr<asset>> resource_by_name;   
