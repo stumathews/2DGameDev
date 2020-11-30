@@ -5,11 +5,15 @@
 #include "Common.h"
 
 
-event_manager::event_manager()
-{
-	logger::log_message("event_manager constructed");
-}
+event_manager::event_manager() = default;
 
+
+bool event_manager::initialize()
+{
+	logger::log_message("event_manager::initialize()");
+	logger::log_message("event_manager ready.");
+	return true;
+}
 
 void event_manager::raise_event(const shared_ptr<event> event, event_subscriber* you)  // NOLINT(performance-unnecessary-value-param)
 {

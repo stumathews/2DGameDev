@@ -15,11 +15,7 @@ using namespace std;
 
 extern shared_ptr<event_manager> event_admin;
 
-resource_manager::resource_manager()
-{
-	// we will load the resources for the level that has been loaded
-	event_admin->subscribe_to_event(event_type::LevelChangedEventType, this);
-}
+resource_manager::resource_manager() = default;
 
 vector<shared_ptr<event>> resource_manager::process_event(const shared_ptr<event> evt)
 {
@@ -81,6 +77,10 @@ void resource_manager::unload()
 bool resource_manager::initialize()
 {
 	logger::log_message("resource_manager::initialize()");
+	
+	// we will load the resources for the level that has been loaded
+	event_admin->subscribe_to_event(event_type::LevelChangedEventType, this);
+	
 	logger::log_message("resource_manager ready.");
 	return true;
 }

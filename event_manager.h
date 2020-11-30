@@ -26,6 +26,8 @@ class event_manager  // NOLINT(cppcoreguidelines-special-member-functions, hicpp
 	// Cannot assign to an event manager
 	void operator=(event_manager const&) = delete;
 
+	bool initialize();
+	
 	// Raise an arbitrary event
 	void raise_event(const std::shared_ptr<event> event, event_subscriber* you);
 

@@ -21,7 +21,7 @@ class resource_manager final : public event_subscriber
 	vector<shared_ptr<event>> process_event(shared_ptr<event> evt) override;
 	void unload();
 
-	static bool initialize();
+	bool initialize();
     string get_subscriber_name() override;
 	void parse_game_resources();
 private:

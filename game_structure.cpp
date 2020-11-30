@@ -27,6 +27,7 @@ extern shared_ptr<event_manager> event_admin;
 extern shared_ptr<resource_manager> resource_admin;
 extern shared_ptr<global_config> config;
 extern shared_ptr<game_world_data> game_world;
+extern shared_ptr<scene_manager> scene_admin;
 
 void game_structure::get_input()
 {
@@ -111,21 +112,21 @@ void game_structure::get_input()
 					});
 					break;
 				case SDLK_1:
-					Mix_PlayChannel(-1, audio_manager::to_audio_resource(resource_admin->get("high.wav"))->as_fx(), 0);
+					Mix_PlayChannel(-1, audio_manager::to_resource(resource_admin->get("high.wav"))->as_fx(), 0);
 					break;
 				case SDLK_2:
-					Mix_PlayChannel(-1, audio_manager::to_audio_resource(resource_admin->get("medium.wav"))->as_fx(), 0);
+					Mix_PlayChannel(-1, audio_manager::to_resource(resource_admin->get("medium.wav"))->as_fx(), 0);
 					break;
 				case SDLK_3:
-					Mix_PlayChannel(-1,  audio_manager::to_audio_resource(resource_admin->get("low.wav"))->as_fx(), 0);
+					Mix_PlayChannel(-1,  audio_manager::to_resource(resource_admin->get("low.wav"))->as_fx(), 0);
 					break;
 				case SDLK_4:
-					Mix_PlayChannel(-1, audio_manager::to_audio_resource(resource_admin->get("scratch.wav"))->as_fx(), 0);
+					Mix_PlayChannel(-1, audio_manager::to_resource(resource_admin->get("scratch.wav"))->as_fx(), 0);
 					break;
 				case SDLK_9:
 					if (Mix_PlayingMusic() == 0)
 					{
-						Mix_PlayMusic(audio_manager::to_audio_resource(resource_admin->get("MainTheme.wav"))->as_music(), -1);
+						Mix_PlayMusic(audio_manager::to_resource(resource_admin->get("MainTheme.wav"))->as_music(), -1);
 					}
 					else
 					{
@@ -292,11 +293,24 @@ bool game_structure::initialize()
 {
 	return run_and_log("game_structure::initialize()", config->verbose, [&]()
 	{
+		// Initialize resource manager
 		const auto resource_admin_initialized_ok = log_if_false(resource_admin->initialize(), "Could not initialize resource manager");
+
+		// Initialize event manager
+		const auto event_admin_initialized_ok = log_if_false(event_admin->initialize(), "Could not initialize event manager");
+
+		// Initialize scene_manager
+		const auto scene_admin_initialized_ok = log_if_false(scene_admin->initialize(), "Could not initialize scene manager");
+
+		// Initialize SDL
 		const auto sdl_initialize_ok = log_if_false(initialize_sdl(config->screen_width, config->screen_height), "Could not initialize SDL, aborting.");
 		const auto dx_render_manager_initialized_ok = config->use_3d_render_manager && init3d_render_manager(); // we dont use 3d yet
 		
-		if(failed(sdl_initialize_ok) || failed(resource_admin_initialized_ok) || failed(dx_render_manager_initialized_ok, "Ignoring dx renderer for now", true) )
+		if(failed(sdl_initialize_ok) || 
+		   failed(event_admin_initialized_ok) ||
+		   failed(resource_admin_initialized_ok) || 
+		   failed(dx_render_manager_initialized_ok, "Ignoring dx renderer for now", true) || 
+		   failed(scene_admin_initialized_ok)) 
 			return false;		
 
 		return true;

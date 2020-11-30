@@ -13,21 +13,27 @@
 
 using namespace tinyxml2;
 extern shared_ptr<event_manager> event_admin;
+extern shared_ptr<global_config> config;
 
-scene_manager::scene_manager()
+bool scene_manager::initialize()
 {
-	// Emit event to switch to scene 1 on initial construction of scene manager
-	event_admin->raise_event(std::make_shared<scene_changed_event>(1), this);
+	is_initialized = run_and_log("scene_manager::initialize()", config->verbose, [&]()
+	{
+		// Emit event to switch to scene 1 on initial construction of scene manager
+		event_admin->raise_event(std::make_shared<scene_changed_event>(1), this);
 
-	// I care about when the level changes
-	event_admin->subscribe_to_event(event_type::LevelChangedEventType, this);
+		// I care about when the level changes
+		event_admin->subscribe_to_event(event_type::LevelChangedEventType, this);
 
-	// I care about when I'm asked to add game object to current scene
-	event_admin->subscribe_to_event(event_type::AddGameObjectToCurrentScene, this);
-	
-	if(!is_initialized)
-		is_initialized = true;
+		// I care about when I'm asked to add game object to current scene
+		event_admin->subscribe_to_event(event_type::AddGameObjectToCurrentScene, this);	
+
+		return true;
+	});
+	return is_initialized;
 }
+
+scene_manager::scene_manager() = default;
 
 vector<shared_ptr<event>> scene_manager::process_event(const std::shared_ptr<event> evt)
 {
@@ -41,6 +47,8 @@ vector<shared_ptr<event>> scene_manager::process_event(const std::shared_ptr<eve
 	
 	return vector<shared_ptr<event>>();
 }
+
+
 
 
 void scene_manager::load_new_scene(const std::shared_ptr<event> evt)

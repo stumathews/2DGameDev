@@ -20,7 +20,7 @@ public:
 		
 		// Creates an audio Resource
 		std::shared_ptr<asset> create_asset(tinyxml2::XMLElement * assetXmlElement);
-		static shared_ptr<audio_resource> to_audio_resource(const shared_ptr<asset>& asset);
+		static shared_ptr<audio_resource> to_resource(const shared_ptr<asset>& asset);
 private:	
 
 	std::vector<shared_ptr<audio_resource>> m_AudioResources;

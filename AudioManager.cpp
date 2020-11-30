@@ -34,7 +34,7 @@ std::shared_ptr<asset> audio_manager::create_asset(tinyxml2::XMLElement * elemen
 	return audioResource;
 }
 
-shared_ptr<audio_resource> audio_manager::to_audio_resource(const shared_ptr<asset>& asset)
+shared_ptr<audio_resource> audio_manager::to_resource(const shared_ptr<asset>& asset)
 {
 	return static_pointer_cast<audio_resource>(asset);
 }
