@@ -18,37 +18,133 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AddGameObjectToCurrentSceneEvent.h" />
+    <ClCompile Include="AnimatedActor.cpp" />
+    <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="AudioResource.cpp" />
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="event_subscriber.cpp" />
+    <ClCompile Include="font_manager.cpp" />
+    <ClCompile Include="font_resource.cpp" />
+    <ClCompile Include="game_object.cpp" />
+    <ClCompile Include="DoLogicUpdateEvent.cpp" />
+    <ClCompile Include="Drawing.cpp" />
+    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="event_manager.cpp" />
+    <ClCompile Include="game_object_factory.cpp" />
+    <ClCompile Include="game_structure.cpp" />
+    <ClCompile Include="scene_loaded_event.cpp" />
+    <ClCompile Include="sdl_graphics_manager.cpp" />
+    <ClCompile Include="graphic_asset.cpp" />
+    <ClCompile Include="LevelGenerator.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mesh3D.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="player_component.cpp" />
+    <ClCompile Include="player_moved_event.cpp" />
+    <ClCompile Include="PositionChangeEvent.cpp" />
+    <ClCompile Include="RectDebugging.cpp" />
+    <ClCompile Include="rect_details.cpp" />
+    <ClCompile Include="RenderManager3D.cpp" />
+    <ClCompile Include="asset.cpp" />
+    <ClCompile Include="resource_manager.cpp" />
+    <ClCompile Include="SceneChangedEvent.cpp" />
+    <ClCompile Include="SceneItem.cpp" />
+    <ClCompile Include="scene_manager.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Sprites3D.cpp" />
+    <ClCompile Include="Square.cpp" />
+    <ClCompile Include="Texture3D.cpp" />
+    <ClCompile Include="tinyxml2-master\tinyxml2.cpp" />
+    <ClCompile Include="Tuple.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="aliases.h" />
+    <ClInclude Include="AnimatedActor.h" />
+    <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="AudioResource.h" />
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="constants.h" />
+    <ClInclude Include="font_manager.h" />
+    <ClInclude Include="font_resource.h" />
+    <ClInclude Include="game_object.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="COMUtils.h" />
+    <ClInclude Include="DoLogicUpdateEvent.h" />
+    <ClInclude Include="Drawing.h" />
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="event_manager.h" />
+    <ClInclude Include="Events.h" />
+    <ClInclude Include="event_subscriber.h" />
+    <ClInclude Include="game_object_factory.h" />
+    <ClInclude Include="game_structure.h" />
+    <ClInclude Include="global_config.h" />
+    <ClInclude Include="scene_loaded_event.h" />
+    <ClInclude Include="sdl_graphics_manager.h" />
+    <ClInclude Include="graphic_asset.h" />
+    <ClInclude Include="Layer.h" />
+    <ClInclude Include="LevelGenerator.h" />
+    <ClInclude Include="Mesh3D.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="player_component.h" />
+    <ClInclude Include="player_moved_event.h" />
+    <ClInclude Include="PositionChangeEvent.h" />
+    <ClInclude Include="RectDebugging.h" />
+    <ClInclude Include="rect_details.h" />
+    <ClInclude Include="RenderManager3D.h" />
+    <ClInclude Include="asset.h" />
+    <ClInclude Include="resource1.h" />
+    <ClInclude Include="resource_manager.h" />
+    <ClInclude Include="SceneChangedEvent.h" />
+    <ClInclude Include="SceneItem.h" />
+    <ClInclude Include="scene_manager.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="Sprites3D.h" />
+    <ClInclude Include="Square.h" />
+    <ClInclude Include="Texture3D.h" />
+    <ClInclude Include="tinyxml2-master\tinyxml2.h" />
+    <ClInclude Include="Tuple.h" />
+    <ClInclude Include="TypeAliases.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="scene2.xml" />
+    <Xml Include="scene3.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="2DGameDev.rc" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{A335C1BA-CFDA-41FD-A0E3-307EBDF715CC}</ProjectGuid>
     <RootNamespace>GameDev</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>2DGameDev</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -73,17 +169,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
+    <LibraryPath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\SDL\SDL2\include;C:\SDL\SDL2_image-2.0.4\include;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;$(MSBuildProjectDirectory)\Actors;$(MSBuildProjectDirectory)\EventManagment;$(MSBuildProjectDirectory)\Rendering;$(MSBuildProjectDirectory)\ResourceManagement;$(MSBuildProjectDirectory)\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\SDL\SDL2\include;C:\SDL\SDL2_image-2.0.4\include;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;C:\SDL\SDL2_ttf-2.0.15\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Winmm.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\SDL\SDL2\lib\x86;C:\SDL\SDL2_image-2.0.4\lib\x86;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Winmm.lib;SDL2_mixer.lib;d3d10.lib;d3dx10.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\SDL\SDL2\lib\x86;C:\SDL\SDL2_image-2.0.4\lib\x86;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\x86;C:\SDL\SDL2_ttf-2.0.15\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -129,44 +230,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Actors\Actor.cpp" />
-    <ClCompile Include="Actors\Ball.cpp" />
-    <ClCompile Include="Actors\AnimatedActor.cpp" />
-    <ClCompile Include="ResourceManagement\AudioResource.cpp" />
-    <ClCompile Include="EventManagment\Event.cpp" />
-    <ClCompile Include="EventManagment\EventManager.cpp" />
-    <ClCompile Include="EventManagment\EventSubscriber.cpp" />
-    <ClCompile Include="EventManagment\PositionChangeEvent.cpp" />
-    <ClCompile Include="ResourceManagement\AudioResourceManager.cpp" />
-    <ClCompile Include="ResourceManagement\GraphicsResourceManager.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Rendering\Drawing.cpp" />
-    <ClCompile Include="ResourceManagement\GraphicsResource.cpp" />
-    <ClCompile Include="ResourceManagement\Resource.cpp" />
-    <ClCompile Include="ResourceManagement\tinyxml2.cpp" />
-    <ClCompile Include="ResourceManagement\ResourceManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Actors\AnimatedActor.h" />
-    <ClInclude Include="ResourceManagement\AudioResource.h" />
-    <ClInclude Include="Common\Common.h" />
-    <ClInclude Include="EventManagment\Event.h" />
-    <ClInclude Include="EventManagment\EventManager.h" />
-    <ClInclude Include="EventManagment\Events.h" />
-    <ClInclude Include="EventManagment\EventSubscriber.h" />
-    <ClInclude Include="EventManagment\PositionChangeEvent.h" />
-    <ClInclude Include="ResourceManagement\AudioResourceManager.h" />
-    <ClInclude Include="ResourceManagement\GraphicsResourceManager.h" />
-    <ClInclude Include="Rendering\Drawing.h" />
-    <ClInclude Include="ResourceManagement\GraphicsResource.h" />
-    <ClInclude Include="ResourceManagement\Resource.h" />
-    <ClInclude Include="ResourceManagement\tinyxml2.h" />
-    <ClInclude Include="ResourceManagement\ResourceManager.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="Resources.xml" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
