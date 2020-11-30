@@ -103,14 +103,14 @@ void game_object::detect_side_collision()
 		if (x == 0) 
 		{
 			is_traveling_left = false;
-			Mix_PlayChannel(-1, static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("high.wav"))->as_fx(), 0);
+			Mix_PlayChannel(-1, static_pointer_cast<audio_resource>(resource_admin->get("high.wav"))->as_fx(), 0);
 		}
 	}
 	else
 	{
-		if (x == sdl_graphics_manager::get().get_screen_width())
+		if (x == sdl_graphics_manager::get_instance().get_screen_width())
 		{
-			Mix_PlayChannel(-1, static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("low.wav"))->as_fx(), 0);
+			Mix_PlayChannel(-1, static_pointer_cast<audio_resource>(resource_admin->get("low.wav"))->as_fx(), 0);
 			is_traveling_left = true;
 		}
 	}
@@ -178,7 +178,7 @@ void game_object::draw_resource(SDL_Renderer* renderer) const
 		const auto rect = get_graphic_asset()->m_bIsAnimated
 						?  &graphic_resource->m_viewPort
 						: nullptr;
-		SDL_RenderCopy( sdl_graphics_manager::get().window_renderer, graphic_resource->texture, rect, &draw_location );
+		SDL_RenderCopy( sdl_graphics_manager::get_instance().window_renderer, graphic_resource->texture, rect, &draw_location );
 	}
 }
 

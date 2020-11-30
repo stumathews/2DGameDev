@@ -15,8 +15,8 @@ class resource_manager final : public event_subscriber
     public:
 	resource_manager();
 	void load_level_assets(int level);
-	shared_ptr<asset> get_resource_by_name(const string& name);
-	shared_ptr<asset> get_resource_by_uuid(int uuid);
+	shared_ptr<asset> get(const string& name);
+	shared_ptr<asset> get(int uuid);
 	int get_resource_count() const { return resource_count; }
 	vector<shared_ptr<event>> process_event(shared_ptr<event> evt) override;
 	void unload();

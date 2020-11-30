@@ -15,12 +15,11 @@ public:
 	void game_loop();
 	bool load_content() const;
 	static long get_tick_now();
-	void update_active_elements();
 	void world_update();
 	void update();
 	static void draw(float);
 	static void spare_time(long);
-	static bool initialize_sdl(int screenWidth, int screenHeight);
+	static bool initialize_sdl(int screen_width, int screen_height);
 	static void unload();
 	void get_input();
 	

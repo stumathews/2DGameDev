@@ -46,10 +46,13 @@ inline void log_message(const string &message, const bool be_verbose = global_co
 	logger::log_message(message, be_verbose);
 }
 
-inline bool run_and_log(const string &message, bool verbose, const std::function<bool()>& action)
+inline bool run_and_log(const string &message, bool verbose, const std::function<bool()>& action, bool print_finished = true)
 {
 	log_message(message);
-	return action();
+	const auto result = action();
+	if(print_finished)
+		log_message("Finished.");
+	return result;
 }
 
 template <typename ENUM>

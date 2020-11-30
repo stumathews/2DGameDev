@@ -116,7 +116,7 @@ void resource_manager::parse_game_resources()
 						the_asset = sdl_graphics_manager::create_asset(element);
 
 					if(strcmp(type, "fx") == 0 || strcmp(type, "music") == 0)
-						the_asset = AudioManager::get_instance().create_asset(element);
+						the_asset = audio_manager::get_instance().create_asset(element);
 
 					if(strcmp(type, "font") == 0)
 						the_asset = font_manager::get_instance().create_asset(element);
@@ -153,12 +153,12 @@ string resource_manager::get_subscriber_name()
 	return "resource manager";	
 }
 
-shared_ptr<asset> resource_manager::get_resource_by_name(const string& name)
+shared_ptr<asset> resource_manager::get(const string& name)
 {
 	return resource_by_name[name];		
 }
 
-shared_ptr<asset> resource_manager::get_resource_by_uuid(const int uuid)
+shared_ptr<asset> resource_manager::get(const int uuid)
 {
 	return resources_by_uuid[uuid];
 }

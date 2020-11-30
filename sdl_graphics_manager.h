@@ -13,7 +13,7 @@ class sdl_graphics_manager final : public event_subscriber
 {
 
 public:
-	static sdl_graphics_manager& get();
+	static sdl_graphics_manager& get_instance();
 
 	sdl_graphics_manager();
 	~sdl_graphics_manager();
@@ -52,7 +52,7 @@ private:
 	
 };
 
-inline sdl_graphics_manager& sdl_graphics_manager::get()
+inline sdl_graphics_manager& sdl_graphics_manager::get_instance()
 {
 	static sdl_graphics_manager instance;
 	return instance;

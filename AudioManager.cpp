@@ -2,17 +2,17 @@
 #include <vector>
 #include <memory>
 #include "asset.h"
+#include "RectDebugging.h"
 
 
-
-AudioManager::AudioManager()
+audio_manager::audio_manager()
 = default;
 
 
-AudioManager::~AudioManager()
+audio_manager::~audio_manager()
 = default;
 
-std::shared_ptr<asset> AudioManager::create_asset(tinyxml2::XMLElement * element)
+std::shared_ptr<asset> audio_manager::create_asset(tinyxml2::XMLElement * element)
 {
 	int uuid;
 	const char* type;
@@ -32,4 +32,9 @@ std::shared_ptr<asset> AudioManager::create_asset(tinyxml2::XMLElement * element
 	
 	m_AudioResources.push_back(audioResource);
 	return audioResource;
+}
+
+shared_ptr<audio_resource> audio_manager::to_audio_resource(const shared_ptr<asset>& asset)
+{
+	return static_pointer_cast<audio_resource>(asset);
 }

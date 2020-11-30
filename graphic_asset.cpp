@@ -31,7 +31,7 @@ void graphic_asset::load()
 	const auto loaded_surface = IMG_Load(path.c_str()); //Load image at specified path
 	if(loaded_surface)
 	{						
-		texture = SDL_CreateTextureFromSurface(sdl_graphics_manager::get().window_renderer, loaded_surface ); //Create texture from surface pixels
+		texture = SDL_CreateTextureFromSurface(sdl_graphics_manager::get_instance().window_renderer, loaded_surface ); //Create texture from surface pixels
 		
 		SDL_FreeSurface(loaded_surface); //Get rid of old loaded surface
 		if(texture)

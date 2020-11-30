@@ -34,7 +34,7 @@ shared_ptr<game_object> game_object_factory::build_game_object(tinyxml2::XMLElem
 		
 		if(detail_name == "resourceId") 
 		{
-			auto meta = resource_admin->get_resource_by_uuid(atoi(detail_value.c_str()));
+			auto meta = resource_admin->get(atoi(detail_value.c_str()));
 			if(meta != nullptr)
 			{
 				if(!meta->type._Equal("graphic"))

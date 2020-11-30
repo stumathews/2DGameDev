@@ -19,6 +19,7 @@
 #include "AddGameObjectToCurrentSceneEvent.h"
 #include "LevelGenerator.h"
 #include "AudioResource.h"
+#include "AudioManager.h"
 
 using namespace std;
 
@@ -110,21 +111,21 @@ void game_structure::get_input()
 					});
 					break;
 				case SDLK_1:
-					Mix_PlayChannel(-1, static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("high.wav"))->as_fx(), 0);
+					Mix_PlayChannel(-1, audio_manager::to_audio_resource(resource_admin->get("high.wav"))->as_fx(), 0);
 					break;
 				case SDLK_2:
-					Mix_PlayChannel(-1, static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("medium.wav"))->as_fx(), 0);
+					Mix_PlayChannel(-1, audio_manager::to_audio_resource(resource_admin->get("medium.wav"))->as_fx(), 0);
 					break;
 				case SDLK_3:
-					Mix_PlayChannel(-1,  static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("low.wav"))->as_fx(), 0);
+					Mix_PlayChannel(-1,  audio_manager::to_audio_resource(resource_admin->get("low.wav"))->as_fx(), 0);
 					break;
 				case SDLK_4:
-					Mix_PlayChannel(-1, static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("scratch.wav"))->as_fx(), 0);
+					Mix_PlayChannel(-1, audio_manager::to_audio_resource(resource_admin->get("scratch.wav"))->as_fx(), 0);
 					break;
 				case SDLK_9:
 					if (Mix_PlayingMusic() == 0)
 					{
-						Mix_PlayMusic(static_pointer_cast<audio_resource>(resource_admin->get_resource_by_name("MainTheme.wav"))->as_music(), -1);
+						Mix_PlayMusic(audio_manager::to_audio_resource(resource_admin->get("MainTheme.wav"))->as_music(), -1);
 					}
 					else
 					{
@@ -201,7 +202,7 @@ long game_structure::get_tick_now()
 	return timeGetTime();
 }
 
-void game_structure::spare_time(long frameTime)
+void game_structure::spare_time(long frame_time)
 {
 	event_admin->process_all_events();
 }
@@ -211,12 +212,12 @@ void game_structure::draw(float percent_within_tick)
 	if(config->use_3d_render_manager)
 		D3DRenderManager::GetInstance().update();
 	else
-		sdl_graphics_manager::get().draw_current_scene(false);
+		sdl_graphics_manager::get_instance().draw_current_scene(false);
 }
 
-bool game_structure::initialize_sdl(int screenWidth, int screenHeight)
+bool game_structure::initialize_sdl(const int screen_width, const int screen_height)
 {
-	return log_if_false(sdl_graphics_manager::get().initialize( screenWidth, screenHeight),"Failed to initialize SDL graphics manager");
+	return log_if_false(sdl_graphics_manager::get_instance().initialize(screen_width, screen_height),"Failed to initialize SDL graphics manager");
 }
 
 /**
@@ -293,7 +294,7 @@ bool game_structure::initialize()
 	{
 		const auto resource_admin_initialized_ok = log_if_false(resource_admin->initialize(), "Could not initialize resource manager");
 		const auto sdl_initialize_ok = log_if_false(initialize_sdl(config->screen_width, config->screen_height), "Could not initialize SDL, aborting.");
-		const auto dx_render_manager_initialized_ok = config->use_3d_render_manager && init3d_render_manager();
+		const auto dx_render_manager_initialized_ok = config->use_3d_render_manager && init3d_render_manager(); // we dont use 3d yet
 		
 		if(failed(sdl_initialize_ok) || failed(resource_admin_initialized_ok) || failed(dx_render_manager_initialized_ok, "Ignoring dx renderer for now", true) )
 			return false;		

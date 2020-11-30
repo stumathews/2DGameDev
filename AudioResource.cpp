@@ -15,9 +15,9 @@ audio_resource::audio_resource(int uid, string name, string path, string type, i
 void audio_resource::load()
 {
 	if(is_fx())
-		fx = Mix_LoadWAV(resource_admin->get_resource_by_name(name)->path.c_str());
+		fx = Mix_LoadWAV(resource_admin->get(name)->path.c_str());
 	else
-		music = Mix_LoadMUS(resource_admin->get_resource_by_name(name)->path.c_str());
+		music = Mix_LoadMUS(resource_admin->get(name)->path.c_str());
 	
 	is_loaded = true;
 }
