@@ -33,19 +33,17 @@ public:
 	std::shared_ptr<asset> create_asset(tinyxml2::XMLElement * asset_xml_element);
 	
 	bool initialize(const uint width = 800, uint height = 600, const char* window_title = nullptr);	
-	void draw_all_actors();
 
 	void draw_current_scene(bool update_window_surface_after_drawing = true) const;
 	uint get_screen_width() const { return screen_width;}
 	uint get_screen_height() const { return screen_height;}
 	
-    string get_subscriber_name() override;
+    std::string get_subscriber_name() override;
 	
 private:
-	game_objects game_objects;	
 	uint screen_width = 0;
 	uint screen_height = 0;
-	void clear_draw_present(function<void(SDL_Renderer* renderer)> &render_routine) const;
+	void clear_draw_present(std::function<void(SDL_Renderer* renderer)> &render_routine) const;
 	
 	events handle_event(const std::shared_ptr<event> the_event) override;
 	

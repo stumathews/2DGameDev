@@ -1,5 +1,7 @@
 #include "font_resource.h"
 
+using namespace std;
+
 font_resource::font_resource(const int uid, string name, string path, string type, int scene) : asset(uid, name, path, type, scene)
 {
 	// ctor used for initialization only
@@ -15,8 +17,9 @@ void font_resource::load()
 	font =  TTF_OpenFont( name.c_str(), 28 );
 }
 
-void font_resource::unload()
+bool font_resource::unload()
 {
 	TTF_CloseFont(font);
     font = nullptr;
+	return true;
 }

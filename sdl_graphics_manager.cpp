@@ -40,14 +40,12 @@ sdl_graphics_manager::sdl_graphics_manager(sdl_graphics_manager&& other)
 	this->window = other.window;
 	this->window_renderer = other.window_renderer;
 	this->window_surface = other.window_surface;
-	this->game_objects = other.game_objects;
 	this->screen_height = other.screen_height;
 	this->screen_width = other.screen_width;
 
 	other.window = nullptr;
 	other.window_renderer = nullptr;
 	other.window_surface = nullptr;
-	other.game_objects = {};
 	other.screen_height = 0;
 	other.screen_width = 0;
 }
@@ -59,14 +57,12 @@ sdl_graphics_manager& sdl_graphics_manager::operator=(sdl_graphics_manager&& oth
 		this->window = other.window;
 		this->window_renderer = other.window_renderer;
 		this->window_surface = other.window_surface;
-		this->game_objects = other.game_objects;
 		this->screen_height = other.screen_height;
 		this->screen_width = other.screen_width;
 
 		other.window = nullptr;
 		other.window_renderer = nullptr;
 		other.window_surface = nullptr;
-		other.game_objects = {};
 		other.screen_height = 0;
 		other.screen_width = 0;
 	}
@@ -184,18 +180,6 @@ std::shared_ptr<asset> sdl_graphics_manager::create_asset(tinyxml2::XMLElement *
 	return resource;
 }
 
-void sdl_graphics_manager::draw_all_actors()
-{
-	RenderFunc render_routine = [&](SDL_Renderer*)
-	{
-		for(const auto &game_object : game_objects)
-		if(game_object->is_visible)
-			game_object->draw(window_renderer);
-	};
-	
-	clear_draw_present(render_routine);
-}
-
 void sdl_graphics_manager::clear_draw_present(std::function<void(SDL_Renderer* renderer)> &render_routine) const
 {
 	// backup current render color
@@ -211,9 +195,10 @@ void sdl_graphics_manager::clear_draw_present(std::function<void(SDL_Renderer* r
 // Draws all the actors in the scene
 void sdl_graphics_manager::draw_current_scene(bool update_window_surface_after_drawing) const
 {	
-	auto render_all_objects = static_cast<RenderFunc>([&](SDL_Renderer*)
+	auto render_all_objects = static_cast<render_func>([&](SDL_Renderer*)
 	{
 		const auto current_scene = scene_admin;
+		
 		// Draw all objects in the layer
 		for (const auto& layer : current_scene->get_scene_layers())
 		{

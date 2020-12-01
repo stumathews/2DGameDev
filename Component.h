@@ -1,12 +1,12 @@
 #pragma once
 #include <string>
-using namespace std;
-class Component
+
+class component
 {
 public:
-	Component(string name) : m_Name(name){}
-	string m_Name;
-	string GetName() { return m_Name; }
-	void SetName(string name) { this->m_Name = name;}
+	explicit component(const std::string name);
+	std::string name;
+	std::string get_name() const;
+	void set_name(std::string name);
 };
 

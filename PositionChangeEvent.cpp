@@ -1,5 +1,7 @@
 #include "PositionChangeEvent.h"
 
+using namespace std;
+
 position_change_event::position_change_event(Direction dir): event(event_type::PositionChangeEventType)
 {
 	direction = dir;

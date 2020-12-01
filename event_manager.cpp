@@ -4,6 +4,8 @@
 #include "Logger.h"
 #include "Common.h"
 
+using namespace std;
+
 extern shared_ptr<global_config> config;
 
 event_manager::event_manager() = default;

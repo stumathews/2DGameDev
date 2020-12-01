@@ -28,7 +28,7 @@ bool audio_resource::is_fx() const
 }
 
 
-void audio_resource::unload()
+bool audio_resource::unload()
 {
 	if(is_fx() && fx != nullptr)
 	{
@@ -45,5 +45,6 @@ void audio_resource::unload()
 			is_loaded = false;
 		}
 	}
+	return true;
 }
 

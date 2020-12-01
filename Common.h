@@ -10,7 +10,7 @@
 #include "Logger.h"
 #include "Common.h"
 
-inline bool succeeded(const bool condition, string message = "")
+inline bool succeeded(const bool condition, std::string message = "")
 {
 	const auto is = condition == true;
 	if(is == true)
@@ -18,7 +18,7 @@ inline bool succeeded(const bool condition, string message = "")
 	return is;
 }
 
-inline bool failed(bool condition,  string message = "", bool ignore = false)
+inline bool failed(bool condition,  std::string message = "", bool ignore = false)
 {
 	const auto is = condition == false;
 	if(is == false)
@@ -41,15 +41,25 @@ struct game_world_data
 	std::vector<std::shared_ptr<game_object>> game_objects;
 };
 
-inline void log_message(const string &message, const bool be_verbose = global_config::verbose)
+inline void log_message(const std::string &message, const bool be_verbose = global_config::verbose)
 {
 	logger::log_message(message, be_verbose);
 }
 
-inline bool run_and_log(const string &message, bool verbose, const std::function<bool()>& action, bool print_finished = true)
+inline bool run_and_log(const std::string &message, bool verbose, const std::function<bool()>& action, bool print_finished = true, bool run_if = true)
 {
 	log_message(message);
-	const auto result = action();
+	bool result;
+	if(run_if)
+	{
+		result = action();
+	}
+	else
+	{
+		result = true; // always succeed if we've been told to not run the action
+	}
+
+	
 	if(print_finished)
 		log_message("Finished.");
 	return result;
@@ -61,7 +71,7 @@ auto as_integer(ENUM const value)
 	return static_cast<typename std::underlying_type<ENUM>::type>(value);
 }
 
-inline bool log_if_false(bool condition, string message)
+inline bool log_if_false(bool condition, std::string message)
 {
 	if(condition == false)
 		log_message(message);

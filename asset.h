@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-using namespace std;
 
 /**
  Meta data about a resource (uid, name, path, type, scene etc)
@@ -9,12 +8,12 @@ class asset
 {
 public:	
 	
-	asset(int uid, string& name, const string& path, const string& type, int scene);
+	asset(int uid, std::string& name, const std::string& path, const std::string& type, int scene);
 
 	const int uid;
-	const string name;
-	const string path;
-	const string type;
+	const std::string name;
+	const std::string path;
+	const std::string type;
 	const int scene;
 
 	bool is_loaded;
@@ -23,7 +22,7 @@ public:
 	virtual void load() = 0;
 
 	// All resources can unload themselves
-	virtual void unload() = 0;
+	virtual bool unload() = 0;
 	
 	virtual ~asset() = default;
 };

@@ -1,6 +1,7 @@
 #include "LevelGenerator.h"
 #include <stack>
 #include <ctime>
+using namespace std;
 
 vector<shared_ptr<square>> level_generator::generate_level()
 {

@@ -8,7 +8,7 @@ class position_change_event : public event
 public:
 	explicit position_change_event(Direction dir);
 	Direction direction;
-	string to_str() override;
+	std::string to_str() override;
 };
 
 

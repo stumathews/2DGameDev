@@ -8,13 +8,13 @@
 
 class event_manager  // NOLINT(cppcoreguidelines-special-member-functions, hicpp-special-member-functions)
 {
-	queue<shared_ptr<event>> primary_event_queue_;
+	std::queue<std::shared_ptr<event>> primary_event_queue_;
 	
 	// used to hold events occuring out of processing of primary events
-	queue<shared_ptr<event>> secondary_event_queue_;
+	std::queue<std::shared_ptr<event>> secondary_event_queue_;
 
 	// Event subscribers (aka event handlers)
-	map<event_type, std::vector<event_subscriber*>> event_subscribers_;
+	std::map<event_type, std::vector<event_subscriber*>> event_subscribers_;
 	
 	public:
 	event_manager();

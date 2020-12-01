@@ -5,26 +5,36 @@ class game_structure final : public event_subscriber
 {
 public:
 	game_structure();
+	
 	static void init_game_world_data();
-
-	static bool initialize(int screen_width, int screen_height);
-	static bool init3d_render_manager();
-	shared_ptr<player> create_player() const;
+	static bool initialize_sdl(int screen_width, int screen_height);
+	
+	std::shared_ptr<player> create_player() const;
 	void setup_player() const;
 	static bool initialize();
+
 	void game_loop();
-	bool load_content() const;
-	static long get_tick_now();
-	void world_update();
+
 	void update();
-	static void draw(float);
-	static void spare_time(long);
-	static bool initialize_sdl(int screen_width, int screen_height);
-	static void unload();
+	void world_update();
+	void player_update();
 	void get_input();
 	
-	void player_update();
+	static void draw(float);
 
-	vector<shared_ptr<event>> handle_event(std::shared_ptr<event> evt) override;
-	string get_subscriber_name() override;
+	/**
+	 * Parses game resources, generates level and adds player to scene
+	 */
+	bool load_content() const;
+	static long get_tick_now();
+
+	/***
+	 Ask the event manager to process events
+	 */
+	static void spare_time(long);
+
+	static void unload();	 // releases resources
+
+	std::vector<std::shared_ptr<event>> handle_event(std::shared_ptr<event> the_event) override;
+	std::string get_subscriber_name() override;
 };

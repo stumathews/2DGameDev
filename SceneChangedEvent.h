@@ -1,7 +1,7 @@
 #pragma once
 #include "Events.h"
 
-class scene_changed_event : public event
+class scene_changed_event final : public event
 {
 public:
 	explicit scene_changed_event(int level) : event(event_type::LevelChangedEventType)
@@ -9,6 +9,6 @@ public:
 		scene_id = level;
 	}
 	int scene_id;
-	string to_str() override;
+	std::string to_str() override;
 };
 

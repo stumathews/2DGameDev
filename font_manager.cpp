@@ -1,7 +1,7 @@
 #include "font_manager.h"
 #include "tinyxml2.h"
 
-std::shared_ptr<asset> font_manager::create_asset(tinyxml2::XMLElement* element)
+std::shared_ptr<asset> font_manager::create_asset(tinyxml2::XMLElement* element) const
 {
 	int uuid;
 	const char* type;
@@ -18,7 +18,6 @@ std::shared_ptr<asset> font_manager::create_asset(tinyxml2::XMLElement* element)
 	// Read anything specific to audio in the element here...
 
 	auto font = std::make_shared<font_resource>(uuid, name, path, type, scene);
-	
-	fonts.push_back(font);
+
 	return font;
 }

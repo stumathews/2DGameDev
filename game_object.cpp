@@ -139,9 +139,9 @@ void game_object::set_color_key(const Uint8 r, const Uint8 g, const Uint8 b)
 	color_key.b = b;
 }
 
-void game_object::add_component(const shared_ptr<Component>& component)
+void game_object::add_component(const shared_ptr<component>& component)
 {
-	components[component->GetName()] = component;
+	components[component->get_name()] = component;
 }
 
 bool game_object::is_player()
@@ -149,7 +149,7 @@ bool game_object::is_player()
 	return find_component(constants::playerComponentName) != nullptr;
 }
 
-shared_ptr<Component> game_object::find_component(string name)
+shared_ptr<component> game_object::find_component(string name)
 {
 	return components[name];
 }

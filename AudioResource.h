@@ -6,7 +6,7 @@
 class audio_resource final : public asset
 {
 public:
-	audio_resource(int uid, string name, const string path, const string type, int scene);
+	audio_resource(int uid, std::string name, const std::string path, const std::string type, int scene);
 
 	// data
 	Mix_Chunk *fx = nullptr;	
@@ -21,6 +21,6 @@ public:
 	bool is_fx() const;
 
 	// a render resource can unload itself from memory
-	void unload() override;
+	bool unload() override;
 };
 

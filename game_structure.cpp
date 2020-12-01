@@ -21,7 +21,6 @@
 #include "AudioResource.h"
 #include "AudioManager.h"
 
-using namespace std;
 
 extern shared_ptr<event_manager> event_admin;
 extern shared_ptr<resource_manager> resource_admin;
@@ -165,7 +164,7 @@ void game_structure::player_update()
 }
 
 
-vector<shared_ptr<event>> game_structure::handle_event(std::shared_ptr<event> evt)
+vector<shared_ptr<event>> game_structure::handle_event(std::shared_ptr<event> the_event)
 {
 	// game_structure does not subscribe to any events
 	return vector<shared_ptr<event>>();
@@ -211,10 +210,7 @@ void game_structure::spare_time(long frame_time)
 
 void game_structure::draw(float percent_within_tick)
 {
-	if(config->use_3d_render_manager)
-		D3DRenderManager::GetInstance().update();
-	else
-		graphics_admin->draw_current_scene(false);
+	graphics_admin->draw_current_scene(false);
 }
 
 bool game_structure::initialize_sdl(const int screen_width, const int screen_height)
@@ -222,9 +218,7 @@ bool game_structure::initialize_sdl(const int screen_width, const int screen_hei
 	return log_if_false(graphics_admin->initialize(screen_width, screen_height),"Failed to initialize SDL graphics manager");
 }
 
-/**
- * Frees static content not managed by resource manager
- */
+
 void game_structure::unload()
 {
 	resource_admin->unload();		
@@ -246,38 +240,9 @@ void game_structure::init_game_world_data()
 	game_world->can_render = true;
 }
 
-bool game_structure::initialize(int screen_width, int screen_height)
-{
-	return run_and_log("game_structure::initialize()", config->verbose, [&]()
-	{
-		resource_admin->initialize();
-
-		const auto sdl_ok = log_if_false(initialize_sdl(screen_width, screen_height), "Could not initialize SDL, aborting.");
-		
-		if(!sdl_ok)
-			return false;
-		
-		if(config->use_3d_render_manager)
-			init3d_render_manager();
-
-		return true;
-	});
-}
-
-bool game_structure::init3d_render_manager()
-{
-	auto& renderManager = D3DRenderManager::GetInstance();
-	renderManager.Initialize(GetModuleHandle(NULL), 800, 600, false, "My Window");
-	auto mesh = new Mesh3D();
-	mesh->create();
-	D3DRenderManager::GetInstance().meshes.push_back(mesh);
-	return true;
-}
-
 shared_ptr<player> game_structure::create_player() const
 {
-	return make_shared<player>(player(config->player_init_pos_x, config->player_init_pos_y,
-	                                  config->square_width / 2));
+	return make_shared<player>(player(config->player_init_pos_x, config->player_init_pos_y, config->square_width / 2));
 }
 
 void game_structure::setup_player() const
@@ -305,12 +270,10 @@ bool game_structure::initialize()
 
 		// Initialize SDL
 		const auto sdl_initialize_ok = log_if_false(initialize_sdl(config->screen_width, config->screen_height), "Could not initialize SDL, aborting.");
-		const auto dx_render_manager_initialized_ok = config->use_3d_render_manager && init3d_render_manager(); // we dont use 3d yet
 		
 		if(failed(sdl_initialize_ok) || 
 		   failed(event_admin_initialized_ok) ||
 		   failed(resource_admin_initialized_ok) || 
-		   failed(dx_render_manager_initialized_ok, "Ignoring dx renderer for now", true) || 
 		   failed(scene_admin_initialized_ok)) 
 			return false;		
 
@@ -366,9 +329,7 @@ void game_structure::game_loop()
 	std::cout << "Game done" << std::endl;
 }
 
-/**
- * Parses game resources, generates level and adds player to scene
- */
+
 bool game_structure::load_content() const
 {
 	resource_admin->read_resources();
