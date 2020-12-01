@@ -8,6 +8,7 @@
 #include "scene_manager.h"
 #include "resource_manager.h"
 #include "AudioManager.h"
+#include "font_manager.h"
 
 using namespace std;
 
@@ -19,6 +20,7 @@ shared_ptr<resource_manager> resource_admin(new resource_manager); // co-ordinat
 shared_ptr<game_structure> game(new game_structure); // logical structure of the game such as the game initialization, game loop etc.
 shared_ptr<sdl_graphics_manager> graphics_admin(new sdl_graphics_manager); // deals with our drawing operations
 shared_ptr<audio_manager> audio_admin(new audio_manager);
+shared_ptr<font_manager> font_admin(new font_manager);
 shared_ptr<global_config> config(new global_config); // game settings
 
 int main(int argc, char *args[])

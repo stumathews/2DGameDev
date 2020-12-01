@@ -114,9 +114,6 @@
     <ClCompile Include="rect_details.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphic_asset.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="player_moved_event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -130,6 +127,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="font_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="graphic_resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -251,9 +251,6 @@
     <ClInclude Include="sdl_graphics_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="graphic_asset.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="aliases.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -270,6 +267,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="font_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="graphic_resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "graphic_asset.h"
+#include "graphic_resource.h"
 #include "tinyxml2.h"
 #include <memory>
 #include "event_subscriber.h"
@@ -46,7 +46,7 @@ private:
 	game_objects game_objects;	
 	uint screen_width = 0;
 	uint screen_height = 0;
-	void clear_draw_present(function<void(SDL_Renderer* renderer)> &draw_routine_2) const;
+	void clear_draw_present(function<void(SDL_Renderer* renderer)> &render_routine) const;
 	
 	events handle_event(const std::shared_ptr<event> the_event) override;
 	

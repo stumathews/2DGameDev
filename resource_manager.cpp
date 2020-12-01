@@ -17,6 +17,7 @@ extern shared_ptr<global_config> config;
 extern shared_ptr<event_manager> event_admin;
 extern shared_ptr<sdl_graphics_manager> graphics_admin;
 extern shared_ptr<audio_manager> audio_admin;
+extern shared_ptr<font_manager> font_admin;
 
 resource_manager::resource_manager() = default;
 
@@ -127,7 +128,7 @@ void resource_manager::read_resources()
 						the_asset = audio_admin->create_asset(element);
 
 					if(strcmp(type, "font") == 0)
-						the_asset = font_manager::get_instance().create_asset(element);
+						the_asset = font_admin->create_asset(element);
 
 					if(the_asset)
 						store_asset(the_asset);

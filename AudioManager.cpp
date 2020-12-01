@@ -25,7 +25,7 @@ std::shared_ptr<asset> audio_manager::create_asset(tinyxml2::XMLElement * elemen
 	
 	auto audio = std::make_shared<audio_resource>(uuid, string(name), string(path), string(type), scene);
 	
-	m_AudioResources.push_back(audio);
+	audio_resources.push_back(audio);
 	return audio;
 }
 

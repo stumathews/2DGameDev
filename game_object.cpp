@@ -58,9 +58,9 @@ void game_object::raise_event(const shared_ptr<event>& the_event)
 	event_admin->raise_event(the_event, this);
 }
 
-shared_ptr<graphic_asset> game_object::get_graphic_asset() const
+shared_ptr<graphic_resource> game_object::get_graphic_asset() const
 {
-	return graphic_resource;
+	return graphic;
 }
 
 void game_object::draw(SDL_Renderer * renderer)
@@ -176,15 +176,15 @@ void game_object::draw_resource(SDL_Renderer* renderer) const
 	{
 		SDL_Rect draw_location = { x, y, 100,100 };
 		const auto rect = get_graphic_asset()->is_animated
-						?  &graphic_resource->view_port
+						?  &graphic->view_port
 						: nullptr;
-		SDL_RenderCopy( sdl_graphics_manager::get_instance().window_renderer, graphic_resource->texture, rect, &draw_location );
+		SDL_RenderCopy( sdl_graphics_manager::get_instance().window_renderer, graphic->texture, rect, &draw_location );
 	}
 }
 
 bool game_object::is_resource_loaded() const
 {
-	return graphic_resource != nullptr;
+	return graphic != nullptr;
 }
 
 
@@ -194,7 +194,7 @@ string game_object::get_tag() const
 	return this->tag;
 }
 
-void game_object::set_graphic_resource(shared_ptr<graphic_asset> resource)
+void game_object::set_graphic_resource(shared_ptr<graphic_resource> resource)
 {
-	this->graphic_resource = resource;
+	this->graphic = resource;
 }

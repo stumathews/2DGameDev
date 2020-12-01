@@ -5,7 +5,7 @@
 #include "scene_manager.h"
 #include "SceneItem.h"
 #include "SDL_image.h"
-#include "graphic_asset.h"
+#include "graphic_resource.h"
 #include <iostream>
 #include <SDL.h>
 #include "event_subscriber.h"
@@ -177,8 +177,8 @@ std::shared_ptr<asset> sdl_graphics_manager::create_asset(tinyxml2::XMLElement *
 
 
 	auto resource = is_animated
-		                        ? std::make_shared<graphic_asset>(uuid, name_c, path, type, level, num_key_frames, key_frame_height, key_frame_width,  is_animated)
-		                        : std::make_shared<graphic_asset>(uuid, name_c, path, type, level, is_animated);
+		                        ? std::make_shared<graphic_resource>(uuid, name_c, path, type, level, num_key_frames, key_frame_height, key_frame_width,  is_animated)
+		                        : std::make_shared<graphic_resource>(uuid, name_c, path, type, level, is_animated);
 		
 	
 	return resource;

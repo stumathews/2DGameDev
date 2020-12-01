@@ -14,6 +14,6 @@ public:
 	static shared_ptr<audio_resource> to_resource(const shared_ptr<asset>& asset);
 private:	
 
-	vector<shared_ptr<audio_resource>> m_AudioResources;
+	vector<shared_ptr<audio_resource>> audio_resources;
 };
 

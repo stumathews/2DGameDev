@@ -36,7 +36,7 @@
     <ClCompile Include="game_structure.cpp" />
     <ClCompile Include="scene_loaded_event.cpp" />
     <ClCompile Include="sdl_graphics_manager.cpp" />
-    <ClCompile Include="graphic_asset.cpp" />
+    <ClCompile Include="graphic_resource.cpp" />
     <ClCompile Include="LevelGenerator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh3D.cpp" />
@@ -82,7 +82,7 @@
     <ClInclude Include="global_config.h" />
     <ClInclude Include="scene_loaded_event.h" />
     <ClInclude Include="sdl_graphics_manager.h" />
-    <ClInclude Include="graphic_asset.h" />
+    <ClInclude Include="graphic_resource.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="LevelGenerator.h" />
     <ClInclude Include="Mesh3D.h" />

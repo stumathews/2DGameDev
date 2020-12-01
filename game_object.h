@@ -24,8 +24,8 @@ public:
 
 	void subscribe_to_event(event_type type);
 	void raise_event(const shared_ptr<event>& the_event);
-	shared_ptr<graphic_asset> get_graphic_asset() const;
-	void set_graphic_resource(shared_ptr<graphic_asset> graphic_resource);
+	shared_ptr<graphic_resource> get_graphic_asset() const;
+	void set_graphic_resource(shared_ptr<graphic_resource> graphic_resource);
 
 	void virtual draw(SDL_Renderer* renderer) = 0;	
 	void virtual update() = 0;
@@ -53,7 +53,7 @@ private:
 	string tag;
 	bool is_traveling_left;
 	int red, blue, green;
-	shared_ptr<graphic_asset> graphic_resource; // can be shared by other actors
+	shared_ptr<graphic_resource> graphic; // can be shared by other actors
 	map<string, shared_ptr<Component>> components;
 	SDL_Color color_key = {};
 	int move_interval = global_config::move_interval; // move by intervals of 10 pixels
