@@ -13,8 +13,7 @@ class sdl_graphics_manager final : public event_subscriber
 {
 
 public:
-	static sdl_graphics_manager& get_instance();
-
+	
 	sdl_graphics_manager();
 	~sdl_graphics_manager();
 	sdl_graphics_manager(sdl_graphics_manager const&)  = delete;
@@ -51,10 +50,4 @@ private:
 	events handle_event(const std::shared_ptr<event> the_event) override;
 	
 };
-
-inline sdl_graphics_manager& sdl_graphics_manager::get_instance()
-{
-	static sdl_graphics_manager instance;
-	return instance;
-}
 

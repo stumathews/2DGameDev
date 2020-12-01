@@ -28,6 +28,7 @@ extern shared_ptr<resource_manager> resource_admin;
 extern shared_ptr<global_config> config;
 extern shared_ptr<game_world_data> game_world;
 extern shared_ptr<scene_manager> scene_admin;
+extern shared_ptr<sdl_graphics_manager> graphics_admin;
 
 void game_structure::get_input()
 {
@@ -213,12 +214,12 @@ void game_structure::draw(float percent_within_tick)
 	if(config->use_3d_render_manager)
 		D3DRenderManager::GetInstance().update();
 	else
-		sdl_graphics_manager::get_instance().draw_current_scene(false);
+		graphics_admin->draw_current_scene(false);
 }
 
 bool game_structure::initialize_sdl(const int screen_width, const int screen_height)
 {
-	return log_if_false(sdl_graphics_manager::get_instance().initialize(screen_width, screen_height),"Failed to initialize SDL graphics manager");
+	return log_if_false(graphics_admin->initialize(screen_width, screen_height),"Failed to initialize SDL graphics manager");
 }
 
 /**

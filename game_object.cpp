@@ -12,6 +12,7 @@
 extern shared_ptr<event_manager> event_admin;
 extern shared_ptr<global_config> config;
 extern shared_ptr<resource_manager> resource_admin;
+extern shared_ptr<sdl_graphics_manager> graphics_admin;
 
 void game_object::change_object_position(const std::shared_ptr<event> the_event)
 {
@@ -108,7 +109,7 @@ void game_object::detect_side_collision()
 	}
 	else
 	{
-		if (x == sdl_graphics_manager::get_instance().get_screen_width())
+		if (x == graphics_admin->get_screen_width())
 		{
 			Mix_PlayChannel(-1, static_pointer_cast<audio_resource>(resource_admin->get("low.wav"))->as_fx(), 0);
 			is_traveling_left = true;
@@ -178,7 +179,7 @@ void game_object::draw_resource(SDL_Renderer* renderer) const
 		const auto rect = get_graphic_asset()->is_animated
 						?  &graphic->view_port
 						: nullptr;
-		SDL_RenderCopy( sdl_graphics_manager::get_instance().window_renderer, graphic->texture, rect, &draw_location );
+		SDL_RenderCopy( graphics_admin->window_renderer, graphic->texture, rect, &draw_location );
 	}
 }
 
