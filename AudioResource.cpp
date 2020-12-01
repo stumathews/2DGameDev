@@ -6,10 +6,10 @@
 
 extern shared_ptr<resource_manager> resource_admin;
 
-audio_resource::audio_resource(int uid, string name, string path, string type, int scene) 
+audio_resource::audio_resource(const int uid, string name, const string path, const string type, int scene) 
 	: asset(uid, name, path, type, scene)
 {
-	
+	// ctor initialize members only
 }
 
 void audio_resource::load()
@@ -47,6 +47,3 @@ void audio_resource::unload()
 	}
 }
 
-audio_resource::~audio_resource()
-{
-}

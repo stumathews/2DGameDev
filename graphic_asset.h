@@ -1,36 +1,25 @@
 #pragma once
 #include "asset.h"
 #include <SDL.h>
-#include <memory>
-#include "asset.h"
-#include "TypeAliases.h"
 #include "TypeAliases.h"
 
 // A stand-alone graphics resource with backing storage that can load and unload itself
 class graphic_asset : public asset
 {
 public:
-		
-	graphic_asset(int uid, string name, string path, string type, int level, bool isAnimated) 
-		: asset(uid, name, path, type, level), num_key_frames(0), key_frame_height(64), key_frame_width(64), m_bIsAnimated(isAnimated)
-	{}
-	graphic_asset(int uid, string name, string path, string type, int level, uint numKeyFrames, uint keyFrameHeight, uint keyFrameWidth, bool isAnimated)
-		: num_key_frames(numKeyFrames), key_frame_height(keyFrameHeight), key_frame_width(keyFrameWidth),  m_viewPort({ 0, 0, (int)keyFrameWidth, (int)keyFrameHeight }), m_bIsAnimated(isAnimated),
-		asset(uid, name, path, type, level)
-	{};	
+
+	graphic_asset(const int uid, string name, const string& path, const string& type, const int level, const bool is_animated);
+	graphic_asset(const int uid, string name, const string& path, const string& type, const int level, const uint num_key_frames, uint key_frame_height, const uint key_frame_width, const bool is_animated);
 	
 	~graphic_asset();
 
-	// The binary data that will represent the resource once its loaded.
-	//SDL_Surface* m_Surface = nullptr;
-	SDL_Texture* texture = nullptr;
+	SDL_Texture* texture = nullptr; // The binary data that will represent the resource once its loaded.
 
-
-	uint num_key_frames;
-	uint key_frame_height;
-	uint key_frame_width;
-	bool m_bIsAnimated = false;
-	SDL_Rect m_viewPort = {};
+	uint num_key_frames = 0;
+	uint key_frame_height = 0;
+	uint key_frame_width = 0;
+	bool is_animated = false;
+	SDL_Rect view_port = {};
 
 	//Load the resource onto the surface
 	void load() override;

@@ -65,8 +65,8 @@ void sprite::setFrameRect(uint FrameNumber)
 	GetResource()->m_viewPort.w = m_FrameWidth;
 	GetResource()->m_viewPort.h = m_FrameHeight;*/
 
-	get_graphic_asset()->m_viewPort.x = typicalFrame[FrameNumber].x;
-	get_graphic_asset()->m_viewPort.y = typicalFrame[FrameNumber].y;
-	get_graphic_asset()->m_viewPort.w = typicalFrame[FrameNumber].w;
-	get_graphic_asset()->m_viewPort.h = typicalFrame[FrameNumber].h;
+	get_graphic_asset()->view_port.x = typicalFrame[FrameNumber].x;
+	get_graphic_asset()->view_port.y = typicalFrame[FrameNumber].y;
+	get_graphic_asset()->view_port.w = typicalFrame[FrameNumber].w;
+	get_graphic_asset()->view_port.h = typicalFrame[FrameNumber].h;
 }

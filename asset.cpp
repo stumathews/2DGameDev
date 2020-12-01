@@ -1,10 +1,13 @@
 
 #include "asset.h"
 
-/*  A resource's metadata */
-asset::asset(int uid, string name, string path, string type, int scene)
-	: uid(uid), path(path), type(type), name(name), scene(scene), is_loaded(false)
+#include <utility>
+
+
+asset::asset(const int uid, string &name, const string &path, const string &type, const int scene) : uid(uid), name(name), path(path), type(type), scene(scene), is_loaded(false)
 {
+	// constructor initializes member only
 }
+
 
 

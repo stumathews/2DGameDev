@@ -5,13 +5,6 @@
 #include "RectDebugging.h"
 
 
-audio_manager::audio_manager()
-= default;
-
-
-audio_manager::~audio_manager()
-= default;
-
 std::shared_ptr<asset> audio_manager::create_asset(tinyxml2::XMLElement * element)
 {
 	int uuid;
@@ -26,12 +19,14 @@ std::shared_ptr<asset> audio_manager::create_asset(tinyxml2::XMLElement * elemen
 	element->QueryStringAttribute("name", &name);
 	element->QueryIntAttribute("scene", &scene);
 
-	// Read anything specific to audio in the element here...
-
-	auto audioResource = std::shared_ptr<audio_resource>(new audio_resource(uuid, name, path, type, scene));
 	
-	m_AudioResources.push_back(audioResource);
-	return audioResource;
+
+	// Read anything specific to audio in the element here...
+	
+	auto audio = std::make_shared<audio_resource>(uuid, string(name), string(path), string(type), scene);
+	
+	m_AudioResources.push_back(audio);
+	return audio;
 }
 
 shared_ptr<audio_resource> audio_manager::to_resource(const shared_ptr<asset>& asset)

@@ -102,7 +102,7 @@ std::shared_ptr<game_object>& game_object_factory::initialize_game_object(std::s
 	if( (red < 0 || red > 255)  || (blue < 0 || blue > 255) || (green < 0 || green > 255) )
 		throw exception("Invalid color values when constructing game object");
 	
-	if(resource->m_bIsAnimated)
+	if(resource->is_animated)
 	{
 		// Sprite		
 		game_object = std::make_shared<sprite>(x, y, global_config::sprite_width, resource->num_key_frames, global_config::frames_per_row, global_config::frames_per_column, resource->key_frame_width, resource->key_frame_height);

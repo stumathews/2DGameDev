@@ -1,8 +1,13 @@
 #include "font_resource.h"
 
-font_resource::font_resource(int uid, const string name, string path, string type, int scene): asset(
-	uid, name, path, type, scene)
+font_resource::font_resource(const int uid, string name, string path, string type, int scene) : asset(uid, name, path, type, scene)
 {
+	// ctor used for initialization only
+}
+
+TTF_Font* font_resource::get_font() const
+{
+	return font;
 }
 
 void font_resource::load()

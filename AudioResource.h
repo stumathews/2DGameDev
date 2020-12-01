@@ -6,15 +6,15 @@
 class audio_resource final : public asset
 {
 public:
-	audio_resource(int uid, string name, string path, string type, int scene);
-	
-	~audio_resource();
+	audio_resource(int uid, string name, const string path, const string type, int scene);
 
+	// data
 	Mix_Chunk *fx = nullptr;	
 	Mix_Music* music = nullptr;
 
 	Mix_Chunk *as_fx() const { return fx;}
-	Mix_Music *as_music() const {return music;}	
+	Mix_Music *as_music() const {return music;}
+
 	
 	//Load the resource onto the surface
 	void load() override;

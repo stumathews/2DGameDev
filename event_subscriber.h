@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class event_subscriber  // NOLINT(cppcoreguidelines-special-member-functions, hicpp-special-member-functions)
+class event_subscriber
 {
 	public:
 	event_subscriber()=default;

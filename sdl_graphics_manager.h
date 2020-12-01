@@ -31,7 +31,7 @@ public:
 	SDL_Renderer* window_renderer = nullptr; //The window renderer
 	SDL_Surface* window_surface = nullptr; 
 
-	static std::shared_ptr<asset> create_asset(tinyxml2::XMLElement * asset_xml_element);
+	std::shared_ptr<asset> create_asset(tinyxml2::XMLElement * asset_xml_element);
 	
 	bool initialize(const uint width = 800, uint height = 600, const char* window_title = nullptr);	
 	void draw_all_actors();

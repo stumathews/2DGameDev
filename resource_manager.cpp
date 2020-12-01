@@ -15,16 +15,29 @@ using namespace std;
 
 extern shared_ptr<global_config> config;
 extern shared_ptr<event_manager> event_admin;
+extern shared_ptr<sdl_graphics_manager> graphics_admin;
+extern shared_ptr<audio_manager> audio_admin;
 
 resource_manager::resource_manager() = default;
 
-vector<shared_ptr<event>> resource_manager::handle_event(const shared_ptr<event> evt)
+bool resource_manager::initialize()
 {
-	if(evt->type == event_type::LevelChangedEventType)
+	return run_and_log("resource_manager::initialize()", config->verbose, [&]()
+	{			
+		event_admin->subscribe_to_event(event_type::LevelChangedEventType, this); // we will load the resources for the level that has been loaded
+		return true;
+	});
+}
+
+vector<shared_ptr<event>> resource_manager::handle_event(const shared_ptr<event> the_event)
+{
+	if(the_event->type == event_type::LevelChangedEventType)
 	{
-		log_message("Detected level change. Loading level assets...");
-		load_level_assets(dynamic_pointer_cast<scene_changed_event>(evt)->scene_id);
-		log_message("Level assets loaded.");
+		run_and_log("Detected level change. Loading level assets...", config->verbose, [&]()
+		{
+			load_level_assets(dynamic_pointer_cast<scene_changed_event>(the_event)->scene_id);
+			return true;
+		});
 	}
 
 	return vector<shared_ptr<event>>();
@@ -63,27 +76,22 @@ void resource_manager::load_level_assets(const int level)
 
 void resource_manager::unload()
 {
-	log_message("Unloading all resources...");
-	for(auto iterator = begin(resource_by_name); iterator != end(resource_by_name); ++iterator)
+	run_and_log("Unloading all resources...", config->verbose, [&]()
 	{
-		auto &asset_name = iterator->first;
-		auto &asset = iterator->second;
-		
-		asset->unload();
-		
-		log_message("Unloaded asset '" + asset_name + string("'."));
-	}	
+		for(const auto &item : resource_by_name)
+		{
+			auto &asset_name = item.first;
+			auto &asset = item.second;
+			
+			asset->unload();
+			
+			log_message("Unloaded asset '" + asset_name + string("'."));
+		}		
+		return true;
+	});	
 }
 
-bool resource_manager::initialize()
-{
-	return run_and_log("resource_manager::initialize()", config->verbose, [&]()
-	{	
-		// we will load the resources for the level that has been loaded
-		event_admin->subscribe_to_event(event_type::LevelChangedEventType, this);
-		return true;
-	});
-}
+
 
 /**
  Index Resources.xml file
@@ -113,10 +121,10 @@ void resource_manager::read_resources()
 					element->QueryStringAttribute("type", &type);			
 
 					if(strcmp(type, "graphic") == 0)
-						the_asset = sdl_graphics_manager::create_asset(element);
+						the_asset = graphics_admin->create_asset(element);
 
 					if(strcmp(type, "fx") == 0 || strcmp(type, "music") == 0)
-						the_asset = audio_manager::get_instance().create_asset(element);
+						the_asset = audio_admin->create_asset(element);
 
 					if(strcmp(type, "font") == 0)
 						the_asset = font_manager::get_instance().create_asset(element);

@@ -18,7 +18,7 @@ class resource_manager final : public event_subscriber
 	shared_ptr<asset> get(const string& name);
 	shared_ptr<asset> get(int uuid);
 	int get_resource_count() const { return resource_count; }
-	vector<shared_ptr<event>> handle_event(shared_ptr<event> evt) override;
+	vector<shared_ptr<event>> handle_event(shared_ptr<event> the_event) override;
 	void unload();
 
 	bool initialize();

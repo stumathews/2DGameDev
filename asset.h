@@ -9,13 +9,14 @@ class asset
 {
 public:	
 	
-	asset(int uid, string name, string path, string type, int scene);
-	asset() = default;
-	int uid;
-	string name;
-	string path;
-	string type;
-	int scene;
+	asset(int uid, string& name, const string& path, const string& type, int scene);
+
+	const int uid;
+	const string name;
+	const string path;
+	const string type;
+	const int scene;
+
 	bool is_loaded;
 	
 	// All resources can load themselves
@@ -23,6 +24,7 @@ public:
 
 	// All resources can unload themselves
 	virtual void unload() = 0;
+	
 	virtual ~asset() = default;
 };
 

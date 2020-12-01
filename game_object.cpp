@@ -175,8 +175,8 @@ void game_object::draw_resource(SDL_Renderer* renderer) const
 	if(resource != nullptr && resource->type == "graphic")
 	{
 		SDL_Rect draw_location = { x, y, 100,100 };
-		const auto rect = get_graphic_asset()->m_bIsAnimated
-						?  &graphic_resource->m_viewPort
+		const auto rect = get_graphic_asset()->is_animated
+						?  &graphic_resource->view_port
 						: nullptr;
 		SDL_RenderCopy( sdl_graphics_manager::get_instance().window_renderer, graphic_resource->texture, rect, &draw_location );
 	}
