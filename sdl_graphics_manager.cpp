@@ -74,6 +74,11 @@ string sdl_graphics_manager::get_subscriber_name()
 	return "sdl_graphics_manager";
 }
 
+std::shared_ptr<graphic_resource> sdl_graphics_manager::to_resource(const std::shared_ptr<asset>& asset)
+{
+	return as_resource<graphic_resource>(asset);
+}
+
 SDL_Window* get_sdl_window(const int screen_width, const int screen_height, const char* title)
 {
 	const auto out_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screen_width, screen_height,SDL_WINDOW_SHOWN);	

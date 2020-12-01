@@ -39,6 +39,8 @@ public:
 	uint get_screen_height() const { return screen_height;}
 	
     std::string get_subscriber_name() override;
+
+	static std::shared_ptr<graphic_resource> to_resource(const std::shared_ptr<asset>& asset);
 	
 private:
 	uint screen_width = 0;

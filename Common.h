@@ -4,13 +4,17 @@
 #include <SDL.h>
 #include <vector>
 #include <memory>
-#include "event_manager.h"
 #include "game_object.h"
-#include <iostream>
 #include "Logger.h"
 #include "Common.h"
 
-inline bool succeeded(const bool condition, std::string message = "")
+template<typename R>
+std::shared_ptr<R> as_resource(const std::shared_ptr<asset> &the_asset)
+{
+	return std::static_pointer_cast<R>(the_asset);
+}
+
+inline bool succeeded(const bool condition, const std::string message)
 {
 	const auto is = condition == true;
 	if(is == true)

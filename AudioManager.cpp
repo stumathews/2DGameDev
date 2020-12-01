@@ -2,6 +2,7 @@
 #include <memory>
 #include "asset.h"
 #include "RectDebugging.h"
+#include "Common.h"
 
 
 std::shared_ptr<asset> audio_manager::create_asset(XMLElement * element) const
@@ -25,6 +26,6 @@ std::shared_ptr<asset> audio_manager::create_asset(XMLElement * element) const
 }
 
 shared_ptr<audio_resource> audio_manager::to_resource(const shared_ptr<asset>& asset)
-{
-	return static_pointer_cast<audio_resource>(asset);
+{	
+	return as_resource<audio_resource>(asset);
 }

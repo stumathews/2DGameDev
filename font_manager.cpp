@@ -1,5 +1,6 @@
 #include "font_manager.h"
 #include "tinyxml2.h"
+#include "Common.h"
 
 std::shared_ptr<asset> font_manager::create_asset(tinyxml2::XMLElement* element) const
 {
@@ -20,4 +21,9 @@ std::shared_ptr<asset> font_manager::create_asset(tinyxml2::XMLElement* element)
 	auto font = std::make_shared<font_resource>(uuid, name, path, type, scene);
 
 	return font;
+}
+
+std::shared_ptr<font_resource> font_manager::to_resource(const std::shared_ptr<asset>& asset)
+{
+	return as_resource<font_resource>(asset);
 }
