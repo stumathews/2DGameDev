@@ -12,7 +12,7 @@
 
 using namespace std;
 
-shared_ptr<game_world_data> game_world(new game_world_data); // shared game world
+shared_ptr<game_world_data> game_world(new game_world_data); // shared game world 
 shared_ptr<event_manager> event_admin(new event_manager); // co-ordinates all events within the game
 shared_ptr<scene_manager> scene_admin(new scene_manager); // co-ordinates the scene-related activities in the game
 shared_ptr<resource_manager> resource_admin(new resource_manager); // co-ordinates the resources in the game - such as holding definitions of all the resources/assets in the game
