@@ -18,267 +18,264 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatedActor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AudioManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AudioResource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DoLogicUpdateEvent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Drawing.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PositionChangeEvent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneChangedEvent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="tinyxml2-master\tinyxml2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sprite.cpp">
+    <ClCompile Include="arch\events\AddGameObjectToCurrentSceneEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh3D.cpp">
+    <ClCompile Include="arch\events\AddGameObjectToCurrentSceneEvent.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RenderManager3D.cpp">
+    <ClCompile Include="arch\events\Event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sprites3D.cpp">
+    <ClCompile Include="arch\events\event_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Texture3D.cpp">
+    <ClCompile Include="arch\events\event_subscriber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AddGameObjectToCurrentSceneEvent.h">
+    <ClCompile Include="arch\asset\asset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Component.cpp">
+    <ClCompile Include="arch\audio\AudioManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tuple.cpp">
+    <ClCompile Include="arch\audio\AudioResource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
+    <ClCompile Include="arch\events\DoLogicUpdateEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Square.cpp">
+    <ClCompile Include="arch\game_structure.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RectDebugging.cpp">
+    <ClCompile Include="arch\font\font_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LevelGenerator.cpp">
+    <ClCompile Include="arch\font\font_resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Event.cpp">
+    <ClCompile Include="arch\objects\Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="asset.cpp">
+    <ClCompile Include="arch\objects\game_object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game_object_factory.cpp">
+    <ClCompile Include="arch\objects\game_object_factory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="event_subscriber.cpp">
+    <ClCompile Include="arch\graphic\graphic_resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="event_manager.cpp">
+    <ClCompile Include="arch\objects\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game_object.cpp">
+    <ClCompile Include="arch\objects\player_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game_structure.cpp">
+    <ClCompile Include="arch\events\player_moved_event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sdl_graphics_manager.cpp">
+    <ClCompile Include="arch\events\PositionChangeEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scene_manager.cpp">
+    <ClCompile Include="arch\events\scene_loaded_event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="resource_manager.cpp">
+    <ClCompile Include="arch\events\SceneChangedEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rect_details.cpp">
+    <ClCompile Include="arch\scene\scene_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="player_moved_event.cpp">
+    <ClCompile Include="arch\scene\SceneItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="player_component.cpp">
+    <ClCompile Include="arch\scene\LevelGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scene_loaded_event.cpp">
+    <ClCompile Include="arch\graphic\Drawing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="font_resource.cpp">
+    <ClCompile Include="arch\scene\rect_details.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="font_manager.cpp">
+    <ClCompile Include="arch\graphic\sdl_graphics_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphic_resource.cpp">
+    <ClCompile Include="arch\resource\resource_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AddGameObjectToCurrentSceneEvent.cpp">
+    <ClCompile Include="arch\objects\Sprite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\scene\Square.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\util\Tuple.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\graphic\3d\RenderManager3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\graphic\3d\Texture3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\objects\3d\Sprites3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\graphic\3d\Mesh3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="arch\util\RectDebugging.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimatedActor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioResource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DoLogicUpdateEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Drawing.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Events.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Layer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PositionChangeEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneChangedEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="tinyxml2-master\tinyxml2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TypeAliases.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="COMUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh3D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderManager3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sprites3D.h">
+    <ClInclude Include="arch\common\Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Texture3D.h">
+    <ClInclude Include="arch\events\Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Component.h">
+    <ClInclude Include="arch\events\event_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Tuple.h">
+    <ClInclude Include="arch\events\event_subscriber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
+    <ClInclude Include="arch\events\Events.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Square.h">
+    <ClInclude Include="arch\asset\asset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="constants.h">
+    <ClInclude Include="arch\audio\AudioManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RectDebugging.h">
+    <ClInclude Include="arch\audio\AudioResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LevelGenerator.h">
+    <ClInclude Include="arch\events\DoLogicUpdateEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Event.h">
+    <ClInclude Include="arch\game_structure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="asset.h">
+    <ClInclude Include="arch\font\font_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game_object_factory.h">
+    <ClInclude Include="arch\font\font_resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="global_config.h">
+    <ClInclude Include="arch\objects\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="event_subscriber.h">
+    <ClInclude Include="arch\objects\game_object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="event_manager.h">
+    <ClInclude Include="arch\objects\game_object_factory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game_object.h">
+    <ClInclude Include="arch\graphic\graphic_resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game_structure.h">
+    <ClInclude Include="arch\objects\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scene_manager.h">
+    <ClInclude Include="arch\objects\player_component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource_manager.h">
+    <ClInclude Include="arch\events\player_moved_event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="rect_details.h">
+    <ClInclude Include="arch\events\PositionChangeEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sdl_graphics_manager.h">
+    <ClInclude Include="arch\events\scene_loaded_event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="aliases.h">
+    <ClInclude Include="arch\events\SceneChangedEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="player_moved_event.h">
+    <ClInclude Include="arch\common\aliases.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="player_component.h">
+    <ClInclude Include="arch\scene\scene_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scene_loaded_event.h">
+    <ClInclude Include="arch\scene\SceneItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="font_resource.h">
+    <ClInclude Include="arch\scene\Layer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="font_manager.h">
+    <ClInclude Include="arch\scene\LevelGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="graphic_resource.h">
+    <ClInclude Include="arch\graphic\Drawing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\common\constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\common\global_config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\scene\rect_details.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\graphic\sdl_graphics_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\resource\resource_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\objects\Sprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\scene\Square.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\util\Tuple.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\graphic\3d\RenderManager3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\graphic\3d\Texture3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\objects\3d\Sprites3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\graphic\3d\Mesh3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\common\TypeAliases.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\util\RectDebugging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="arch\util\COMUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="scene2.xml" />
-    <Xml Include="scene3.xml" />
+    <Xml Include="game\scene2.xml" />
+    <Xml Include="game\scene3.xml" />
+    <Xml Include="game\scene1.xml" />
+    <Xml Include="game\Resources.xml" />
+    <Xml Include="game\scene4.xml" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="2DGameDev.rc">

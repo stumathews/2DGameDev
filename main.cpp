@@ -1,14 +1,15 @@
 #include <SDL.h>
 #include <Windows.h>
 #include <iostream>
-#include "Common.h"
-#include "game_object.h"
+#include "arch/common/Common.h"
 #include <vector>
 #include "game_structure.h"
-#include "scene_manager.h"
-#include "resource_manager.h"
-#include "AudioManager.h"
-#include "font_manager.h"
+#include "font/font_manager.h"
+#include <events/event_manager.h>
+#include "audio/AudioManager.h"
+#include "graphic/sdl_graphics_manager.h"
+#include "resource/resource_manager.h"
+#include "scene/scene_manager.h"
 
 using namespace std;
 

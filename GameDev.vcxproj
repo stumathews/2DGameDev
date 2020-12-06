@@ -19,98 +19,99 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AddGameObjectToCurrentSceneEvent.cpp" />
-    <ClCompile Include="AddGameObjectToCurrentSceneEvent.h" />
-    <ClCompile Include="AnimatedActor.cpp" />
-    <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="AudioResource.cpp" />
-    <ClCompile Include="Component.cpp" />
-    <ClCompile Include="event_subscriber.cpp" />
-    <ClCompile Include="font_manager.cpp" />
-    <ClCompile Include="font_resource.cpp" />
-    <ClCompile Include="game_object.cpp" />
-    <ClCompile Include="DoLogicUpdateEvent.cpp" />
-    <ClCompile Include="Drawing.cpp" />
-    <ClCompile Include="Event.cpp" />
-    <ClCompile Include="event_manager.cpp" />
-    <ClCompile Include="game_object_factory.cpp" />
-    <ClCompile Include="game_structure.cpp" />
-    <ClCompile Include="scene_loaded_event.cpp" />
-    <ClCompile Include="sdl_graphics_manager.cpp" />
-    <ClCompile Include="graphic_resource.cpp" />
-    <ClCompile Include="LevelGenerator.cpp" />
+    <ClCompile Include="arch\events\AddGameObjectToCurrentSceneEvent.cpp" />
+    <ClCompile Include="arch\events\AddGameObjectToCurrentSceneEvent.h" />
+    <ClCompile Include="arch\audio\AudioManager.cpp" />
+    <ClCompile Include="arch\audio\AudioResource.cpp" />
+    <ClCompile Include="arch\objects\Component.cpp" />
+    <ClCompile Include="arch\events\event_subscriber.cpp" />
+    <ClCompile Include="arch\font\font_manager.cpp" />
+    <ClCompile Include="arch\font\font_resource.cpp" />
+    <ClCompile Include="arch\objects\game_object.cpp" />
+    <ClCompile Include="arch\events\DoLogicUpdateEvent.cpp" />
+    <ClCompile Include="arch\graphic\Drawing.cpp" />
+    <ClCompile Include="arch\events\Event.cpp" />
+    <ClCompile Include="arch\events\event_manager.cpp" />
+    <ClCompile Include="arch\objects\game_object_factory.cpp" />
+    <ClCompile Include="arch\game_structure.cpp" />
+    <ClCompile Include="arch\events\scene_loaded_event.cpp" />
+    <ClCompile Include="arch\graphic\sdl_graphics_manager.cpp" />
+    <ClCompile Include="arch\graphic\graphic_resource.cpp" />
+    <ClCompile Include="arch\scene\LevelGenerator.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Mesh3D.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="player_component.cpp" />
-    <ClCompile Include="player_moved_event.cpp" />
-    <ClCompile Include="PositionChangeEvent.cpp" />
-    <ClCompile Include="RectDebugging.cpp" />
-    <ClCompile Include="rect_details.cpp" />
-    <ClCompile Include="RenderManager3D.cpp" />
-    <ClCompile Include="asset.cpp" />
-    <ClCompile Include="resource_manager.cpp" />
-    <ClCompile Include="SceneChangedEvent.cpp" />
-    <ClCompile Include="SceneItem.cpp" />
-    <ClCompile Include="scene_manager.cpp" />
-    <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="Sprites3D.cpp" />
-    <ClCompile Include="Square.cpp" />
-    <ClCompile Include="Texture3D.cpp" />
+    <ClCompile Include="arch\graphic\3d\Mesh3D.cpp" />
+    <ClCompile Include="arch\objects\Player.cpp" />
+    <ClCompile Include="arch\objects\player_component.cpp" />
+    <ClCompile Include="arch\events\player_moved_event.cpp" />
+    <ClCompile Include="arch\events\PositionChangeEvent.cpp" />
+    <ClCompile Include="arch\util\RectDebugging.cpp" />
+    <ClCompile Include="arch\scene\rect_details.cpp" />
+    <ClCompile Include="arch\graphic\3d\RenderManager3D.cpp" />
+    <ClCompile Include="arch\asset\asset.cpp" />
+    <ClCompile Include="arch\resource\resource_manager.cpp" />
+    <ClCompile Include="arch\events\SceneChangedEvent.cpp" />
+    <ClCompile Include="arch\scene\SceneItem.cpp" />
+    <ClCompile Include="arch\scene\scene_manager.cpp" />
+    <ClCompile Include="arch\objects\Sprite.cpp" />
+    <ClCompile Include="arch\objects\3d\Sprites3D.cpp" />
+    <ClCompile Include="arch\scene\Square.cpp" />
+    <ClCompile Include="arch\graphic\3d\Texture3D.cpp" />
     <ClCompile Include="tinyxml2-master\tinyxml2.cpp" />
-    <ClCompile Include="Tuple.cpp" />
+    <ClCompile Include="arch\util\Tuple.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="aliases.h" />
-    <ClInclude Include="AnimatedActor.h" />
-    <ClInclude Include="AudioManager.h" />
-    <ClInclude Include="AudioResource.h" />
-    <ClInclude Include="Component.h" />
-    <ClInclude Include="constants.h" />
-    <ClInclude Include="font_manager.h" />
-    <ClInclude Include="font_resource.h" />
-    <ClInclude Include="game_object.h" />
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="COMUtils.h" />
-    <ClInclude Include="DoLogicUpdateEvent.h" />
-    <ClInclude Include="Drawing.h" />
-    <ClInclude Include="Event.h" />
-    <ClInclude Include="event_manager.h" />
-    <ClInclude Include="Events.h" />
-    <ClInclude Include="event_subscriber.h" />
-    <ClInclude Include="game_object_factory.h" />
-    <ClInclude Include="game_structure.h" />
-    <ClInclude Include="global_config.h" />
-    <ClInclude Include="scene_loaded_event.h" />
-    <ClInclude Include="sdl_graphics_manager.h" />
-    <ClInclude Include="graphic_resource.h" />
-    <ClInclude Include="Layer.h" />
-    <ClInclude Include="LevelGenerator.h" />
-    <ClInclude Include="Mesh3D.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="player_component.h" />
-    <ClInclude Include="player_moved_event.h" />
-    <ClInclude Include="PositionChangeEvent.h" />
-    <ClInclude Include="RectDebugging.h" />
-    <ClInclude Include="rect_details.h" />
-    <ClInclude Include="RenderManager3D.h" />
-    <ClInclude Include="asset.h" />
+    <ClInclude Include="arch\common\aliases.h" />
+    <ClInclude Include="arch\audio\AudioManager.h" />
+    <ClInclude Include="arch\audio\AudioResource.h" />
+    <ClInclude Include="arch\objects\Component.h" />
+    <ClInclude Include="arch\common\constants.h" />
+    <ClInclude Include="arch\font\font_manager.h" />
+    <ClInclude Include="arch\font\font_resource.h" />
+    <ClInclude Include="arch\objects\game_object.h" />
+    <ClInclude Include="arch\common\Common.h" />
+    <ClInclude Include="arch\util\COMUtils.h" />
+    <ClInclude Include="arch\events\DoLogicUpdateEvent.h" />
+    <ClInclude Include="arch\graphic\Drawing.h" />
+    <ClInclude Include="arch\events\Event.h" />
+    <ClInclude Include="arch\events\event_manager.h" />
+    <ClInclude Include="arch\events\Events.h" />
+    <ClInclude Include="arch\events\event_subscriber.h" />
+    <ClInclude Include="arch\objects\game_object_factory.h" />
+    <ClInclude Include="arch\game_structure.h" />
+    <ClInclude Include="arch\common\global_config.h" />
+    <ClInclude Include="arch\events\scene_loaded_event.h" />
+    <ClInclude Include="arch\graphic\sdl_graphics_manager.h" />
+    <ClInclude Include="arch\graphic\graphic_resource.h" />
+    <ClInclude Include="arch\scene\Layer.h" />
+    <ClInclude Include="arch\scene\LevelGenerator.h" />
+    <ClInclude Include="arch\graphic\3d\Mesh3D.h" />
+    <ClInclude Include="arch\objects\Player.h" />
+    <ClInclude Include="arch\objects\player_component.h" />
+    <ClInclude Include="arch\events\player_moved_event.h" />
+    <ClInclude Include="arch\events\PositionChangeEvent.h" />
+    <ClInclude Include="arch\util\RectDebugging.h" />
+    <ClInclude Include="arch\scene\rect_details.h" />
+    <ClInclude Include="arch\graphic\3d\RenderManager3D.h" />
+    <ClInclude Include="arch\asset\asset.h" />
     <ClInclude Include="resource1.h" />
-    <ClInclude Include="resource_manager.h" />
-    <ClInclude Include="SceneChangedEvent.h" />
-    <ClInclude Include="SceneItem.h" />
-    <ClInclude Include="scene_manager.h" />
-    <ClInclude Include="Sprite.h" />
-    <ClInclude Include="Sprites3D.h" />
-    <ClInclude Include="Square.h" />
-    <ClInclude Include="Texture3D.h" />
+    <ClInclude Include="arch\resource\resource_manager.h" />
+    <ClInclude Include="arch\events\SceneChangedEvent.h" />
+    <ClInclude Include="arch\scene\SceneItem.h" />
+    <ClInclude Include="arch\scene\scene_manager.h" />
+    <ClInclude Include="arch\objects\Sprite.h" />
+    <ClInclude Include="arch\objects\3d\Sprites3D.h" />
+    <ClInclude Include="arch\scene\Square.h" />
+    <ClInclude Include="arch\graphic\3d\Texture3D.h" />
     <ClInclude Include="tinyxml2-master\tinyxml2.h" />
-    <ClInclude Include="Tuple.h" />
-    <ClInclude Include="TypeAliases.h" />
+    <ClInclude Include="arch\util\Tuple.h" />
+    <ClInclude Include="arch\common\TypeAliases.h" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="scene2.xml" />
-    <Xml Include="scene3.xml" />
+    <Xml Include="game\Resources.xml" />
+    <Xml Include="game\scene1.xml" />
+    <Xml Include="game\scene2.xml" />
+    <Xml Include="game\scene3.xml" />
+    <Xml Include="game\scene4.xml" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="2DGameDev.rc" />
@@ -171,7 +172,7 @@
     <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Stuart\git\2DGameDev\arch;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
     <LibraryPath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
