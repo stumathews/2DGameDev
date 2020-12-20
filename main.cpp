@@ -15,21 +15,23 @@
 using namespace std;
 using namespace gamelib;
 
-shared_ptr<game_world_data> game_world(new game_world_data); // shared game world
-shared_ptr<global_config> config(new global_config); // game settings
-shared_ptr<event_manager> event_admin(new event_manager(config)); // co-ordinates all events within the game
-shared_ptr<sdl_graphics_manager> graphics_admin(new sdl_graphics_manager(event_admin)); // deals with our drawing operations
-shared_ptr<audio_manager> audio_admin(new audio_manager); // makes audio resources
-shared_ptr<font_manager> font_admin(new font_manager); // makes font resources
-shared_ptr<resource_manager> resource_admin(new resource_manager(config, graphics_admin, font_admin, audio_admin )); // co-ordinates the resources in the game - such as holding definitions of all the resources/assets in the game
-shared_ptr<scene_manager> scene_admin(new scene_manager(event_admin, config, resource_admin )); // co-ordinates the scene-related activities in the game
-shared_ptr<game_structure> game(new game_structure(event_admin, resource_admin, config, game_world, scene_admin, graphics_admin)); // logical structure of the game such as the game initialization, game loop etc.
-shared_ptr<settings_manager> settings_admin(new settings_manager);
+
 
 int main(int argc, char *args[])
 {
 	try
 	{
+		const shared_ptr<game_world_data> game_world(new game_world_data); // shared game world
+		const shared_ptr<global_config> config(new global_config); // game settings
+		const shared_ptr<event_manager> event_admin(new event_manager(config)); // co-ordinates all events within the game
+		const shared_ptr<sdl_graphics_manager> graphics_admin(new sdl_graphics_manager(event_admin)); // deals with our drawing operations
+		const shared_ptr<audio_manager> audio_admin(new audio_manager); // makes audio resources
+		const shared_ptr<font_manager> font_admin(new font_manager); // makes font resources
+		const shared_ptr<resource_manager> resource_admin(new resource_manager(config, graphics_admin, font_admin, audio_admin )); // co-ordinates the resources in the game - such as holding definitions of all the resources/assets in the game
+		const shared_ptr<scene_manager> scene_admin(new scene_manager(event_admin, config, resource_admin )); // co-ordinates the scene-related activities in the game
+		const shared_ptr<game_structure> game(new game_structure(event_admin, resource_admin, config, game_world, scene_admin, graphics_admin)); // logical structure of the game such as the game initialization, game loop etc.
+		const shared_ptr<settings_manager> settings_admin(new settings_manager);
+		
 		const auto is_initialized = succeeded(game->initialize(), "Initialize");
 		const auto is_loaded = succeeded(game->load_content(), "load_content");
 
