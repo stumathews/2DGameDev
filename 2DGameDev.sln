@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "2DGameDev", "GameDev.vcxproj", "{A335C1BA-CFDA-41FD-A0E3-307EBDF715CC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{669A9E46-91FC-4BF2-9D51-8B9C350D4D0D} = {669A9E46-91FC-4BF2-9D51-8B9C350D4D0D}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentManager", "ContentManager\ContentManager\ContentManager.csproj", "{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}"
 EndProject
