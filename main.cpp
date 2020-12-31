@@ -76,7 +76,17 @@ bool level_manager::initialize()
 
 shared_ptr<player> level_manager::create_player(shared_ptr<settings_manager> settings_admin, shared_ptr<resource_manager> resource_admin) const
 {
-	return make_shared<player>(player(settings_admin->get_int("player","player_init_pos_x"), settings_admin->get_int("player", "player_init_pos_y"), settings_admin->get_int("global", "square_width") / 2, resource_admin, settings_admin));
+	const auto rows = settings_admin->get_int("grid","rows");
+	const auto cols = settings_admin->get_int("grid","cols");
+	const auto screen_width = settings_admin->get_int("global","screen_width");
+	const auto screen_height = settings_admin->get_int("global","screen_height");
+	const auto w = screen_width / cols; //settings_admin->get_int("global","square_width");
+	const auto h = screen_height / rows;
+	auto const x = settings_admin->get_int("player","player_init_pos_x");
+	auto const y = settings_admin->get_int("player", "player_init_pos_y");
+	
+	
+	return make_shared<player>(player(x, y, w, h, resource_admin, settings_admin));
 }
 
 shared_ptr<game_object> level_manager::setup_player(vector<shared_ptr<square>> rooms) const

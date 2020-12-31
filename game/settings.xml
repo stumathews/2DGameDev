@@ -12,8 +12,12 @@
 		<setting name="frames_per_column" type="int">3</setting>
 		<setting name="verbose" type="bool">true</setting>
 		<setting name="use_3d_render_manager" type="bool">true</setting>
-		<setting name="print_debugging_text" type="bool">true</setting>
+		<setting name="print_debugging_text" type="bool">false</setting>
 	</global>
+	<grid>
+		<setting name="rows" type="int">20</setting>
+		<setting name="cols" type="int">20</setting>
+	</grid>
 	<player>
 		<setting name="player_init_pos_x" type="int">0</setting>
 		<setting name="player_init_pos_y" type="int">0</setting>
