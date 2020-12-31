@@ -9,6 +9,8 @@
 #include "audio/AudioManager.h"
 #include "common/constants.h"
 #include "events/AddGameObjectToCurrentSceneEvent.h"
+#include "events/PositionChangeEvent.h"
+#include "events/SceneChangedEvent.h"
 #include "game/LevelGenerator.h"
 #include "game/exceptions/game_exception.h"
 #include "graphic/sdl_graphics_manager.h"
@@ -20,15 +22,21 @@
 using namespace std;
 using namespace gamelib;
 
+
+
+
 class level_manager : event_subscriber
 {
 public:
 	std::string get_subscriber_name() override { return "level_manager";};
+	void get_input();
 	std::vector<std::shared_ptr<event>> handle_event(std::shared_ptr<event> evt) override;
 	void init_game_world_data() const;
 	level_manager(std::shared_ptr<event_manager> event_admin,
-	                                             std::shared_ptr<resource_manager> resource_admin,
-	                                             std::shared_ptr<settings_manager> settings_admin, shared_ptr<game_world> world, shared_ptr<scene_manager> scene_admin);
+	                                             shared_ptr<resource_manager> resource_admin,
+	                                             shared_ptr<settings_manager> settings_admin, 
+												 shared_ptr<game_world> world,
+												 shared_ptr<scene_manager> scene_admin, shared_ptr<audio_manager> audio_admin);
 	bool initialize();
 
 	shared_ptr<player> create_player(shared_ptr<settings_manager> settings_admin,
@@ -40,7 +48,143 @@ public:
 	std::shared_ptr<settings_manager> settings_admin;
 	shared_ptr<game_world> world;
 	shared_ptr<scene_manager> scene_admin;
+	shared_ptr<audio_manager> audio_admin;
 };
+
+void level_manager::get_input()
+	{
+		SDL_Event sdl_event;
+		
+		while(SDL_PollEvent(&sdl_event) != 0)
+		{
+			if(sdl_event.type != SDL_QUIT)
+			{
+				if (sdl_event.type == SDL_KEYDOWN)
+				{
+					switch (sdl_event.key.keysym.sym)
+					{
+					case SDLK_w:
+					case SDLK_UP:
+						run_and_log("Player pressed up!", settings_admin->get_bool("global", "verbose"), [&]()
+						{
+							event_admin->raise_event(std::make_unique<position_change_event>(Direction::Up), this);
+							return true;
+						}, true, true, settings_admin);
+						break;
+					case SDLK_s:
+					case SDLK_DOWN:
+						run_and_log("Player pressed down!", settings_admin->get_bool("global", "verbose"), [&]()
+						{
+							event_admin->raise_event(std::make_unique<position_change_event>(Direction::Down), this);
+							return true;
+						}, true, true, settings_admin);
+						break;
+					case SDLK_a:
+					case SDLK_LEFT:
+						run_and_log("Player pressed left!", settings_admin->get_bool("global", "verbose"), [&]()
+						{
+							event_admin->raise_event(std::make_unique<position_change_event>(Direction::Left), this);
+							return true;
+						}, true, true, settings_admin);
+						break;
+
+					case SDLK_d:
+					case SDLK_RIGHT:
+						run_and_log("Player pressed right!", settings_admin->get_bool("global", "verbose"), [&]()
+						{
+							event_admin->raise_event(std::make_unique<position_change_event>(Direction::Right), this);
+							return true;
+						}, true, true, settings_admin);
+						break;
+
+					case SDLK_q:
+					case SDLK_ESCAPE:
+						run_and_log("Player pressed quit!", settings_admin->get_bool("global", "verbose"), [&]()
+						{
+							world->is_game_done = 1;
+							return true;
+						}, true, true, settings_admin);
+						break;
+					case SDLK_j:
+						run_and_log("Change to level 1", settings_admin->get_bool("global", "verbose"), [&]()
+						{
+							event_admin->raise_event(std::make_unique<scene_changed_event>(1), this);
+							return true;
+						}, true, true, settings_admin);
+						break;
+					case SDLK_k:
+						run_and_log("Change to level 2", settings_admin->get_bool("global", "verbose"), [&]()
+						{
+							event_admin->raise_event(std::make_unique<scene_changed_event>(2), this);
+							return true;
+						}, true, true, settings_admin);
+						break;
+					case SDLK_l:
+						run_and_log("Change to level 3", settings_admin->get_bool("global", "verbose"), [&]()
+						{
+							event_admin->raise_event(std::make_unique<scene_changed_event>(3), this);
+							return true;
+						}, true, true, settings_admin);
+						break;
+
+					case SDLK_x:
+						run_and_log("Change to level 4", settings_admin->get_bool("global", "verbose"), [&]()
+						{
+							event_admin->raise_event(std::make_unique<scene_changed_event>(4), this);
+							return true;
+						}, true, true, settings_admin);
+						break;
+					case SDLK_1:
+						audio_admin->play_sound(audio_manager::to_resource(resource_admin->get("high.wav"))->as_fx());						
+						break;
+					case SDLK_2:
+						audio_admin->play_sound(audio_manager::to_resource(resource_admin->get("medium.wav"))->as_fx());	
+						break;
+					case SDLK_3:
+						audio_admin->play_sound(audio_manager::to_resource(resource_admin->get("low.wav"))->as_fx());	
+						break;
+					case SDLK_4:
+						audio_admin->play_sound(audio_manager::to_resource(resource_admin->get("scratch.wav"))->as_fx());	
+						break;
+					case SDLK_9:
+						if (Mix_PlayingMusic() == 0)
+						{
+							audio_admin->play_music(audio_manager::to_resource(resource_admin->get("MainTheme.wav"))->as_music());
+							
+						}
+						else
+						{
+							if (Mix_PausedMusic() == 1)
+								Mix_ResumeMusic();
+							else
+								Mix_PauseMusic();
+						}
+						break;
+					case SDLK_0:
+						Mix_HaltMusic();
+						break;
+					case SDLK_r:
+						settings_admin->reload();
+						event_admin->raise_event(make_shared<event>(event_type::SettingsReloaded), this);
+						log_message("Settings reloaded", settings_admin->get_bool("global", "verbose"), false);
+						break;
+					case SDLK_g:						
+						event_admin->raise_event(make_shared<event>(event_type::GenerateNewLevel), this);
+						log_message("Generating new level", settings_admin->get_bool("global", "verbose"), false);
+						break;
+					default:
+						std::cout << "Unknown control key" << std::endl;
+						log_message("Unknown control key", settings_admin->get_bool("global", "verbose"));
+						break;
+					}
+				}
+			}
+			else
+			{
+				world->is_game_done = true;
+			}
+		}
+	}
 
 events level_manager::handle_event(std::shared_ptr<event> evt)
 {
@@ -49,6 +193,12 @@ events level_manager::handle_event(std::shared_ptr<event> evt)
 	{
 		load_content();
 	}
+	
+	if(evt->type == event_type::InvalidMove)
+	{		
+		audio_admin->play_sound(audio_manager::to_resource(resource_admin->get(settings_admin->get_string("audio","invalid_move")))->as_fx());	
+	}
+		
 	return secondary_events;
 }
 
@@ -60,8 +210,8 @@ void level_manager::init_game_world_data() const
 }
 
 level_manager::level_manager(std::shared_ptr<event_manager> event_admin,
-	std::shared_ptr<resource_manager> resource_admin, std::shared_ptr<settings_manager> settings_admin, shared_ptr<game_world> world, shared_ptr<scene_manager> scene_admin)
-	: event_admin(std::move(event_admin)), resource_admin(std::move(resource_admin)), settings_admin(std::move(settings_admin)), world(std::move(world)), scene_admin(std::move(scene_admin))
+	std::shared_ptr<resource_manager> resource_admin, std::shared_ptr<settings_manager> settings_admin, shared_ptr<game_world> world, shared_ptr<scene_manager> scene_admin, shared_ptr<audio_manager> audio_admin)
+	: event_admin(std::move(event_admin)), resource_admin(std::move(resource_admin)), settings_admin(std::move(settings_admin)), world(std::move(world)), scene_admin(std::move(scene_admin)), audio_admin(std::move(audio_admin))
 {
 	
 }
@@ -71,6 +221,7 @@ bool level_manager::initialize()
 	init_game_world_data();
 	
 	event_admin->subscribe_to_event(event_type::GenerateNewLevel, this);
+	event_admin->subscribe_to_event(event_type::InvalidMove, this);
 	return true;
 }
 
@@ -86,7 +237,7 @@ shared_ptr<player> level_manager::create_player(shared_ptr<settings_manager> set
 	auto const y = settings_admin->get_int("player", "player_init_pos_y");
 	
 	
-	return make_shared<player>(player(x, y, w, h, resource_admin, settings_admin));
+	return make_shared<player>(player(x, y, w, h, resource_admin, settings_admin, event_admin));
 }
 
 shared_ptr<game_object> level_manager::setup_player(vector<shared_ptr<square>> rooms) const
@@ -165,8 +316,9 @@ int main(int argc, char *args[])
 		const auto font_admin = make_shared<font_manager>(); // makes font resources
 		const auto resource_admin = make_shared<resource_manager>(settings_admin, graphics_admin, font_admin, audio_admin); 
 		const auto scene_admin = make_shared<scene_manager>(event_admin, settings_admin, resource_admin);
-		const auto structure =  make_shared<game_structure>(event_admin, resource_admin, settings_admin, world, scene_admin, graphics_admin);
-		const auto level_admin = make_shared<level_manager>(event_admin, resource_admin, settings_admin, world, scene_admin);
+		
+		const auto level_admin = make_shared<level_manager>(event_admin, resource_admin, settings_admin, world, scene_admin, audio_admin);
+		const auto structure =  make_shared<game_structure>(event_admin, resource_admin, settings_admin, world, scene_admin, graphics_admin, audio_admin, [&](){level_admin->get_input();});
 		
 		
 		

@@ -18,6 +18,10 @@
 		<setting name="rows" type="int">20</setting>
 		<setting name="cols" type="int">20</setting>
 	</grid>
+		
+	<audio>
+		<setting name="invalid_move" type="string">low.wav</setting>
+	</audio>
 	<player>
 		<setting name="player_init_pos_x" type="int">0</setting>
 		<setting name="player_init_pos_y" type="int">0</setting>
