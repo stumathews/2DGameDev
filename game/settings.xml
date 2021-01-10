@@ -30,7 +30,7 @@
 		<setting name="move_interval" type="int">1</setting>
 		<setting name="draw_box" type="bool">false</setting>
 		<setting name="box_width" type="int">10</setting>
-		<setting name="r" type="int">0</setting>
+		<setting name="r" type="int">255</setting>
 		<setting name="g" type="int">255</setting>
 		<setting name="b" type="int">0</setting>
 		<setting name="a" type="int">0</setting> 

@@ -23,12 +23,14 @@
     <ClCompile Include="game\game_world.cpp" />
     <ClCompile Include="game\LevelGenerator.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="pickup.cpp" />
     <ClCompile Include="tinyxml2-master\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\exceptions\game_exception.h" />
     <ClInclude Include="game\game_world.h" />
     <ClInclude Include="game\LevelGenerator.h" />
+    <ClInclude Include="pickup.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="tinyxml2-master\tinyxml2.h" />
   </ItemGroup>

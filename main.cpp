@@ -6,6 +6,8 @@
 #include "game_structure.h"
 #include "font/font_manager.h"
 #include <events/event_manager.h>
+
+#include "pickup.h"
 #include "audio/AudioManager.h"
 #include "common/constants.h"
 #include "events/AddGameObjectToCurrentSceneEvent.h"
@@ -38,8 +40,10 @@ public:
 												 shared_ptr<game_world> world,
 												 shared_ptr<scene_manager> scene_admin, shared_ptr<audio_manager> audio_admin);
 	bool initialize();
+	size_t get_random_index(const int min, const int max) const;
 
-	shared_ptr<game_object> create_player(vector<shared_ptr<square>> rooms) const;
+	shared_ptr<game_object> create_player(vector<shared_ptr<square>> rooms, const int w, const int h) const;
+	vector<shared_ptr<square>> create_pickups(const vector<shared_ptr<square>>& rooms, const int w, const int h);
 	vector<shared_ptr<game_object>> load_content();
 	std::shared_ptr<event_manager> event_admin;
 	std::shared_ptr<resource_manager> resource_admin;
@@ -65,6 +69,13 @@ void level_manager::get_input()
 		{
 			switch (sdl_event.key.keysym.sym)
 			{
+			case SDLK_SPACE:
+				run_and_log("Space bar pressed!", be_verbose, [&]()
+				{
+					event_admin->raise_event(make_shared<event>(event_type::Fire), this);
+					return true;
+				}, true, true, settings_admin);
+				break;
 			case SDLK_w:
 			case SDLK_UP:
 				run_and_log("Player pressed up!", be_verbose, [&]()
@@ -226,20 +237,20 @@ bool level_manager::initialize()
 	return true;
 }
 
-shared_ptr<game_object> level_manager::create_player(const vector<shared_ptr<square>> rooms) const
+size_t level_manager::get_random_index(const int min, const int max) const
 {
-	const auto rows = settings_admin->get_int("grid","rows");
-	const auto cols = settings_admin->get_int("grid","cols");
-	const auto screen_width = settings_admin->get_int("global","screen_width");
-	const auto screen_height = settings_admin->get_int("global","screen_height");
-	const auto w = screen_width / cols; 
-	const auto h = screen_height / rows;
+	return rand() % (max - min + 1) + min;
+}
+
+shared_ptr<game_object> level_manager::create_player(const vector<shared_ptr<square>> rooms, const int w, const int h) const
+{
+	
 	const auto min = 0;
-	const auto random_room_index = rand() % (rooms.size()-min+1) + min;
+	const auto random_room_index = get_random_index(min, rooms.size());
 	const auto random_room = rooms[random_room_index];
 	
 	// create the player
-	const auto the_player =  make_shared<player>(player(0, 0, w/2, h/2, resource_admin, settings_admin, event_admin));
+	const auto the_player =  make_shared<player>(player(0, 0, w, h, resource_admin, settings_admin, event_admin));
 
 	the_player->set_tag(constants::playerTag);
 	
@@ -259,6 +270,32 @@ shared_ptr<game_object> level_manager::create_player(const vector<shared_ptr<squ
 	the_player->center_player_in_room(random_room);
 
 	return the_player;
+}
+
+
+coordinate<int> center_within(const square &room, const int w, const int h)
+{
+	auto const room_x_mid = room.get_x() + (room.get_w() / 2);
+		auto const room_y_mid = room.get_y() + (room.get_h() / 2);
+		auto const x = room_x_mid - w /2;
+		auto const y = room_y_mid - h /2;			
+		return coordinate<int>(x, y);
+}
+
+vector<shared_ptr<square>> level_manager::create_pickups(const vector<shared_ptr<square>>& rooms, const int w, const int h)
+{
+	vector<shared_ptr<square>> pickups;
+	const auto num_pickups = 10;
+	for(auto i = 0; i < num_pickups; i++)
+	{
+		const auto rand_index = get_random_index(0, rooms.size());
+		const auto random_room = rooms[rand_index];		
+		const auto center = center_within(*random_room, w, h);
+		const auto npc = make_shared<pickup>(i, center.get_x(), center.get_y(), w, h, resource_admin, true, false, true, settings_admin);
+		npc->set_fill(true);
+		pickups.push_back(npc);
+	}
+	return pickups;
 }
 
 vector<shared_ptr<game_object>> level_manager::load_content()
@@ -288,7 +325,21 @@ vector<shared_ptr<game_object>> level_manager::load_content()
 	}
 		
 	// Create the player
-	const auto player = create_player(rooms);
+	const auto rows = settings_admin->get_int("grid","rows");
+	const auto cols = settings_admin->get_int("grid","cols");
+	const auto screen_width = settings_admin->get_int("global","screen_width");
+	const auto screen_height = settings_admin->get_int("global","screen_height");
+	const auto w = screen_width / cols; 
+	const auto h = screen_height / rows;
+	const auto player = create_player(rooms, w/2, h/2);
+
+	const auto pickups = create_pickups(rooms, w/2, h/2);
+	for(const auto &pickup : pickups)
+	{
+		pickup->raise_event(std::make_shared<add_game_object_to_current_scene_event>(std::dynamic_pointer_cast<square>(pickup)), event_admin);
+		pickup->subscribe_to_event(event_type::PlayerMovedEventType, event_admin);
+		objects.push_back(pickup);
+	}
 	
 	// Add player to game world
 	objects.push_back(player);
