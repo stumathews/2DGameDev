@@ -5,7 +5,7 @@ using namespace std;
 
 namespace gamelib
 {
-	vector<shared_ptr<square>> level_generator::generate_level( std::shared_ptr<resource_manager> resource_admin, shared_ptr<settings_manager> settings_admin)
+	vector<shared_ptr<Room>> level_generator::generate_level( std::shared_ptr<resource_manager> resource_admin, shared_ptr<settings_manager> settings_admin)
 	{
 		srand(static_cast<unsigned>(time(nullptr)));
 		
@@ -17,8 +17,8 @@ namespace gamelib
 		const auto square_width = screen_width / max_columns; //settings_admin->get_int("global","square_width");
 		const auto square_height = screen_height / max_rows;
 		
-		vector<shared_ptr<square>> mazeGrid;
-		stack<shared_ptr<square>> roomStack;
+		vector<shared_ptr<Room>> mazeGrid;
+		stack<shared_ptr<Room>> roomStack;
 
 		/* Generate Rooms for the Maze */
 		auto count = 0;
@@ -29,7 +29,7 @@ namespace gamelib
 				auto number = count++;
 				auto support_move_logic = false;
 				
-				auto game_object = std::make_shared<square>(number, col * square_width, row * square_height, square_width, square_height, resource_admin, support_move_logic, false, true, settings_admin);				
+				auto game_object = std::make_shared<Room>(number, col * square_width, row * square_height, square_width, square_height, resource_admin, false, settings_admin);				
 				game_object->set_tag(std::to_string(number));
 				mazeGrid.push_back(game_object);			
 			}
@@ -61,8 +61,8 @@ namespace gamelib
 			const auto can_remove_right = thisColumn+1 <= max_columns;
 
 			vector<int> removableSides;
-			auto current_room = mazeGrid[i];
-			auto next_room = mazeGrid[next_index];
+			auto &current_room = mazeGrid[i];
+			auto &next_room = mazeGrid[next_index];
 
 			current_room->set_adjacent_room_index(room_above_index, room_right_index, room_below_index, room_left_index);
 
@@ -95,7 +95,7 @@ namespace gamelib
 					continue;
 				case left_side:
 					current_room->remove_wall(left_side);				
-					auto prev = mazeGrid[prevIndex]; mazeGrid[room_left_index]->remove_wall(right_side);
+					auto &prev = mazeGrid[prevIndex]; mazeGrid[room_left_index]->remove_wall(right_side);
 					prev->remove_wall(right_side);
 					continue;
 				}

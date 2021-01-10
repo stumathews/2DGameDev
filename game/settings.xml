@@ -21,6 +21,7 @@
 		
 	<audio>
 		<setting name="invalid_move" type="string">low.wav</setting>
+		<setting name="fetched_pickup" type="string">beep.wav</setting>
 	</audio>
 	<player>
 		<setting name="player_init_pos_x" type="int">0</setting>
@@ -31,7 +32,7 @@
 		<setting name="draw_box" type="bool">false</setting>
 		<setting name="box_width" type="int">10</setting>
 		<setting name="r" type="int">255</setting>
-		<setting name="g" type="int">255</setting>
+		<setting name="g" type="int">0</setting>
 		<setting name="b" type="int">0</setting>
 		<setting name="a" type="int">0</setting> 
 		<setting name="verbose" type="bool">true</setting>
@@ -43,5 +44,11 @@
 		<setting name="a" type="int">0</setting>
 		<setting name="enable" type="bool">false</setting>
 	</room_fill>
+	<pickup>
+		<setting name="r" type="int">0</setting>
+		<setting name="g" type="int">255</setting>
+		<setting name="b" type="int">0</setting>
+		<setting name="a" type="int">0</setting>
+	</pickup>
 
 </settings>

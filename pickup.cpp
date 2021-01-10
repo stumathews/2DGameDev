@@ -1,28 +1,69 @@
-#include "pickup.h"
+#include "Pickup.h"
+#include "events/player_moved_event.h"
 
-pickup::pickup(const int number, const int x, const int y, const int rw, const int rh,
-               const std::shared_ptr<gamelib::resource_manager>& resource_admin, const bool fill,
-               const bool supports_move_logic,
-               const bool is_visible, const std::shared_ptr<gamelib::settings_manager>& settings_admin)
-: square(number, x, y, rw, rh, resource_admin, fill, supports_move_logic, is_visible, settings_admin, gamelib::square_role::Pickup)
+using namespace std;
+
+Pickup::Pickup(const int x, const int y, const int w, const int h, const bool visible,  std::shared_ptr<gamelib::event_manager> event_admin, const std::shared_ptr<gamelib::settings_manager>& settings_admin)
+	: DrawingBase(x, y, visible, settings_admin), width(w), height(h), event_admin(std::move(event_admin))
 {
+	init();
 }
 
-std::vector<std::shared_ptr<gamelib::event>> pickup::handle_event(std::shared_ptr<gamelib::event> event)
+void Pickup::init()
 {
-	return square::handle_event(event);
+	event_admin->subscribe_to_event(gamelib::event_type::DoLogicUpdateEventType, this);
+	fill_color = {
+			static_cast<Uint8>(settings_admin->get_int("pickup", "r")),
+			static_cast<Uint8>(settings_admin->get_int("pickup", "g")),
+			static_cast<Uint8>(settings_admin->get_int("pickup", "b")),
+			static_cast<Uint8>(settings_admin->get_int("pickup", "a"))			
+		};
 }
 
-void pickup::load_settings(std::shared_ptr<gamelib::settings_manager> settings_admin)
+Pickup::Pickup(const bool visible, const shared_ptr<gamelib::settings_manager>& settings_admin):
+	DrawingBase(0, 0, visible, settings_admin), width(0), height(0)
 {
-	return square::load_settings(settings_admin);
+	init();
 }
 
-void pickup::draw(SDL_Renderer* renderer)
+
+vector<shared_ptr<gamelib::event>> Pickup::handle_event(shared_ptr<gamelib::event> the_event)
 {
-	return square::draw(renderer);
+	vector<shared_ptr<gamelib::event>> generated_events;
+
+	if(the_event->type == gamelib::event_type::PlayerMovedEventType)
+	{
+		const auto moved_event = std::static_pointer_cast<gamelib::player_moved_event>(the_event);				
+			const auto player_component = moved_event->get_player_component();
+			const auto player = player_component->the_player;
+
+		// basic little collision detection
+		if(player->x == x && player->y == y)
+		{
+			generated_events.push_back(make_shared<gamelib::event>(gamelib::event_type::FetchedPickup));
+		}
+		
+	}
+	if(the_event->type == gamelib::event_type::DoLogicUpdateEventType)
+	{
+		update();
+	}
+	return generated_events;
 }
 
-void pickup::update()
+void Pickup::load_settings(shared_ptr<gamelib::settings_manager> settings_admin)
 {
+	
+}
+
+void Pickup::draw(SDL_Renderer* renderer)
+{
+	SDL_Rect rect = { x, y, width, height};
+	
+	DrawFilledRect(renderer, &rect, fill_color);
+}
+
+void Pickup::update()
+{
+	bounds = { x, y, width, height};
 }

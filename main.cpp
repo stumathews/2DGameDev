@@ -7,7 +7,7 @@
 #include "font/font_manager.h"
 #include <events/event_manager.h>
 
-#include "pickup.h"
+#include "Pickup.h"
 #include "audio/AudioManager.h"
 #include "common/constants.h"
 #include "events/AddGameObjectToCurrentSceneEvent.h"
@@ -27,7 +27,7 @@ using namespace gamelib;
 
 
 
-class level_manager : event_subscriber
+class level_manager : IEventSubscriber
 {
 public:
 	std::string get_subscriber_name() override { return "level_manager";};
@@ -40,11 +40,11 @@ public:
 												 shared_ptr<game_world> world,
 												 shared_ptr<scene_manager> scene_admin, shared_ptr<audio_manager> audio_admin);
 	bool initialize();
-	size_t get_random_index(const int min, const int max) const;
+	static size_t get_random_index(const int min, const int max);
 
-	shared_ptr<game_object> create_player(vector<shared_ptr<square>> rooms, const int w, const int h) const;
-	vector<shared_ptr<square>> create_pickups(const vector<shared_ptr<square>>& rooms, const int w, const int h);
-	vector<shared_ptr<game_object>> load_content();
+	shared_ptr<GameObject> create_player(vector<shared_ptr<Room>> rooms, const int w, const int h) const;
+	vector<shared_ptr<GameObject>> create_pickups(const vector<shared_ptr<Room>>& rooms, const int w, const int h);
+	vector<shared_ptr<GameObject>> load_content();
 	std::shared_ptr<event_manager> event_admin;
 	std::shared_ptr<resource_manager> resource_admin;
 	std::shared_ptr<settings_manager> settings_admin;
@@ -199,10 +199,10 @@ events level_manager::handle_event(std::shared_ptr<event> evt)
 	events secondary_events;
 	
 	if(evt->type == event_type::InvalidMove)
-	{		
-		audio_admin->play_sound(audio_manager::to_resource(resource_admin->get(settings_admin->get_string("audio","invalid_move")))->as_fx());	
-	}
-		
+		audio_admin->play_sound(audio_manager::to_resource(resource_admin->get(settings_admin->get_string("audio","invalid_move")))->as_fx());
+	if(evt->type == event_type::FetchedPickup)
+		audio_admin->play_sound(audio_manager::to_resource(resource_admin->get(settings_admin->get_string("audio","fetched_pickup")))->as_fx());
+
 	return secondary_events;
 }
 
@@ -228,21 +228,20 @@ bool level_manager::initialize()
 {
 	init_game_world_data();
 
-	// Let te level manager re-generate a level if a request to do so is made
+	// subscribe to game events
 	event_admin->subscribe_to_event(event_type::GenerateNewLevel, this);
-
-	// The level manager will play the appropriate sound, update invalid move statics etc
 	event_admin->subscribe_to_event(event_type::InvalidMove, this);
-	
+	event_admin->subscribe_to_event(event_type::FetchedPickup, this);
+		
 	return true;
 }
 
-size_t level_manager::get_random_index(const int min, const int max) const
+size_t level_manager::get_random_index(const int min, const int max)
 {
 	return rand() % (max - min + 1) + min;
 }
 
-shared_ptr<game_object> level_manager::create_player(const vector<shared_ptr<square>> rooms, const int w, const int h) const
+shared_ptr<GameObject> level_manager::create_player(const vector<shared_ptr<Room>> rooms, const int w, const int h) const
 {
 	
 	const auto min = 0;
@@ -250,7 +249,7 @@ shared_ptr<game_object> level_manager::create_player(const vector<shared_ptr<squ
 	const auto random_room = rooms[random_room_index];
 	
 	// create the player
-	const auto the_player =  make_shared<player>(player(0, 0, w, h, resource_admin, settings_admin, event_admin));
+	const auto the_player =  make_shared<Player>(Player(0, 0, w, h, settings_admin, event_admin));
 
 	the_player->set_tag(constants::playerTag);
 	
@@ -263,6 +262,8 @@ shared_ptr<game_object> level_manager::create_player(const vector<shared_ptr<squ
 	// Player will be able to have its settings re-loaded at runtime
 	the_player->subscribe_to_event(event_type::SettingsReloaded, event_admin);
 
+	the_player->subscribe_to_event(event_type::DoLogicUpdateEventType, event_admin);
+
 	// Add the player to te current scene/level
 	the_player->raise_event(std::make_shared<add_game_object_to_current_scene_event>(the_player, 100), event_admin);
 
@@ -273,7 +274,7 @@ shared_ptr<game_object> level_manager::create_player(const vector<shared_ptr<squ
 }
 
 
-coordinate<int> center_within(const square &room, const int w, const int h)
+coordinate<int> center_within(const Room &room, const int w, const int h)
 {
 	auto const room_x_mid = room.get_x() + (room.get_w() / 2);
 		auto const room_y_mid = room.get_y() + (room.get_h() / 2);
@@ -282,23 +283,22 @@ coordinate<int> center_within(const square &room, const int w, const int h)
 		return coordinate<int>(x, y);
 }
 
-vector<shared_ptr<square>> level_manager::create_pickups(const vector<shared_ptr<square>>& rooms, const int w, const int h)
+vector<shared_ptr<GameObject>> level_manager::create_pickups(const vector<shared_ptr<Room>>& rooms, const int w, const int h)
 {
-	vector<shared_ptr<square>> pickups;
+	vector<shared_ptr<GameObject>> pickups;
 	const auto num_pickups = 10;
 	for(auto i = 0; i < num_pickups; i++)
 	{
-		const auto rand_index = get_random_index(0, rooms.size());
+		const auto rand_index = get_random_index(0, rooms.size()-1);
 		const auto random_room = rooms[rand_index];		
 		const auto center = center_within(*random_room, w, h);
-		const auto npc = make_shared<pickup>(i, center.get_x(), center.get_y(), w, h, resource_admin, true, false, true, settings_admin);
-		npc->set_fill(true);
+		const auto npc = make_shared<Pickup>(center.get_x(), center.get_y(), w, h, true, event_admin, settings_admin);
 		pickups.push_back(npc);
 	}
 	return pickups;
 }
 
-vector<shared_ptr<game_object>> level_manager::load_content()
+vector<shared_ptr<GameObject>> level_manager::load_content()
 {
 	resource_admin->read_resources();
 	
@@ -312,7 +312,7 @@ vector<shared_ptr<game_object>> level_manager::load_content()
 		room->subscribe_to_event(event_type::PlayerMovedEventType, event_admin);
 		
 		// Add each room to the scene
-		room->raise_event(std::make_shared<add_game_object_to_current_scene_event>(std::dynamic_pointer_cast<square>(room)), event_admin);
+		room->raise_event(std::make_shared<add_game_object_to_current_scene_event>(std::dynamic_pointer_cast<Room>(room)), event_admin);
 
 		// Initialize each room's initial settings
 		room->load_settings(settings_admin);
@@ -321,7 +321,7 @@ vector<shared_ptr<game_object>> level_manager::load_content()
 		room->subscribe_to_event(event_type::SettingsReloaded, event_admin);
 
 		// Add each room as a game object
-		objects.push_back( dynamic_pointer_cast<game_object>(room));
+		objects.push_back( dynamic_pointer_cast<GameObject>(room));
 	}
 		
 	// Create the player
@@ -336,7 +336,7 @@ vector<shared_ptr<game_object>> level_manager::load_content()
 	const auto pickups = create_pickups(rooms, w/2, h/2);
 	for(const auto &pickup : pickups)
 	{
-		pickup->raise_event(std::make_shared<add_game_object_to_current_scene_event>(std::dynamic_pointer_cast<square>(pickup)), event_admin);
+		pickup->raise_event(std::make_shared<add_game_object_to_current_scene_event>(std::dynamic_pointer_cast<Pickup>(pickup)), event_admin);
 		pickup->subscribe_to_event(event_type::PlayerMovedEventType, event_admin);
 		objects.push_back(pickup);
 	}
