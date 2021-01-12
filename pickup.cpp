@@ -1,5 +1,6 @@
 #include "Pickup.h"
 #include "events/player_moved_event.h"
+#include <GameObjectEvent.h>
 
 using namespace std;
 
@@ -41,6 +42,7 @@ vector<shared_ptr<gamelib::event>> Pickup::handle_event(shared_ptr<gamelib::even
 		if(player->x == x && player->y == y)
 		{
 			generated_events.push_back(make_shared<gamelib::event>(gamelib::event_type::FetchedPickup));
+			generated_events.push_back(make_shared<gamelib::GameObjectEvent>(id, this, gamelib::GameObjectEventContext::Remove));
 		}
 		
 	}

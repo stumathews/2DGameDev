@@ -24,7 +24,7 @@
 using namespace std;
 using namespace gamelib;
 
-
+int GameObject::ids = 0;
 
 
 class level_manager : IEventSubscriber
