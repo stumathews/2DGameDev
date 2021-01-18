@@ -21,7 +21,7 @@
 		
 	<audio>
 		<setting name="invalid_move" type="string">low.wav</setting>
-		<setting name="fetched_pickup" type="string">beep.wav</setting>
+		<setting name="fetched_pickup" type="string">boop.wav</setting>
 	</audio>
 	<player>
 		<setting name="player_init_pos_x" type="int">0</setting>

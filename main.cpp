@@ -26,7 +26,7 @@
 using namespace std;
 using namespace gamelib;
 
-class level_manager : public EventSubscriber, public inheritable_enable_shared_from_this<IEventSubscriber>
+class level_manager : public EventSubscriber, public inheritable_enable_shared_from_this<level_manager>
 {
 public:
 	std::string get_subscriber_name() override { return "level_manager";};

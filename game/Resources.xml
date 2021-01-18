@@ -13,4 +13,5 @@
   <Asset uid="11" scene="3" name="p3.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p3_walk/p3_walk.png" isAnimated="true" numKeyFrames="11" keyFrameHeight="97" keyFrameWidth="73"></Asset>
   <Asset uid="12" scene="0" name="arial.ttf" type="font" filename="Assets/fonts/arial.ttf"></Asset>
   <Asset uid="13" scene="0" name="beep.wav" type="fx" filename="Assets/beep.wav"></Asset>
+  <Asset uid="14" scene="0" name="boop.wav" type="fx" filename="Assets/boop.wav"></Asset>
 </Assets>
