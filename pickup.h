@@ -24,6 +24,7 @@ public:
 	void update() override;
 	SDL_Color fill_color;
 	std::shared_ptr<gamelib::event_manager> event_admin;
+	virtual ~Pickup();
 private:
 	int width, height;
 };

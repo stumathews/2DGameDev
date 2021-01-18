@@ -1,6 +1,7 @@
 #include "Pickup.h"
 #include "events/player_moved_event.h"
-#include <GameObjectEvent.h>
+#include <events/GameObjectEvent.h>
+#include <common/Common.h>
 
 using namespace std;
 
@@ -68,4 +69,11 @@ void Pickup::draw(SDL_Renderer* renderer)
 void Pickup::update()
 {
 	bounds = { x, y, width, height};
+}
+
+Pickup::~Pickup()
+{
+	gamelib::log_message("~Pickup()", settings_admin->get_bool("global","verbose"));
+	
+	event_admin->remove_subscription(id, gamelib::event_type::GameObject);
 }

@@ -6,7 +6,7 @@
 #include "game_structure.h"
 #include "font/font_manager.h"
 #include <events/event_manager.h>
-
+#include <events/EventSubscriber.h>
 #include "Pickup.h"
 #include "audio/AudioManager.h"
 #include "common/constants.h"
@@ -20,14 +20,12 @@
 #include "scene/scene_manager.h"
 #include "util/settings_manager.h"
 #include "objects/game_world_component.h"
+#include <events/GameObjectEvent.h>
 
 using namespace std;
 using namespace gamelib;
 
-int GameObject::ids = 0;
-
-
-class level_manager : IEventSubscriber
+class level_manager : EventSubscriber
 {
 public:
 	std::string get_subscriber_name() override { return "level_manager";};
@@ -43,8 +41,8 @@ public:
 	static size_t get_random_index(const int min, const int max);
 
 	shared_ptr<GameObject> create_player(vector<shared_ptr<Room>> rooms, const int w, const int h) const;
-	vector<shared_ptr<GameObject>> create_pickups(const vector<shared_ptr<Room>>& rooms, const int w, const int h);
-	vector<shared_ptr<GameObject>> load_content();
+	game_objects create_pickups(const vector<shared_ptr<Room>>& rooms, const int w, const int h);
+	game_objects load_content();
 	std::shared_ptr<event_manager> event_admin;
 	std::shared_ptr<resource_manager> resource_admin;
 	std::shared_ptr<settings_manager> settings_admin;
@@ -202,7 +200,24 @@ events level_manager::handle_event(std::shared_ptr<event> evt)
 		audio_admin->play_sound(audio_manager::to_resource(resource_admin->get(settings_admin->get_string("audio","invalid_move")))->as_fx());
 	if(evt->type == event_type::FetchedPickup)
 		audio_admin->play_sound(audio_manager::to_resource(resource_admin->get(settings_admin->get_string("audio","fetched_pickup")))->as_fx());
+	if(evt->type == event_type::GameObject)
+	{
+		const auto game_object_event = dynamic_pointer_cast<GameObjectEvent>(evt);
+		if(game_object_event->context == GameObjectEventContext::Remove)
+		{
+			auto &objects = world->game_objects;
+			auto func = [&](weak_ptr<gamelib::GameObject> candidate)
+			{ 
+				if(auto ptr = candidate.lock()){
+					auto result = ptr->id == game_object_event->game_object->id;
+					return result;
+				}
+			};
 
+			std::remove_if(begin(objects), end(objects), func);
+		}
+
+	}
 	return secondary_events;
 }
 
@@ -232,6 +247,7 @@ bool level_manager::initialize()
 	event_admin->subscribe_to_event(event_type::GenerateNewLevel, this);
 	event_admin->subscribe_to_event(event_type::InvalidMove, this);
 	event_admin->subscribe_to_event(event_type::FetchedPickup, this);
+	event_admin->subscribe_to_event(event_type::GameObject, this);
 		
 	return true;
 }
@@ -283,9 +299,9 @@ coordinate<int> center_within(const Room &room, const int w, const int h)
 		return coordinate<int>(x, y);
 }
 
-vector<shared_ptr<GameObject>> level_manager::create_pickups(const vector<shared_ptr<Room>>& rooms, const int w, const int h)
+game_objects level_manager::create_pickups(const vector<shared_ptr<Room>>& rooms, const int w, const int h)
 {
-	vector<shared_ptr<GameObject>> pickups;
+	game_objects pickups;
 	const auto num_pickups = 10;
 	for(auto i = 0; i < num_pickups; i++)
 	{
@@ -298,7 +314,7 @@ vector<shared_ptr<GameObject>> level_manager::create_pickups(const vector<shared
 	return pickups;
 }
 
-vector<shared_ptr<GameObject>> level_manager::load_content()
+game_objects level_manager::load_content()
 {
 	resource_admin->read_resources();
 	
@@ -339,6 +355,7 @@ vector<shared_ptr<GameObject>> level_manager::load_content()
 		pickup->raise_event(std::make_shared<add_game_object_to_current_scene_event>(std::dynamic_pointer_cast<Pickup>(pickup)), event_admin);
 		pickup->subscribe_to_event(event_type::PlayerMovedEventType, event_admin);
 		objects.push_back(pickup);
+		
 	}
 	
 	// Add player to game world
@@ -364,14 +381,14 @@ int main(int argc, char *args[])
 		const auto audio_admin = make_shared<audio_manager>();
 		const auto font_admin = make_shared<font_manager>();
 		const auto resource_admin = make_shared<resource_manager>(settings_admin, graphics_admin, font_admin, audio_admin); 
-		const auto scene_admin = make_shared<scene_manager>(event_admin, settings_admin, resource_admin);		
+		const auto scene_admin = make_shared<scene_manager>(event_admin, settings_admin, resource_admin, world);		
 		const auto level_admin = make_shared<level_manager>(event_admin, resource_admin, settings_admin, world, scene_admin, audio_admin);
 		const auto structure =  make_shared<game_structure>(event_admin, resource_admin, settings_admin, world, scene_admin, graphics_admin, audio_admin, [&](){level_admin->get_input();});
 		
 		// Game Initialization
 		
 		const auto is_initialized = succeeded(structure->initialize(), "Initialize");
-		const auto is_loaded = succeeded(level_admin->initialize(), "loading content");
+		const auto is_loaded = succeeded(level_admin->initialize(), "initializing level manager");
 
 		// Create the level
 		level_admin->load_content();
