@@ -21,11 +21,12 @@
 #include "util/settings_manager.h"
 #include "objects/game_world_component.h"
 #include <events/GameObjectEvent.h>
+#include <objects/MultipleInheritableEnableSharedFromThis.h>
 
 using namespace std;
 using namespace gamelib;
 
-class level_manager : EventSubscriber
+class level_manager : public EventSubscriber, public inheritable_enable_shared_from_this<IEventSubscriber>
 {
 public:
 	std::string get_subscriber_name() override { return "level_manager";};
@@ -70,7 +71,7 @@ void level_manager::get_input()
 			case SDLK_SPACE:
 				run_and_log("Space bar pressed!", be_verbose, [&]()
 				{
-					event_admin->raise_event(make_shared<event>(event_type::Fire), this);
+					event_admin->raise_event(make_shared<event>(event_type::Fire), shared_from_this());
 					return true;
 				}, true, true, settings_admin);
 				break;
@@ -78,7 +79,7 @@ void level_manager::get_input()
 			case SDLK_UP:
 				run_and_log("Player pressed up!", be_verbose, [&]()
 				{
-					event_admin->raise_event(std::make_unique<position_change_event>(Direction::Up), this);
+					event_admin->raise_event(std::make_unique<position_change_event>(Direction::Up), shared_from_this());
 					return true;
 				}, true, true, settings_admin);
 				break;
@@ -86,7 +87,7 @@ void level_manager::get_input()
 			case SDLK_DOWN:
 				run_and_log("Player pressed down!", be_verbose, [&]()
 				{
-					event_admin->raise_event(std::make_unique<position_change_event>(Direction::Down), this);
+					event_admin->raise_event(std::make_unique<position_change_event>(Direction::Down), shared_from_this());
 					return true;
 				}, true, true, settings_admin);
 				break;
@@ -94,7 +95,7 @@ void level_manager::get_input()
 			case SDLK_LEFT:
 				run_and_log("Player pressed left!", be_verbose, [&]()
 				{
-					event_admin->raise_event(std::make_unique<position_change_event>(Direction::Left), this);
+					event_admin->raise_event(std::make_unique<position_change_event>(Direction::Left), shared_from_this());
 					return true;
 				}, true, true, settings_admin);
 				break;
@@ -103,7 +104,7 @@ void level_manager::get_input()
 			case SDLK_RIGHT:
 				run_and_log("Player pressed right!", be_verbose, [&]()
 				{
-					event_admin->raise_event(std::make_unique<position_change_event>(Direction::Right), this);
+					event_admin->raise_event(std::make_unique<position_change_event>(Direction::Right), shared_from_this());
 					return true;
 				}, true, true, settings_admin);
 				break;
@@ -119,21 +120,21 @@ void level_manager::get_input()
 			case SDLK_j:
 				run_and_log("Change to level 1", be_verbose, [&]()
 				{
-					event_admin->raise_event(std::make_unique<scene_changed_event>(1), this);
+					event_admin->raise_event(std::make_unique<scene_changed_event>(1), shared_from_this());
 					return true;
 				}, true, true, settings_admin);
 				break;
 			case SDLK_k:
 				run_and_log("Change to level 2", be_verbose, [&]()
 				{
-					event_admin->raise_event(std::make_unique<scene_changed_event>(2), this);
+					event_admin->raise_event(std::make_unique<scene_changed_event>(2), shared_from_this());
 					return true;
 				}, true, true, settings_admin);
 				break;
 			case SDLK_l:
 				run_and_log("Change to level 3", be_verbose, [&]()
 				{
-					event_admin->raise_event(std::make_unique<scene_changed_event>(3), this);
+					event_admin->raise_event(std::make_unique<scene_changed_event>(3), shared_from_this());
 					return true;
 				}, true, true, settings_admin);
 				break;
@@ -141,7 +142,7 @@ void level_manager::get_input()
 			case SDLK_x:
 				run_and_log("Change to level 4", be_verbose, [&]()
 				{
-					event_admin->raise_event(std::make_unique<scene_changed_event>(4), this);
+					event_admin->raise_event(std::make_unique<scene_changed_event>(4), shared_from_this());
 					return true;
 				}, true, true, settings_admin);
 				break;
@@ -175,11 +176,11 @@ void level_manager::get_input()
 				break;
 			case SDLK_r:
 				settings_admin->reload();
-				event_admin->raise_event(make_shared<event>(event_type::SettingsReloaded), this);
+				event_admin->raise_event(make_shared<event>(event_type::SettingsReloaded), shared_from_this());
 				log_message("Settings reloaded", be_verbose, false);
 				break;
 			case SDLK_g:						
-				event_admin->raise_event(make_shared<event>(event_type::GenerateNewLevel), this);
+				event_admin->raise_event(make_shared<event>(event_type::GenerateNewLevel), shared_from_this());
 				log_message("Generating new level", be_verbose, false);
 				break;
 			default:
@@ -244,10 +245,10 @@ bool level_manager::initialize()
 	init_game_world_data();
 
 	// subscribe to game events
-	event_admin->subscribe_to_event(event_type::GenerateNewLevel, this);
-	event_admin->subscribe_to_event(event_type::InvalidMove, this);
-	event_admin->subscribe_to_event(event_type::FetchedPickup, this);
-	event_admin->subscribe_to_event(event_type::GameObject, this);
+	event_admin->subscribe_to_event(event_type::GenerateNewLevel, shared_from_this());
+	event_admin->subscribe_to_event(event_type::InvalidMove, shared_from_this());
+	event_admin->subscribe_to_event(event_type::FetchedPickup, shared_from_this());
+	event_admin->subscribe_to_event(event_type::GameObject, shared_from_this());
 		
 	return true;
 }
@@ -354,6 +355,8 @@ game_objects level_manager::load_content()
 	{
 		pickup->raise_event(std::make_shared<add_game_object_to_current_scene_event>(std::dynamic_pointer_cast<Pickup>(pickup)), event_admin);
 		pickup->subscribe_to_event(event_type::PlayerMovedEventType, event_admin);
+		pickup->subscribe_to_event(gamelib::event_type::DoLogicUpdateEventType, event_admin);
+		
 		objects.push_back(pickup);
 		
 	}

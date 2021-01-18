@@ -4,7 +4,8 @@
 #include <common/Common.h>
 
 using namespace std;
-
+namespace gamelib 
+{
 Pickup::Pickup(const int x, const int y, const int w, const int h, const bool visible,  std::shared_ptr<gamelib::event_manager> event_admin, const std::shared_ptr<gamelib::settings_manager>& settings_admin)
 	: DrawingBase(x, y, visible, settings_admin), width(w), height(h), event_admin(std::move(event_admin))
 {
@@ -13,13 +14,12 @@ Pickup::Pickup(const int x, const int y, const int w, const int h, const bool vi
 
 void Pickup::init()
 {
-	event_admin->subscribe_to_event(gamelib::event_type::DoLogicUpdateEventType, this);
 	fill_color = {
-			static_cast<Uint8>(settings_admin->get_int("pickup", "r")),
-			static_cast<Uint8>(settings_admin->get_int("pickup", "g")),
-			static_cast<Uint8>(settings_admin->get_int("pickup", "b")),
-			static_cast<Uint8>(settings_admin->get_int("pickup", "a"))			
-		};
+				static_cast<Uint8>(settings_admin->get_int("pickup", "r")),
+				static_cast<Uint8>(settings_admin->get_int("pickup", "g")),
+				static_cast<Uint8>(settings_admin->get_int("pickup", "b")),
+				static_cast<Uint8>(settings_admin->get_int("pickup", "a"))
+	};
 }
 
 Pickup::Pickup(const bool visible, const shared_ptr<gamelib::settings_manager>& settings_admin):
@@ -76,4 +76,5 @@ Pickup::~Pickup()
 	gamelib::log_message("~Pickup()", settings_admin->get_bool("global","verbose"));
 	
 	event_admin->remove_subscription(id, gamelib::event_type::GameObject);
+}
 }
