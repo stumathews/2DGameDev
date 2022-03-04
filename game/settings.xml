@@ -1,5 +1,6 @@
 <!-- Settings -->
 <settings>
+	<!-- Global Game Settings -->
 	<global>
 		<!-- 20 times a second = 50 milliseconds, 1 second is 20*50 = 1000 milliseconds -->
 		<setting name="tick_time_ms" type="int">50</setting>
@@ -14,15 +15,20 @@
 		<setting name="use_3d_render_manager" type="bool">true</setting>
 		<setting name="print_debugging_text" type="bool">false</setting>
 	</global>
+	
+	<!-- Maze Settings -->
 	<grid>
-		<setting name="rows" type="int">20</setting>
-		<setting name="cols" type="int">20</setting>
+		<setting name="rows" type="int">10</setting>
+		<setting name="cols" type="int">10</setting>
 	</grid>
 		
+	<!-- Audio settings -->
 	<audio>
 		<setting name="invalid_move" type="string">low.wav</setting>
 		<setting name="fetched_pickup" type="string">boop.wav</setting>
 	</audio>
+	
+	<!-- Player settings -->
 	<player>
 		<setting name="player_init_pos_x" type="int">0</setting>
 		<setting name="player_init_pos_y" type="int">0</setting>
@@ -37,6 +43,8 @@
 		<setting name="a" type="int">0</setting> 
 		<setting name="verbose" type="bool">true</setting>
 	</player>
+	
+	<!-- Room fill settings-->
 	<room_fill>
 		<setting name="r" type="int">255</setting>
 		<setting name="g" type="int">255</setting>
@@ -44,6 +52,8 @@
 		<setting name="a" type="int">0</setting>
 		<setting name="enable" type="bool">false</setting>
 	</room_fill>
+	
+	<!-- Pickup settings -->
 	<pickup>
 		<setting name="r" type="int">0</setting>
 		<setting name="g" type="int">255</setting>
