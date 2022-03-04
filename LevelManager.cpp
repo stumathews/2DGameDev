@@ -166,14 +166,25 @@ size_t LevelManager::get_random_index(const int min, const int max)
 	return rand() % (max - min + 1) + min;
 }
 
+coordinate<int> GetCenterOfRoom(const Room &room, const int w, const int h)
+{
+	auto const room_x_mid = room.get_x() + (room.get_w() / 2);
+	auto const room_y_mid = room.get_y() + (room.get_h() / 2);
+	auto const x = room_x_mid - w /2;
+	auto const y = room_y_mid - h /2;			
+	return coordinate<int>(x, y);
+}
+
 shared_ptr<GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>> rooms, const int w, const int h) const
 {	
 	const auto minNumRooms = 0;
 	const auto playerRoomIndex = get_random_index(minNumRooms, rooms.size());
 	const auto playerRoom = rooms[playerRoomIndex];
+	const auto positionInRoom = GetCenterOfRoom(*playerRoom, w, h);
 	
 	// create the player
-	const auto player =  make_shared<Player>(Player(0, 0, w, h, settings_admin, event_admin));
+	const auto player =  make_shared<Player>(Player(positionInRoom.get_x(), positionInRoom.get_y(), w, h, settings_admin, event_admin));
+	player->within_room_index = playerRoomIndex;
 
 	player->set_tag(constants::playerTag);
 	
@@ -198,14 +209,7 @@ shared_ptr<GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>>
 	return player;
 }
 
-coordinate<int> GetCenterOfRoom(const Room &room, const int w, const int h)
-{
-	auto const room_x_mid = room.get_x() + (room.get_w() / 2);
-	auto const room_y_mid = room.get_y() + (room.get_h() / 2);
-	auto const x = room_x_mid - w /2;
-	auto const y = room_y_mid - h /2;			
-	return coordinate<int>(x, y);
-}
+
 
 
 game_objects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& rooms, const int w, const int h)
