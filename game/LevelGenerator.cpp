@@ -5,16 +5,16 @@ using namespace std;
 
 namespace gamelib
 {
-	vector<shared_ptr<Room>> level_generator::generate_level( std::shared_ptr<resource_manager> resource_admin, shared_ptr<settings_manager> settings_admin)
+	vector<shared_ptr<Room>> level_generator::generate_level(ResourceManager& resource_admin, SettingsManager& settings_admin, EventManager& event_admin)
 	{
 		srand(static_cast<unsigned>(time(nullptr)));
 		
-		const auto screen_width = settings_admin->get_int("global","screen_width");
-		const auto screen_height = settings_admin->get_int("global","screen_height");
+		const auto screen_width = settings_admin.get_int("global","screen_width");
+		const auto screen_height = settings_admin.get_int("global","screen_height");
 		
-		const auto max_rows = settings_admin->get_int("grid","rows");
-		const auto max_columns = settings_admin->get_int("grid","cols");
-		const auto square_width = screen_width / max_columns; //settings_admin->get_int("global","square_width");
+		const auto max_rows = settings_admin.get_int("grid","rows");
+		const auto max_columns = settings_admin.get_int("grid","cols");
+		const auto square_width = screen_width / max_columns; //settings_admin.get_int("global","square_width");
 		const auto square_height = screen_height / max_rows;
 		
 		vector<shared_ptr<Room>> mazeGrid;
@@ -29,7 +29,7 @@ namespace gamelib
 				auto number = count++;
 				auto support_move_logic = false;
 				
-				auto game_object = std::make_shared<Room>(number, col * square_width, row * square_height, square_width, square_height, resource_admin, false, settings_admin);				
+				auto game_object = std::shared_ptr<Room>(new Room(number, col * square_width, row * square_height, square_width, square_height, resource_admin, settings_admin, event_admin, false));				
 				game_object->set_tag(std::to_string(number));
 				mazeGrid.push_back(game_object);			
 			}

@@ -24,13 +24,19 @@
     <ClCompile Include="game\exceptions\game_exception.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game\game_world.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="game\LevelGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pickup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\GameWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameCommands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,13 +50,19 @@
     <ClInclude Include="game\exceptions\game_exception.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game\game_world.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="game\LevelGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pickup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\gameWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCommands.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

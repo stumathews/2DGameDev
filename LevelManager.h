@@ -1,14 +1,14 @@
 #pragma once
 
 #include <memory>
-#include "util/settings_manager.h"
+#include "util/SettingsManager.h"
 #include <objects/MultipleInheritableEnableSharedFromThis.h>
 #include <iostream>
 #include "game/gameWorld.h"
 #include "common/Common.h"
-#include "game_structure.h"
-#include "font/font_manager.h"
-#include <events/event_manager.h>
+#include "GameStructure.h"
+#include "font/FontManager.h"
+#include <events/EventManager.h>
 #include <events/EventSubscriber.h>
 #include "Pickup.h"
 #include "audio/AudioManager.h"
@@ -18,9 +18,9 @@
 #include "game/LevelGenerator.h"
 #include "game/exceptions/game_exception.h"
 #include "graphic/sdl_graphics_manager.h"
-#include "resource/resource_manager.h"
-#include "scene/scene_manager.h"
-#include "util/settings_manager.h"
+#include "resource/ResourceManager.h"
+#include "scene/SceneManager.h"
+#include "util/SettingsManager.h"
 #include "objects/game_world_component.h"
 #include <events/GameObjectEvent.h>
 #include <events/Event.h>
@@ -37,12 +37,15 @@ public:
 	std::vector<std::shared_ptr<gamelib::event>> handle_event(std::shared_ptr<gamelib::event> evt) override;
 	
 	// set basic game world defaults
-	void init_game_world_data() const;
-	LevelManager(std::shared_ptr<gamelib::event_manager> event_admin,
-	                                             shared_ptr<gamelib::resource_manager> resource_admin,
-	                                             shared_ptr<gamelib::settings_manager> settings_admin, 
-												 shared_ptr<GameWorld> world,
-												 shared_ptr<gamelib::scene_manager> scene_admin, shared_ptr<gamelib::audio_manager> audio_admin);
+	void InitGameWorldData() const;
+	LevelManager(
+		gamelib::EventManager& event_admin, 
+		gamelib::ResourceManager& resource_admin, 
+		gamelib::SettingsManager& settings_admin, 
+		GameWorld& world,
+		gamelib::SceneManager& scene_admin,
+		gamelib::AudioManager& audio_admin, gamelib::logger& gameLogger);
+
 	bool initialize();
 	static size_t get_random_index(const int min, const int max);	
 	gamelib::game_objects CreateLevel();
@@ -50,13 +53,16 @@ public:
 private:
 	shared_ptr<gamelib::GameObject> CreatePlayer(vector<shared_ptr<gamelib::Room>> rooms, const int w, const int h) const;
 	gamelib::game_objects CreatePickups(const vector<shared_ptr<gamelib::Room>>& rooms, const int w, const int h);
-	std::shared_ptr<gamelib::event_manager> event_admin;
-	std::shared_ptr<gamelib::resource_manager> resource_admin;
-	std::shared_ptr<gamelib::settings_manager> settings_admin;
-	shared_ptr<GameWorld> world;
-	shared_ptr<gamelib::scene_manager> scene_admin;
-	shared_ptr<gamelib::audio_manager> audio_admin;
-	shared_ptr<GameCommands> gameCommands;
+	gamelib::EventManager& event_admin;
+	gamelib::ResourceManager& resource_admin;
+	gamelib::SettingsManager& settings_admin;
+	GameWorld& world;
+	gamelib::SceneManager& scene_admin;
+	gamelib::AudioManager& audio_admin;
+	std::shared_ptr<GameCommands> gameCommands;
+	gamelib::logger& gameLogger;
+
+    void RemoveGameObject(GameWorld& gameWorld, gamelib::GameObject& gameObject);
 
 };
 

@@ -10,7 +10,7 @@ namespace gamelib
 	{
 	public:
 		enum room_side {top_side = 1, right_side = 2, bottom_side = 3, left_side = 4};
-		static std::vector<std::shared_ptr<Room>> generate_level(std::shared_ptr<resource_manager> resource_admin, std::shared_ptr<settings_manager> settings_admin);	
+		static std::vector<std::shared_ptr<Room>> generate_level(ResourceManager& resource_admin, SettingsManager& settings_admin, EventManager& event_admin);	
 	};
 }
 

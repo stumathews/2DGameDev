@@ -7,28 +7,36 @@
 
 namespace gamelib
 {
+	// Represents a Pickup in the game
 	class Pickup final : public gamelib::DrawingBase
 	{
 	public:
-		Pickup(int x, int y, int w, int h, bool visible, const std::shared_ptr<gamelib::event_manager> event_admin, const std::shared_ptr<gamelib::settings_manager>& settings_admin);
+		
+		// Create a new pickup at specific coordinates
+		Pickup(int x, int y, int w, int h, bool visible, gamelib::EventManager& event_admin, gamelib::SettingsManager& settings_admin);
+		
+		// Create a new pickup with undefined coordinates
+		Pickup(bool visible, gamelib::SettingsManager& settings_admin, gamelib::EventManager& event_admin);
+
+		// Initialize the pickup
 		void init();
-		Pickup(bool visible, const std::shared_ptr<gamelib::settings_manager>& settings_admin);
+		
+		/* IEventSubscriber overrides */
+		std::string get_subscriber_name() override;
+		gamelib::object_type get_type() override;
+		std::string get_identifier() override;
+		std::vector<std::shared_ptr<gamelib::event>> handle_event(std::shared_ptr<gamelib::event> the_event) override;
 
-		std::string get_subscriber_name() override { return "pickup";};
+		// Load pickup settings
+		void load_settings(gamelib::SettingsManager& settings_admin) override;
 
-		gamelib::object_type get_type() override { return gamelib::object_type::pickup; }
-
-		std::string get_identifier() override { return "pickup"; }
-
-		std::vector<std::shared_ptr<gamelib::event>>
-		handle_event(std::shared_ptr<gamelib::event> the_event) override;
-
-		void load_settings(std::shared_ptr<gamelib::settings_manager> settings_admin) override;
+		// Draw Pickup
 		void draw(SDL_Renderer* renderer) override;
+
+		// Update Pickup
 		void update() override;
 		SDL_Color fill_color;
-		std::shared_ptr<gamelib::event_manager> event_admin;
-		virtual ~Pickup();
+		gamelib::EventManager& event_admin;
 	private:
 		int width, height;
 	};

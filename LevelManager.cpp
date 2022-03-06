@@ -2,6 +2,15 @@
 
 using namespace gamelib;
 
+bool IsSameSubscriber(IEventSubscriber* candidate, int subscriptionId) 
+{
+	if(candidate)
+	{
+		auto found_match = candidate == nullptr ? true : candidate->get_subscriber_id() == subscriptionId;
+		return found_match;
+	}
+	return false;
+};
 
 // Handle level events
 events LevelManager::handle_event(std::shared_ptr<event> evt)
@@ -18,60 +27,81 @@ events LevelManager::handle_event(std::shared_ptr<event> evt)
 	
 	// Received per GameObject event
 	if(evt->type == event_type::GameObject)
-	{
-		const auto game_object_event = dynamic_pointer_cast<GameObjectEvent>(evt);
+	{		
+		const auto gameObjectEvent = dynamic_pointer_cast<GameObjectEvent>(evt);
 		
-		// Remove game object from game
-		if(game_object_event->context == GameObjectEventContext::Remove)
+		// Level Manager is responsible for removing game object from game
+		if(gameObjectEvent->context == GameObjectEventContext::Remove)
 		{
-			auto &objects = world->game_objects;
-
-			// Function to remove game object
-			auto func = [&](weak_ptr<gamelib::GameObject> candidate)
-			{ 
-				if(auto ptr = candidate.lock()) // Test to see if the game object reference still exists 
-				{
-					auto result = (ptr->id == game_object_event->game_object->id);
-					return result;
-				}
-			};
-
-			// Actually run the function to remove game object
-			std::remove_if(begin(objects), end(objects), func);
+			RemoveGameObject(world, *gameObjectEvent->game_object );			
 		}
 
 	}
 	return secondary_events;
 }
 
-void LevelManager::init_game_world_data() const
+void LevelManager::RemoveGameObject(GameWorld& gameWorld, GameObject& gameObject)
 {
-	world->is_game_done = false;
-	world->is_network_game = false;
-	world->can_render = true;
+	auto &objects = world.game_objects;
+	// Look for gameObject
+	auto result = std::find_if(begin(objects), end(objects), [&](weak_ptr<gamelib::GameObject> target)
+	{ 
+		if(auto underlyingGameObject = target.lock()) // Test to see if the game object reference still exists 
+		{
+			auto result = (underlyingGameObject->id == gameObject.id);
+			return result;
+		}
+		return false;
+	});
+	
+	auto found = result != end(objects);
+			
+			if(found)
+			{			
+				// Remove any pending events in the event manager for this object
+				event_admin.Unsubscribe((*result)->id);
+
+				// Erase from list of known game object
+				objects.erase(result);
+			}
 }
 
-LevelManager::LevelManager(std::shared_ptr<event_manager> event_admin, shared_ptr<resource_manager> resource_admin, 
-	shared_ptr<settings_manager> settings_admin, shared_ptr<GameWorld> world, shared_ptr<scene_manager> scene_admin,
-	shared_ptr<audio_manager> audio_admin) : event_admin(std::move(event_admin)),
-	                                         resource_admin(std::move(resource_admin)),
-	                                         settings_admin(std::move(settings_admin)), world(std::move(world)),
-	                                         scene_admin(std::move(scene_admin)),
-	audio_admin(std::move(audio_admin)) { }
+void LevelManager::InitGameWorldData() const
+{
+	world.is_game_done = false;
+	world.is_network_game = false;
+	world.can_render = true;
+}
+
+LevelManager::LevelManager(
+	EventManager& event_admin, 
+	ResourceManager& resource_admin, 
+	SettingsManager& settings_admin, 
+	GameWorld& world, 
+	SceneManager& scene_admin,
+	AudioManager& audio_admin,
+	logger& gameLogger) : event_admin(event_admin),
+	                                         resource_admin(resource_admin),
+	                                         settings_admin(settings_admin), 
+	                                         world(world),
+	                                         scene_admin(scene_admin),
+											 audio_admin(audio_admin), gameLogger(gameLogger)
+{
+}
 
 bool LevelManager::initialize()
 {
 	// set basic game world defaults
-	init_game_world_data();
+	InitGameWorldData();
 
 	// All game commands that we handle in this game
-	gameCommands = make_shared<GameCommands>(settings_admin, event_admin, audio_admin, resource_admin, world);
+	gameCommands = make_shared<GameCommands>(settings_admin, event_admin, audio_admin, resource_admin, world, gameLogger);
 
 	// subscribe to game events
-	event_admin->subscribe_to_event(event_type::GenerateNewLevel, shared_from_this());
-	event_admin->subscribe_to_event(event_type::InvalidMove, shared_from_this());
-	event_admin->subscribe_to_event(event_type::FetchedPickup, shared_from_this());
-	event_admin->subscribe_to_event(event_type::GameObject, shared_from_this());
+	event_admin.subscribe_to_event(event_type::GenerateNewLevel, this);
+	event_admin.subscribe_to_event(event_type::InvalidMove, this);
+	event_admin.subscribe_to_event(event_type::FetchedPickup, this);
+	event_admin.subscribe_to_event(event_type::GameObject, this);
 		
 	return true;
 }
@@ -80,7 +110,7 @@ bool LevelManager::initialize()
 void LevelManager::GetKeyboardInput()
 {
 	SDL_Event sdl_event;
-	const auto bVerbose = settings_admin->get_bool("global", "verbose");
+	const auto bVerbose = settings_admin.get_bool("global", "verbose");
 	
 	while (SDL_PollEvent(&sdl_event) != 0)
 	{
@@ -125,16 +155,16 @@ void LevelManager::GetKeyboardInput()
 				gameCommands->ChangeLevel(bVerbose, 4);
 				break;
 			case SDLK_1:
-				audio_admin->play_sound(gamelib::audio_manager::to_resource(resource_admin->get("high.wav"))->as_fx());
+				audio_admin.play_sound(gamelib::AudioManager::to_resource(resource_admin.get("high.wav"))->as_fx());
 				break;
 			case SDLK_2:
-				audio_admin->play_sound(gamelib::audio_manager::to_resource(resource_admin->get("medium.wav"))->as_fx());
+				audio_admin.play_sound(gamelib::AudioManager::to_resource(resource_admin.get("medium.wav"))->as_fx());
 				break;
 			case SDLK_3:
-				audio_admin->play_sound(gamelib::audio_manager::to_resource(resource_admin->get("low.wav"))->as_fx());
+				audio_admin.play_sound(gamelib::AudioManager::to_resource(resource_admin.get("low.wav"))->as_fx());
 				break;
 			case SDLK_4:
-				audio_admin->play_sound(gamelib::audio_manager::to_resource(resource_admin->get("scratch.wav"))->as_fx());
+				audio_admin.play_sound(gamelib::AudioManager::to_resource(resource_admin.get("scratch.wav"))->as_fx());
 				break;
 			case SDLK_9:
 				gameCommands->ToggleMusic(bVerbose);
@@ -147,7 +177,7 @@ void LevelManager::GetKeyboardInput()
 				break;
 			default:
 				std::cout << "Unknown control key" << std::endl;
-				log_message("Unknown control key", bVerbose);
+				log_message("Unknown control key", gameLogger, bVerbose);
 				break;
 			}
 		}
@@ -183,7 +213,7 @@ shared_ptr<GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>>
 	const auto positionInRoom = GetCenterOfRoom(*playerRoom, w, h);
 	
 	// create the player
-	const auto player =  make_shared<Player>(Player(positionInRoom.get_x(), positionInRoom.get_y(), w, h, settings_admin, event_admin));
+	const auto player =  shared_ptr<Player>(new Player(positionInRoom.get_x(), positionInRoom.get_y(), w, h, settings_admin, event_admin, gameLogger));
 	player->within_room_index = playerRoomIndex;
 
 	player->set_tag(constants::playerTag);
@@ -223,7 +253,7 @@ game_objects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& rooms, 
 
 		// Place the pickup in the center of the candidate room
 		const auto positionInRoom = GetCenterOfRoom(*random_room, w, h);
-		const auto npc = make_shared<Pickup>(positionInRoom.get_x(), positionInRoom.get_y(), w, h, true, event_admin, settings_admin);
+		const auto npc = std::shared_ptr<Pickup>(new Pickup(positionInRoom.get_x(), positionInRoom.get_y(), w, h, true, event_admin, settings_admin));
 		pickups.push_back(npc);
 	}
 	return pickups;
@@ -232,21 +262,21 @@ game_objects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& rooms, 
 game_objects LevelManager::CreateLevel()
 {
 	// Read level settings
-	const auto rows = settings_admin->get_int("grid", "rows");
-	const auto cols = settings_admin->get_int("grid", "cols");
-	const auto screenWidth = settings_admin->get_int("global", "screen_width");
-	const auto screenHeight = settings_admin->get_int("global", "screen_height");
+	const auto rows = settings_admin.get_int("grid", "rows");
+	const auto cols = settings_admin.get_int("grid", "cols");
+	const auto screenWidth = settings_admin.get_int("global", "screen_width");
+	const auto screenHeight = settings_admin.get_int("global", "screen_height");
 	const auto rowWidth = screenWidth / cols; 
 	const auto rowHeight = screenHeight / rows;
 
 	// Index Resources File
-	resource_admin->IndexResources();
+	resource_admin.IndexResources();
 	
 	// This is the list of all game objects
 	game_objects objects;	
 	
 	// Generate the level's rooms
-	auto rooms = level_generator::generate_level(resource_admin, settings_admin);
+	auto rooms = level_generator::generate_level(resource_admin, settings_admin, event_admin);
 
 	// Setup each room
 	for (const auto& room: rooms)
@@ -288,10 +318,14 @@ game_objects LevelManager::CreateLevel()
 	objects.push_back(player);
 
 	// Set game objects to the game world
-	world->game_objects = objects;	
+	world.game_objects = objects;	
 
 	// Add the game world component on the player (each player can see in to the game world)
 	player->add_component(make_shared<class game_world_component>(world));
 	
 	return objects;
 }
+
+
+
+
