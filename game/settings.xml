@@ -20,6 +20,7 @@
 	<grid>
 		<setting name="rows" type="int">10</setting>
 		<setting name="cols" type="int">10</setting>
+		<setting name="removeSidesRandomly" type="bool">true</setting>
 	</grid>
 		
 	<!-- Audio settings -->
@@ -50,7 +51,7 @@
 		<setting name="g" type="int">255</setting>
 		<setting name="b" type="int">0</setting>
 		<setting name="a" type="int">0</setting>
-		<setting name="enable" type="bool">false</setting>
+		<setting name="enable" type="bool" description="If the room should be filled">false</setting>
 	</room_fill>
 	
 	<!-- Pickup settings -->

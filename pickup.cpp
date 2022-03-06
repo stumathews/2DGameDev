@@ -1,80 +1,108 @@
 #include "Pickup.h"
-#include "events/player_moved_event.h"
+#include "events/PlayerMovedEvent.h"
 #include <events/GameObjectEvent.h>
 #include <common/Common.h>
+//#include <objects/DrawingBase.h>
 
 using namespace std;
 namespace gamelib 
 {
-	Pickup::Pickup(const int x, const int y, const int w, const int h, const bool visible, 
-		gamelib::EventManager& event_admin, gamelib::SettingsManager& settings_admin)
-		: DrawingBase(x, y, visible, settings_admin, event_admin), width(w), height(h), event_admin(event_admin)
+	Pickup::Pickup(const int x, const int y, const int width, const int height, const bool isVisible, 
+		gamelib::EventManager& eventManager, gamelib::SettingsManager& settingsManager) 
+			: DrawableGameObject(x, y, isVisible, settingsManager, eventManager), width(width), height(height), eventManager(eventManager)
 	{
-		init();
+		Initialize();
 	}
 
-	void Pickup::init()
+	Pickup::Pickup(const bool visible, SettingsManager& settingsManager, EventManager& eventManager)
+		: DrawableGameObject(0, 0, visible, settingsManager, eventManager), width(0), height(0), eventManager(eventManager)
 	{
-		fill_color = {
-					static_cast<Uint8>(settings_admin.get_int("pickup", "r")),
-					static_cast<Uint8>(settings_admin.get_int("pickup", "g")),
-					static_cast<Uint8>(settings_admin.get_int("pickup", "b")),
-					static_cast<Uint8>(settings_admin.get_int("pickup", "a"))
+		Initialize();
+	}
+
+	void Pickup::Initialize()
+	{
+		// Set the pickups will color on initialization
+		fillColour = 
+		{
+			// Red
+			static_cast<Uint8>(settings_admin.get_int("pickup", "r")),
+			// Green
+			static_cast<Uint8>(settings_admin.get_int("pickup", "g")),
+			// Blue
+			static_cast<Uint8>(settings_admin.get_int("pickup", "b")),
+			// Alpha
+			static_cast<Uint8>(settings_admin.get_int("pickup", "a"))
 		};
 	}
 
-	std::string Pickup::get_subscriber_name() { return "pickup"; }
-
-	gamelib::object_type Pickup::get_type() { return gamelib::object_type::pickup; }
-
-	std::string Pickup::get_identifier() { return "pickup"; }
-
-	Pickup::Pickup(const bool visible, SettingsManager& settings_admin, EventManager& eventAdmin):
-		DrawingBase(0, 0, visible, settings_admin, eventAdmin), width(0), height(0), event_admin(eventAdmin)
-	{
-		init();
+	std::string Pickup::GetSubscriberName() 
+	{ 
+		return "pickup";
 	}
 
+	gamelib::object_type Pickup::GetGameObjectType() 
+	{ 
+		return gamelib::object_type::Pickup; 
+	}
 
-	vector<shared_ptr<gamelib::event>> Pickup::handle_event(shared_ptr<gamelib::event> the_event)
+	std::string Pickup::GetName()
 	{
-		vector<shared_ptr<gamelib::event>> generated_events;
+		return "pickup";
+	}
 
-		if(the_event->type == gamelib::event_type::PlayerMovedEventType)
+	vector<shared_ptr<gamelib::Event>> Pickup::HandleEvent(shared_ptr<gamelib::Event> event)
+	{
+		vector<shared_ptr<gamelib::Event>> generated_events;
+
+		// Pickups are concerned with the player moving for collision detection purposes
+		if(event->type == gamelib::EventType::PlayerMovedEventType)
 		{
-			const auto moved_event = std::static_pointer_cast<gamelib::player_moved_event>(the_event);				
-				const auto player_component = moved_event->get_player_component();
-				const auto player = player_component->the_player;
+			const auto moved_event = std::static_pointer_cast<gamelib::PlayerMovedEvent>(event);
+			const auto player = moved_event->get_player_component()->the_player;
 
-			// basic little collision detection
+			// Basic collision detection
 			if(player->x == x && player->y == y)
 			{
-				generated_events.push_back(make_shared<gamelib::event>(gamelib::event_type::FetchedPickup));
+				generated_events.push_back(make_shared<gamelib::Event>(gamelib::EventType::FetchedPickup));
 				generated_events.push_back(make_shared<gamelib::GameObjectEvent>(id, this, gamelib::GameObjectEventContext::Remove));
 			}
 		
 		}
-		if(the_event->type == gamelib::event_type::DoLogicUpdateEventType)
+
+		if(event->type == gamelib::EventType::DoLogicUpdateEventType)
 		{
-			update();
+			// Update bounds etc.
+			Update();
 		}
 		return generated_events;
 	}
 
-	void Pickup::load_settings(SettingsManager& settings_admin)
+	void Pickup::LoadSettings(SettingsManager& settingsManager) 	{ }
+
+	void Pickup::Draw(SDL_Renderer* renderer)
 	{
+		// Collect our dimensions before drawing with them
+		SDL_Rect dimensions = 
+		{
+			x,
+			y,
+			width,
+			height
+		};
 	
+		// Draw 
+		DrawFilledRect(renderer, &dimensions, fillColour);
 	}
 
-	void Pickup::draw(SDL_Renderer* renderer)
+	void Pickup::Update()
 	{
-		SDL_Rect rect = { x, y, width, height};
-	
-		DrawFilledRect(renderer, &rect, fill_color);
-	}
-
-	void Pickup::update()
-	{
-		bounds = { x, y, width, height};
+		bounds = 
+		{ 
+			x, 
+			y,
+			width,
+			height
+		};
 	}
 }

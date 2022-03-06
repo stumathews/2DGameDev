@@ -1,4 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- List of all asset in the game -->
 <Assets>
   <Asset uid="1" scene="0" name="MainTheme.wav" type="music" filename="Assets/Music/MainTheme.wav"></Asset>
   <Asset uid="2" scene="0" name="scratch.wav" type="fx" filename="Assets/scratch.wav"></Asset>

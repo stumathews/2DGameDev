@@ -1,43 +1,63 @@
 #include "LevelGenerator.h"
-#include <stack>
-#include <ctime>
+#include <algorithm>
+#include <iostream>
+#include <random>
+#include <vector>
+
 using namespace std;
 
 namespace gamelib
 {
-	vector<shared_ptr<Room>> level_generator::generate_level(ResourceManager& resource_admin, SettingsManager& settings_admin, EventManager& event_admin)
+	/// <summary>
+	/// Generates the Rooms in the Level
+	/// </summary>
+	vector<shared_ptr<Room>> level_generator::generate_level(ResourceManager& resourceManager, SettingsManager& settingsManager, EventManager& eventManager)
 	{
-		srand(static_cast<unsigned>(time(nullptr)));
+		// Get global settings
+		const auto screen_width = settingsManager.get_int("global","screen_width");
+		const auto screen_height = settingsManager.get_int("global","screen_height");
 		
-		const auto screen_width = settings_admin.get_int("global","screen_width");
-		const auto screen_height = settings_admin.get_int("global","screen_height");
-		
-		const auto max_rows = settings_admin.get_int("grid","rows");
-		const auto max_columns = settings_admin.get_int("grid","cols");
-		const auto square_width = screen_width / max_columns; //settings_admin.get_int("global","square_width");
+		// Get global grid/maze settings
+		const auto max_rows = settingsManager.get_int("grid","rows");
+		const auto max_columns = settingsManager.get_int("grid","cols");
+
+		// caclulate the dimensions of a room (a square with 4 sides/walls)
+		const auto square_width = screen_width / max_columns; 
 		const auto square_height = screen_height / max_rows;
 		
-		vector<shared_ptr<Room>> mazeGrid;
-		stack<shared_ptr<Room>> roomStack;
+		// List of Rooms generated
+		vector<shared_ptr<Room>> rooms;
 
-		/* Generate Rooms for the Maze */
+		// Generate Row x Col Rooms for the Maze
 		auto count = 0;
+
+		// Generate n rows
 		for(auto row = 0; row < max_rows; row++)
 		{
+			// generate n columns in this row
 			for(auto col = 0; col < max_columns; col++)
 			{			
+				// each room has a unique room number
 				auto number = count++;
+
+				// rooms do not support moving
 				auto support_move_logic = false;
 				
-				auto game_object = std::shared_ptr<Room>(new Room(number, col * square_width, row * square_height, square_width, square_height, resource_admin, settings_admin, event_admin, false));				
-				game_object->set_tag(std::to_string(number));
-				mazeGrid.push_back(game_object);			
+				// Create room
+				auto room = std::shared_ptr<Room>(new Room(number, col * square_width, row * square_height, square_width, square_height, resourceManager, settingsManager, eventManager, false));				
+				
+				// Set room tag to room number
+				room->SetTag(std::to_string(number));
+
+				// Add to list of rooms in game
+				rooms.push_back(room);			
 			}
 		}
 
-		const auto total_rooms = static_cast<int>(mazeGrid.size());	
+		const auto total_rooms = static_cast<int>(rooms.size());	
 		
-		/* Determine which faces/edges can be removed, based on the bounds of the grid i.e within rows x cols of board */
+		// Go through each room and remove/disable some walls
+		// Determine which faces/edges can be removed, based on the bounds of the grid i.e within rows x cols of board
 		for(auto i = 0; i < total_rooms; i++)
 		{
 			const auto next_index = i + 1;
@@ -46,9 +66,13 @@ namespace gamelib
 			if(next_index >= total_rooms)
 				break;
 
-			const auto this_row = abs(i / max_columns);
-			const auto last_column = (this_row+1 * max_columns)-1;
-			const auto thisColumn = max_columns - (last_column-i);
+			// Collect contextual information about room relative to others around it
+
+			// We are operating under zero-based logic from here on out:
+
+			const auto this_row = (int)ceil(i/max_columns);
+			const auto last_column = (int)(this_row+1 * max_columns)-1;
+			const auto this_col = i % max_columns;
 
 			const auto room_above_index = i - max_columns;
 			const auto room_below_index = i + max_columns;
@@ -57,50 +81,110 @@ namespace gamelib
 
 			const auto can_remove_above = room_above_index >= 0;
 			const auto can_remove_below = room_below_index < total_rooms;
-			const auto can_remove_left = thisColumn-1 >= 1;
-			const auto can_remove_right = thisColumn+1 <= max_columns;
+			const auto can_remove_left = this_col-1 >= 1;
+			const auto can_remove_right = this_col+1 <= max_columns;
 
-			vector<int> removableSides;
-			auto &current_room = mazeGrid[i];
-			auto &next_room = mazeGrid[next_index];
+			auto &current_room = rooms[i];
+			auto &next_room = rooms[next_index];
 
-			current_room->set_adjacent_room_index(room_above_index, room_right_index, room_below_index, room_left_index);
+			// List of sides that are removable (some cannot be removed if they are on the bounds of the board/game)
+			vector<Side> removableSides;		
 
-			if(can_remove_above && current_room->is_walled(top_side) && mazeGrid[room_above_index]->is_walled(bottom_side))
-				removableSides.push_back(top_side);
-			if(can_remove_below  && current_room->is_walled(bottom_side) && mazeGrid[room_below_index]->is_walled(top_side))
-				removableSides.push_back(bottom_side);
-			if(can_remove_left  && current_room->is_walled(left_side) && mazeGrid[room_left_index]->is_walled(right_side))
-				removableSides.push_back(left_side);
-			if(can_remove_right  && current_room->is_walled(right_side) && mazeGrid[room_right_index]->is_walled(left_side))
-				removableSides.push_back(right_side);
+			// Set information about rooms around this one
+			current_room->SetSoroundingRooms(room_above_index, room_right_index, room_below_index, room_left_index);
 
-			const int rand_side_index = rand() % removableSides.size(); // Choose a random element wall to remove from possible choices
-			const auto remove_sides_randomly = true;
-			if(remove_sides_randomly)
+			// is possible to remove top wall of this room?
+			if(can_remove_above)
 			{
-				switch(removableSides[rand_side_index])
+				removableSides.push_back(Side::Top);
+			}
+
+			// is possible to remove bottom wall of this room?
+			if(can_remove_below)
+			{
+				removableSides.push_back(Side::Bottom);
+			}
+
+			// is possible to remove left wall of this room?
+			if(can_remove_left)
+			{
+				removableSides.push_back(Side::Left);
+			}
+
+			// is possible to remove right wall of this room?
+			if(can_remove_right)
+			{
+				removableSides.push_back(Side::Right);
+			}
+
+			// Choose a 1 random element wall to remove from possible sides 
+			vector<Side> random_sides;
+			uint n_sample = 1;			
+			std::sample(begin(removableSides),
+				        end(removableSides),
+				        std::back_inserter(random_sides), 
+				        n_sample, 
+				        std::mt19937 { std::random_device{}() });
+
+			const auto remove_sides_randomly = settingsManager.get_bool("grid", "removeSidesRandomly");
+			
+			// Removes one side randonly
+			if(remove_sides_randomly)
+			{				
+				auto aSide = random_sides.front();
+
+				if(aSide == Side::Top && can_remove_above)
 				{
-				case top_side:
-					current_room->remove_wall(top_side); mazeGrid[room_above_index]->remove_wall(bottom_side);
-					next_room->remove_wall(bottom_side);
-					continue;
-				case right_side:
-					current_room->remove_wall(right_side); mazeGrid[room_right_index]->remove_wall(left_side);
-					next_room->remove_wall(left_side);
-					continue;
-				case bottom_side:
-					current_room->remove_wall(bottom_side); mazeGrid[room_below_index]->remove_wall(top_side);
-					next_room->remove_wall(top_side);
-					continue;
-				case left_side:
-					current_room->remove_wall(left_side);				
-					auto &prev = mazeGrid[prevIndex]; mazeGrid[room_left_index]->remove_wall(right_side);
-					prev->remove_wall(right_side);
-					continue;
+					// remove the top side of this room
+					current_room->RemoveWallZeroBased(Side::Top); 
+					
+					auto roomAbove = rooms[current_room->GetNeighbourIndex(Side::Top)];
+					
+					// remove the bottom of the room above 
+					roomAbove->RemoveWallZeroBased(Side::Bottom);
+
+					next_room->RemoveWallZeroBased(Side::Bottom);					
 				}
+
+				if(aSide == Side::Right && can_remove_right)
+				{
+					// Remove the right side of this room
+					current_room->RemoveWallZeroBased(Side::Right);
+					auto roomToLeft = rooms[current_room->GetNeighbourIndex(Side::Right)];
+
+					// Remove room on right's left wall
+					roomToLeft->RemoveWallZeroBased(Side::Left);
+
+					next_room->RemoveWallZeroBased(Side::Left);
+				}
+
+				if(aSide == Side::Bottom && can_remove_below)
+				{					
+					// Remove the bottom side of this room
+					current_room->RemoveWallZeroBased(Side::Bottom);
+					
+					// Remove the room belows top wall
+					auto roomBelow = rooms[current_room->GetNeighbourIndex(Side::Bottom)];
+					roomBelow->RemoveWallZeroBased(Side::Top);
+
+					next_room->RemoveWallZeroBased(Side::Top);
+				}
+
+				if(aSide == Side::Left && can_remove_left)
+				{
+					// Remove the left wall on this room
+					current_room->RemoveWallZeroBased(Side::Left);				
+					auto &prev = rooms[prevIndex]; 
+
+					// Remove the room on left side's right wall
+					auto roomOnLeft = rooms[current_room->GetNeighbourIndex(Side::Left)];
+					roomOnLeft->RemoveWallZeroBased(Side::Right);
+
+					prev->RemoveWallZeroBased(Side::Right);
+				}				
 			}
 		}
-		return mazeGrid;
+
+		return rooms;
 	}
 }

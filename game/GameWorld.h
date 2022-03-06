@@ -1,7 +1,7 @@
 #pragma once
 
-#include "objects/game_world_data.h"
+#include "objects/GameWorldData.h"
 
-class GameWorld : public game_world_data
+class GameWorld : public GameWorldData
 {
 };

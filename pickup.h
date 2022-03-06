@@ -3,41 +3,96 @@
 #include "scene/Room.h"
 #include "objects/DrawingBase.h"
 #include <events/IEventSubscriber.h>
-#include <objects/MultipleInheritableEnableSharedFromThis.h>
 
 namespace gamelib
 {
-	// Represents a Pickup in the game
-	class Pickup final : public gamelib::DrawingBase
+	/// <summary>
+	/// Represents a Pickup in the game
+	/// </summary>
+	class Pickup final : public gamelib::DrawableGameObject
 	{
 	public:
 		
-		// Create a new pickup at specific coordinates
-		Pickup(int x, int y, int w, int h, bool visible, gamelib::EventManager& event_admin, gamelib::SettingsManager& settings_admin);
+		/// <summary>
+		/// Create a new pickup at specific coordinates
+		/// </summary>
+		Pickup(int x, int y, int width, int height, bool visible, gamelib::EventManager& eventManager, gamelib::SettingsManager& settingsManager);
 		
-		// Create a new pickup with undefined coordinates
-		Pickup(bool visible, gamelib::SettingsManager& settings_admin, gamelib::EventManager& event_admin);
+		/// <summary>
+		/// Create a new pickup with undefined coordinates
+		/// </summary>
+		/// <param name="visible">initial visible state</param>
+		/// <param name="settingsManager">settingsManager</param>
+		/// <param name="eventManager">eventManager</param>
+		Pickup(bool visible, gamelib::SettingsManager& settingsManager, gamelib::EventManager& eventManager);
 
-		// Initialize the pickup
-		void init();
+		/// <summary>
+		/// Initialize the pickup
+		/// </summary>
+		void Initialize();
 		
-		/* IEventSubscriber overrides */
-		std::string get_subscriber_name() override;
-		gamelib::object_type get_type() override;
-		std::string get_identifier() override;
-		std::vector<std::shared_ptr<gamelib::event>> handle_event(std::shared_ptr<gamelib::event> the_event) override;
+		/// <summary>
+		/// Provide name to event system
+		/// </summary>
+		/// <returns>Subscriber name</returns>
+		std::string GetSubscriberName() override;
 
-		// Load pickup settings
-		void load_settings(gamelib::SettingsManager& settings_admin) override;
+		/// <summary>
+		/// Provide Pickup game type
+		/// </summary>
+		/// <returns>Pickup</returns>
+		gamelib::object_type GetGameObjectType() override;
 
-		// Draw Pickup
-		void draw(SDL_Renderer* renderer) override;
+		/// <summary>
+		/// Provide name
+		/// </summary>
+		/// <returns>Name</returns>
+		std::string GetName() override;
 
-		// Update Pickup
-		void update() override;
-		SDL_Color fill_color;
-		gamelib::EventManager& event_admin;
+		/// <summary>
+		/// Handle pickup events
+		/// </summary>
+		/// <param name="event">incoming event</param>
+		/// <returns>generated events</returns>
+		std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event) override;
+
+		/// <summary>
+		/// Load pickup settings
+		/// </summary>
+		/// <param name="settingsManager">settingsManager</param>
+		void LoadSettings(gamelib::SettingsManager& settingsManager) override;
+
+		/// <summary>
+		/// Draw Pickup
+		/// </summary>
+		/// <param name="renderer">SDL renderer</param>
+		void Draw(SDL_Renderer* renderer) override;
+
+		/// <summary>
+		///  Update Pickup
+		/// </summary>
+		void Update() override;
+		
 	private:
-		int width, height;
+
+		/// <summary>
+		/// Pickup width
+		/// </summary>
+		int width;
+
+		/// <summary>
+		/// Pickup height
+		/// </summary>
+		int height;
+
+		/// <summary>
+		/// Colour of the pickup
+		/// </summary>
+		SDL_Color fillColour;
+
+		/// <summary>
+		/// EventManager
+		/// </summary>
+		gamelib::EventManager& eventManager;
 	};
 }

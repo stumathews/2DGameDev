@@ -20,7 +20,7 @@ public:
 	GameCommands(const GameCommands& copy) = delete;
 	//GameCommands& operator=(GameCommands& other) = delete;
 
-	std::string get_subscriber_name() override { return "GameCommands";};
+	std::string GetSubscriberName() override { return "GameCommands";};
 
 	void Fire(bool be_verbose);
 	void MoveUp(bool be_verbose);
@@ -37,14 +37,14 @@ public:
 private:
 	gamelib::SettingsManager& _settings;
 	gamelib::EventManager& _events;
-	gamelib::AudioManager& _audio;
+	gamelib::AudioManager& _audioManager;
 	gamelib::ResourceManager& _resources;
 	GameWorld& _gameWorld;
 	bool _be_verbose;
 	gamelib::Logger& _gameLogger;
 
 	// Inherited via EventSubscriber
-	virtual std::vector<std::shared_ptr<gamelib::event>> handle_event(std::shared_ptr<gamelib::event> evt) override;
+	virtual std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt) override;
 };
 
 
