@@ -44,7 +44,7 @@ public:
 		gamelib::SettingsManager& settings_admin, 
 		GameWorld& world,
 		gamelib::SceneManager& scene_admin,
-		gamelib::AudioManager& audio_admin, gamelib::logger& gameLogger);
+		gamelib::AudioManager& audio_admin, gamelib::Logger& gameLogger);
 
 	bool initialize();
 	static size_t get_random_index(const int min, const int max);	
@@ -60,7 +60,7 @@ private:
 	gamelib::SceneManager& scene_admin;
 	gamelib::AudioManager& audio_admin;
 	std::shared_ptr<GameCommands> gameCommands;
-	gamelib::logger& gameLogger;
+	gamelib::Logger& gameLogger;
 
     void RemoveGameObject(GameWorld& gameWorld, gamelib::GameObject& gameObject);
 

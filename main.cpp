@@ -9,9 +9,9 @@ int main(int argc, char *args[])
 {
 	try
 	{
-		// Main game Objects are created here and passed around as shared pointers throughout the game
+		// Main game Objects are created here
 		auto world = GameWorld();		
-		auto gameLogger = logger();
+		auto gameLogger = Logger();
 		auto settings = SettingsManager();
 		auto events = EventManager(settings, gameLogger);
 		auto graphics = sdl_graphics_manager(events, gameLogger);                                       
@@ -34,6 +34,7 @@ int main(int argc, char *args[])
 		// Initialize key parts of the game
 		const auto isGameStructureInitialized = succeeded(structure->initialize(), "Initialize Game...");
 		const auto IsLevelsInitialized = succeeded(levels.initialize(), "Initializing Level Manager...");
+		
 		// Create the level
 		levels.CreateLevel();
 

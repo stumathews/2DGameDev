@@ -2,15 +2,26 @@
 
 using namespace gamelib;
 
-bool IsSameSubscriber(IEventSubscriber* candidate, int subscriptionId) 
+LevelManager::LevelManager(	EventManager& event_admin, 	ResourceManager& resource_admin, SettingsManager& settings_admin, GameWorld& world, SceneManager& scene_admin, AudioManager& audio_admin, Logger& gameLogger) 
+		: event_admin(event_admin), resource_admin(resource_admin), settings_admin(settings_admin), world(world), scene_admin(scene_admin), audio_admin(audio_admin), gameLogger(gameLogger) 
+{ }
+
+bool LevelManager::initialize()
 {
-	if(candidate)
-	{
-		auto found_match = candidate == nullptr ? true : candidate->get_subscriber_id() == subscriptionId;
-		return found_match;
-	}
-	return false;
-};
+	// set basic game world defaults
+	InitGameWorldData();
+
+	// All game commands that we handle in this game
+	gameCommands = make_shared<GameCommands>(settings_admin, event_admin, audio_admin, resource_admin, world, gameLogger);
+
+	// subscribe to game events
+	event_admin.subscribe_to_event(event_type::GenerateNewLevel, this);
+	event_admin.subscribe_to_event(event_type::InvalidMove, this);
+	event_admin.subscribe_to_event(event_type::FetchedPickup, this);
+	event_admin.subscribe_to_event(event_type::GameObject, this);
+		
+	return true;
+}
 
 // Handle level events
 events LevelManager::handle_event(std::shared_ptr<event> evt)
@@ -43,6 +54,7 @@ events LevelManager::handle_event(std::shared_ptr<event> evt)
 void LevelManager::RemoveGameObject(GameWorld& gameWorld, GameObject& gameObject)
 {
 	auto &objects = world.game_objects;
+
 	// Look for gameObject
 	auto result = std::find_if(begin(objects), end(objects), [&](weak_ptr<gamelib::GameObject> target)
 	{ 
@@ -73,40 +85,6 @@ void LevelManager::InitGameWorldData() const
 	world.can_render = true;
 }
 
-LevelManager::LevelManager(
-	EventManager& event_admin, 
-	ResourceManager& resource_admin, 
-	SettingsManager& settings_admin, 
-	GameWorld& world, 
-	SceneManager& scene_admin,
-	AudioManager& audio_admin,
-	logger& gameLogger) : event_admin(event_admin),
-	                                         resource_admin(resource_admin),
-	                                         settings_admin(settings_admin), 
-	                                         world(world),
-	                                         scene_admin(scene_admin),
-											 audio_admin(audio_admin), gameLogger(gameLogger)
-{
-}
-
-bool LevelManager::initialize()
-{
-	// set basic game world defaults
-	InitGameWorldData();
-
-	// All game commands that we handle in this game
-	gameCommands = make_shared<GameCommands>(settings_admin, event_admin, audio_admin, resource_admin, world, gameLogger);
-
-	// subscribe to game events
-	event_admin.subscribe_to_event(event_type::GenerateNewLevel, this);
-	event_admin.subscribe_to_event(event_type::InvalidMove, this);
-	event_admin.subscribe_to_event(event_type::FetchedPickup, this);
-	event_admin.subscribe_to_event(event_type::GameObject, this);
-		
-	return true;
-}
-
-// Read from SDL for keyboard data
 void LevelManager::GetKeyboardInput()
 {
 	SDL_Event sdl_event;
@@ -191,10 +169,7 @@ void LevelManager::GetKeyboardInput()
 	}
 }
 
-size_t LevelManager::get_random_index(const int min, const int max)
-{
-	return rand() % (max - min + 1) + min;
-}
+size_t LevelManager::get_random_index(const int min, const int max) { return rand() % (max - min + 1) + min; }
 
 coordinate<int> GetCenterOfRoom(const Room &room, const int w, const int h)
 {
@@ -238,9 +213,6 @@ shared_ptr<GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>>
 
 	return player;
 }
-
-
-
 
 game_objects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& rooms, const int w, const int h)
 {
@@ -325,7 +297,3 @@ game_objects LevelManager::CreateLevel()
 	
 	return objects;
 }
-
-
-
-

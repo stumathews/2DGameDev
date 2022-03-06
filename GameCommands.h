@@ -16,7 +16,7 @@ public:
 				 gamelib::AudioManager& audio,
 				 gamelib::ResourceManager& resources,
 				 GameWorld& gameWorld, 
-		         gamelib::logger& gameLogger);
+		         gamelib::Logger& gameLogger);
 	GameCommands(const GameCommands& copy) = delete;
 	//GameCommands& operator=(GameCommands& other) = delete;
 
@@ -41,7 +41,7 @@ private:
 	gamelib::ResourceManager& _resources;
 	GameWorld& _gameWorld;
 	bool _be_verbose;
-	gamelib::logger& _gameLogger;
+	gamelib::Logger& _gameLogger;
 
 	// Inherited via EventSubscriber
 	virtual std::vector<std::shared_ptr<gamelib::event>> handle_event(std::shared_ptr<gamelib::event> evt) override;

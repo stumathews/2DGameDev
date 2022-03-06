@@ -14,7 +14,7 @@ GameCommands::GameCommands(SettingsManager& settings,
 						   AudioManager& audio,
 						   ResourceManager& resources,
 						   GameWorld& gameWorld, 
-						   logger& gameLogger) 
+						   Logger& gameLogger) 
 	: _settings(settings), _events(events), _be_verbose(false), _audio(audio), _resources(resources), _gameWorld(gameWorld), _gameLogger(gameLogger)
 {
 }
