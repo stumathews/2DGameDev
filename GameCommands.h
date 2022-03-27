@@ -11,14 +11,8 @@
 class GameCommands :  public gamelib::EventSubscriber, public inheritable_enable_shared_from_this<GameCommands>
 {
 public:	
-	GameCommands(gamelib::SettingsManager& settings, 
-				 gamelib::EventManager& events,
-				 gamelib::AudioManager& audio,
-				 gamelib::ResourceManager& resources,
-				 GameWorld& gameWorld, 
-		         gamelib::Logger& gameLogger);
+	GameCommands(GameWorld& gameWorld);
 	GameCommands(const GameCommands& copy) = delete;
-	//GameCommands& operator=(GameCommands& other) = delete;
 
 	std::string GetSubscriberName() override { return "GameCommands";};
 
@@ -35,13 +29,8 @@ public:
 	void InvalidMove(bool be_verbose = false);
 	void FetchedPickup(bool be_verbose = false);
 private:
-	gamelib::SettingsManager& _settings;
-	gamelib::EventManager& _events;
-	gamelib::AudioManager& _audioManager;
-	gamelib::ResourceManager& _resources;
 	GameWorld& _gameWorld;
 	bool _be_verbose;
-	gamelib::Logger& _gameLogger;
 
 	// Inherited via EventSubscriber
 	virtual std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt) override;

@@ -7,15 +7,14 @@
 using namespace std;
 namespace gamelib 
 {
-	Pickup::Pickup(const int x, const int y, const int width, const int height, const bool isVisible, 
-		gamelib::EventManager& eventManager, gamelib::SettingsManager& settingsManager) 
-			: DrawableGameObject(x, y, isVisible, settingsManager, eventManager), width(width), height(height), eventManager(eventManager)
+	Pickup::Pickup(const int x, const int y, const int width, const int height, const bool isVisible) 
+			: DrawableGameObject(x, y, isVisible), width(width), height(height)
 	{
 		Initialize();
 	}
 
-	Pickup::Pickup(const bool visible, SettingsManager& settingsManager, EventManager& eventManager)
-		: DrawableGameObject(0, 0, visible, settingsManager, eventManager), width(0), height(0), eventManager(eventManager)
+	Pickup::Pickup(const bool visible)
+		: DrawableGameObject(0, 0, visible), width(0), height(0)
 	{
 		Initialize();
 	}
@@ -26,13 +25,13 @@ namespace gamelib
 		fillColour = 
 		{
 			// Red
-			static_cast<Uint8>(settings_admin.get_int("pickup", "r")),
+			static_cast<Uint8>(SettingsManager::Get()->get_int("pickup", "r")),
 			// Green
-			static_cast<Uint8>(settings_admin.get_int("pickup", "g")),
+			static_cast<Uint8>(SettingsManager::Get()->get_int("pickup", "g")),
 			// Blue
-			static_cast<Uint8>(settings_admin.get_int("pickup", "b")),
+			static_cast<Uint8>(SettingsManager::Get()->get_int("pickup", "b")),
 			// Alpha
-			static_cast<Uint8>(settings_admin.get_int("pickup", "a"))
+			static_cast<Uint8>(SettingsManager::Get()->get_int("pickup", "a"))
 		};
 	}
 
@@ -78,7 +77,7 @@ namespace gamelib
 		return generated_events;
 	}
 
-	void Pickup::LoadSettings(SettingsManager& settingsManager) 	{ }
+	void Pickup::LoadSettings() 	{ }
 
 	void Pickup::Draw(SDL_Renderer* renderer)
 	{

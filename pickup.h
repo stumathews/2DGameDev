@@ -16,7 +16,7 @@ namespace gamelib
 		/// <summary>
 		/// Create a new pickup at specific coordinates
 		/// </summary>
-		Pickup(int x, int y, int width, int height, bool visible, gamelib::EventManager& eventManager, gamelib::SettingsManager& settingsManager);
+		Pickup(int x, int y, int width, int height, bool visible);
 		
 		/// <summary>
 		/// Create a new pickup with undefined coordinates
@@ -24,7 +24,7 @@ namespace gamelib
 		/// <param name="visible">initial visible state</param>
 		/// <param name="settingsManager">settingsManager</param>
 		/// <param name="eventManager">eventManager</param>
-		Pickup(bool visible, gamelib::SettingsManager& settingsManager, gamelib::EventManager& eventManager);
+		Pickup(bool visible);
 
 		/// <summary>
 		/// Initialize the pickup
@@ -60,7 +60,7 @@ namespace gamelib
 		/// Load pickup settings
 		/// </summary>
 		/// <param name="settingsManager">settingsManager</param>
-		void LoadSettings(gamelib::SettingsManager& settingsManager) override;
+		void LoadSettings() override;
 
 		/// <summary>
 		/// Draw Pickup
@@ -89,10 +89,5 @@ namespace gamelib
 		/// Colour of the pickup
 		/// </summary>
 		SDL_Color fillColour;
-
-		/// <summary>
-		/// EventManager
-		/// </summary>
-		gamelib::EventManager& eventManager;
 	};
 }

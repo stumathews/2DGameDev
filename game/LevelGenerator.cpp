@@ -11,15 +11,15 @@ namespace gamelib
 	/// <summary>
 	/// Generates the Rooms in the Level
 	/// </summary>
-	vector<shared_ptr<Room>> level_generator::generate_level(ResourceManager& resourceManager, SettingsManager& settingsManager, EventManager& eventManager)
+	vector<shared_ptr<Room>> level_generator::generate_level()
 	{
 		// Get global settings
-		const auto screen_width = settingsManager.get_int("global","screen_width");
-		const auto screen_height = settingsManager.get_int("global","screen_height");
+		const auto screen_width = SettingsManager::Get()->get_int("global","screen_width");
+		const auto screen_height = SettingsManager::Get()->get_int("global","screen_height");
 		
 		// Get global grid/maze settings
-		const auto max_rows = settingsManager.get_int("grid","rows");
-		const auto max_columns = settingsManager.get_int("grid","cols");
+		const auto max_rows = SettingsManager::Get()->get_int("grid","rows");
+		const auto max_columns = SettingsManager::Get()->get_int("grid","cols");
 
 		// caclulate the dimensions of a room (a square with 4 sides/walls)
 		const auto square_width = screen_width / max_columns; 
@@ -44,7 +44,7 @@ namespace gamelib
 				auto support_move_logic = false;
 				
 				// Create room
-				auto room = std::shared_ptr<Room>(new Room(number, col * square_width, row * square_height, square_width, square_height, resourceManager, settingsManager, eventManager, false));				
+				auto room = std::shared_ptr<Room>(new Room(number, col * square_width, row * square_height, square_width, square_height, false));				
 				
 				// Set room tag to room number
 				room->SetTag(std::to_string(number));
@@ -126,7 +126,7 @@ namespace gamelib
 				        n_sample, 
 				        std::mt19937 { std::random_device{}() });
 
-			const auto remove_sides_randomly = settingsManager.get_bool("grid", "removeSidesRandomly");
+			const auto remove_sides_randomly = SettingsManager::Get()->get_bool("grid", "removeSidesRandomly");
 			
 			// Removes one side randonly
 			if(remove_sides_randomly)

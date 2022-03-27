@@ -17,13 +17,8 @@ using namespace std;
 /// <param name="resources"></param>
 /// <param name="gameWorld"></param>
 /// <param name="gameLogger"></param>
-GameCommands::GameCommands(SettingsManager& settings, 
-						   EventManager& events,
-						   AudioManager& audio,
-						   ResourceManager& resources,
-						   GameWorld& gameWorld, 
-						   Logger& gameLogger) 
-	: _settings(settings), _events(events), _be_verbose(false), _audioManager(audio), _resources(resources), _gameWorld(gameWorld), _gameLogger(gameLogger) { }
+GameCommands::GameCommands(GameWorld& gameWorld) 
+	: _be_verbose(false), _gameWorld(gameWorld) { }
 
 /// <summary>
 /// Fire!
@@ -34,9 +29,9 @@ void GameCommands::Fire(bool be_verbose)
 	LogThis("Space bar pressed!", be_verbose, [&]()
 	{
 		// Raise Fire event
-		_events.RaiseEvent(std::make_shared<gamelib::Event>(gamelib::EventType::Fire), this);
+		EventManager::Get()->RaiseEvent(std::make_shared<gamelib::Event>(gamelib::EventType::Fire), this);
 		return true;
-	}, _settings, true, true);
+	}, true, true);
 }
 
 /// <summary>
@@ -48,9 +43,9 @@ void GameCommands::MoveUp(bool be_verbose)
 	LogThis("Player pressed up!", be_verbose, [&]()
 	{
 		// Raise Position changed event - Up
-		_events.RaiseEvent(std::make_unique<gamelib::position_change_event>(gamelib::Direction::Up), this);
+		EventManager::Get()->RaiseEvent(std::make_unique<gamelib::position_change_event>(gamelib::Direction::Up), this);
 		return true;
-	}, _settings, true, true);
+	}, true, true);
 }
 
 /// <summary>
@@ -62,9 +57,9 @@ void GameCommands::MoveDown(bool be_verbose)
 	LogThis("Player pressed down!", be_verbose, [&]()
 	{
 		// Raise Position changed event - Down
-		_events.RaiseEvent(std::make_unique<gamelib::position_change_event>(gamelib::Direction::Down), this);
+		EventManager::Get()->RaiseEvent(std::make_unique<gamelib::position_change_event>(gamelib::Direction::Down), this);
 		return true;
-	}, _settings, true, true);
+	}, true, true);
 }
 
 /// <summary>
@@ -76,9 +71,9 @@ void GameCommands::MoveLeft(bool be_verbose)
 	LogThis("Player pressed left!", be_verbose, [&]()
 	{
 		// Raise Position changed event - Left
-		_events.RaiseEvent(std::make_unique<gamelib::position_change_event>(gamelib::Direction::Left), this);
+		EventManager::Get()->RaiseEvent(std::make_unique<gamelib::position_change_event>(gamelib::Direction::Left), this);
 		return true;
-	}, _settings, true, true);
+	}, true, true);
 }
 
 /// <summary>
@@ -90,9 +85,9 @@ void GameCommands::MoveRight(bool be_verbose)
 	LogThis("Player pressed right!", be_verbose, [&]()
 	{
 		// Raise Position changed event - Rigt
-		_events.RaiseEvent(std::make_unique<gamelib::position_change_event>(gamelib::Direction::Right), this);
+		EventManager::Get()->RaiseEvent(std::make_unique<gamelib::position_change_event>(gamelib::Direction::Right), this);
 		return true;
-	}, _settings, true, true);
+	}, true, true);
 }
 
 void GameCommands::ChangeLevel(bool be_verbose, short newLevel)
@@ -101,9 +96,9 @@ void GameCommands::ChangeLevel(bool be_verbose, short newLevel)
 
 	LogThis(message, be_verbose, [&]()
 	{
-		_events.RaiseEvent(std::make_unique<gamelib::SceneChangedEvent>(newLevel), this);
+		EventManager::Get()->RaiseEvent(std::make_unique<gamelib::SceneChangedEvent>(newLevel), this);
 		return true;
-	}, _settings, true, true);
+	}, true, true);
 }
 
 /// <summary>
@@ -112,9 +107,9 @@ void GameCommands::ChangeLevel(bool be_verbose, short newLevel)
 /// <param name="be_verbose"></param>
 void GameCommands::ReloadSettings(bool be_verbose)
 {
-	_settings.reload();
-	_events.RaiseEvent(make_shared<gamelib::Event>(gamelib::EventType::SettingsReloaded), this);
-	LogMessage("Settings reloaded", _gameLogger, be_verbose, false);
+	SettingsManager::Get()->reload();
+	EventManager::Get()->RaiseEvent(make_shared<gamelib::Event>(gamelib::EventType::SettingsReloaded), this);
+	LogMessage("Settings reloaded", be_verbose, false);
 }
 
 /// <summary>
@@ -123,8 +118,8 @@ void GameCommands::ReloadSettings(bool be_verbose)
 /// <param name="be_verbose"></param>
 void GameCommands::GenerateNewLevel(bool be_verbose)
 {
-	_events.RaiseEvent(make_shared<gamelib::Event>(gamelib::EventType::GenerateNewLevel), this);
-	LogMessage("Generating new level", _gameLogger, be_verbose, false);
+	EventManager::Get()->RaiseEvent(make_shared<gamelib::Event>(gamelib::EventType::GenerateNewLevel), this);
+	LogMessage("Generating new level", be_verbose, false);
 }
 
 /// <summary>
@@ -135,7 +130,7 @@ void GameCommands::ToggleMusic(bool be_verbose)
 {	
 	if (!Mix_PlayingMusic())
 	{
-		_audioManager.PlayMusic(gamelib::AudioManager::ToAudioAsset(_resources.GetAssetInfo("MainTheme.wav"))->AsMusic());
+		AudioManager::Get()->PlayMusic(gamelib::AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("MainTheme.wav"))->AsMusic());
 	}
 	else
 	{
@@ -156,7 +151,7 @@ void GameCommands::Quit(bool be_verbose)
 	{
 		_gameWorld.IsGameDone = 1;
 		return true;
-	}, _settings, true, true);
+	}, true, true);
 }
 
 /// <summary>
@@ -165,8 +160,8 @@ void GameCommands::Quit(bool be_verbose)
 /// <param name="be_verbose"></param>
 void GameCommands::InvalidMove(bool be_verbose)
 {
-	_gameLogger.LogThis("GameCommand: Invalid move", be_verbose);
-	_audioManager.PlaySound(AudioManager::ToAudioAsset(_resources.GetAssetInfo(_settings.get_string("audio", "invalid_move")))->AsSoundEffect());
+	Logger::Get()->LogThis("GameCommand: Invalid move", be_verbose);
+	AudioManager::Get()->PlaySound(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->get_string("audio", "invalid_move")))->AsSoundEffect());
 }
 
 /// <summary>
@@ -175,7 +170,7 @@ void GameCommands::InvalidMove(bool be_verbose)
 /// <param name="be_verbose"></param>
 void GameCommands::FetchedPickup(bool be_verbose)
 {
-	_audioManager.PlaySound(AudioManager::ToAudioAsset(_resources.GetAssetInfo(_settings.get_string("audio", "fetched_pickup")))->AsSoundEffect());
+	AudioManager::Get()->PlaySound(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->get_string("audio", "fetched_pickup")))->AsSoundEffect());
 }
 
 /// <summary>

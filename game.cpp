@@ -17,30 +17,22 @@ int main(int argc, char *args[])
 	try
 	{
 		// Main game Objects are created here
-		GameWorld gameWorld;		
-		Logger logger;
-		SettingsManager settings;
-		AudioManager audio;
-		FontManager fonts;
-		EventManager events = EventManager(settings, logger);
-		SDLGraphicsManager graphics = SDLGraphicsManager(events, logger);		
-		ResourceManager resources = ResourceManager(settings, graphics, fonts, audio, logger);
-		SceneManager currentScene = SceneManager(events, settings, resources, gameWorld, logger);
-		LevelManager levels = LevelManager(events, resources, settings, gameWorld, currentScene, audio, logger);
+		GameWorld gameWorld;	
+		SceneManager currentScene = SceneManager(gameWorld);
+		LevelManager levels(gameWorld, currentScene );
 
 		// Read game settings
-		settings.load("game/settings.xml");
-		const auto beVerbose = settings.get_bool("global", "verbose");
+		SettingsManager::Get()->load("game/settings.xml");
+		const auto beVerbose = SettingsManager::Get()->get_bool("global", "verbose");
 
 		// Create game infrastructure
-		GameStructure game = GameStructure(events, resources, settings, gameWorld, currentScene, graphics, audio,
+		GameStructure game = GameStructure(gameWorld, currentScene,
 			// The level manager is responsible for polling for input
-			[&]() { levels.GetKeyboardInput(); },
-			logger);
+			[&]() { levels.GetKeyboardInput(); });
 		
 		// Initialize key parts of the game
-		const auto isGameStructureInitialized = IsSuccess(game.InitializeGameSubSystems(), "Initialize Game subsystems...", logger);
-		const auto IsLevelsInitialized = IsSuccess(levels.Initialize(), "Initializing Level Manager...", logger);
+		const auto isGameStructureInitialized = IsSuccess(game.InitializeGameSubSystems(), "Initialize Game subsystems...");
+		const auto IsLevelsInitialized = IsSuccess(levels.Initialize(), "Initializing Level Manager...");
 		
 		// Sets up level becuase we want these events to be in the queue before the level events
 		levels.PrepareLevel(1);
@@ -54,20 +46,20 @@ int main(int argc, char *args[])
 			auto message = string("Game initialization failed.") + 
 				           string("GameStructured initialized=") + std::to_string(isGameStructureInitialized) + 
 				           string(" LevelInitialized=") + std::to_string(IsLevelsInitialized);
-			LogMessage(message, logger, beVerbose, true);
+			LogMessage(message, beVerbose, true);
 			return -1;
 		}
 
 		
 
 		// Start main game Loop		
-		const auto loop_result = LogThis("Beginning game loop...", beVerbose, [&]() { return game.DoGameLoop(); }, settings, true, true);
+		const auto loop_result = LogThis("Beginning game loop...", beVerbose, [&]() { return game.DoGameLoop(); }, true, true);
 		
 		// Game loop ended, start unloading the game...		
-		const auto unload_result = LogThis("Unloading game...", beVerbose, [&]() { return game.UnloadGameSubsystems(); }, settings, true, true);
+		const auto unload_result = LogThis("Unloading game...", beVerbose, [&]() { return game.UnloadGameSubsystems(); }, true, true);
 		
-		return IsSuccess(loop_result, "Game loop failed", logger) && 
-			   IsSuccess(unload_result, "Content unload failed", logger);
+		return IsSuccess(loop_result, "Game loop failed") && 
+			   IsSuccess(unload_result, "Content unload failed");
 	
 	}
 	catch(EngineException& e)

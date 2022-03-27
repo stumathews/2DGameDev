@@ -17,13 +17,7 @@ public:
 	/// <summary>
 	/// Construct a Level Manager
 	/// </summary>
-	LevelManager(
-		gamelib::EventManager& eventManager, 
-		gamelib::ResourceManager& resource_admin, 
-		gamelib::SettingsManager& _settingsManager, 
-		GameWorld& gameWorld,
-		gamelib::SceneManager& _sceneManager,
-		gamelib::AudioManager& _audioManager, gamelib::Logger& gameLogger);
+	LevelManager(GameWorld& gameWorld, gamelib::SceneManager& scene_admin);
 
 	/// <summary>
 	/// Initialize the level
@@ -68,18 +62,13 @@ private:
 	/// </summary>
 	gamelib::ListOfGameObjects CreatePickups(const std::vector<std::shared_ptr<gamelib::Room>>& rooms, const int w, const int h);
 	
-	gamelib::EventManager& _eventManager;
-	gamelib::ResourceManager& _resourceManager;
-	gamelib::SettingsManager& _settingsManager;
-	
 	// Game world, including game objects
 	GameWorld& gameWorld;
-	gamelib::SceneManager& _sceneManager;
-	gamelib::AudioManager& _audioManager;
 
+	gamelib::SceneManager& sceneManager;
+	
 	// Game commands
 	std::shared_ptr<GameCommands> _gameCommands;
-	gamelib::Logger& _gameLogger;
 
     /// <summary>
     /// Remove game object

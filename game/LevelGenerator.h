@@ -9,7 +9,7 @@ namespace gamelib
 	class level_generator
 	{
 	public:
-		static std::vector<std::shared_ptr<Room>> generate_level(ResourceManager& resource_admin, SettingsManager& settingsManager, EventManager& eventManager);	
+		static std::vector<std::shared_ptr<Room>> generate_level();	
 	};
 }
 
