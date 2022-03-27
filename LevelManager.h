@@ -10,6 +10,8 @@
 #include "GameCommands.h"
 #include <scene/Room.h>
 
+typedef std::vector<std::shared_ptr<gamelib::GameObject>> ListOfGameObjects;
+
 class LevelManager : public gamelib::EventSubscriber
 {
 public:
@@ -43,7 +45,7 @@ public:
 	/// <summary>
 	/// Create the Level's game objects
 	/// </summary>
-	gamelib::ListOfGameObjects CreateLevel();	
+	ListOfGameObjects CreateLevel();	
 
 	/// <summary>
 	/// Starts the level 
@@ -60,7 +62,7 @@ private:
 	/// <summary>
 	/// Create the Pickups
 	/// </summary>
-	gamelib::ListOfGameObjects CreatePickups(const std::vector<std::shared_ptr<gamelib::Room>>& rooms, const int w, const int h);
+	ListOfGameObjects CreatePickups(const std::vector<std::shared_ptr<gamelib::Room>>& rooms, const int w, const int h);
 	
 	// Game world, including game objects
 	GameWorld& gameWorld;

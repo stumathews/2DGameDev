@@ -7,12 +7,66 @@
   <Asset uid="3" scene="0" name="high.wav" type="fx" filename="Assets/high.wav"></Asset>
   <Asset uid="4" scene="0" name="medium.wav" type="fx" filename="Assets/medium.wav"></Asset>
   <Asset uid="5" scene="0" name="low.wav" type="fx" filename="Assets/low.wav"></Asset>  
-  <Asset uid="6" scene="1" name="p1.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p1_front.png"></Asset>
-  <Asset uid="7" scene="2" name="p2.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p2_front.png" isAnimated="false" numKeyFrames="12"></Asset>
-  <Asset uid="8" scene="2" name="p3.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p3_front.png" isAnimated="false" numKeyFrames="0"></Asset>
-  <Asset uid="9" scene="3" name="p1.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p1_walk/p1_walk.png" isAnimated="true" numKeyFrames="11" keyFrameHeight="97" keyFrameWidth="73"></Asset>
-  <Asset uid="10" scene="3" name="p2.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p2_walk/p2_walk.png" isAnimated="true" numKeyFrames="11" keyFrameHeight="97" keyFrameWidth="73"></Asset>
-  <Asset uid="11" scene="3" name="p3.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p3_walk/p3_walk.png" isAnimated="true" numKeyFrames="11" keyFrameHeight="97" keyFrameWidth="73"></Asset>
+  <Asset uid="6" scene="1" name="p1.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p1_front.png" width="66" height="92"></Asset>
+  <Asset uid="7" scene="2" name="p2.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p2_front.png" width="66" height="92"></Asset>
+  <Asset uid="8" scene="2" name="p3.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p3_front.png" width="66" height="92"></Asset>
+  <Asset uid="9" scene="3" name="p1.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p1_walk/p1_walk.png" width="256" height="512">
+    <sprite>
+      <animation>
+        <keyframes>
+          <keyframe x="0" y="0" w="67" h="92"/>
+          <keyframe x="66" y="0" w="66" h="93"/>
+          <keyframe x="132" y="0" w="67" h="92"/>
+          <keyframe x="0" y="93" w="67" h="93"/>
+          <keyframe x="67" y="93" w="66" h="93"/>
+          <keyframe x="133" y="93" w="71" h="92"/>
+          <keyframe x="0" y="186" w="71" h="93"/>
+          <keyframe x="71" y="186" w="71" h="93"/>
+          <keyframe x="142" y="186" w="70" h="93"/>
+          <keyframe x="0" y="279" w="71" h="93"/>
+          <keyframe x="71" y="279" w="67" h="92"/>
+        </keyframes>
+      </animation> 
+    </sprite>  
+  </Asset>
+  <Asset uid="10" scene="3" name="p2.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p2_walk/p2_walk.png" width="256" height="512">
+     <sprite>
+      <animation>
+        <keyframes>
+          <keyframe x="0" y="0" w="67" h="92"/>
+          <keyframe x="67" y="0" w="66" h="93"/>
+          <keyframe x="133" y="0" w="66" h="91"/>
+          <keyframe x="0" y="93" w="67" h="91"/>
+          <keyframe x="67" y="93" w="66" h="91"/>
+          <keyframe x="133" y="93" w="69" h="90"/>
+          <keyframe x="0" y="184" w="69" h="91"/>
+          <keyframe x="69" y="184" w="69" h="92"/>
+          <keyframe x="138" y="184" w="68" h="92"/>
+          <keyframe x="0" y="276" w="69" h="93"/>
+          <keyframe x="69" y="276" w="67" h="92"/>
+        </keyframes>
+      </animation> 
+    </sprite>  
+  </Asset>
+  <Asset uid="11" scene="3" name="p3.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p3_walk/p3_walk.png" width="256" height="512">
+     <sprite>
+      <animation>
+        <keyframes>
+          <keyframe x="0" y="0" w="66" h="92"/>
+          <keyframe x="66" y="0" w="66" h="93"/>
+          <keyframe x="132" y="0" w="66" h="93"/>
+          <keyframe x="0" y="93" w="66" h="93"/>
+          <keyframe x="66" y="93" w="66" h="93"/>
+          <keyframe x="132" y="93" w="71" h="92"/>
+          <keyframe x="0" y="186" w="71" h="93"/>
+          <keyframe x="71" y="186" w="71" h="93"/>
+          <keyframe x="142" y="186" w="70" h="92"/>
+          <keyframe x="0" y="279" w="71" h="93"/>
+          <keyframe x="71" y="279" w="66" h="92"/>
+        </keyframes>
+      </animation> 
+    </sprite>  
+  </Asset>
   <Asset uid="12" scene="0" name="arial.ttf" type="font" filename="Assets/fonts/arial.ttf"></Asset>
   <Asset uid="13" scene="0" name="beep.wav" type="fx" filename="Assets/beep.wav"></Asset>
   <Asset uid="14" scene="0" name="boop.wav" type="fx" filename="Assets/boop.wav"></Asset>

@@ -383,7 +383,7 @@ ListOfGameObjects LevelManager::CreateLevel()
 	gameWorld.objects = objects;	
 
 	// Add the game world component on the player (each player can see in to the game world)
-	player->AddComponent(std::make_shared<game_world_component>(gameWorld));
+	player->components.AddComponent(std::make_shared<game_world_component>(gameWorld));
 	
 	return objects;
 }

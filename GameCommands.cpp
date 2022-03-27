@@ -43,7 +43,7 @@ void GameCommands::MoveUp(bool be_verbose)
 	LogThis("Player pressed up!", be_verbose, [&]()
 	{
 		// Raise Position changed event - Up
-		EventManager::Get()->RaiseEvent(std::make_unique<gamelib::position_change_event>(gamelib::Direction::Up), this);
+		EventManager::Get()->RaiseEvent(std::make_unique<gamelib::PositionChangeEvent>(gamelib::Direction::Up), this);
 		return true;
 	}, true, true);
 }
@@ -57,7 +57,7 @@ void GameCommands::MoveDown(bool be_verbose)
 	LogThis("Player pressed down!", be_verbose, [&]()
 	{
 		// Raise Position changed event - Down
-		EventManager::Get()->RaiseEvent(std::make_unique<gamelib::position_change_event>(gamelib::Direction::Down), this);
+		EventManager::Get()->RaiseEvent(std::make_unique<gamelib::PositionChangeEvent>(gamelib::Direction::Down), this);
 		return true;
 	}, true, true);
 }
@@ -71,7 +71,7 @@ void GameCommands::MoveLeft(bool be_verbose)
 	LogThis("Player pressed left!", be_verbose, [&]()
 	{
 		// Raise Position changed event - Left
-		EventManager::Get()->RaiseEvent(std::make_unique<gamelib::position_change_event>(gamelib::Direction::Left), this);
+		EventManager::Get()->RaiseEvent(std::make_unique<gamelib::PositionChangeEvent>(gamelib::Direction::Left), this);
 		return true;
 	}, true, true);
 }
@@ -85,7 +85,7 @@ void GameCommands::MoveRight(bool be_verbose)
 	LogThis("Player pressed right!", be_verbose, [&]()
 	{
 		// Raise Position changed event - Rigt
-		EventManager::Get()->RaiseEvent(std::make_unique<gamelib::position_change_event>(gamelib::Direction::Right), this);
+		EventManager::Get()->RaiseEvent(std::make_unique<gamelib::PositionChangeEvent>(gamelib::Direction::Right), this);
 		return true;
 	}, true, true);
 }
