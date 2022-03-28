@@ -37,6 +37,10 @@ public:
 	/// </summary>
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt) override;
 
+	void OnLevelChanged(std::shared_ptr<gamelib::Event>& evt);
+
+	void PlayLevelMusic(std::string levelMusicAssetName);
+
 	/// <summary>
 	/// Name for event subsystem
 	/// </summary>

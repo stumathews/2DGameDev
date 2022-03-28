@@ -2,7 +2,7 @@
 #include "events/PlayerMovedEvent.h"
 #include <events/GameObjectEvent.h>
 #include <common/Common.h>
-//#include <objects/DrawingBase.h>
+//#include <objects/DrawableGameObject.h>
 
 using namespace std;
 namespace gamelib 

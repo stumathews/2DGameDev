@@ -8,6 +8,7 @@
 #include <events/GameObjectEvent.h>
 #include <objects/Player.h>
 #include <memory>
+#include <events/SceneChangedEvent.h>
 
 using namespace gamelib;
 using namespace std;
@@ -33,6 +34,7 @@ bool LevelManager::Initialize()
 	EventManager::Get()->SubscribeToEvent(EventType::InvalidMove, this);
 	EventManager::Get()->SubscribeToEvent(EventType::FetchedPickup, this);
 	EventManager::Get()->SubscribeToEvent(EventType::GameObject, this);
+	EventManager::Get()->SubscribeToEvent(EventType::LevelChangedEventType, this);
 		
 	return true;
 }
@@ -68,12 +70,16 @@ events LevelManager::HandleEvent(std::shared_ptr<Event> evt)
 	gamelib::events secondary_events;
 	
 	// Invalid move 
-	if(evt->type == EventType::InvalidMove)
-		_gameCommands->InvalidMove();		
+	if (evt->type == EventType::InvalidMove)
+	{
+		_gameCommands->InvalidMove();
+	}
 	
 	// Recieved pickup
-	if(evt->type == EventType::FetchedPickup)
+	if (evt->type == EventType::FetchedPickup)
+	{
 		_gameCommands->FetchedPickup();
+	}
 	
 	// Received per GameObject event
 	if(evt->type == EventType::GameObject)
@@ -87,7 +93,51 @@ events LevelManager::HandleEvent(std::shared_ptr<Event> evt)
 		}
 
 	}
+
+	// Lets change the music when the level changes
+	if (evt->type == EventType::LevelChangedEventType)
+	{		
+		OnLevelChanged(evt);
+	}
+
 	return secondary_events;
+}
+
+void LevelManager::OnLevelChanged(std::shared_ptr<gamelib::Event>& evt)
+{
+	const auto levelChangedEvent = dynamic_pointer_cast<SceneChangedEvent>(evt);
+	auto level = levelChangedEvent->scene_id;
+
+	// Could encode this into the scene file instead of hardcoding it
+	if (level == 1)
+	{
+		PlayLevelMusic("LevelMusic1");
+	}
+	if (level == 2)
+	{
+		PlayLevelMusic("LevelMusic2");
+	}
+	if (level == 3)
+	{
+		PlayLevelMusic("LevelMusic3");
+	}
+	if (level == 4)
+	{
+		PlayLevelMusic("LevelMusic4");
+	}
+}
+
+void LevelManager::PlayLevelMusic(std::string levelMusicAssetName)
+{
+	auto asset = ResourceManager::Get()->GetAssetInfo(levelMusicAssetName);
+	if (asset->isLoadedInMemory)
+	{
+		auto audioAsset = gamelib::AudioManager::ToAudioAsset(asset);
+		if (asset && asset->isLoadedInMemory)
+		{
+			AudioManager::Get()->PlayMusic(audioAsset->AsMusic());
+		}
+	}
 }
 
 /// <summary>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "scene/Room.h"
-#include "objects/DrawingBase.h"
+#include "objects/DrawableGameObject.h"
 #include <events/IEventSubscriber.h>
 
 namespace gamelib

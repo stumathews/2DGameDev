@@ -2,7 +2,7 @@
 
 <!-- List of all asset in the game -->
 <Assets>
-  <Asset uid="1" scene="0" name="MainTheme.wav" type="music" filename="Assets/Music/MainTheme.wav"></Asset>
+  <Asset uid="1" scene="4" name="LevelMusic4" type="music" filename="Assets/Music/MainTheme.wav"></Asset>
   <Asset uid="2" scene="0" name="scratch.wav" type="fx" filename="Assets/scratch.wav"></Asset>
   <Asset uid="3" scene="0" name="high.wav" type="fx" filename="Assets/high.wav"></Asset>
   <Asset uid="4" scene="0" name="medium.wav" type="fx" filename="Assets/medium.wav"></Asset>
@@ -70,4 +70,8 @@
   <Asset uid="12" scene="0" name="arial.ttf" type="font" filename="Assets/fonts/arial.ttf"></Asset>
   <Asset uid="13" scene="0" name="beep.wav" type="fx" filename="Assets/beep.wav"></Asset>
   <Asset uid="14" scene="0" name="boop.wav" type="fx" filename="Assets/boop.wav"></Asset>
+  <Asset uid="15" scene="1" name="LevelMusic1" type="music" filename="Assets/Music/8BitMetal.wav"></Asset>
+  <Asset uid="16" scene="2" name="LevelMusic2" type="music" filename="Assets/Music/FranticLevel.wav"></Asset>
+  <Asset uid="17" scene="3" name="LevelMusic3" type="music" filename="Assets/Music/HappyLevel.wav"></Asset>
+
 </Assets>
