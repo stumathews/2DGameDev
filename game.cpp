@@ -16,19 +16,16 @@ int main(int argc, char *args[])
 
 	try
 	{
-		// Main game Objects are created here
-		GameWorld gameWorld;	
-		SceneManager currentScene = SceneManager(gameWorld);
-		LevelManager levels(gameWorld, currentScene );
+		LevelManager levels;
 
 		// Read game settings
-		SettingsManager::Get()->load("game/settings.xml");
-		const auto beVerbose = SettingsManager::Get()->get_bool("global", "verbose");
+		SettingsManager::Get()->Load("game/settings.xml");
+
+		// Read verbosity setting
+		const auto beVerbose = SettingsManager::Get()->GetBool("global", "verbose");
 
 		// Create game infrastructure
-		GameStructure game = GameStructure(gameWorld, currentScene,
-			// The level manager is responsible for polling for input
-			[&]() { levels.GetKeyboardInput(); });
+		GameStructure game = GameStructure([&]() { levels.GetKeyboardInput(); });
 		
 		// Initialize key parts of the game
 		const auto isGameStructureInitialized = IsSuccess(game.InitializeGameSubSystems(), "Initialize Game subsystems...");

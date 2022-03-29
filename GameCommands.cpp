@@ -3,7 +3,7 @@
 #include <memory>
 #include "events/PositionChangeEvent.h"
 #include "events/SceneChangedEvent.h"
-
+#include "scene/SceneManager.h"
 #include <iostream>
 using namespace gamelib;
 using namespace std;
@@ -11,14 +11,13 @@ using namespace std;
 /// <summary>
 /// GameCommands is a common place where game events are raised in the game
 /// </summary>
-/// <param name="settings"></param>
-/// <param name="events"></param>
-/// <param name="audio"></param>
-/// <param name="resources"></param>
-/// <param name="gameWorld"></param>
-/// <param name="gameLogger"></param>
-GameCommands::GameCommands(GameWorld& gameWorld) 
-	: _be_verbose(false), _gameWorld(gameWorld) { }
+
+GameCommands::GameCommands() : _be_verbose(false) { }
+
+std::string GameCommands::GetSubscriberName() 
+{
+	return "GameCommands";
+}
 
 /// <summary>
 /// Fire!
@@ -107,7 +106,7 @@ void GameCommands::ChangeLevel(bool be_verbose, short newLevel)
 /// <param name="be_verbose"></param>
 void GameCommands::ReloadSettings(bool be_verbose)
 {
-	SettingsManager::Get()->reload();
+	SettingsManager::Get()->Reload();
 	EventManager::Get()->RaiseEvent(make_shared<gamelib::Event>(gamelib::EventType::SettingsReloaded), this);
 	LogMessage("Settings reloaded", be_verbose, false);
 }
@@ -148,8 +147,8 @@ void GameCommands::ToggleMusic(bool be_verbose)
 void GameCommands::Quit(bool be_verbose)
 {	
 	LogThis("Player pressed quit!", be_verbose, [&]()
-	{
-		_gameWorld.IsGameDone = 1;
+	{		
+		SceneManager::Get()->GetGameWorld().IsGameDone = 1;
 		return true;
 	}, true, true);
 }
@@ -161,7 +160,7 @@ void GameCommands::Quit(bool be_verbose)
 void GameCommands::InvalidMove(bool be_verbose)
 {
 	Logger::Get()->LogThis("GameCommand: Invalid move", be_verbose);
-	AudioManager::Get()->PlaySound(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->get_string("audio", "invalid_move")))->AsSoundEffect());
+	AudioManager::Get()->PlaySound(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "invalid_move")))->AsSoundEffect());
 }
 
 /// <summary>
@@ -170,7 +169,7 @@ void GameCommands::InvalidMove(bool be_verbose)
 /// <param name="be_verbose"></param>
 void GameCommands::FetchedPickup(bool be_verbose)
 {
-	AudioManager::Get()->PlaySound(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->get_string("audio", "fetched_pickup")))->AsSoundEffect());
+	AudioManager::Get()->PlaySound(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "fetched_pickup")))->AsSoundEffect());
 }
 
 /// <summary>

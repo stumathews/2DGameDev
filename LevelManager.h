@@ -11,6 +11,7 @@
 #include <scene/Room.h>
 
 typedef std::vector<std::shared_ptr<gamelib::GameObject>> ListOfGameObjects;
+class gamelib::GameWorldData;
 
 class LevelManager : public gamelib::EventSubscriber
 {
@@ -19,7 +20,7 @@ public:
 	/// <summary>
 	/// Construct a Level Manager
 	/// </summary>
-	LevelManager(GameWorld& gameWorld, gamelib::SceneManager& scene_admin);
+	LevelManager();
 
 	/// <summary>
 	/// Initialize the level
@@ -68,18 +69,13 @@ private:
 	/// </summary>
 	ListOfGameObjects CreatePickups(const std::vector<std::shared_ptr<gamelib::Room>>& rooms, const int w, const int h);
 	
-	// Game world, including game objects
-	GameWorld& gameWorld;
-
-	gamelib::SceneManager& sceneManager;
-	
 	// Game commands
 	std::shared_ptr<GameCommands> _gameCommands;
 
     /// <summary>
     /// Remove game object
     /// </summary>
-    void RemoveGameObject(GameWorld& gameWorld, gamelib::GameObject& gameObject);
+    void RemoveGameObject(gamelib::GameObject& gameObject);
 	
 	/// <summary>
 	/// Get Random Index between [min and max] 

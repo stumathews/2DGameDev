@@ -13,7 +13,7 @@
 using namespace gamelib;
 using namespace std;
 
-LevelManager::LevelManager(GameWorld& gameWorld, gamelib::SceneManager& scene_admin) : gameWorld(gameWorld), sceneManager(scene_admin)
+LevelManager::LevelManager()
 {
 }
 
@@ -27,7 +27,7 @@ bool LevelManager::Initialize()
 	InitGameWorldData();
 
 	// All game commands that we handle in this game
-	_gameCommands = shared_ptr<GameCommands>(new GameCommands(gameWorld));
+	_gameCommands = shared_ptr<GameCommands>(new GameCommands());
 
 	// subscribe to game events
 	EventManager::Get()->SubscribeToEvent(EventType::GenerateNewLevel, this);
@@ -89,7 +89,7 @@ events LevelManager::HandleEvent(std::shared_ptr<Event> evt)
 		// Level Manager is responsible for removing game object from game
 		if(gameObjectEvent->context == GameObjectEventContext::Remove)
 		{
-			RemoveGameObject(gameWorld, *gameObjectEvent->gameObject );			
+			RemoveGameObject(*gameObjectEvent->gameObject );			
 		}
 
 	}
@@ -154,10 +154,10 @@ std::string LevelManager::GetSubscriberName()
 /// </summary>
 /// <param name="gameWorld">Game world container</param>
 /// <param name="gameObject">game Object</param>
-void LevelManager::RemoveGameObject(GameWorld& gameWorld, GameObject& gameObject)
+void LevelManager::RemoveGameObject(GameObject& gameObject)
 {
-	auto &objects = gameWorld.objects;
-
+	auto& objects = SceneManager::Get()->GetGameWorld().GetGameObjects();
+	
 	// Look for gameObject
 	auto result = std::find_if(begin(objects), end(objects), [&](weak_ptr<gamelib::GameObject> target)
 	{ 
@@ -185,10 +185,10 @@ void LevelManager::RemoveGameObject(GameWorld& gameWorld, GameObject& gameObject
 /// Initialize game world
 /// </summary>
 void LevelManager::InitGameWorldData() const
-{
-	gameWorld.IsGameDone = false;
-	gameWorld.IsNetworkGame = false;
-	gameWorld.CanDraw = true;
+{	
+	SceneManager::Get()->GetGameWorld().IsGameDone = false;
+	SceneManager::Get()->GetGameWorld().IsNetworkGame = false;
+	SceneManager::Get()->GetGameWorld().CanDraw = true;
 }
 
 /// <summary>
@@ -197,7 +197,7 @@ void LevelManager::InitGameWorldData() const
 void LevelManager::GetKeyboardInput()
 {
 	SDL_Event sdlEvent;
-	const auto bVerbose = SettingsManager::Get()->get_bool("global", "verbose");
+	const auto bVerbose = SettingsManager::Get()->GetBool("global", "verbose");
 	
 	while (SDL_PollEvent(&sdlEvent) != 0)
 	{
@@ -374,10 +374,10 @@ ListOfGameObjects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& ro
 ListOfGameObjects LevelManager::CreateLevel()
 {
 	// Read level settings
-	const auto rows = SettingsManager::Get()->get_int("grid", "rows");
-	const auto cols = SettingsManager::Get()->get_int("grid", "cols");
-	const auto screenWidth = SettingsManager::Get()->get_int("global", "screen_width");
-	const auto screenHeight = SettingsManager::Get()->get_int("global", "screen_height");
+	const auto rows = SettingsManager::Get()->GetInt("grid", "rows");
+	const auto cols = SettingsManager::Get()->GetInt("grid", "cols");
+	const auto screenWidth = SettingsManager::Get()->GetInt("global", "screen_width");
+	const auto screenHeight = SettingsManager::Get()->GetInt("global", "screen_height");
 	const auto rowWidth = screenWidth / cols; 
 	const auto rowHeight = screenHeight / rows;
 
@@ -385,7 +385,7 @@ ListOfGameObjects LevelManager::CreateLevel()
 	ResourceManager::Get()->IndexResources();
 	
 	// This is the list of all game objects
-	ListOfGameObjects objects;	
+	ListOfGameObjects& objects = SceneManager::Get()->GetGameWorld().GetGameObjects();
 	
 	// Generate the level's rooms
 	auto rooms = level_generator::generate_level();
@@ -430,10 +430,7 @@ ListOfGameObjects LevelManager::CreateLevel()
 	objects.push_back(player);
 
 	// Set game objects to the game world
-	gameWorld.objects = objects;	
-
-	// Add the game world component on the player (each player can see in to the game world)
-	player->components.AddComponent(std::make_shared<game_world_component>(gameWorld));
-	
+	SceneManager::Get()->GetGameWorld().GetGameObjects() = objects;	
+		
 	return objects;
 }

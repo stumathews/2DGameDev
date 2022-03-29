@@ -25,13 +25,13 @@ namespace gamelib
 		fillColour = 
 		{
 			// Red
-			static_cast<Uint8>(SettingsManager::Get()->get_int("pickup", "r")),
+			static_cast<Uint8>(SettingsManager::Get()->GetInt("pickup", "r")),
 			// Green
-			static_cast<Uint8>(SettingsManager::Get()->get_int("pickup", "g")),
+			static_cast<Uint8>(SettingsManager::Get()->GetInt("pickup", "g")),
 			// Blue
-			static_cast<Uint8>(SettingsManager::Get()->get_int("pickup", "b")),
+			static_cast<Uint8>(SettingsManager::Get()->GetInt("pickup", "b")),
 			// Alpha
-			static_cast<Uint8>(SettingsManager::Get()->get_int("pickup", "a"))
+			static_cast<Uint8>(SettingsManager::Get()->GetInt("pickup", "a"))
 		};
 	}
 

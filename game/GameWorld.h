@@ -2,6 +2,6 @@
 
 #include "objects/GameWorldData.h"
 
-class GameWorld : public GameWorldData
+class GameWorld : public gamelib::GameWorldData
 {
 };

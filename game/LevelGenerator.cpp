@@ -14,12 +14,12 @@ namespace gamelib
 	vector<shared_ptr<Room>> level_generator::generate_level()
 	{
 		// Get global settings
-		const auto screen_width = SettingsManager::Get()->get_int("global","screen_width");
-		const auto screen_height = SettingsManager::Get()->get_int("global","screen_height");
+		const auto screen_width = SettingsManager::Get()->GetInt("global","screen_width");
+		const auto screen_height = SettingsManager::Get()->GetInt("global","screen_height");
 		
 		// Get global grid/maze settings
-		const auto max_rows = SettingsManager::Get()->get_int("grid","rows");
-		const auto max_columns = SettingsManager::Get()->get_int("grid","cols");
+		const auto max_rows = SettingsManager::Get()->GetInt("grid","rows");
+		const auto max_columns = SettingsManager::Get()->GetInt("grid","cols");
 
 		// caclulate the dimensions of a room (a square with 4 sides/walls)
 		const auto square_width = screen_width / max_columns; 
@@ -126,7 +126,7 @@ namespace gamelib
 				        n_sample, 
 				        std::mt19937 { std::random_device{}() });
 
-			const auto remove_sides_randomly = SettingsManager::Get()->get_bool("grid", "removeSidesRandomly");
+			const auto remove_sides_randomly = SettingsManager::Get()->GetBool("grid", "removeSidesRandomly");
 			
 			// Removes one side randonly
 			if(remove_sides_randomly)

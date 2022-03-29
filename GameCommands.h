@@ -11,10 +11,10 @@
 class GameCommands :  public gamelib::EventSubscriber, public inheritable_enable_shared_from_this<GameCommands>
 {
 public:	
-	GameCommands(GameWorld& gameWorld);
+	GameCommands();
 	GameCommands(const GameCommands& copy) = delete;
 
-	std::string GetSubscriberName() override { return "GameCommands";};
+	std::string GetSubscriberName() override;;
 
 	void Fire(bool be_verbose);
 	void MoveUp(bool be_verbose);
@@ -29,7 +29,6 @@ public:
 	void InvalidMove(bool be_verbose = false);
 	void FetchedPickup(bool be_verbose = false);
 private:
-	GameWorld& _gameWorld;
 	bool _be_verbose;
 
 	// Inherited via EventSubscriber
