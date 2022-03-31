@@ -5,6 +5,7 @@
 #include "events/SceneChangedEvent.h"
 #include "scene/SceneManager.h"
 #include <iostream>
+#include <events/GameObjectEvent.h>
 using namespace gamelib;
 using namespace std;
 

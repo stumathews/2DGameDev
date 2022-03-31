@@ -19,21 +19,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GameCommands.cpp" />
+    <ClCompile Include="game\GameCommands.cpp" />
     <ClCompile Include="game\GameWorld.cpp" />
     <ClCompile Include="game\LevelGenerator.cpp" />
-    <ClCompile Include="LevelManager.cpp" />
-    <ClCompile Include="game.cpp" />
-    <ClCompile Include="pickup.cpp" />
+    <ClCompile Include="game\Player.cpp" />
+    <ClCompile Include="game\PlayerComponent.cpp" />
+    <ClCompile Include="game\Room.cpp" />
+    <ClCompile Include="game\LevelManager.cpp" />
+    <ClCompile Include="game\game.cpp" />
+    <ClCompile Include="game\pickup.cpp" />
     <ClCompile Include="tinyxml2-master\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="game.h" />
-    <ClInclude Include="GameCommands.h" />
+    <ClInclude Include="game\game.h" />
+    <ClInclude Include="game\GameCommands.h" />
     <ClInclude Include="game\gameWorld.h" />
     <ClInclude Include="game\LevelGenerator.h" />
-    <ClInclude Include="LevelManager.h" />
-    <ClInclude Include="pickup.h" />
+    <ClInclude Include="game\Player.h" />
+    <ClInclude Include="game\PlayerComponent.h" />
+    <ClInclude Include="game\Room.h" />
+    <ClInclude Include="game\LevelManager.h" />
+    <ClInclude Include="game\pickup.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="tinyxml2-master\tinyxml2.h" />
   </ItemGroup>

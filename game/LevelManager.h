@@ -2,13 +2,13 @@
 
 #include <memory>
 #include "util/SettingsManager.h"
-#include "game/gameWorld.h"
+#include "gameWorld.h"
 #include "audio/AudioManager.h"
 #include "graphic/SDLGraphicsManager.h"
 #include "resource/ResourceManager.h"
 #include "scene/SceneManager.h"
 #include "GameCommands.h"
-#include <scene/Room.h>
+#include "Room.h"
 
 typedef std::vector<std::shared_ptr<gamelib::GameObject>> ListOfGameObjects;
 class gamelib::GameWorldData;
@@ -38,6 +38,8 @@ public:
 	/// </summary>
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt) override;
 
+	void GenerateNewLevel();
+
 	void OnLevelChanged(std::shared_ptr<gamelib::Event>& evt);
 
 	void PlayLevelMusic(std::string levelMusicAssetName);
@@ -62,12 +64,12 @@ private:
 	/// <summary>
 	/// Create the Player
 	/// </summary>
-	std::shared_ptr<gamelib::GameObject> CreatePlayer(std::vector<std::shared_ptr<gamelib::Room>> rooms, const int w, const int h) const;
+	std::shared_ptr<gamelib::GameObject> CreatePlayer(std::vector<std::shared_ptr<Room>> rooms, const int w, const int h) const;
 
 	/// <summary>
 	/// Create the Pickups
 	/// </summary>
-	ListOfGameObjects CreatePickups(const std::vector<std::shared_ptr<gamelib::Room>>& rooms, const int w, const int h);
+	ListOfGameObjects CreatePickups(const std::vector<std::shared_ptr<Room>>& rooms, const int w, const int h);
 	
 	// Game commands
 	std::shared_ptr<GameCommands> _gameCommands;

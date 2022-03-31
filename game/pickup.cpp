@@ -3,6 +3,8 @@
 #include <events/GameObjectEvent.h>
 #include <common/Common.h>
 //#include <objects/DrawableGameObject.h>
+#include <scene/SceneManager.h>
+#include "player.h"
 
 using namespace std;
 namespace gamelib 
@@ -58,7 +60,7 @@ namespace gamelib
 		if(event->type == gamelib::EventType::PlayerMovedEventType)
 		{
 			const auto moved_event = std::static_pointer_cast<gamelib::PlayerMovedEvent>(event);
-			const auto player = moved_event->get_player_component()->the_player;
+			const auto player = dynamic_pointer_cast<Player>(SceneManager::Get()->GetGameWorld().player);
 
 			// Basic collision detection
 			if(player->x == x && player->y == y)

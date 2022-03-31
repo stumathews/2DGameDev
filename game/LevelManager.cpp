@@ -3,10 +3,10 @@
 #include "Pickup.h"
 #include "common/constants.h"
 #include "events/AddGameObjectToCurrentSceneEvent.h"
-#include "game/LevelGenerator.h"
+#include "LevelGenerator.h"
 #include "objects/game_world_component.h"
 #include <events/GameObjectEvent.h>
-#include <objects/Player.h>
+#include "Player.h"
 #include <memory>
 #include <events/SceneChangedEvent.h>
 
@@ -93,6 +93,10 @@ events LevelManager::HandleEvent(std::shared_ptr<Event> evt)
 		}
 
 	}
+	if (evt->type == EventType::GenerateNewLevel)
+	{
+		GenerateNewLevel();
+	}
 
 	// Lets change the music when the level changes
 	if (evt->type == EventType::LevelChangedEventType)
@@ -101,6 +105,25 @@ events LevelManager::HandleEvent(std::shared_ptr<Event> evt)
 	}
 
 	return secondary_events;
+}
+
+void LevelManager::GenerateNewLevel()
+{
+	// Remove all current game objects
+	for (auto gameObject : SceneManager::Get()->GetGameWorld().GetGameObjects())
+	{
+		/*if (gameObject->GetGameObjectType() == gamelib::object_type::Room)
+		{
+		continue;
+		}*/
+
+		auto gameObjectEvent = new GameObjectEvent(0, &(*gameObject), gamelib::GameObjectEventContext::Remove);
+
+		auto removeGameObjectEvent = shared_ptr<GameObjectEvent>(gameObjectEvent);
+
+		EventManager::Get()->RaiseEvent(removeGameObjectEvent, this);
+	}
+	CreateLevel();
 }
 
 void LevelManager::OnLevelChanged(std::shared_ptr<gamelib::Event>& evt)
@@ -229,16 +252,20 @@ void LevelManager::GetKeyboardInput()
 			case SDLK_ESCAPE:
 				_gameCommands->Quit(bVerbose);
 				break;
-			case SDLK_j:				
+			case SDLK_j:	
+				GenerateNewLevel();
 				_gameCommands->ChangeLevel(bVerbose, 1);
 				break;
 			case SDLK_k:
+				GenerateNewLevel();
 				_gameCommands->ChangeLevel(bVerbose, 2);
 				break;
 			case SDLK_l:
+				GenerateNewLevel();
 				_gameCommands->ChangeLevel(bVerbose, 3);
 				break;
 			case SDLK_x:
+				GenerateNewLevel();
 				_gameCommands->ChangeLevel(bVerbose, 4);
 				break;
 			case SDLK_1:
@@ -340,6 +367,8 @@ shared_ptr<GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>>
 	// Place the player in a random room
 	player->CenterPlayerInRoom(playerRoom);
 
+	SceneManager::Get()->GetGameWorld().player = player;
+
 	return player;
 }
 
@@ -418,8 +447,16 @@ ListOfGameObjects LevelManager::CreateLevel()
 	// Setup the pickups
 	for(const auto &pickup : pickups)
 	{
-		pickup->RaiseEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(std::dynamic_pointer_cast<Pickup>(pickup))));
+		auto gameObject = std::dynamic_pointer_cast<Pickup>(pickup);
+		auto addEvent = new AddGameObjectToCurrentSceneEvent(gameObject);
+
+		// Add to current scene
+		pickup->RaiseEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(addEvent));
+		
+		// Subscribe to player movement notifications
 		pickup->SubscribeToEvent(EventType::PlayerMovedEventType);
+
+		// Subscribe to update events
 		pickup->SubscribeToEvent(gamelib::EventType::DoLogicUpdateEventType);
 		
 		objects.push_back(pickup);
