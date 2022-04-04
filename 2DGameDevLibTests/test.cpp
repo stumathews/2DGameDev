@@ -2,7 +2,7 @@
 #include "LevelGenerator.h"
 
 
-TEST(LevelGeneratorTests, Test) 
+TEST(LevelGeneratorTests, Generate) 
 {
 	LevelGenerator levelGenerator(800, 600, 10, 10, true);
 	auto result = levelGenerator.Generate();

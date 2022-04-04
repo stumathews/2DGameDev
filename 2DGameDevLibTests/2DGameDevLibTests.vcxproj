@@ -25,6 +25,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <ProjectName>2DGameDevLibTests</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -34,7 +35,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>C:\Users\Stuart\git\2DGameDev\2DGameDevLib;c:\sdl\SDL2\include;C:\Users\Stuart\git\cppgamelib;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\SDL\SDL2\lib\x86;C:\SDL\SDL2_image-2.0.4\lib\x86;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\x86;C:\SDL\SDL2_ttf-2.0.15\lib\x86;C:\Users\Stuart\git\2DGameDev\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\SDL\SDL2\lib\x86;C:\SDL\SDL2_image-2.0.4\lib\x86;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\x86;C:\SDL\SDL2_ttf-2.0.15\lib\x86;C:\Users\Stuart\git\2DGameDev\Debug;C:\Users\Stuart\git\cppgamelib\Debug;C:\Users\Stuart\git\2DGameDev\2DGameDevLib\Debug;$(LibraryPath)</LibraryPath>
+    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -59,7 +61,7 @@
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets" Condition="Exists('..\..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" />
+    <Import Project="..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets" Condition="Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" />
   </ImportGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -128,6 +130,6 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets'))" />
   </Target>
 </Project>
