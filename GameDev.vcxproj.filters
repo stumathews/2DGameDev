@@ -18,12 +18,6 @@
     <ClCompile Include="tinyxml2-master\tinyxml2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game\LevelGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="game\pickup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="game\LevelManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,27 +30,12 @@
     <ClCompile Include="game\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game\Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="game\Room.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="game\PlayerComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tinyxml2-master\tinyxml2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="game\LevelGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="game\pickup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\LevelManager.h">
@@ -69,15 +48,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="game\Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="game\Room.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="game\PlayerComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "LevelGenerator.h"
 #include <algorithm>
 #include <iostream>
@@ -9,22 +10,21 @@
 using namespace std;
 using namespace gamelib;
 
+LevelGenerator::LevelGenerator(int screenWidth, int screenHeight, int rows, int columns, bool removeRandomSides)
+	: screenWidth(screenWidth), screenHeight(screenHeight), rows(rows), columns(columns), removeRandomSides(removeRandomSides)
+{
+
+}
+
 /// <summary>
 /// Generates the Rooms in the Level
 /// </summary>
-vector<shared_ptr<Room>> level_generator::generate_level()
+vector<shared_ptr<Room>> LevelGenerator::Generate()
 {
-	// Get global settings
-	const auto screen_width = SettingsManager::Get()->GetInt("global","screen_width");
-	const auto screen_height = SettingsManager::Get()->GetInt("global","screen_height");
-		
-	// Get global grid/maze settings
-	const auto max_rows = SettingsManager::Get()->GetInt("grid","rows");
-	const auto max_columns = SettingsManager::Get()->GetInt("grid","cols");
-
+	
 	// caclulate the dimensions of a room (a square with 4 sides/walls)
-	const auto square_width = screen_width / max_columns; 
-	const auto square_height = screen_height / max_rows;
+	const auto square_width = screenWidth / columns; 
+	const auto square_height = screenHeight / rows;
 		
 	// List of Rooms generated
 	vector<shared_ptr<Room>> rooms;
@@ -33,10 +33,10 @@ vector<shared_ptr<Room>> level_generator::generate_level()
 	auto count = 0;
 
 	// Generate n rows
-	for(auto row = 0; row < max_rows; row++)
+	for(auto row = 0; row < rows; row++)
 	{
 		// generate n columns in this row
-		for(auto col = 0; col < max_columns; col++)
+		for(auto col = 0; col < columns; col++)
 		{			
 			// each room has a unique room number
 			auto number = count++;
@@ -59,7 +59,7 @@ vector<shared_ptr<Room>> level_generator::generate_level()
 		
 	// Go through each room and remove/disable some walls
 	// Determine which faces/edges can be removed, based on the bounds of the grid i.e within rows x cols of board
-	for(auto i = 0; i < total_rooms; i++)
+	for(auto i = 0; i < total_rooms-1; i++)
 	{
 		const auto next_index = i + 1;
 		const auto prevIndex = i - 1;
@@ -71,19 +71,19 @@ vector<shared_ptr<Room>> level_generator::generate_level()
 
 		// We are operating under zero-based logic from here on out:
 
-		const auto this_row = (int)ceil(i/max_columns);
-		const auto last_column = (int)(this_row+1 * max_columns)-1;
-		const auto this_col = i % max_columns;
+		const auto this_row = (int)ceil(i/columns);
+		const auto last_column = (int)(this_row+1 * columns)-1;
+		const auto this_col = i % columns;
 
-		const auto room_above_index = i - max_columns;
-		const auto room_below_index = i + max_columns;
+		const auto room_above_index = i - columns;
+		const auto room_below_index = i + columns;
 		const auto room_left_index = i - 1;
 		const auto room_right_index = i + 1;
 
 		const auto can_remove_above = room_above_index >= 0;
 		const auto can_remove_below = room_below_index < total_rooms;
 		const auto can_remove_left = this_col-1 >= 1;
-		const auto can_remove_right = this_col+1 <= max_columns;
+		const auto can_remove_right = this_col+1 <= columns;
 
 		auto &current_room = rooms[i];
 		auto &next_room = rooms[next_index];
@@ -127,7 +127,7 @@ vector<shared_ptr<Room>> level_generator::generate_level()
 				    n_sample, 
 				    std::mt19937 { std::random_device{}() });
 
-		const auto remove_sides_randomly = SettingsManager::Get()->GetBool("grid", "removeSidesRandomly");
+		const auto remove_sides_randomly = removeRandomSides;
 			
 		// Removes one side randonly
 		if(remove_sides_randomly)

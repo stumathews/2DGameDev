@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Player.h"
 #include "PlayerComponent.h"
 #include <memory>
@@ -8,6 +9,7 @@
 #include "events/PositionChangeEvent.h"
 #include "scene/SceneManager.h"
 #include "Room.h"
+#include <events/Event.h>
 #include <functional>
 
 using namespace std;
@@ -76,47 +78,33 @@ using namespace gamelib;
 		// Process Player events
 		if(EventType::PositionChangeEventType == event->type)
 		{						
-			const auto positionChangedEvent = dynamic_pointer_cast<PositionChangeEvent>(event);
-			const auto moveDirection = positionChangedEvent->direction;			
-					
-			auto gameWorld = SceneManager::Get()->GetGameWorld();
+			auto positionChangedEvent = dynamic_pointer_cast<PositionChangeEvent>(event);
+			const auto moveDirection = positionChangedEvent->direction;	
 
-			// Func to find last room index
-			auto findLastRoomIndexFunc = [](weak_ptr<GameObject> gameObject) 
-			{
-				if (auto ptr = gameObject.lock()) 
-				{
-					return ptr->GetGameObjectType() == object_type::Room;
-				}
-				return false;
-			};
+			auto gameObjects = SceneManager::Get()->GetGameWorld().GetGameObjects();
 
-			auto gameObjects = gameWorld.GetGameObjects();
-
-			auto lastRoomIndex = count_if(begin(gameObjects), end(gameObjects), findLastRoomIndexFunc);
-			lastRoomIndex -= 1; // we are zero based
-			const auto firstRoomIndex = 0;
-
-			auto currentRoom = dynamic_pointer_cast<Room>(gameObjects[within_room_index < firstRoomIndex ? firstRoomIndex : within_room_index]);			
-			auto aboveRoom = dynamic_pointer_cast<Room>(gameObjects[GetRoomNeighbourIndex(firstRoomIndex, lastRoomIndex, 0, currentRoom)]);
-			auto rightRoom = dynamic_pointer_cast<Room>(gameObjects[GetRoomNeighbourIndex(firstRoomIndex, lastRoomIndex, 1, currentRoom)]);
-			auto bottomRoom = dynamic_pointer_cast<Room>(gameObjects[GetRoomNeighbourIndex(firstRoomIndex, lastRoomIndex, 2, currentRoom)]);
-			auto leftRoom = dynamic_pointer_cast<Room>(gameObjects[GetRoomNeighbourIndex(firstRoomIndex, lastRoomIndex, 3, currentRoom)]);
+			
+			const auto firstRoomIndex = 0; 
+			auto lastRoomIndex = CountRoomGameObjects(gameObjects) -1 ;
+			
+			auto currentRoom = GetCurrentRoom(gameObjects, firstRoomIndex);
+			auto aboveRoom = GetRoom(gameObjects, firstRoomIndex, lastRoomIndex, currentRoom, 0);
+			auto rightRoom = GetRoom(gameObjects, firstRoomIndex, lastRoomIndex, currentRoom, 1);
+			auto bottomRoom = GetRoom(gameObjects, firstRoomIndex, lastRoomIndex, currentRoom, 2);
+			auto leftRoom = GetRoom(gameObjects, firstRoomIndex, lastRoomIndex, currentRoom, 3);
 
 			const auto isMovingRight = moveDirection == Direction::Right;
 			const auto isMovingDown = moveDirection == Direction::Down;
 			const auto isMovingUp = moveDirection == Direction::Up;
 			const auto isMovingLeft = moveDirection == Direction::Left;
 			
-			const auto canMoveRight = isMovingRight && !currentRoom->IsWalled(Side::Right) && !rightRoom->IsWalled(Side::Left);
-			const auto canMoveLeft = isMovingLeft && !currentRoom->IsWalled(Side::Left) && !leftRoom->IsWalled(Side::Right);
-			const auto canMoveDown = isMovingDown && !currentRoom->IsWalled(Side::Bottom) && !bottomRoom->IsWalled(Side::Top);
-			const auto canMoveUp = isMovingUp && !currentRoom->IsWalled(Side::Top)&& !aboveRoom->IsWalled(Side::Bottom);
+			const auto canMoveRight = CanMoveRight(isMovingRight, currentRoom, rightRoom);
+			const auto canMoveLeft = CanMoveLeft(isMovingLeft, currentRoom, leftRoom);
+			const auto canMoveDown = CanMoveDown(isMovingDown, currentRoom, bottomRoom);
+			const auto canMoveUp = CanMoveUp(isMovingUp, currentRoom, aboveRoom);
 			
-			const auto isValidMove = moveDirection == Direction::Down && canMoveDown ||
-											   moveDirection == Direction::Left && canMoveLeft || 
-											   moveDirection == Direction::Right && canMoveRight || 
-											   moveDirection == Direction::Up && canMoveUp;
+			// Check if the move is valid
+			const auto isValidMove = IsValidMove(moveDirection, canMoveDown, canMoveLeft, canMoveRight, canMoveUp);
 			
 			// An inavalid move is when we want to move in a direction but we cant
 			if(!isValidMove)
@@ -130,21 +118,25 @@ using namespace gamelib;
 			
 			if (isMovingDown)
 			{
+				// Put player into room below
 				CenterPlayerInRoom(bottomRoom);
 			}
 			
 			if (isMovingUp)
 			{
+				// Put player into the room above
 				CenterPlayerInRoom(aboveRoom);
 			}
 			
 			if (isMovingRight)
 			{
+				// Put player in the next room on th right
 				CenterPlayerInRoom(rightRoom);
 			}
 			
 			if (isMovingLeft)
 			{
+				// Put player in the previous room on the left
 				CenterPlayerInRoom(leftRoom);
 			}
 
@@ -158,6 +150,59 @@ using namespace gamelib;
 		}
 
 		return created_events;
+	}
+	
+
+	const ptrdiff_t& Player::CountRoomGameObjects(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects)
+	{
+		return count_if(begin(gameObjects), end(gameObjects), [](weak_ptr<GameObject> gameObject)
+		{
+			if (auto ptr = gameObject.lock())
+			{
+				return ptr->GetGameObjectType() == object_type::Room;
+			}
+			return false;
+		});
+	}
+
+	const std::shared_ptr<Room>& Player::GetCurrentRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects, const int& firstRoomIndex)
+	{
+		auto room = gameObjects[within_room_index];
+		return dynamic_pointer_cast<Room>(room);
+	}
+
+	const std::shared_ptr<Room>& Player::GetRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects, const int& firstRoomIndex, const ptrdiff_t& lastRoomIndex, std::shared_ptr<Room>& currentRoom, int side)
+	{
+		auto room = gameObjects[GetRoomNeighbourIndex(firstRoomIndex, lastRoomIndex, side, currentRoom)];
+		return dynamic_pointer_cast<Room>(room);
+	}
+
+	bool Player::IsValidMove(const gamelib::Direction& moveDirection, const bool& canMoveDown, const bool& canMoveLeft, const bool& canMoveRight, const bool& canMoveUp)
+	{
+		return moveDirection == Direction::Down && canMoveDown ||
+			moveDirection == Direction::Left && canMoveLeft ||
+			moveDirection == Direction::Right && canMoveRight ||
+			moveDirection == Direction::Up && canMoveUp;
+	}
+
+	bool Player::CanMoveUp(const bool& isMovingUp, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& aboveRoom)
+	{
+		return isMovingUp && !currentRoom->IsWalled(Side::Top) && !aboveRoom->IsWalled(Side::Bottom);
+	}
+
+	bool Player::CanMoveDown(const bool& isMovingDown, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& bottomRoom)
+	{
+		return isMovingDown && !currentRoom->IsWalled(Side::Bottom) && !bottomRoom->IsWalled(Side::Top);
+	}
+
+	bool Player::CanMoveLeft(const bool& isMovingLeft, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& leftRoom)
+	{
+		return isMovingLeft && !currentRoom->IsWalled(Side::Left) && !leftRoom->IsWalled(Side::Right);
+	}
+
+	bool Player::CanMoveRight(const bool& isMovingRight, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& rightRoom)
+	{
+		return isMovingRight && !currentRoom->IsWalled(Side::Right) && !rightRoom->IsWalled(Side::Left);
 	}
 
 	

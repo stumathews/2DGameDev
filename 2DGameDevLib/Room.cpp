@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Room.h"
 #include "util/RectDebugging.h"
 #include <events/PlayerMovedEvent.h>

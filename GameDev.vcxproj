@@ -21,25 +21,15 @@
   <ItemGroup>
     <ClCompile Include="game\GameCommands.cpp" />
     <ClCompile Include="game\GameWorld.cpp" />
-    <ClCompile Include="game\LevelGenerator.cpp" />
-    <ClCompile Include="game\Player.cpp" />
-    <ClCompile Include="game\PlayerComponent.cpp" />
-    <ClCompile Include="game\Room.cpp" />
     <ClCompile Include="game\LevelManager.cpp" />
     <ClCompile Include="game\game.cpp" />
-    <ClCompile Include="game\pickup.cpp" />
     <ClCompile Include="tinyxml2-master\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\game.h" />
     <ClInclude Include="game\GameCommands.h" />
     <ClInclude Include="game\gameWorld.h" />
-    <ClInclude Include="game\LevelGenerator.h" />
-    <ClInclude Include="game\Player.h" />
-    <ClInclude Include="game\PlayerComponent.h" />
-    <ClInclude Include="game\Room.h" />
     <ClInclude Include="game\LevelManager.h" />
-    <ClInclude Include="game\pickup.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="tinyxml2-master\tinyxml2.h" />
   </ItemGroup>
@@ -57,6 +47,9 @@
   <ItemGroup>
     <ProjectReference Include="..\cppgamelib\cppgamelib.vcxproj">
       <Project>{478a3ef4-5780-4567-be58-56beccd9d215}</Project>
+    </ProjectReference>
+    <ProjectReference Include="2DGameDevLib\2DGameDevLib.vcxproj">
+      <Project>{825d337d-0f78-428c-9590-fdb39f79c6e9}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -115,7 +108,7 @@
     <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Stuart\git\2DGameDev\arch;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Stuart\git\2DGameDev\2DGameDevLib;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
     <LibraryPath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;$(LibraryPath)</LibraryPath>
     <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
@@ -130,7 +123,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Winmm.lib;SDL2_mixer.lib;d3d10.lib;d3dx10.lib;SDL2_ttf.lib;cppgamelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Winmm.lib;SDL2_mixer.lib;d3d10.lib;d3dx10.lib;SDL2_ttf.lib;cppgamelib.lib;2DGameDevLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\SDL\SDL2\lib\x86;C:\SDL\SDL2_image-2.0.4\lib\x86;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\x86;C:\SDL\SDL2_ttf-2.0.15\lib\x86;C:\Users\Stuart\git\2DGameDev\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Pickup.h"
 #include "events/PlayerMovedEvent.h"
 #include <events/GameObjectEvent.h>

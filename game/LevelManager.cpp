@@ -417,7 +417,10 @@ ListOfGameObjects LevelManager::CreateLevel()
 	ListOfGameObjects& objects = SceneManager::Get()->GetGameWorld().GetGameObjects();
 	
 	// Generate the level's rooms
-	auto rooms = level_generator::generate_level();
+	
+	const auto removeRandomSides = SettingsManager::Get()->GetBool("grid", "removeSidesRandomly");
+	auto levelGenerator = LevelGenerator(screenWidth, screenHeight, rows, cols, removeRandomSides);
+	auto rooms = levelGenerator.Generate();
 
 	// Setup each room
 	for (const auto& room: rooms)

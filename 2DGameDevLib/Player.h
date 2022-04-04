@@ -7,9 +7,15 @@
 #include "events/Event.h"
 #include "Room.h"
 
+namespace gamelib
+{
+	enum class Direction;
+}
+
 /// <summary>
 /// Player object
 /// </summary>
+
 class Player final : public gamelib::DrawableGameObject
 {		
 public:
@@ -39,6 +45,24 @@ public:
 	/// <param name="event"></param>
 	/// <returns></returns>
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event) override;
+
+	
+
+	const ptrdiff_t& CountRoomGameObjects(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects);
+
+	const std::shared_ptr<Room>& GetCurrentRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects, const int& firstRoomIndex);
+
+	const std::shared_ptr<Room>& GetRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects, const int& firstRoomIndex, const ptrdiff_t& lastRoomIndex, std::shared_ptr<Room>& currentRoom, int side);
+
+	bool IsValidMove(const gamelib::Direction& moveDirection, const bool& canMoveDown, const bool& canMoveLeft, const bool& canMoveRight, const bool& canMoveUp);
+
+	bool CanMoveUp(const bool& isMovingUp, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& aboveRoom);
+
+	bool CanMoveDown(const bool& isMovingDown, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& bottomRoom);
+
+	bool CanMoveLeft(const bool& isMovingLeft, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& leftRoom);
+
+	bool CanMoveRight(const bool& isMovingRight, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& rightRoom);
 
 	/// <summary>
 	/// Draw player
