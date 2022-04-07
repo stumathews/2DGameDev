@@ -6,6 +6,7 @@
 #include <objects/DrawableGameObject.h>
 #include "events/Event.h"
 #include "Room.h"
+#include <ai/FSM.h>
 
 namespace gamelib
 {
@@ -46,7 +47,7 @@ public:
 	/// <returns></returns>
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event) override;
 
-	
+	void SetDirection(gamelib::Direction direction);
 
 	const ptrdiff_t& CountRoomGameObjects(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects);
 
@@ -105,11 +106,15 @@ public:
 	/// <returns></returns>
 	int GetHeight();
 
+	gamelib::Direction GetDirection();
+
 private:
 	int width;
 	int height;
 	int within_room_index = 0;
 	bool drawBox = false;
 	bool be_verbose;
+	gamelib::Direction direction;
+	
 };
 

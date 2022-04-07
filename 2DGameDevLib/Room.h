@@ -76,6 +76,12 @@ public:
 	void RemoveWall(Side wall);
 
 	/// <summary>
+	/// Add a wall
+	/// </summary>
+	/// <param name="wall"></param>
+	void AddWall(Side wall);
+
+	/// <summary>
 	/// Remove wall
 	/// </summary>
 	void RemoveWallZeroBased(Side wall);

@@ -252,7 +252,16 @@ void Room::Update()
 /// <param name="wall">wall index</param>
 void Room::RemoveWall(Side wall)
 {
-	this->walls[(int)wall-1] = false;
+	this->walls[(int)wall] = false;
+}
+
+/// <summary>
+/// Add a wall if not already added
+/// </summary>
+/// <param name="wall"></param>
+void Room::AddWall(Side wall)
+{
+	this->walls[(int)wall] = true;
 }
 
 /// <summary>
