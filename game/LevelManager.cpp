@@ -9,6 +9,9 @@
 #include "Player.h"
 #include <memory>
 #include <events/SceneChangedEvent.h>
+#include <SpriteAsset.h>
+#include <objects/GameObjectFactory.h>
+#include "SnapToRoomStrategy.h"
 
 using namespace gamelib;
 using namespace std;
@@ -345,6 +348,9 @@ shared_ptr<GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>>
 	
 	// create the player
 	const auto player =  shared_ptr<Player>(new Player(positionInRoom.GetX(), positionInRoom.GetY(), w, h));
+	auto moveStrategy = shared_ptr<SnapToRoomStrategy>(new SnapToRoomStrategy(player));
+	player->SetMoveStrategy(moveStrategy);
+
 	player->SetRoom(playerRoomIndex);
 
 	player->SetTag(constants::playerTag);
@@ -353,7 +359,7 @@ shared_ptr<GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>>
 	player->LoadSettings();
 
 	// Player will respond to directional keyboard input
-	player->SubscribeToEvent(EventType::PositionChangeEventType);
+	player->SubscribeToEvent(EventType::ControllerMoveEvent);
 
 	// Player will be able to have its settings re-loaded at runtime
 	player->SubscribeToEvent(EventType::SettingsReloaded);
@@ -367,6 +373,11 @@ shared_ptr<GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>>
 	// Place the player in a random room
 	player->CenterPlayerInRoom(playerRoom);
 
+	auto spriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo("player"));
+	auto sprite = AnimatedSprite::Create(player->x, player->y, spriteAsset);
+
+	// Set player's sprite
+	player->SetSprite(sprite);
 	SceneManager::Get()->GetGameWorld().player = player;
 
 	return player;

@@ -41,7 +41,7 @@ namespace gamelib
 		/// Provide Pickup game type
 		/// </summary>
 		/// <returns>Pickup</returns>
-		gamelib::object_type GetGameObjectType() override;
+		gamelib::GameObjectType GetGameObjectType() override;
 
 		/// <summary>
 		/// Provide name

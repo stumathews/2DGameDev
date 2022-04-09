@@ -43,9 +43,9 @@ namespace gamelib
 		return "pickup";
 	}
 
-	gamelib::object_type Pickup::GetGameObjectType() 
+	gamelib::GameObjectType Pickup::GetGameObjectType() 
 	{ 
-		return gamelib::object_type::Pickup; 
+		return gamelib::GameObjectType::Pickup; 
 	}
 
 	std::string Pickup::GetName()

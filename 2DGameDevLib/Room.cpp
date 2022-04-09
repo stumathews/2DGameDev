@@ -25,7 +25,7 @@ vector<shared_ptr<Event>> Room::HandleEvent(const std::shared_ptr<Event> event)
 		const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);
 
 		// Dont handle player events
-		if(GetGameObjectType() == object_type::Player)
+		if(GetGameObjectType() == GameObjectType::Player)
 		{
 			return generatedEvents;
 		}
@@ -280,9 +280,9 @@ void Room::ShouldRoomFill(bool fill_me)
 	fill = fill_me; 
 }
 
-object_type Room::GetGameObjectType() 
+GameObjectType Room::GetGameObjectType() 
 {
-	return object_type::Room;
+	return GameObjectType::Room;
 }
 
 /// <summary>

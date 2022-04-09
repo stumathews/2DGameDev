@@ -21,7 +21,7 @@
 		<setting name="rows" type="int">10</setting>
 		<setting name="cols" type="int">10</setting>
 		<setting name="removeSidesRandomly" type="bool">true</setting>
-    <setting name="nowalls" type="bool">true</setting>
+    <setting name="nowalls" type="bool">false</setting>
 	</grid>
 		
 	<!-- Audio settings -->

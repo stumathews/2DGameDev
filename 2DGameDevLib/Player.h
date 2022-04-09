@@ -2,11 +2,12 @@
 
 #include <memory>
 #include <vector>
-
 #include <objects/DrawableGameObject.h>
 #include "events/Event.h"
 #include "Room.h"
 #include <ai/FSM.h>
+#include <objects/sprite.h>
+#include "MoveStrategy.h"
 
 namespace gamelib
 {
@@ -36,24 +37,25 @@ public:
 	void CenterPlayerInRoom(std::shared_ptr<Room> target_room);
 
 	/// <summary>
-	/// Get Index of neighbour
-	/// </summary>
-	static int GetRoomNeighbourIndex(int firstRoomIndex, int lastRoomIndex, int side, std::shared_ptr<Room> room);
-
-	/// <summary>
 	/// Handle Player events
 	/// </summary>
 	/// <param name="event"></param>
 	/// <returns></returns>
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event) override;
 
+	void BaseProcessEvent(const std::shared_ptr<gamelib::Event>& event, gamelib::events& createdEvents);
+
+	const gamelib::events& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::events& createdEvents);
+
+	void MovePlayer(const bool& isMovingDown, std::shared_ptr<Room>& bottomRoom, const bool& isMovingUp, std::shared_ptr<Room>& aboveRoom, const bool& isMovingRight, std::shared_ptr<Room>& rightRoom, const bool& isMovingLeft, std::shared_ptr<Room>& leftRoom);
+
 	void SetDirection(gamelib::Direction direction);
 
 	const ptrdiff_t& CountRoomGameObjects(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects);
 
-	const std::shared_ptr<Room>& GetCurrentRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects, const int& firstRoomIndex);
+	const std::shared_ptr<Room>& GetCurrentRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects);
 
-	const std::shared_ptr<Room>& GetRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects, const int& firstRoomIndex, const ptrdiff_t& lastRoomIndex, std::shared_ptr<Room>& currentRoom, int side);
+	const std::shared_ptr<Room>& GetRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects, std::shared_ptr<Room>& currentRoom, Side side);
 
 	bool IsValidMove(const gamelib::Direction& moveDirection, const bool& canMoveDown, const bool& canMoveLeft, const bool& canMoveRight, const bool& canMoveUp);
 
@@ -81,7 +83,7 @@ public:
 	/// Get Game oibject type
 	/// </summary>
 	/// <returns></returns>
-	gamelib::object_type GetGameObjectType() override;
+	gamelib::GameObjectType GetGameObjectType() override;
 
 	/// <summary>
 	/// Update player
@@ -108,13 +110,17 @@ public:
 
 	gamelib::Direction GetDirection();
 
+	void SetSprite(std::shared_ptr<gamelib::AnimatedSprite> sprite);
+
+	void SetMoveStrategy(std::shared_ptr<IMoveStrategy> moveStrategy);
+
 private:
+	std::shared_ptr<gamelib::AnimatedSprite> sprite;
 	int width;
 	int height;
-	int within_room_index = 0;
+	int playerRoomIndex = 0;
 	bool drawBox = false;
-	bool be_verbose;
 	gamelib::Direction direction;
-	
+	std::shared_ptr<IMoveStrategy> moveStrategy;
 };
 

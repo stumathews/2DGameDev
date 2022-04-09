@@ -94,7 +94,7 @@ public:
 	/// <summary>
 	/// Provide Room type
 	/// </summary>
-	gamelib::object_type GetGameObjectType() override;
+	gamelib::GameObjectType GetGameObjectType() override;
 
 	/// <summary>
 	/// Name
