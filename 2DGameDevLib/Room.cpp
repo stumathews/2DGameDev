@@ -19,7 +19,7 @@ vector<shared_ptr<Event>> Room::HandleEvent(const std::shared_ptr<Event> event)
 	// Handle when the player moves
 	if(event->type == EventType::PlayerMovedEventType)
 	{			
-		const auto moved_event = std::static_pointer_cast<PlayerMovedEvent>(event);
+		const auto playerMovedEvent = std::static_pointer_cast<PlayerMovedEvent>(event);
 				
 		// Get player
 		const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);
@@ -95,28 +95,38 @@ void Room::Draw(SDL_Renderer* renderer)
 	const auto dx = rect.GetDx();
 	const auto dy = rect.GetDy();
 
-	const auto have_top_wall = this->walls[0];
-	const auto have_right_wall = this->walls[1];
-	const auto have_bottom_wall = this->walls[2];
-	const auto have_left_wall = this->walls[3];
+	const auto hasTopWall = this->walls[0];
+	const auto hasRightWall = this->walls[1];
+	const auto hasBottomWall = this->walls[2];
+	const auto hasLeftWall = this->walls[3];
 
 	// Draw the walls as lines
-	if (have_top_wall) 
+	if (hasTopWall)
+	{
 		SDL_RenderDrawLine(renderer, ax, ay, bx, by);
+	}
 		
-	if (have_right_wall) 
+	if (hasRightWall)
+	{
 		SDL_RenderDrawLine(renderer, bx, by, cx, cy);
+	}
 		
-	if (have_bottom_wall) 
+	if (hasBottomWall)
+	{
 		SDL_RenderDrawLine(renderer, cx, cy, dx, dy);
+	}
 		
-	if (have_left_wall) 
+	if (hasLeftWall)
+	{
 		SDL_RenderDrawLine(renderer, dx, dy, ax, ay);
+	}
 		
-	if(fill)
-		DrawFilledRect(renderer, &bounds, { 255, 0 ,0 ,0});
+	if (fill)
+	{
+		DrawFilledRect(renderer, &bounds, { 255, 0 ,0 ,0 });
+	}
 		
-	if( SettingsManager::Get()->GetBool("global", "print_debugging_text"))
+	if(SettingsManager::Get()->GetBool("global", "print_debugging_text"))
 	{
 		RectDebugging::printInRect(renderer, GetTag(), &bounds); 
 	}
@@ -138,24 +148,16 @@ Room::Room(int number,
 	int height, 
 	bool fill)
 	: DrawableGameObject(x, y, true), fill(fill), playerBounds({}),
-		top_room_index(0), right_room_index(0),  bottom_room_index(0), width(width), height(height), left_room_index(0)
+		topRoomIndex(0), rightRoomIndex(0),  bottomRoomIndex(0), width(width), height(height), leftRoomIndex(0)
 {
 	// Bounds of this room
-	this->bounds =
-	{
-		x,
-		y, 
-		width,
-		height
-	};
-
+	this->bounds = { x, y, width, height };
 	this->width = width;
 	this->height = height;
 	this->number = number;
 
 	// Room geometry helper
 	this->abcd = ABCDRectangle(x, y, width, height);
-
 
 	// All walls are present by default
 	walls[0] = true;
@@ -173,10 +175,10 @@ Room::Room(int number,
 /// <param name="left_index"></param>
 void Room::SetSoroundingRooms(const int top_index, const int right_index, const int bottom_index, const int left_index)
 {
-	this->top_room_index = top_index;
-	this->right_room_index = right_index;
-	this->bottom_room_index = bottom_index;
-	this->left_room_index = left_index;
+	this->topRoomIndex = top_index;
+	this->rightRoomIndex = right_index;
+	this->bottomRoomIndex = bottom_index;
+	this->leftRoomIndex = left_index;
 }
 
 int Room::GetNeighbourIndex(Side side) const
@@ -184,16 +186,16 @@ int Room::GetNeighbourIndex(Side side) const
 	switch (side)
 	{
 	case Side::Top:
-		return top_room_index;
+		return topRoomIndex;
 		break;
 	case Side::Right:
-		return right_room_index;
+		return rightRoomIndex;
 		break;
 	case Side::Bottom:
-		return bottom_room_index;
+		return bottomRoomIndex;
 		break;
 		case Side::Left:
-		return left_room_index;
+		return leftRoomIndex;
 		break;
 	default:
 		return -1;

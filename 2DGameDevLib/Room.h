@@ -152,22 +152,22 @@ protected:
 	/// <summary>
 	/// Index of the room above this one (room number)
 	/// </summary>
-	int top_room_index;
+	int topRoomIndex;
 
 	/// <summary>
 	/// Index of the room to the right of this one (room number)
 	/// </summary>
-	int right_room_index;
+	int rightRoomIndex;
 
 	/// <summary>
 	/// Index of the room below this one (room number)
 	/// </summary>
-	int bottom_room_index; 
+	int bottomRoomIndex; 
 
 	/// <summary>
 	/// Room to the left of this one (room number)
 	/// </summary>
-	int left_room_index;
+	int leftRoomIndex;
 
 	/// <summary>
 	/// Width of this room
@@ -177,10 +177,10 @@ protected:
 	/// <summary>
 	/// Height of this room
 	/// </summary>
-	int height;
+	int height;	
 
 private:
-				
+	
 	/// <summary>
 	/// Indication if the player is within this room at the moment
 	/// </summary>

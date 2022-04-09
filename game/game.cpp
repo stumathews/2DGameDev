@@ -28,7 +28,7 @@ int main(int argc, char *args[])
 		GameStructure game = GameStructure([&]() { levels.GetKeyboardInput(); });
 		
 		// Initialize key parts of the game
-		const auto isGameStructureInitialized = IsSuccess(game.InitializeGameSubSystems(), "Initialize Game subsystems...");
+		const auto isGameStructureInitialized = IsSuccess(game.InitializeGameSubSystems(800, 600, "Mazer 2d"), "Initialize Game subsystems...");
 		const auto IsLevelsInitialized = IsSuccess(levels.Initialize(), "Initializing Level Manager...");
 		
 		// Sets up level becuase we want these events to be in the queue before the level events
