@@ -72,11 +72,17 @@ const events& Player::OnControllerMove(const shared_ptr<Event>& event, events& c
 	const auto canMoveUp = CanMoveUp(isMovingUp, currentRoom, topRoom);
 
 	// An invalid move is when we want to move in a direction but we cant
-	if (!IsValidMove(moveDirection, canMoveDown, canMoveLeft, canMoveRight, canMoveUp))
+	auto ignoreRestrictions = SettingsManager::Get()->GetBool("player", "ignore-restrictions");
+	if(!ignoreRestrictions)
 	{
-		LogMessage("Invalid move", SettingsManager::Get()->GetBool("global", "verbose"));
-		EventManager::Get()->RaiseEvent(make_shared<Event>(EventType::InvalidMove), this);
-		return createdEvents;
+		if (!IsValidMove(moveDirection, canMoveDown, canMoveLeft, canMoveRight, canMoveUp))
+		{
+		
+
+			LogMessage("Invalid move", SettingsManager::Get()->GetBool("global", "verbose"));
+			EventManager::Get()->RaiseEvent(make_shared<Event>(EventType::InvalidMove), this);
+			return createdEvents;
+	}
 	}
 
 	MovePlayer(isMovingDown, bottomRoom, isMovingUp, topRoom, isMovingRight, rightRoom, isMovingLeft, leftRoom);
@@ -116,35 +122,24 @@ void Player::MovePlayer(const bool& isMovingDown, shared_ptr<Room>& bottomRoom, 
 	if (isMovingDown)
 	{
 		SetDirection(Direction::Down);
-
-		// Put player into room below
-		//CenterPlayerInRoom(bottomRoom);
 		moveStrategy->MoveTo(bottomRoom);
 	}
 
 	if (isMovingUp)
 	{
 		SetDirection(Direction::Up);
-		// Put player into the room above
-
-		//CenterPlayerInRoom(aboveRoom);
 		moveStrategy->MoveTo(aboveRoom);
 	}
 
 	if (isMovingRight)
 	{
 		SetDirection(Direction::Right);
-
-		// Put player in the next room on th right
-		//CenterPlayerInRoom(rightRoom);
 		moveStrategy->MoveTo(rightRoom);
 	}
 
 	if (isMovingLeft)
 	{
 		SetDirection(Direction::Left);
-		// Put player in the previous room on the left
-		//CenterPlayerInRoom(leftRoom);
 		moveStrategy->MoveTo(leftRoom);
 	}
 }
@@ -166,16 +161,14 @@ const ptrdiff_t& Player::CountRoomGameObjects(vector<shared_ptr<GameObject>>& ga
 	});
 }
 
-const shared_ptr<Room>& Player::GetCurrentRoom(vector<shared_ptr<GameObject>>& gameObjects)
+const shared_ptr<Room> Player::GetCurrentRoom(vector<shared_ptr<GameObject>>& gameObjects)
 {
-	auto gameObject = gameObjects[playerRoomIndex];
-	return dynamic_pointer_cast<Room>(gameObject);
+	return dynamic_pointer_cast<Room>(gameObjects[playerRoomIndex]);
 }
 
-const shared_ptr<Room>& Player::GetRoom(vector<shared_ptr<GameObject>>& gameObjects, shared_ptr<Room>& currentRoom, Side side)
+const shared_ptr<Room> Player::GetRoom(vector<shared_ptr<GameObject>>& gameObjects, shared_ptr<Room>& currentRoom, Side side)
 {
-	auto gameObject = gameObjects[currentRoom->GetNeighbourIndex(side)];
-	return dynamic_pointer_cast<Room>(gameObject);
+	return dynamic_pointer_cast<Room>(gameObjects[currentRoom->GetNeighbourIndex(side)]);
 }
 
 bool Player::IsValidMove(const Direction& moveDirection, const bool& canMoveDown, const bool& canMoveLeft, const bool& canMoveRight, const bool& canMoveUp)
@@ -206,9 +199,20 @@ bool Player::CanMoveRight(const bool& isMovingRight, shared_ptr<Room>& currentRo
 	return isMovingRight && !currentRoom->IsWalled(Side::Right) && !rightRoom->IsWalled(Side::Left);
 }
 
+gamelib::coordinate<int> Player::GetHotspot()
+{
+	auto mid_x = x + GetWidth()/2;
+	auto mid_y = y + GetHeight()/2;
+	return coordinate<int>(mid_x, mid_y);
+}
+
 void Player::Draw(SDL_Renderer* renderer)
-{	
+{		
 	sprite->Draw(renderer);
+
+	// Draw the hotspot
+	SDL_Rect point_bounds = { GetHotspot().GetX() -5, GetHotspot().GetY() +5 };
+	DrawFilledRect(renderer, &point_bounds , { 255, 0 ,0 ,0 });
 }
 
 string Player::GetName()

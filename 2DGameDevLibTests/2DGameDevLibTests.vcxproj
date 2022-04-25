@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{dd33b97b-06eb-4264-80ca-ce685a995029}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -34,8 +34,8 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\Stuart\git\2DGameDev\2DGameDevLib;c:\sdl\SDL2\include;C:\Users\Stuart\git\cppgamelib;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\SDL\SDL2\lib\x86;C:\SDL\SDL2_image-2.0.4\lib\x86;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\x86;C:\SDL\SDL2_ttf-2.0.15\lib\x86;C:\Users\Stuart\git\2DGameDev\Debug;C:\Users\Stuart\git\cppgamelib\Debug;C:\Users\Stuart\git\2DGameDev\2DGameDevLib\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\repos\2DGameDev\2DGameDevLib;c:\sdl\SDL2\include;C:\repos\cppgamelib;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\SDL\SDL2\lib\x86;C:\SDL\SDL2_image-2.0.4\lib\x86;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\x86;C:\SDL\SDL2_ttf-2.0.15\lib\x86;C:\repos\2DGameDev\Debug;C:\repos\cppgamelib\Debug;C:\repos\2DGameDev\2DGameDevLib\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemGroup>

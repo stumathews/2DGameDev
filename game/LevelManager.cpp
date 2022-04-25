@@ -12,6 +12,7 @@
 #include <SpriteAsset.h>
 #include <objects/GameObjectFactory.h>
 #include "SnapToRoomStrategy.h"
+#include "EdgeTowardsRoomStrategy.h"
 
 using namespace gamelib;
 using namespace std;
@@ -348,7 +349,8 @@ shared_ptr<GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>>
 	
 	// create the player
 	const auto player =  shared_ptr<Player>(new Player(positionInRoom.GetX(), positionInRoom.GetY(), w, h));
-	auto moveStrategy = shared_ptr<SnapToRoomStrategy>(new SnapToRoomStrategy(player));
+	//auto moveStrategy = shared_ptr<SnapToRoomStrategy>(new SnapToRoomStrategy(player));
+	auto moveStrategy = shared_ptr<EdgeTowardsRoomStrategy>(new EdgeTowardsRoomStrategy(player, 2));
 	player->SetMoveStrategy(moveStrategy);
 
 	player->SetRoom(playerRoomIndex);

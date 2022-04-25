@@ -8,6 +8,7 @@
 #include <ai/FSM.h>
 #include <objects/sprite.h>
 #include "MoveStrategy.h"
+#include "util/Tuple.h"
 
 namespace gamelib
 {
@@ -53,9 +54,9 @@ public:
 
 	const ptrdiff_t& CountRoomGameObjects(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects);
 
-	const std::shared_ptr<Room>& GetCurrentRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects);
+	const std::shared_ptr<Room> GetCurrentRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects);
 
-	const std::shared_ptr<Room>& GetRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects, std::shared_ptr<Room>& currentRoom, Side side);
+	const std::shared_ptr<Room> GetRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects, std::shared_ptr<Room>& currentRoom, Side side);
 
 	bool IsValidMove(const gamelib::Direction& moveDirection, const bool& canMoveDown, const bool& canMoveLeft, const bool& canMoveRight, const bool& canMoveUp);
 
@@ -66,6 +67,8 @@ public:
 	bool CanMoveLeft(const bool& isMovingLeft, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& leftRoom);
 
 	bool CanMoveRight(const bool& isMovingRight, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& rightRoom);
+
+	gamelib::coordinate<int> GetHotspot();
 
 	/// <summary>
 	/// Draw player

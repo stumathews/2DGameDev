@@ -4,6 +4,7 @@
 #include "objects/DrawableGameObject.h"
 #include "objects/GameObject.h"
 #include <events/Event.h>
+#include "util/Tuple.h"
 
 enum class Side
 {
@@ -125,6 +126,10 @@ public:
 	/// Update room
 	/// </summary>
 	void Update() override;
+
+	
+
+	gamelib::coordinate<int> GetHotspot();
 
 protected:
 

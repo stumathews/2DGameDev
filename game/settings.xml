@@ -44,6 +44,7 @@
 		<setting name="b" type="int">0</setting>
 		<setting name="a" type="int">0</setting> 
 		<setting name="verbose" type="bool">true</setting>
+		<setting name="ignore-restrictions" type="bool">true</setting>
 	</player>
 	
 	<!-- Room fill settings-->

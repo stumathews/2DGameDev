@@ -130,6 +130,11 @@ void Room::Draw(SDL_Renderer* renderer)
 	{
 		RectDebugging::printInRect(renderer, GetTag(), &bounds); 
 	}
+
+	// Draw hotspot
+
+	SDL_Rect point_bounds = { GetHotspot().GetX() -5, GetHotspot().GetY() +5 };
+	DrawFilledRect(renderer, &point_bounds , { 0, 0 ,0 ,0 });
 }
 
 /// <summary>
@@ -139,6 +144,11 @@ void Room::Draw(SDL_Renderer* renderer)
 ABCDRectangle& Room::GetABCDRectangle()
 {
 	return abcd;
+}
+
+gamelib::coordinate<int> Room::GetHotspot()
+{
+	return GetABCDRectangle().GetCenter();
 }
 
 Room::Room(int number, 
