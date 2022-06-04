@@ -110,6 +110,7 @@ void Room::Draw(SDL_Renderer* renderer)
 	{
 		SDL_RenderDrawLine(renderer, bx, by, cx, cy);
 	}
+
 		
 	if (hasBottomWall)
 	{
@@ -132,9 +133,11 @@ void Room::Draw(SDL_Renderer* renderer)
 	}
 
 	// Draw hotspot
-
-	SDL_Rect point_bounds = { GetHotspot().GetX() -5, GetHotspot().GetY() +5 };
-	DrawFilledRect(renderer, &point_bounds , { 0, 0 ,0 ,0 });
+	if(SettingsManager::Get()->GetBool("room","drawHotSpot"))
+	{
+		SDL_Rect point_bounds = { GetHotspot().GetX() -5, GetHotspot().GetY() +5 };
+		DrawFilledRect(renderer, &point_bounds , { 0, 0 ,0 ,0 });
+	}
 }
 
 /// <summary>
@@ -149,6 +152,11 @@ ABCDRectangle& Room::GetABCDRectangle()
 gamelib::coordinate<int> Room::GetHotspot()
 {
 	return GetABCDRectangle().GetCenter();
+}
+
+int Room::GetRoomNumber()
+{
+	return number;
 }
 
 Room::Room(int number, 
@@ -170,10 +178,12 @@ Room::Room(int number,
 	this->abcd = ABCDRectangle(x, y, width, height);
 
 	// All walls are present by default
-	walls[0] = true;
-	walls[1] = true;
-	walls[2] = true;
-	walls[3] = true;
+	walls[0] = IsTopWalled = true;
+	walls[1] = IsRightWalled = true;
+	walls[2] = IsBottomWalled = true;
+	walls[3] = IsLeftWalled = true;
+
+	 
 }
 
 /// <summary>
@@ -253,8 +263,28 @@ bool Room::IsWalled(Side wall)
 	return walls[(int)wall];
 }
 
+bool Room::HasTopWall()
+{
+	return IsWalled(Side::Top);
+}
+
+bool Room::HasBottomWall()
+{
+	return IsWalled(Side::Bottom);
+}
+
+bool Room::HasLeftWall()
+{
+	return IsWalled(Side::Left);
+}
+
+bool Room::HasRightWall()
+{
+	return IsWalled(Side::Right);
+}
+
 // Walls dont respont to frame updates yet
-void Room::Update()
+void Room::Update(float deltaMs)
 {
 }
 
@@ -265,6 +295,26 @@ void Room::Update()
 void Room::RemoveWall(Side wall)
 {
 	this->walls[(int)wall] = false;
+	SetNotWalled(wall);
+}
+
+void Room::SetNotWalled(Side wall)
+{
+	switch (wall)
+	{
+	case Side::Top:
+		IsTopWalled = false;
+		break;
+	case Side::Bottom:
+		IsBottomWalled = false;
+		break;
+	case Side::Left:
+		IsBottomWalled = false;
+		break;
+	case Side::Right:
+		IsRightWalled = false;
+		break;
+	}
 }
 
 /// <summary>
@@ -274,6 +324,26 @@ void Room::RemoveWall(Side wall)
 void Room::AddWall(Side wall)
 {
 	this->walls[(int)wall] = true;
+	SetWalled(wall);
+}
+
+void Room::SetWalled(Side wall)
+{
+	switch (wall)
+	{
+	case Side::Top:
+		IsTopWalled = true;
+		break;
+	case Side::Bottom:
+		IsBottomWalled = true;
+		break;
+	case Side::Left:
+		IsBottomWalled = true;
+		break;
+	case Side::Right:
+		IsRightWalled = true;
+		break;
+	}
 }
 
 /// <summary>
@@ -283,6 +353,7 @@ void Room::AddWall(Side wall)
 void Room::RemoveWallZeroBased(Side wall)
 {
 	this->walls[(int)wall] = false;
+	SetNotWalled(wall);
 }
 
 void Room::ShouldRoomFill(bool fill_me) 

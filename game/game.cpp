@@ -31,12 +31,6 @@ int main(int argc, char *args[])
 		const auto isGameStructureInitialized = IsSuccess(game.InitializeGameSubSystems(800, 600, "Mazer 2d"), "Initialize Game subsystems...");
 		const auto IsLevelsInitialized = IsSuccess(levels.Initialize(), "Initializing Level Manager...");
 		
-		// Sets up level becuase we want these events to be in the queue before the level events
-		levels.PrepareLevel(1);
-
-		// Create the level
-		levels.CreateLevel();
-
 		// Abort game if initialization failed
 		if(!isGameStructureInitialized || !IsLevelsInitialized)
 		{
@@ -47,7 +41,12 @@ int main(int argc, char *args[])
 			return -1;
 		}
 
+		// Sets up level becuase we want these events to be in the queue before the level events
 		
+		levels.ChangeLevel(1);
+
+		// Create the level
+		levels.CreateAutoLevel();		
 
 		// Start main game Loop		
 		const auto loop_result = LogThis("Beginning game loop...", beVerbose, [&]() { return game.DoGameLoop(); }, true, true);

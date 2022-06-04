@@ -1,7 +1,12 @@
+#include "EdgeTowardsRoomStrategy.h"
+#include "EdgeTowardsRoomStrategy.h"
+#include "EdgeTowardsRoomStrategy.h"
+#include "EdgeTowardsRoomStrategy.h"
 #include "pch.h"
 #include "EdgeTowardsRoomStrategy.h"
 #include "Player.h"
 #include "Room.h"
+#include "scene/SceneManager.h"
 
 EdgeTowardsRoomStrategy::EdgeTowardsRoomStrategy(std::shared_ptr<Player> player, int edgeIncrement)
 {
@@ -13,28 +18,55 @@ void EdgeTowardsRoomStrategy::MoveTo(std::shared_ptr<Room> room)
 {
 	// Edge player towards the room
 	
-	int move_interval = 1;
-	
-	int delta_y = room->GetHotspot().GetY() - player->GetHotspot().GetY();
-	int delta_x = room->GetHotspot().GetX() - player->GetHotspot().GetX();
-	
-	if(delta_y != 0)
-		player->y = delta_y > 0 ? player->y + move_interval : player->y - move_interval;
-	
-	if(delta_x != 0)
-		player->x = delta_x > 0 ? player->x + move_interval : player->x - move_interval;	
+	int move_interval = 3;
 
-	if(delta_y == 0)
+	auto gameObjects = gamelib::SceneManager::Get()->GetGameWorld().GetGameObjects();
+	auto playersRoom = player->GetCurrentRoom(gameObjects);
+	auto moveDown = playersRoom->GetNeighbourIndex(Side::Bottom) == room->GetRoomNumber();
+	auto moveUp = playersRoom->GetNeighbourIndex(Side::Top) == room->GetRoomNumber();
+	auto moveLeft = playersRoom->GetNeighbourIndex(Side::Left) == room->GetRoomNumber();
+	auto moveRight = playersRoom->GetNeighbourIndex(Side::Right) == room->GetRoomNumber();
+
+	if(moveDown)
 	{
-		// horizontal movement
-		player->x = delta_x > 0 ? player->x + move_interval : player->x - move_interval;
+		player->y += move_interval;
 	}
 
-	if(delta_x == 0)
+	if(moveUp)
 	{
-		// vertical movement
-		player->y = delta_y > 0 ? player->y + move_interval : player->y - move_interval;
+		player->y -= move_interval;
+	}
+
+	if(moveLeft)
+	{
+		player->x -= move_interval;
+	}
+
+	if(moveRight)
+	{
+		player->x += move_interval;
 	}
 	
-	player->Update();
+	
+	player->Update(0.0f);
+}
+
+bool EdgeTowardsRoomStrategy::CanMoveUp(const bool& isMovingUp, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& aboveRoom)
+{
+	return true;
+}
+
+bool EdgeTowardsRoomStrategy::CanMoveDown(const bool& isMovingDown, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& bottomRoom)
+{
+	return true;
+}
+
+bool EdgeTowardsRoomStrategy::CanMoveLeft(const bool& isMovingLeft, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& leftRoom)
+{
+	return true;
+}
+
+bool EdgeTowardsRoomStrategy::CanMoveRight(const bool& isMovingRight, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& rightRoom)
+{
+	return true;
 }

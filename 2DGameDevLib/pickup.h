@@ -3,6 +3,7 @@
 #include "Room.h"
 #include "objects/DrawableGameObject.h"
 #include <events/IEventSubscriber.h>
+#include <objects/Sprite.h>
 
 namespace gamelib
 {
@@ -71,7 +72,7 @@ namespace gamelib
 		/// <summary>
 		///  Update Pickup
 		/// </summary>
-		void Update() override;
+		void Update(float deltaMs) override;
 		
 	private:
 
@@ -89,5 +90,10 @@ namespace gamelib
 		/// Colour of the pickup
 		/// </summary>
 		SDL_Color fillColour;
+
+		/// <summary>
+		/// Animated sprite
+		/// </summary>
+		std::shared_ptr<gamelib::AnimatedSprite> sprite;
 	};
 }

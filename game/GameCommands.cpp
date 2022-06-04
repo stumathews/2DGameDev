@@ -130,7 +130,7 @@ void GameCommands::ToggleMusic(bool be_verbose)
 {	
 	if (!Mix_PlayingMusic())
 	{
-		AudioManager::Get()->PlayMusic(gamelib::AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("MainTheme.wav"))->AsMusic());
+		AudioManager::Get()->Play(gamelib::AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("MainTheme.wav"))->AsMusic());
 	}
 	else
 	{
@@ -161,7 +161,8 @@ void GameCommands::Quit(bool be_verbose)
 void GameCommands::InvalidMove(bool be_verbose)
 {
 	Logger::Get()->LogThis("GameCommand: Invalid move", be_verbose);
-	AudioManager::Get()->PlaySound(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "invalid_move")))->AsSoundEffect());
+	AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "invalid_move")))->AsSoundEffect());
+
 }
 
 /// <summary>
@@ -170,7 +171,7 @@ void GameCommands::InvalidMove(bool be_verbose)
 /// <param name="be_verbose"></param>
 void GameCommands::FetchedPickup(bool be_verbose)
 {
-	AudioManager::Get()->PlaySound(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "fetched_pickup")))->AsSoundEffect());
+	AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "fetched_pickup")))->AsSoundEffect());
 }
 
 /// <summary>

@@ -71,16 +71,25 @@ public:
 	/// <returns></returns>
 	bool IsWalled(Side wall);
 
+	bool HasTopWall();
+	bool HasBottomWall();
+	bool HasLeftWall();
+	bool HasRightWall();
+
 	/// <summary>
 	/// Remove wall
 	/// </summary>
 	void RemoveWall(Side wall);
+
+	void SetNotWalled(Side wall);
 
 	/// <summary>
 	/// Add a wall
 	/// </summary>
 	/// <param name="wall"></param>
 	void AddWall(Side wall);
+
+	void SetWalled(Side wall);
 
 	/// <summary>
 	/// Remove wall
@@ -125,11 +134,15 @@ public:
 	/// <summary>
 	/// Update room
 	/// </summary>
-	void Update() override;
-
+	void Update(float deltaMs) override;
 	
-
+	/// <summary>
+	/// Get coordinates of the room's hotspot
+	/// </summary>
+	/// <returns></returns>
 	gamelib::coordinate<int> GetHotspot();
+
+	int GetRoomNumber();
 
 protected:
 
@@ -183,6 +196,11 @@ protected:
 	/// Height of this room
 	/// </summary>
 	int height;	
+
+	bool IsTopWalled;
+	bool IsBottomWalled;
+	bool IsRightWalled;
+	bool IsLeftWalled;
 
 private:
 	

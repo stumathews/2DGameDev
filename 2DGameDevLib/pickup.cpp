@@ -6,6 +6,8 @@
 //#include <objects/DrawableGameObject.h>
 #include <scene/SceneManager.h>
 #include "player.h"
+#include <memory>
+#include <SpriteAsset.h>
 
 using namespace std;
 namespace gamelib 
@@ -13,13 +15,15 @@ namespace gamelib
 	Pickup::Pickup(const int x, const int y, const int width, const int height, const bool isVisible) 
 			: DrawableGameObject(x, y, isVisible), width(width), height(height)
 	{
-		Initialize();
+		//Initialize();
+		//auto assetName = components.FindComponent("assetName");
+
+		
 	}
 
 	Pickup::Pickup(const bool visible)
-		: DrawableGameObject(0, 0, visible), width(0), height(0)
+		: DrawableGameObject(0, 0, visible), width(0), height(0), fillColour({})
 	{
-		Initialize();
 	}
 
 	void Pickup::Initialize()
@@ -36,6 +40,8 @@ namespace gamelib
 			// Alpha
 			static_cast<Uint8>(SettingsManager::Get()->GetInt("pickup", "a"))
 		};
+		auto spriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(stringProperties["assetName"]));
+		sprite = AnimatedSprite::Create(x, y, spriteAsset);;
 	}
 
 	std::string Pickup::GetSubscriberName() 
@@ -75,7 +81,7 @@ namespace gamelib
 		if(event->type == gamelib::EventType::DoLogicUpdateEventType)
 		{
 			// Update bounds etc.
-			Update();
+			Update(0.0f);
 		}
 		return generated_events;
 	}
@@ -94,10 +100,11 @@ namespace gamelib
 		};
 	
 		// Draw 
-		DrawFilledRect(renderer, &dimensions, fillColour);
+		//DrawFilledRect(renderer, &dimensions, fillColour);
+		sprite->Draw(renderer);
 	}
 
-	void Pickup::Update()
+	void Pickup::Update(float deltaMs)
 	{
 		bounds = 
 		{ 
@@ -106,5 +113,9 @@ namespace gamelib
 			width,
 			height
 		};
+
+		sprite->x = x;
+		sprite->y = y;
+		sprite->Update(deltaMs);
 	}
 }

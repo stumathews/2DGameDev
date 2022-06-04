@@ -9,6 +9,8 @@
 #include <objects/sprite.h>
 #include "MoveStrategy.h"
 #include "util/Tuple.h"
+#include "Restrictions.h"
+#include <Timer.h>
 
 namespace gamelib
 {
@@ -44,29 +46,38 @@ public:
 	/// <returns></returns>
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event) override;
 
+	void Fire();
+
+	void RemoveWall(gamelib::Direction facaingDirection);
+
+	void RemoveRightWall();
+
+	void RemoveLeftWall();
+
+	void RemoveBottomWall();
+
+	void RemoveTopWall();
+
 	void BaseProcessEvent(const std::shared_ptr<gamelib::Event>& event, gamelib::events& createdEvents);
 
 	const gamelib::events& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::events& createdEvents);
 
 	void MovePlayer(const bool& isMovingDown, std::shared_ptr<Room>& bottomRoom, const bool& isMovingUp, std::shared_ptr<Room>& aboveRoom, const bool& isMovingRight, std::shared_ptr<Room>& rightRoom, const bool& isMovingLeft, std::shared_ptr<Room>& leftRoom);
 
-	void SetDirection(gamelib::Direction direction);
+	void SetRoomRestrictions();
 
-	const ptrdiff_t& CountRoomGameObjects(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects);
+	void SetMovingDirection(gamelib::Direction direction);
+
+	const ptrdiff_t CountRoomGameObjects(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects);
 
 	const std::shared_ptr<Room> GetCurrentRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects);
+	const std::shared_ptr<Room> GetCurrentRoom();
+
+	const std::shared_ptr<Room> GetRoom(int index);
 
 	const std::shared_ptr<Room> GetRoom(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects, std::shared_ptr<Room>& currentRoom, Side side);
 
 	bool IsValidMove(const gamelib::Direction& moveDirection, const bool& canMoveDown, const bool& canMoveLeft, const bool& canMoveRight, const bool& canMoveUp);
-
-	bool CanMoveUp(const bool& isMovingUp, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& aboveRoom);
-
-	bool CanMoveDown(const bool& isMovingDown, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& bottomRoom);
-
-	bool CanMoveLeft(const bool& isMovingLeft, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& leftRoom);
-
-	bool CanMoveRight(const bool& isMovingRight, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& rightRoom);
 
 	gamelib::coordinate<int> GetHotspot();
 
@@ -91,7 +102,7 @@ public:
 	/// <summary>
 	/// Update player
 	/// </summary>
-	void Update() override;
+	void Update(float deltaMs) override;
 
 	/// <summary>
 	/// Set the player's room
@@ -117,13 +128,24 @@ public:
 
 	void SetMoveStrategy(std::shared_ptr<IMoveStrategy> moveStrategy);
 
+	Restrictions restrictions;
+
+	std::shared_ptr<Room> CurrentRoom;
+
+	std::vector<std::shared_ptr<gamelib::GameObject>>& GameObjectsPtr;
+
+
+	
+	gamelib::Timer fiveSecTimer;
 private:
+	
 	std::shared_ptr<gamelib::AnimatedSprite> sprite;
 	int width;
 	int height;
 	int playerRoomIndex = 0;
 	bool drawBox = false;
-	gamelib::Direction direction;
+	gamelib::Direction currentMovingDirection;
+	gamelib::Direction currentFacingDirection;
 	std::shared_ptr<IMoveStrategy> moveStrategy;
 };
 

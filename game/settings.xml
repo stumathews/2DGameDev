@@ -15,7 +15,7 @@
 		<setting name="use_3d_render_manager" type="bool">true</setting>
 		<setting name="print_debugging_text" type="bool">false</setting>
 	</global>
-	
+			
 	<!-- Maze Settings -->
 	<grid>
 		<setting name="rows" type="int">10</setting>
@@ -23,6 +23,22 @@
 		<setting name="removeSidesRandomly" type="bool">true</setting>
     <setting name="nowalls" type="bool">false</setting>
 	</grid>
+	
+	<room>
+		<setting name="drawHotSpot" type="bool">true</setting>
+	</room>
+	
+	<pickup1>
+		<setting name="assetName" type="string">goldcoin</setting>
+	</pickup1>
+	
+	<pickup2>
+		<setting name="assetName" type="string">silvercoin</setting>
+	</pickup2>
+	
+	<pickup3>
+		<setting name="assetName" type="string">coppercoin</setting>
+	</pickup3>
 		
 	<!-- Audio settings -->
 	<audio>
@@ -38,13 +54,16 @@
 		<setting name="y" type="int">400</setting>
 		<setting name="move_interval" type="int">1</setting>
 		<setting name="draw_box" type="bool">false</setting>
+		<setting name="hotspotSize" type="int">20</setting>
+		<setting name="drawHotspot" type="bool">true</setting>
 		<setting name="box_width" type="int">10</setting>
 		<setting name="r" type="int">255</setting>
 		<setting name="g" type="int">0</setting>
 		<setting name="b" type="int">0</setting>
 		<setting name="a" type="int">0</setting> 
 		<setting name="verbose" type="bool">true</setting>
-		<setting name="ignore-restrictions" type="bool">true</setting>
+		<setting name="ignore-restrictions" type="bool">false</setting>
+		<setting name="moveStrategy" type="string">edge</setting> <!-- 'snap' or 'edge' strategy -->
 	</player>
 	
 	<!-- Room fill settings-->
