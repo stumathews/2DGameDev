@@ -5,6 +5,7 @@
 #include "objects/GameObject.h"
 #include <events/Event.h>
 #include "util/Tuple.h"
+#include <geometry/Line.h>
 
 enum class Side
 {
@@ -144,6 +145,20 @@ public:
 
 	int GetRoomNumber();
 
+	SDL_Rect InnerBounds;
+
+	
+	bool IsTopWalled;
+	bool IsBottomWalled;
+	bool IsRightWalled;
+	bool IsLeftWalled;
+
+	
+	gamelib::Line TopLine;
+	gamelib::Line RightLine;
+	gamelib::Line BottomLine;
+	gamelib::Line LeftLine;
+
 protected:
 
 	/// <summary>
@@ -197,10 +212,6 @@ protected:
 	/// </summary>
 	int height;	
 
-	bool IsTopWalled;
-	bool IsBottomWalled;
-	bool IsRightWalled;
-	bool IsLeftWalled;
 
 private:
 	
@@ -218,6 +229,12 @@ private:
 	/// The bounds of the player
 	/// </summary>
 	SDL_Rect playerBounds = {0};
+
+	/// <summary>
+	/// Offset from the bounds to make an innerBounds
+	/// </summary>
+	int innerBoundsOffset;
+	
 };
 
 

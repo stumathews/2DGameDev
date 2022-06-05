@@ -33,6 +33,10 @@ vector<shared_ptr<Event>> Room::HandleEvent(const std::shared_ptr<Event> event)
 		// Set if the player is in this room or not
 		isPlayerWithinRoom = (player->x >= bounds.x && player->x < bounds.x + bounds.w) && 
 				            (player->y >= bounds.y && player->y < bounds.y + bounds.h);
+
+		auto x1 = player->GetHotspot().GetX();
+		auto y1 = player->GetHotspot().GetY();
+		isPlayerWithinRoom = SDL_IntersectRectAndLine(&InnerBounds, &x1, &y1, &x1, &y1);
 			
 		// A room lets the player know which room it is in
 		// Update the player's knowledge of which room its in
@@ -71,6 +75,8 @@ void Room::LoadSettings()
 
 	// Refetch Room settings
 	fill = SettingsManager::Get()->GetBool("room_fill", "enable");
+
+	innerBoundsOffset = SettingsManager::Get()->GetInt("room", "innerBoundsOffset");
 }
 
 /// <summary>
@@ -84,42 +90,33 @@ void Room::Draw(SDL_Renderer* renderer)
 
 	// black
 	SDL_SetRenderDrawColor(renderer, 0, 0,0,0);
-		
-	auto& rect = GetABCDRectangle();
-	const auto ax = rect.GetAx();
-	const auto ay = rect.GetAy();
-	const auto bx = rect.GetBx();
-	const auto by = rect.GetBy();
-	const auto cx = rect.GetCx();
-	const auto cy = rect.GetCy();
-	const auto dx = rect.GetDx();
-	const auto dy = rect.GetDy();
 
 	const auto hasTopWall = this->walls[0];
 	const auto hasRightWall = this->walls[1];
 	const auto hasBottomWall = this->walls[2];
 	const auto hasLeftWall = this->walls[3];
 
+
 	// Draw the walls as lines
 	if (hasTopWall)
 	{
-		SDL_RenderDrawLine(renderer, ax, ay, bx, by);
+		SDL_RenderDrawLine(renderer, TopLine.x1, TopLine.y1, TopLine.x2, TopLine.y2);
 	}
 		
 	if (hasRightWall)
 	{
-		SDL_RenderDrawLine(renderer, bx, by, cx, cy);
+		SDL_RenderDrawLine(renderer, RightLine.x1, RightLine.y1, RightLine.x2, RightLine.y2);
 	}
 
 		
 	if (hasBottomWall)
 	{
-		SDL_RenderDrawLine(renderer, cx, cy, dx, dy);
+		SDL_RenderDrawLine(renderer, BottomLine.x1, BottomLine.y1, BottomLine.x2, BottomLine.y2);
 	}
 		
 	if (hasLeftWall)
 	{
-		SDL_RenderDrawLine(renderer, dx, dy, ax, ay);
+		SDL_RenderDrawLine(renderer, LeftLine.x1, LeftLine.y1, LeftLine.x2, LeftLine.y2);
 	}
 		
 	if (fill)
@@ -129,14 +126,38 @@ void Room::Draw(SDL_Renderer* renderer)
 		
 	if(SettingsManager::Get()->GetBool("global", "print_debugging_text"))
 	{
-		RectDebugging::printInRect(renderer, GetTag(), &bounds); 
+		if(SettingsManager::Get()->GetBool("global", "print_debugging_text_neighbours_only"))
+		{
+			const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);
+			auto playerRoom = player->GetCurrentRoom();
+			if(number == playerRoom->topRoomIndex || 
+				number == playerRoom->rightRoomIndex || 
+				number == playerRoom->bottomRoomIndex || 
+				number == playerRoom->leftRoomIndex)
+			{
+				RectDebugging::printInRect(renderer, GetTag(), &bounds);
+			}
+		}
+		else
+		{
+			RectDebugging::printInRect(renderer, GetTag(), &bounds);
+		}
 	}
 
 	// Draw hotspot
 	if(SettingsManager::Get()->GetBool("room","drawHotSpot"))
 	{
-		SDL_Rect point_bounds = { GetHotspot().GetX() -5, GetHotspot().GetY() +5 };
-		DrawFilledRect(renderer, &point_bounds , { 0, 0 ,0 ,0 });
+		SDL_Rect point_bounds = { GetHotspot().GetX() - width/2, GetHotspot().GetY() +height/2 };
+		DrawFilledRect(renderer, &point_bounds , { 0, 255 , 255 ,0 }); // cyan
+	}
+
+	// Draw inner bounds
+	if(SettingsManager::Get()->GetBool("room","drawinnerBounds"))
+	{
+		SDL_SetRenderDrawColor(renderer, 255, 255 , 0,0); //yellow
+		auto innerBounds = SDL_Rect { bounds.x + innerBoundsOffset, bounds.y + innerBoundsOffset, bounds.w - innerBoundsOffset, bounds.h - innerBoundsOffset };
+		SDL_RenderDrawRect(renderer, &innerBounds);
+		SDL_SetRenderDrawColor(renderer, 0, 0,0,0);
 	}
 }
 
@@ -166,16 +187,52 @@ Room::Room(int number,
 	int height, 
 	bool fill)
 	: DrawableGameObject(x, y, true), fill(fill), playerBounds({}),
-		topRoomIndex(0), rightRoomIndex(0),  bottomRoomIndex(0), width(width), height(height), leftRoomIndex(0)
+		topRoomIndex(0), rightRoomIndex(0),  bottomRoomIndex(0), width(width), height(height), leftRoomIndex(0), innerBoundsOffset(0)
 {
 	// Bounds of this room
 	this->bounds = { x, y, width, height };
+	this->InnerBounds = { bounds.x + innerBoundsOffset, bounds.y + innerBoundsOffset, bounds.w - innerBoundsOffset, bounds.h - innerBoundsOffset };
 	this->width = width;
 	this->height = height;
 	this->number = number;
 
 	// Room geometry helper
 	this->abcd = ABCDRectangle(x, y, width, height);
+
+	// Calculate the geometry of the walls
+	auto& rect = this->abcd;
+	const auto ax = rect.GetAx();
+	const auto ay = rect.GetAy();
+	const auto bx = rect.GetBx();
+	const auto by = rect.GetBy();
+	const auto cx = rect.GetCx();
+	const auto cy = rect.GetCy();
+	const auto dx = rect.GetDx();
+	const auto dy = rect.GetDy();
+
+	// Top wall line geometry
+	TopLine.x1 = ax;
+	TopLine.y1 = ay;
+	TopLine.x2 = bx;
+	TopLine.y2 = by;
+
+	// Right wall line geometry
+	RightLine.x1 = bx;
+	RightLine.y1 = by;
+	RightLine.x2 = cx;
+	RightLine.y2 = cy;
+
+	// Bottom wall line geometry
+	BottomLine.x1 = cx;
+	BottomLine.y1 = cy;
+	BottomLine.x2 = dx;
+	BottomLine.y2 = dy;
+
+	// Left wall line geometry , , , 
+	LeftLine.x1 = dx;
+	LeftLine.y1 = dy;
+	LeftLine.x2 = ax;
+	LeftLine.y2 = ay;
 
 	// All walls are present by default
 	walls[0] = IsTopWalled = true;
@@ -189,10 +246,6 @@ Room::Room(int number,
 /// <summary>
 /// Set Indexs of sorrounding rooms
 /// </summary>
-/// <param name="top_index"></param>
-/// <param name="right_index"></param>
-/// <param name="bottom_index"></param>
-/// <param name="left_index"></param>
 void Room::SetSoroundingRooms(const int top_index, const int right_index, const int bottom_index, const int left_index)
 {
 	this->topRoomIndex = top_index;

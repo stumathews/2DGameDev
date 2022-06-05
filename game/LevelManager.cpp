@@ -370,7 +370,7 @@ shared_ptr<GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>>
 	player->SetSprite(sprite);
 	SceneManager::Get()->GetGameWorld().player = player;
 
-	player->fiveSecTimer.Start(150);
+	player->animationTimeoutTimer.Start(150);
 
 	return player;
 }

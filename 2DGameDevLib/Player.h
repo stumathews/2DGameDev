@@ -80,6 +80,7 @@ public:
 	bool IsValidMove(const gamelib::Direction& moveDirection, const bool& canMoveDown, const bool& canMoveLeft, const bool& canMoveRight, const bool& canMoveUp);
 
 	gamelib::coordinate<int> GetHotspot();
+	
 
 	/// <summary>
 	/// Draw player
@@ -136,7 +137,8 @@ public:
 
 
 	
-	gamelib::Timer fiveSecTimer;
+	gamelib::Timer animationTimeoutTimer;
+	gamelib::coordinate<int> CalculateHotspot(int x, int y);
 private:
 	
 	std::shared_ptr<gamelib::AnimatedSprite> sprite;

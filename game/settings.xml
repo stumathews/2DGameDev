@@ -3,7 +3,7 @@
 	<!-- Global Game Settings -->
 	<global>
 		<!-- 20 times a second = 50 milliseconds, 1 second is 20*50 = 1000 milliseconds -->
-		<setting name="tick_time_ms" type="int">50</setting>
+		<setting name="tick_time_ms" type="int">60</setting>
 		<setting name="square_width" type="int">150</setting>
 		<setting name="sprite_width" type="int">50</setting>
 		<setting name="max_loops" type="int">4</setting>
@@ -13,7 +13,8 @@
 		<setting name="frames_per_column" type="int">3</setting>
 		<setting name="verbose" type="bool">true</setting>
 		<setting name="use_3d_render_manager" type="bool">true</setting>
-		<setting name="print_debugging_text" type="bool">false</setting>
+		<setting name="print_debugging_text" type="bool">true</setting>
+		<setting name="print_debugging_text_neighbours_only" type="bool">true</setting>
 	</global>
 			
 	<!-- Maze Settings -->
@@ -25,7 +26,10 @@
 	</grid>
 	
 	<room>
-		<setting name="drawHotSpot" type="bool">true</setting>
+		<setting name="drawHotSpot" type="bool">false</setting>
+		<setting name="drawinnerBounds" type="bool">false</setting>	
+		<setting name="innerBoundsOffset" type="int">1</setting>	
+	
 	</room>
 	
 	<pickup1>
@@ -56,6 +60,7 @@
 		<setting name="draw_box" type="bool">false</setting>
 		<setting name="hotspotSize" type="int">20</setting>
 		<setting name="drawHotspot" type="bool">true</setting>
+		<setting name="hideSprite" type="bool">false</setting>
 		<setting name="box_width" type="int">10</setting>
 		<setting name="r" type="int">255</setting>
 		<setting name="g" type="int">0</setting>

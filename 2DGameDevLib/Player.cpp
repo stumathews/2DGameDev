@@ -31,6 +31,8 @@ Player::Player(const int x, const int y, const int w, const int h)
 	SubscribeToEvent(EventType::DoLogicUpdateEventType);
 
 	SubscribeToEvent(EventType::Fire);
+
+	animationTimeoutTimer = Timer();
 }
 
 vector<shared_ptr<Event>> Player::HandleEvent(const shared_ptr<Event> event)
@@ -57,7 +59,6 @@ vector<shared_ptr<Event>> Player::HandleEvent(const shared_ptr<Event> event)
 
 void Player::Fire()
 {
-	LogMessage("Firing.");
 	RemoveWall(currentFacingDirection);	
 }
 
@@ -221,7 +222,7 @@ void Player::MovePlayer(const bool& isMovingDown, shared_ptr<Room>& bottomRoom, 
 	if(restrictions.IsMoving)
 	{
 		sprite->StartAnimation();
-		fiveSecTimer.Reset();
+		animationTimeoutTimer.Reset();
 	}
 
 }
@@ -292,16 +293,22 @@ bool Player::IsValidMove(const Direction& moveDirection, const bool& canMoveDown
 		moveDirection == Direction::Up && canMoveUp;
 }
 
-gamelib::coordinate<int> Player::GetHotspot()
+gamelib::coordinate<int> Player::CalculateHotspot(int x, int y)
 {
 	auto mid_x = x + GetWidth()/2;
 	auto mid_y = y + GetHeight()/2;
 	return coordinate<int>(mid_x, mid_y);
 }
 
+gamelib::coordinate<int> Player::GetHotspot()
+{
+	return CalculateHotspot(x,y);
+}
+
 void Player::Draw(SDL_Renderer* renderer)
 {
-	sprite->Draw(renderer);
+	if(!SettingsManager::Get()->GetBool("player", "hideSprite"))
+		sprite->Draw(renderer);
 
 	// Draw the hotspot
 	if(SettingsManager::Get()->GetBool("player", "drawHotspot"))
@@ -363,12 +370,12 @@ void Player::Update(float deltaMs)
 		sprite->Update(deltaMs);
 	}
 
-	if(fiveSecTimer.IsElapsed || fiveSecTimer.IsStopped)
+	if(animationTimeoutTimer.IsElapsed || animationTimeoutTimer.IsStopped)
 	{
 		sprite->StopAnimation();
 	}
 
-	fiveSecTimer.Update(deltaMs);
+	animationTimeoutTimer.Update(deltaMs);
 	
 
 }
@@ -404,4 +411,6 @@ void Player::SetMoveStrategy(shared_ptr<IMoveStrategy> moveStrategy)
 {
 	this->moveStrategy = moveStrategy;
 }
+
+
 
