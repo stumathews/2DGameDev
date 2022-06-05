@@ -3,7 +3,7 @@
 	<!-- Global Game Settings -->
 	<global>
 		<!-- 20 times a second = 50 milliseconds, 1 second is 20*50 = 1000 milliseconds -->
-		<setting name="tick_time_ms" type="int">60</setting>
+		<setting name="tick_time_ms" type="int">20</setting>
 		<setting name="square_width" type="int">150</setting>
 		<setting name="sprite_width" type="int">50</setting>
 		<setting name="max_loops" type="int">4</setting>
@@ -11,9 +11,9 @@
 		<setting name="screen_height" type="int">600</setting>
 		<setting name="frames_per_row" type="int">3</setting>
 		<setting name="frames_per_column" type="int">3</setting>
-		<setting name="verbose" type="bool">true</setting>
+		<setting name="verbose" type="bool">false</setting>
 		<setting name="use_3d_render_manager" type="bool">true</setting>
-		<setting name="print_debugging_text" type="bool">true</setting>
+		<setting name="print_debugging_text" type="bool">false</setting>
 		<setting name="print_debugging_text_neighbours_only" type="bool">true</setting>
 	</global>
 			

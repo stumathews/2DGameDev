@@ -68,9 +68,11 @@ namespace gamelib
 		{
 			const auto moved_event = std::static_pointer_cast<gamelib::PlayerMovedEvent>(event);
 			const auto player = dynamic_pointer_cast<Player>(SceneManager::Get()->GetGameWorld().player);
-
+			SDL_Rect playerHostpotBounds = {player->GetHotspot().GetX(), player->GetHotspot().GetY(), 1, 1};
+			SDL_Rect result;
+			
 			// Basic collision detection
-			if(player->x == x && player->y == y)
+			if(SDL_IntersectRect(&playerHostpotBounds, &bounds, &result))
 			{
 				generated_events.push_back(make_shared<gamelib::Event>(gamelib::EventType::FetchedPickup));
 				generated_events.push_back(make_shared<gamelib::GameObjectEvent>(id, this, gamelib::GameObjectEventContext::Remove));

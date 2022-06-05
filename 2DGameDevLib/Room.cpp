@@ -126,21 +126,31 @@ void Room::Draw(SDL_Renderer* renderer)
 		
 	if(SettingsManager::Get()->GetBool("global", "print_debugging_text"))
 	{
+		const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);
+		SDL_Color color = { 255, 255, 255 };
 		if(SettingsManager::Get()->GetBool("global", "print_debugging_text_neighbours_only"))
 		{
-			const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);
+			
 			auto playerRoom = player->GetCurrentRoom();
 			if(number == playerRoom->topRoomIndex || 
 				number == playerRoom->rightRoomIndex || 
 				number == playerRoom->bottomRoomIndex || 
 				number == playerRoom->leftRoomIndex)
 			{
-				RectDebugging::printInRect(renderer, GetTag(), &bounds);
+				color = { 255, 255, 0, 0};
+				RectDebugging::printInRect(renderer, GetTag(), &bounds, color);
 			}
+			if(number == player->CurrentRoom->number)
+			{
+				color = { 255, 0, 0, 0};
+				RectDebugging::printInRect(renderer, GetTag(), &bounds, color);
+			}
+			
 		}
 		else
 		{
-			RectDebugging::printInRect(renderer, GetTag(), &bounds);
+			
+			RectDebugging::printInRect(renderer, GetTag(), &bounds, color);
 		}
 	}
 
