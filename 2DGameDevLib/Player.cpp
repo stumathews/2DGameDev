@@ -326,7 +326,7 @@ void Player::Draw(SDL_Renderer* renderer)
 	{
 		SDL_Color colour = { 255, 0 ,0 ,0 };
 		SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
-		SDL_RenderDrawRect(renderer, &bounds);
+		SDL_RenderDrawRect(renderer, &Bounds);
 	}
 
 	
@@ -344,7 +344,7 @@ GameObjectType Player::GetGameObjectType()
 
 void Player::Update(float deltaMs)
 {
-	bounds = { 	x, 	y, width, height	};
+	Bounds = { 	x, 	y, width, height	};
 
 	// if facing up use keyframes tagged with up
 	if (sprite)

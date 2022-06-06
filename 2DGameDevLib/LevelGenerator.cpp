@@ -76,7 +76,7 @@ vector<shared_ptr<Room>> LevelGenerator::Generate()
 		auto &thisRoom = rooms[i];
 		auto &nextRoom = nextIndex == totalRooms ? rooms[i] : rooms[nextIndex];
 
-		thisRoom->SetSoroundingRooms(roomIndexAbove, roomIndexRight, roomIndexBelow, roomIndexLeft);
+		thisRoom->SetSorroundingRooms(roomIndexAbove, roomIndexRight, roomIndexBelow, roomIndexLeft);
 
 		ConfigureWalls(thisRoom, canRemoveTopWall, rooms, nextRoom, canRemoveRightWall, canRemoveBottomWall, canRemoveLeftWall, prevIndex);
 	}

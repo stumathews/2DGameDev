@@ -19,6 +19,7 @@ private:
 	// Inherited via IMoveStrategy
 	virtual bool CanMoveUp(const bool& isMovingUp, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& aboveRoom) override;
 	bool WouldHitInnerBounds(std::shared_ptr<Room>& bottomRoom);
+	bool IsTerminalRooms(std::shared_ptr<Room> room1, std::shared_ptr<Room> room2);
 	virtual bool CanMoveDown(const bool& isMovingDown, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& bottomRoom) override;
 	virtual bool CanMoveLeft(const bool& isMovingLeft, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& leftRoom) override;
 	virtual bool CanMoveRight(const bool& isMovingRight, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& rightRoom) override;

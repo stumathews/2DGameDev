@@ -26,6 +26,7 @@ gamelib::coordinate<int> EdgeTowardsRoomStrategy::CalculatePlayerMoveTo(std::sha
 	
 	resulting_y = player->y;
 	resulting_x = player->x;
+
 	if(moveDown)
 	{
 		resulting_y += move_interval;
@@ -52,71 +53,77 @@ gamelib::coordinate<int> EdgeTowardsRoomStrategy::CalculatePlayerMoveTo(std::sha
 void EdgeTowardsRoomStrategy::MoveTo(std::shared_ptr<Room> room)
 {
 	// Edge player towards the room
-
 	auto resultingMove = CalculatePlayerMoveTo(room);
 
+	// Set the player's new position
 	player->x = resultingMove.GetX();
-	player->y = resultingMove.GetY();
-	
-	
+	player->y = resultingMove.GetY();	
+
+	// This is required
 	player->Update(0.0f);
 }
 
 
 bool EdgeTowardsRoomStrategy::WouldHitInnerBounds(std::shared_ptr<Room>& room)
 {
+	// Calculate where the player would be if the move is done
 	auto mockPlayerPosition = CalculatePlayerMoveTo(room);
+
+	// Calculate the location of the hotspot at that location
 	auto mockPlayerHotSpot = player->CalculateHotspot(mockPlayerPosition.GetX(), mockPlayerPosition.GetY());
+
+	// Setup the bounds for the simulated hotspot
 	auto mockPlayerHotSpotBounds = SDL_Rect { mockPlayerHotSpot.GetX(), mockPlayerHotSpot.GetY(), 1, 1 };
+	
+	// Check if the player would intersect with the inner bounds of the room
 	SDL_Rect result;
-	auto wouldItHitIt = SDL_IntersectRect(&room->InnerBounds, &mockPlayerHotSpotBounds, &result);
-	return wouldItHitIt;
+	return SDL_IntersectRect(&room->InnerBounds, &mockPlayerHotSpotBounds, &result);
+}
+
+bool EdgeTowardsRoomStrategy::IsTerminalRooms(std::shared_ptr<Room> room1, std::shared_ptr<Room> room2)
+{
+	return room1->GetRoomNumber() == room2->GetRoomNumber();
 }
 
 bool EdgeTowardsRoomStrategy::CanMoveUp(const bool& isMovingUp, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& aboveRoom)
 {
-	auto isTerminalRoom = aboveRoom->GetRoomNumber() == currentRoom->GetRoomNumber();
-	auto hasNoBlockingWalls =!aboveRoom->HasBottomWall() && !currentRoom->HasTopWall();
+	if(!isMovingUp)
+		return false;
 
-	if(isTerminalRoom)
-	{
-		return WouldHitInnerBounds(currentRoom);
-	}
-
-	return hasNoBlockingWalls || !WouldHitInnerBounds(aboveRoom);
+	auto hasBlockingWalls = aboveRoom->HasBottomWall() && currentRoom->HasTopWall();
+	return IsTerminalRooms(aboveRoom, currentRoom) ?  WouldHitInnerBounds(currentRoom) : !hasBlockingWalls || !WouldHitInnerBounds(aboveRoom);
 }
 
 
 bool EdgeTowardsRoomStrategy::CanMoveDown(const bool& isMovingDown, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& bottomRoom)
 {
-	auto isTerminalRoom = bottomRoom->GetRoomNumber() == currentRoom->GetRoomNumber();
-	auto hasNoBlockingWalls = !bottomRoom->HasTopWall() && !currentRoom->HasBottomWall();
-	if(isTerminalRoom)
-	{
-		return WouldHitInnerBounds(currentRoom);
-	}
+	if(!isMovingDown)
+		return false;
 
-	return hasNoBlockingWalls || !WouldHitInnerBounds(bottomRoom);
+	auto hasNoBlockingWalls = !bottomRoom->HasTopWall() && !currentRoom->HasBottomWall();
+	return IsTerminalRooms(bottomRoom, currentRoom) 
+		? WouldHitInnerBounds(currentRoom) 
+		: hasNoBlockingWalls || !WouldHitInnerBounds(bottomRoom);
 }
 
 bool EdgeTowardsRoomStrategy::CanMoveLeft(const bool& isMovingLeft, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& leftRoom)
 {
-	auto isTerminalRoom = leftRoom->GetRoomNumber() == currentRoom->GetRoomNumber();
+	if(!isMovingLeft)
+		return false;
+
 	auto hasNoBlockingWalls = !leftRoom->HasRightWall() && !currentRoom->HasLeftWall();
-	if(isTerminalRoom)
-	{
-		return WouldHitInnerBounds(currentRoom);
-	}
-	return hasNoBlockingWalls || !WouldHitInnerBounds(leftRoom);
+	return IsTerminalRooms(leftRoom, currentRoom) 
+		? WouldHitInnerBounds(currentRoom) 
+		: hasNoBlockingWalls || !WouldHitInnerBounds(leftRoom);
 }
 
 bool EdgeTowardsRoomStrategy::CanMoveRight(const bool& isMovingRight, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& rightRoom)
 {
-	auto isTerminalRoom = rightRoom->GetRoomNumber() == currentRoom->GetRoomNumber();
+	if(!isMovingRight)
+		return false;
+
 	auto hasNoBlockingWalls = !rightRoom->HasLeftWall() && !currentRoom->HasRightWall();
-	if(isTerminalRoom)
-	{
-		return WouldHitInnerBounds(currentRoom);
-	}
-	return hasNoBlockingWalls || !WouldHitInnerBounds(rightRoom);
+	return IsTerminalRooms(rightRoom, currentRoom) 
+		? WouldHitInnerBounds(currentRoom) 
+		: hasNoBlockingWalls || !WouldHitInnerBounds(rightRoom);
 }

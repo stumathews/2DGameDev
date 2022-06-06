@@ -177,7 +177,7 @@ void LevelManager::RemoveGameObject(GameObject& gameObject)
 	{ 
 		if(auto underlyingGameObject = target.lock()) // Test to see if the game object reference still exists 
 		{
-			auto result = (underlyingGameObject->id == gameObject.id);
+			auto result = (underlyingGameObject->Id == gameObject.Id);
 			return result;
 		}
 		return false;
@@ -188,7 +188,7 @@ void LevelManager::RemoveGameObject(GameObject& gameObject)
 	if(found)
 	{			
 		// Remove any pending events in the event manager for this object
-		EventManager::Get()->Unsubscribe((*result)->id);
+		EventManager::Get()->Unsubscribe((*result)->Id);
 
 		// Erase from list of known game object
 		objects.erase(result);

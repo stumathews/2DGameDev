@@ -72,10 +72,10 @@ namespace gamelib
 			SDL_Rect result;
 			
 			// Basic collision detection
-			if(SDL_IntersectRect(&playerHostpotBounds, &bounds, &result))
+			if(SDL_IntersectRect(&playerHostpotBounds, &Bounds, &result))
 			{
 				generated_events.push_back(make_shared<gamelib::Event>(gamelib::EventType::FetchedPickup));
-				generated_events.push_back(make_shared<gamelib::GameObjectEvent>(id, this, gamelib::GameObjectEventContext::Remove));
+				generated_events.push_back(make_shared<gamelib::GameObjectEvent>(Id, this, gamelib::GameObjectEventContext::Remove));
 			}
 		
 		}
@@ -108,7 +108,7 @@ namespace gamelib
 
 	void Pickup::Update(float deltaMs)
 	{
-		bounds = 
+		Bounds = 
 		{ 
 			x, 
 			y,

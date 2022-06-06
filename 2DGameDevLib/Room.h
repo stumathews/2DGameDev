@@ -36,7 +36,7 @@ public:
 	/// <summary>
 	/// Get Sorrounding rooms
 	/// </summary>
-	void SetSoroundingRooms(const int top_index, const int right_index, const int bottom_index,
+	void SetSorroundingRooms(const int top_index, const int right_index, const int bottom_index,
 		                            const int left_index);
 
 	int GetNeighbourIndex(Side index) const;
@@ -121,9 +121,17 @@ public:
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event) override;
 
 	/// <summary>
+	/// When a player moves...
+	/// </summary>
+	std::vector<std::shared_ptr<gamelib::Event>>& OnPlayerMoved(std::vector<std::shared_ptr<gamelib::Event>>& generatedEvents);
+
+	void DrawWalls(SDL_Renderer* renderer);
+
+	void DrawDiagnostics(SDL_Renderer* renderer);
+
+	/// <summary>
 	/// Load room settings
 	/// </summary>
-	/// <param name="settings_admin"></param>
 	void LoadSettings() override;		 
 
 	/// <summary>
@@ -143,16 +151,21 @@ public:
 	/// <returns></returns>
 	gamelib::coordinate<int> GetHotspot();
 
+	/// <summary>
+	/// Get Room Number
+	/// </summary>
+	/// <returns></returns>
 	int GetRoomNumber();
 
+	/// <summary>
+	/// Area just within the bounds
+	/// </summary>
 	SDL_Rect InnerBounds;
-
 	
 	bool IsTopWalled;
 	bool IsBottomWalled;
 	bool IsRightWalled;
 	bool IsLeftWalled;
-
 	
 	gamelib::Line TopLine;
 	gamelib::Line RightLine;
@@ -164,7 +177,7 @@ protected:
 	/// <summary>
 	/// Each room as a room number
 	/// </summary>
-	int number;
+	int RoomNumber;
 
 	/// <summary>
 	/// Each room as 4 possible walls
@@ -205,12 +218,12 @@ protected:
 	/// <summary>
 	/// Width of this room
 	/// </summary>
-	int width;
+	int Width;
 
 	/// <summary>
 	/// Height of this room
 	/// </summary>
-	int height;	
+	int Height;	
 
 
 private:
@@ -224,11 +237,6 @@ private:
 	/// indication if this room should be filled
 	/// </summary>
 	bool fill = false;
-
-	/// <summary>
-	/// The bounds of the player
-	/// </summary>
-	SDL_Rect playerBounds = {0};
 
 	/// <summary>
 	/// Offset from the bounds to make an innerBounds
