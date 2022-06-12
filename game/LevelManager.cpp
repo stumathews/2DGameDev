@@ -14,6 +14,7 @@
 #include "SnapToRoomStrategy.h"
 #include "EdgeTowardsRoomStrategy.h"
 #include "GameObjectEventFactory.h"
+#include <GameData.h>
 
 using namespace gamelib;
 using namespace std;
@@ -112,9 +113,13 @@ void LevelManager::GenerateNewLevel()
 /// </summary>
 void LevelManager::RemoveAllGameObjects()
 {
-	std::for_each(std::begin(SceneManager::Get()->GetGameWorld().GetGameObjects()), std::end(SceneManager::Get()->GetGameWorld().GetGameObjects()), [this](std::shared_ptr<GameObject> gameObject) {
+	std::for_each(std::begin(SceneManager::Get()->GetGameWorld().GetGameObjects()), std::end(SceneManager::Get()->GetGameWorld().GetGameObjects()), [this](std::shared_ptr<gamelib::GameObject> gameObject) {
 		EventManager::Get()->RaiseEvent(GameObjectEventFactory::MakeRemoveObjectEvent(&(*gameObject)), this);
 	});
+
+	//Reclassify game objects
+
+	GameData::Get()->SetGameObjects(&SceneManager::Get()->GetGameWorld().GetGameObjects());
 }
 
 
@@ -168,7 +173,7 @@ std::string LevelManager::GetSubscriberName()
 /// </summary>
 /// <param name="gameWorld">Game world container</param>
 /// <param name="gameObject">game Object</param>
-void LevelManager::RemoveGameObject(GameObject& gameObject)
+void LevelManager::RemoveGameObject(gamelib::GameObject& gameObject)
 {
 	auto& objects = SceneManager::Get()->GetGameWorld().GetGameObjects();
 	
@@ -193,6 +198,9 @@ void LevelManager::RemoveGameObject(GameObject& gameObject)
 		// Erase from list of known game object
 		objects.erase(result);
 	}
+
+	// Reclassify
+	GameData::Get()->SetGameObjects(&objects);
 }
 
 /// <summary>
@@ -320,7 +328,7 @@ coordinate<int> GetCenterOfRoom(const Room &room, const int w, const int h)
 /// <summary>
 /// Create the player
 /// </summary>
-shared_ptr<GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>> rooms, const int w, const int h) const
+shared_ptr<gamelib::GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>> rooms, const int w, const int h) const
 {	
 	const auto minNumRooms = 0;
 	const auto playerRoomIndex = GetRandomIndex(minNumRooms, rooms.size());
@@ -456,8 +464,10 @@ ListOfGameObjects LevelManager::CreateAutoLevel()
 		room->SubscribeToEvent(EventType::SettingsReloaded);
 
 		// Add each room as a game object
-		gameObjectsPtr.push_back(dynamic_pointer_cast<GameObject>(room));
+		gameObjectsPtr.push_back(dynamic_pointer_cast<gamelib::GameObject>(room));
 	}
+
+	GameData::Get()->SetGameObjects(&gameObjectsPtr);
 		
 	// Create the player
 	const auto player = CreatePlayer(rooms, rowWidth/2, rowHeight/2);
@@ -485,6 +495,8 @@ ListOfGameObjects LevelManager::CreateAutoLevel()
 	
 	// Add player to game world
 	gameObjectsPtr.push_back(player);	
+
+	GameData::Get()->SetGameObjects(&gameObjectsPtr);
 		
 	return gameObjectsPtr;
 }

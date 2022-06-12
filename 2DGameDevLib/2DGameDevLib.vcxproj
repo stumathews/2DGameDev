@@ -161,8 +161,10 @@
   <ItemGroup>
     <ClInclude Include="EdgeTowardsRoomStrategy.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GameData.h" />
     <ClInclude Include="GameObjectEventFactory.h" />
     <ClInclude Include="LevelGenerator.h" />
+    <ClInclude Include="Movement.h" />
     <ClInclude Include="MoveStrategy.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="pickup.h" />
@@ -174,8 +176,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EdgeTowardsRoomStrategy.cpp" />
+    <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameObjectEventFactory.cpp" />
     <ClCompile Include="LevelGenerator.cpp" />
+    <ClCompile Include="Movement.cpp" />
     <ClCompile Include="MoveStrategy.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

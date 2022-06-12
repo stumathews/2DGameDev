@@ -114,6 +114,7 @@ vector<shared_ptr<Event>>& Room::OnPlayerMoved(vector<shared_ptr<Event>>& genera
 	return generatedEvents;
 }
 
+
 void Room::DrawWalls(SDL_Renderer* renderer)
 {
 	// Keep track of walls

@@ -3,6 +3,10 @@
 #include "Room.h"
 #include "scene/SceneManager.h"
 #include "EdgeTowardsRoomStrategy.h"
+#include <Direction.h>
+#include <common/Logger.h>
+#include <sstream>
+#include <exceptions/EngineException.h>
 
 EdgeTowardsRoomStrategy::EdgeTowardsRoomStrategy(std::shared_ptr<Player> player, int edgeIncrement)
 {
@@ -10,43 +14,65 @@ EdgeTowardsRoomStrategy::EdgeTowardsRoomStrategy(std::shared_ptr<Player> player,
 	this->edgeIncrement = edgeIncrement;
 }
 
-gamelib::coordinate<int> EdgeTowardsRoomStrategy::CalculatePlayerMoveTo(std::shared_ptr<Room> room)
+gamelib::Direction EdgeTowardsRoomStrategy::GetDirectionTowardsRoom(std::shared_ptr<Room> targetRoom)
 {
-	int move_interval = 3;
+	auto moveDirection = gamelib::Direction::None;
+	auto roomNumber = targetRoom->GetRoomNumber();
+	auto playersRoom = player->GetCurrentRoom();
 
-	auto gameObjects = gamelib::SceneManager::Get()->GetGameWorld().GetGameObjects();
-	auto playersRoom = player->GetCurrentRoom(gameObjects);
-	auto moveDown = playersRoom->GetNeighbourIndex(Side::Bottom) == room->GetRoomNumber();
-	auto moveUp = playersRoom->GetNeighbourIndex(Side::Top) == room->GetRoomNumber();
-	auto moveLeft = playersRoom->GetNeighbourIndex(Side::Left) == room->GetRoomNumber();
-	auto moveRight = playersRoom->GetNeighbourIndex(Side::Right) == room->GetRoomNumber();
-		
+	if(playersRoom->GetNeighbourIndex(Side::Bottom) == roomNumber)
+	{
+		moveDirection = gamelib::Direction::Down;
+	}
+	else if(playersRoom->GetNeighbourIndex(Side::Top) == roomNumber)
+	{
+		moveDirection = gamelib::Direction::Up;
+	}
+
+	else if(playersRoom->GetNeighbourIndex(Side::Left) == roomNumber)
+	{
+		moveDirection = gamelib::Direction::Left;
+	}
+	else if(playersRoom->GetNeighbourIndex(Side::Right) == roomNumber)
+	{
+		moveDirection = gamelib::Direction::Right;
+	}
+	else
+	{
+		std::stringstream message;
+		message << "The room number :" <<  roomNumber << " not in the neighbourhood of the player.";
+		gamelib::Logger::Get()->LogThis(message.str());
+		moveDirection = gamelib::Direction::None;
+	}
+
+	return moveDirection;
+}
+
+gamelib::coordinate<int> EdgeTowardsRoomStrategy::CalculatePlayerMoveTo(std::shared_ptr<Room> room, int move_interval)
+{		
+	auto directionTowardsRoom = GetDirectionTowardsRoom(room);
 	int resulting_x;	
 	int resulting_y; 
 	
 	resulting_y = player->y;
 	resulting_x = player->x;
 
-	if(moveDown)
+	switch(directionTowardsRoom)
 	{
+	case gamelib::Direction::Down:
 		resulting_y += move_interval;
-	}
-
-	if(moveUp)
-	{
+		break;	
+	case gamelib::Direction::Up:
 		resulting_y -= move_interval;
-	}
-
-	if(moveLeft)
-	{
+		break;
+	case gamelib::Direction::Left:
 		resulting_x -= move_interval;
-	}
-
-	if(moveRight)
-	{
+		break;
+	case gamelib::Direction::Right:
 		resulting_x += move_interval;
+		break;
 	}
-
+	
 	return gamelib::coordinate<int>(resulting_x, resulting_y);
 }
 
@@ -57,10 +83,17 @@ void EdgeTowardsRoomStrategy::MoveTo(std::shared_ptr<Room> room)
 
 	// Set the player's new position
 	player->x = resultingMove.GetX();
-	player->y = resultingMove.GetY();	
+	player->y = resultingMove.GetY();
+}
 
-	// This is required
-	player->Update(0.0f);
+void EdgeTowardsRoomStrategy::MoveTo(std::shared_ptr<Room> room, std::shared_ptr<Movement> movement)
+{
+	// Edge player towards the room
+	auto resultingMove = CalculatePlayerMoveTo(room, movement->TakePixelsToMove());
+
+	// Set the player's new position
+	player->x = resultingMove.GetX();
+	player->y = resultingMove.GetY();
 }
 
 
@@ -70,7 +103,7 @@ bool EdgeTowardsRoomStrategy::WouldHitInnerBounds(std::shared_ptr<Room>& room)
 	auto mockPlayerPosition = CalculatePlayerMoveTo(room);
 
 	// Calculate the location of the hotspot at that location
-	auto mockPlayerHotSpot = player->CalculateHotspot(mockPlayerPosition.GetX(), mockPlayerPosition.GetY());
+	auto mockPlayerHotSpot = player->CalculateHotspotPosition(mockPlayerPosition.GetX(), mockPlayerPosition.GetY());
 
 	// Setup the bounds for the simulated hotspot
 	auto mockPlayerHotSpotBounds = SDL_Rect { mockPlayerHotSpot.GetX(), mockPlayerHotSpot.GetY(), 1, 1 };

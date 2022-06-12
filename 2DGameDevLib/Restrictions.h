@@ -21,8 +21,5 @@ public:
 	bool CanMoveLeft;
 	bool CanMoveDown;
 	bool CanMoveUp;
-
-
-
 };
 

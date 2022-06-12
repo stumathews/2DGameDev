@@ -12,6 +12,10 @@ void SnapToRoomStrategy::MoveTo(std::shared_ptr<Room> room)
 	CenterPlayerInRoom(room);
 }
 
+void SnapToRoomStrategy::MoveTo(std::shared_ptr<Room> room, std::shared_ptr<Movement> movement)
+{
+}
+
 void SnapToRoomStrategy::CenterPlayerInRoom(std::shared_ptr<Room> room)
 {
 	auto const room_x_mid = room->GetX() + (room->GetWidth() / 2);

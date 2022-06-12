@@ -11,6 +11,8 @@
 #include "util/Tuple.h"
 #include "Restrictions.h"
 #include <Timer.h>
+#include "Movement.h"
+#include <deque>
 
 namespace gamelib
 {
@@ -52,17 +54,25 @@ public:
 
 	void RemoveRightWall();
 
+	const std::shared_ptr<Room> GetRightNeighbourRoom();
+
 	void RemoveLeftWall();
+
+	const std::shared_ptr<Room> GetLeftNeighbourRoom();
 
 	void RemoveBottomWall();
 
+	const std::shared_ptr<Room> GetBottomNeighbourRoom();
+
 	void RemoveTopWall();
+
+	const std::shared_ptr<Room> GetTopNeighbourRoom();
 
 	void BaseProcessEvent(const std::shared_ptr<gamelib::Event>& event, gamelib::events& createdEvents);
 
 	const gamelib::events& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::events& createdEvents);
 
-	void MovePlayer(const bool& isMovingDown, std::shared_ptr<Room>& bottomRoom, const bool& isMovingUp, std::shared_ptr<Room>& aboveRoom, const bool& isMovingRight, std::shared_ptr<Room>& rightRoom, const bool& isMovingLeft, std::shared_ptr<Room>& leftRoom);
+	void OnAfterMove(const gamelib::Direction& movementDirection);
 
 	void SetRoomRestrictions();
 
@@ -105,6 +115,8 @@ public:
 	/// </summary>
 	void Update(float deltaMs) override;
 
+	bool IsWithinRoom(std::shared_ptr<Room> room);
+
 	/// <summary>
 	/// Set the player's room
 	/// </summary>
@@ -123,22 +135,52 @@ public:
 	/// <returns></returns>
 	int GetHeight();
 
+	/// <summary>
+	/// Get Direction
+	/// </summary>
+	/// <returns></returns>
 	gamelib::Direction GetDirection();
 
+
+	/// <summary>
+	/// Set the sprite of the player
+	/// </summary>
+	/// <param name="sprite"></param>
 	void SetSprite(std::shared_ptr<gamelib::AnimatedSprite> sprite);
 
+	/// <summary>
+	/// Set the movement strategy
+	/// </summary>
+	/// <param name="moveStrategy"></param>
 	void SetMoveStrategy(std::shared_ptr<IMoveStrategy> moveStrategy);
 
+	/// <summary>
+	/// Restrictions
+	/// </summary>
 	Restrictions restrictions;
 
+	/// <summary>
+	/// Current room
+	/// </summary>
 	std::shared_ptr<Room> CurrentRoom;
 
+	/// <summary>
+	/// All game objects
+	/// </summary>
 	std::vector<std::shared_ptr<gamelib::GameObject>>& GameObjectsPtr;
-
-
 	
+	/// <summary>
+	/// Animation timeout timer
+	/// </summary>
 	gamelib::Timer animationTimeoutTimer;
-	gamelib::coordinate<int> CalculateHotspot(int x, int y);
+
+	/// <summary>
+	/// Calculate player hostspot position
+	/// </summary>
+	/// <param name="x"></param>
+	/// <param name="y"></param>
+	/// <returns></returns>
+	gamelib::coordinate<int> CalculateHotspotPosition(int x, int y);
 private:
 	
 	std::shared_ptr<gamelib::AnimatedSprite> sprite;
@@ -149,5 +191,6 @@ private:
 	gamelib::Direction currentMovingDirection;
 	gamelib::Direction currentFacingDirection;
 	std::shared_ptr<IMoveStrategy> moveStrategy;
+	std::deque<std::shared_ptr<Movement>> moveQueue;
 };
 

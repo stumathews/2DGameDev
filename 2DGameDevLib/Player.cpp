@@ -12,6 +12,7 @@
 #include <events/Event.h>
 #include <functional>
 #include <events/DoLogicUpdateEvent.h>
+#include "GameData.h"
 
 using namespace std;
 using namespace gamelib;
@@ -29,7 +30,6 @@ Player::Player(const int x, const int y, const int w, const int h)
 
 	// Player can update itself 
 	SubscribeToEvent(EventType::DoLogicUpdateEventType);
-
 	SubscribeToEvent(EventType::Fire);
 
 	animationTimeoutTimer = Timer();
@@ -64,6 +64,7 @@ void Player::Fire()
 
 void Player::RemoveWall(gamelib::Direction facingDirection)
 {
+	// Remove the wall that is opposite the direction the player is facing
 	switch(facingDirection)
 	{
 		case gamelib::Direction::Up:		
@@ -84,25 +85,51 @@ void Player::RemoveWall(gamelib::Direction facingDirection)
 void Player::RemoveRightWall()
 {
 	CurrentRoom->RemoveWall(Side::Right);
-	GetRoom(CurrentRoom->GetNeighbourIndex(Side::Right))->RemoveWall(Side::Left);
+
+	// Remove the wall on the adjacent room
+	GetRightNeighbourRoom()->RemoveWall(Side::Left);
 }
+
 
 void Player::RemoveLeftWall()
 {
 	CurrentRoom->RemoveWall(Side::Left);
-	GetRoom(CurrentRoom->GetNeighbourIndex(Side::Left))->RemoveWall(Side::Right);
+
+	// Remove the wall on the adjacent room
+	GetLeftNeighbourRoom()->RemoveWall(Side::Right);
 }
 
 void Player::RemoveBottomWall()
 {
 	CurrentRoom->RemoveWall(Side::Bottom);
-	GetRoom(CurrentRoom->GetNeighbourIndex(Side::Bottom))->RemoveWall(Side::Top);
+	GetBottomNeighbourRoom()->RemoveWall(Side::Top);
 }
 
 void Player::RemoveTopWall()
 {
 	CurrentRoom->RemoveWall(Side::Top);
-	GetRoom(CurrentRoom->GetNeighbourIndex(Side::Top))->RemoveWall(Side::Bottom);
+
+	// Remove the wall on the adjacent room
+	GetTopNeighbourRoom()->RemoveWall(Side::Bottom);
+}
+
+const std::shared_ptr<Room> Player::GetRightNeighbourRoom()
+{
+	return GetRoom(CurrentRoom->GetNeighbourIndex(Side::Right));
+}
+const std::shared_ptr<Room> Player::GetLeftNeighbourRoom()
+{
+	return GetRoom(CurrentRoom->GetNeighbourIndex(Side::Left));
+}
+
+const std::shared_ptr<Room> Player::GetBottomNeighbourRoom()
+{
+	return GetRoom(CurrentRoom->GetNeighbourIndex(Side::Bottom));
+}
+
+const std::shared_ptr<Room> Player::GetTopNeighbourRoom()
+{
+	return GetRoom(CurrentRoom->GetNeighbourIndex(Side::Top));
 }
 
 void Player::BaseProcessEvent(const shared_ptr<Event>& event, events& createdEvents)
@@ -143,14 +170,44 @@ const events& Player::OnControllerMove(const shared_ptr<Event>& event, events& c
 
 			LogMessage("Invalid move", SettingsManager::Get()->GetBool("global", "verbose"));
 			EventManager::Get()->RaiseEvent(make_shared<Event>(EventType::InvalidMove), this);
-			
+			moveQueue.clear();
 			currentFacingDirection = positionChangedEvent->direction;
 			return createdEvents;
 		}
 	}
 
-	MovePlayer(isMovingDown, bottomRoom, isMovingUp, topRoom, isMovingRight, rightRoom, isMovingLeft, leftRoom);
+	std::shared_ptr<Room> moveTowardsRoom;
 
+	switch(positionChangedEvent->direction)
+	{
+		case Direction::Up:
+			moveTowardsRoom = topRoom;	
+		break;
+		case Direction::Down:
+			moveTowardsRoom = bottomRoom;
+		break;
+		case Direction::Left:
+			moveTowardsRoom = leftRoom;
+		break;
+		case Direction::Right:
+			moveTowardsRoom = rightRoom;
+		break;
+	}
+
+	SetMovingDirection(positionChangedEvent->direction);
+
+	// Cancel last move
+	if(moveQueue.size() > 0)
+		moveQueue.pop_front();
+
+	// Put new move in queue
+	auto moveDurationMs = 500;
+	auto InterpolateMaxPixels = 20;
+	moveQueue.push_back(std::shared_ptr<Movement>(new Movement(moveDurationMs, moveTowardsRoom, InterpolateMaxPixels)));
+	
+	sprite->StartAnimation();
+
+	// Update facing direction
 	currentFacingDirection = positionChangedEvent->direction;
 
 	// Player moved. Tell the world.
@@ -183,55 +240,31 @@ void Player::CenterPlayerInRoom(shared_ptr<Room> targetRoom)
 	Update(0.0f);
 }
 
-void Player::MovePlayer(const bool& isMovingDown, shared_ptr<Room>& bottomRoom, const bool& isMovingUp, shared_ptr<Room>& aboveRoom, const bool& isMovingRight, shared_ptr<Room>& rightRoom, const bool& isMovingLeft, shared_ptr<Room>& leftRoom)
+void Player::OnAfterMove(const gamelib::Direction& movementDirection)
 {
-	if (isMovingDown)
-	{
-		SetMovingDirection(Direction::Down);
-		moveStrategy->MoveTo(bottomRoom);
-	}
-
-	if (isMovingUp)
-	{
-		SetMovingDirection(Direction::Up);
-		moveStrategy->MoveTo(aboveRoom);
-	}
-
-	if (isMovingRight)
-	{
-		SetMovingDirection(Direction::Right);
-		moveStrategy->MoveTo(rightRoom);
-	}
-
-	if (isMovingLeft)
-	{
-		SetMovingDirection(Direction::Left);
-		moveStrategy->MoveTo(leftRoom);		
-	}
-		
 	CurrentRoom = GetCurrentRoom();
 
-	restrictions.IsMovingRight = isMovingRight;
-	restrictions.IsMovingDown = isMovingDown;
-	restrictions.IsMovingUp = isMovingUp;
-	restrictions.IsMovingLeft = isMovingLeft;
+	restrictions.IsMovingRight = movementDirection == gamelib::Direction::Right;
+	restrictions.IsMovingDown = movementDirection == gamelib::Direction::Down;
+	restrictions.IsMovingUp = movementDirection == gamelib::Direction::Up;
+	restrictions.IsMovingLeft = movementDirection == gamelib::Direction::Left;
 	restrictions.IsMoving = restrictions.IsMovingRight || restrictions.IsMovingDown || restrictions.IsMovingUp || restrictions.IsMovingLeft;
 
 	SetRoomRestrictions();
 
-	if(restrictions.IsMoving)
+	if (restrictions.IsMoving)
 	{
 		sprite->StartAnimation();
 		animationTimeoutTimer.Reset();
 	}
-
 }
+
 
 void Player::SetRoomRestrictions()
 {
 	if(!CurrentRoom)
 	{
-		CurrentRoom = GetCurrentRoom();
+		CurrentRoom = GetCurrentRoom();		
 	}
 
 	auto gameObjects = SceneManager::Get()->GetGameWorld().GetGameObjects();
@@ -264,25 +297,23 @@ const ptrdiff_t Player::CountRoomGameObjects(vector<shared_ptr<GameObject>>& gam
 }
 
 const shared_ptr<Room> Player::GetCurrentRoom(vector<shared_ptr<GameObject>>& gameObjects)
-{
-	return dynamic_pointer_cast<Room>(gameObjects[playerRoomIndex]);
+{	
+	return GameData::Get()->GetRoom(playerRoomIndex);	 
 }
 
 const std::shared_ptr<Room> Player::GetCurrentRoom()
 {
-	auto gameObjects = SceneManager::Get()->GetGameWorld().GetGameObjects();
-	return dynamic_pointer_cast<Room>(gameObjects[playerRoomIndex]);
+	return GameData::Get()->GetRoom(playerRoomIndex);
 }
 
 const std::shared_ptr<Room> Player::GetRoom(int index)
 {
-	auto gameObjects = SceneManager::Get()->GetGameWorld().GetGameObjects();
-	return dynamic_pointer_cast<Room>(gameObjects[index]);
+	return GameData::Get()->GetRoom(index);
 }
 
 const shared_ptr<Room> Player::GetRoom(vector<shared_ptr<GameObject>>& gameObjects, shared_ptr<Room>& currentRoom, Side side)
 {
-	return dynamic_pointer_cast<Room>(gameObjects[currentRoom->GetNeighbourIndex(side)]);
+	return GameData::Get()->GetRoom(currentRoom->GetNeighbourIndex(side));
 }
 
 bool Player::IsValidMove(const Direction& moveDirection, const bool& canMoveDown, const bool& canMoveLeft, const bool& canMoveRight, const bool& canMoveUp)
@@ -293,7 +324,7 @@ bool Player::IsValidMove(const Direction& moveDirection, const bool& canMoveDown
 		moveDirection == Direction::Up && canMoveUp;
 }
 
-gamelib::coordinate<int> Player::CalculateHotspot(int x, int y)
+gamelib::coordinate<int> Player::CalculateHotspotPosition(int x, int y)
 {
 	auto mid_x = x + GetWidth()/2;
 	auto mid_y = y + GetHeight()/2;
@@ -302,13 +333,15 @@ gamelib::coordinate<int> Player::CalculateHotspot(int x, int y)
 
 gamelib::coordinate<int> Player::GetHotspot()
 {
-	return CalculateHotspot(x,y);
+	return CalculateHotspotPosition(x,y);
 }
 
 void Player::Draw(SDL_Renderer* renderer)
 {
 	if(!SettingsManager::Get()->GetBool("player", "hideSprite"))
+	{
 		sprite->Draw(renderer);
+	}
 
 	// Draw the hotspot
 	if(SettingsManager::Get()->GetBool("player", "drawHotspot"))
@@ -344,8 +377,6 @@ GameObjectType Player::GetGameObjectType()
 
 void Player::Update(float deltaMs)
 {
-	Bounds = { 	x, 	y, width, height	};
-
 	// if facing up use keyframes tagged with up
 	if (sprite)
 	{
@@ -364,20 +395,62 @@ void Player::Update(float deltaMs)
 			sprite->SetAnimationFrameGroup("left");
 			break;
 		}
+
+		// Process queued movements
+		for(auto& movement : moveQueue)
+		{
+			if(!movement->IsComplete())
+			{
+				// Calculate the movement in pixels to move for the amount of time that has elapsed
+				movement->Update(deltaMs);
+				
+				// Each movement is targetted towards a room
+				auto targetRoom = movement->GetTargetRoom();
+
+				// Move the player towards to target room according to the calculated movement
+				moveStrategy->MoveTo(targetRoom, movement);
+
+				// Check if player is within the target room yet
+				if(IsWithinRoom(targetRoom))
+				{
+					SetRoom(targetRoom->GetRoomNumber());
+				}
+
+				// Update the list of current restrictions based on current position of player
+				
+				OnAfterMove(currentMovingDirection);
+			}
+		}	
+
+		// Remove moves if they have all been completed.
+		moveQueue.erase(std::remove_if(moveQueue.begin(), moveQueue.end(), [&](const std::shared_ptr<Movement> movement)-> bool 
+		{ 
+			return movement->IsComplete(); 
+		}), moveQueue.end());
+
+		// If there are no moves pending, stop the animation
+		if(moveQueue.empty())
+		{
+			sprite->StopAnimation();
+		}
+
+		// Update the bounds of the player for others to use
+		Bounds = { x, 	y, width, height };
 		
 		sprite->x = x;
 		sprite->y = y;
+
+		// Advance the sprite image
 		sprite->Update(deltaMs);
 	}
+}
 
-	if(animationTimeoutTimer.IsElapsed || animationTimeoutTimer.IsStopped)
-	{
-		sprite->StopAnimation();
-	}
-
-	animationTimeoutTimer.Update(deltaMs);
-	
-
+bool Player::IsWithinRoom(std::shared_ptr<Room> room)
+{
+	// Set if the player is in this room or not		
+	auto x1 = GetHotspot().GetX();
+	auto y1 = GetHotspot().GetY();
+	return SDL_IntersectRectAndLine(&room->InnerBounds, &x1, &y1, &x1, &y1);
 }
 
 void Player::SetRoom(int roomIndex) 
