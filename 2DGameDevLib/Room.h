@@ -6,6 +6,7 @@
 #include <events/Event.h>
 #include "util/Tuple.h"
 #include <geometry/Line.h>
+#include <common/aliases.h>
 
 enum class Side
 {
@@ -14,6 +15,19 @@ enum class Side
 	Bottom,
 	Left
 };
+
+inline const char* ToString(Side side)
+{
+	switch (side)
+	{
+		case Side::Top:   return "Top";
+		case Side::Right: return "Right";
+		case Side::Bottom: return "Bottom";
+		case Side::Left: return "Left";
+		default:      
+			return "[Unknown Side]";
+	}
+}
 
 /// <summary>
 /// Conceptual room object
@@ -25,25 +39,23 @@ public:
 	/// <summary>
 	/// Create a room
 	/// </summary>
-	Room(int number, 
-		int x,
-		int y, 
-		int width, 
-		int height, 
-		bool fill = false);
-		
-		
+	Room(int number, int x, int y, int width, int height, bool fill = false);
+
+	void SetupWalls();
+				
 	/// <summary>
 	/// Get Sorrounding rooms
 	/// </summary>
-	void SetSorroundingRooms(const int top_index, const int right_index, const int bottom_index,
-		                            const int left_index);
+	void SetSorroundingRooms(const int top_index, const int right_index, const int bottom_index, const int left_index);
 
 	/// <summary>
 	/// Get the center coordinates of the room
 	/// </summary>
 	const gamelib::coordinate<int> GetCenter(const int w, const int h);
 
+	/// <summary>
+	/// Get Neighbour on side index
+	/// </summary>
 	int GetNeighbourIndex(Side index) const;
 
 	/// <summary>
@@ -87,6 +99,8 @@ public:
 	/// </summary>
 	void RemoveWall(Side wall);
 
+	void LogWallRemoval(Side wall);
+
 	void SetNotWalled(Side wall);
 
 	/// <summary>
@@ -123,14 +137,16 @@ public:
 	/// </summary>
 	/// <param name="event"></param>
 	/// <returns></returns>
-	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event) override;
+	gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> event) override;
 
 	/// <summary>
 	/// When a player moves...
 	/// </summary>
-	std::vector<std::shared_ptr<gamelib::Event>>& OnPlayerMoved(std::vector<std::shared_ptr<gamelib::Event>>& generatedEvents);
+	gamelib::ListOfEvents& OnPlayerMoved(std::vector<std::shared_ptr<gamelib::Event>>& generatedEvents);
 
 	void DrawWalls(SDL_Renderer* renderer);
+
+	void DrawLine(SDL_Renderer* renderer, gamelib::Line& line);
 
 	void DrawDiagnostics(SDL_Renderer* renderer);
 
@@ -247,6 +263,11 @@ private:
 	/// Offset from the bounds to make an innerBounds
 	/// </summary>
 	int innerBoundsOffset;
+
+	/// <summary>
+	/// Add log entries when walls are removed
+	/// </summary>
+	bool logWallRemovals;
 	
 };
 

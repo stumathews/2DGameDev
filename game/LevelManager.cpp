@@ -22,10 +22,8 @@ using namespace std;
 
 bool LevelManager::Initialize()
 {
-	// Set basic game world defaults
 	InitGameWorldData();
 
-	// All game commands that we handle in this game.
 	_gameCommands = shared_ptr<GameCommands>(new GameCommands());
 
 	EventManager::Get()->SubscribeToEvent(EventType::GenerateNewLevel, this);
@@ -39,25 +37,11 @@ bool LevelManager::Initialize()
 	return true;
 }
 
-bool LevelManager::ChangeLevel(int level)
+gamelib::ListOfEvents LevelManager::HandleEvent(std::shared_ptr<Event> event)
 {
-	bool isSuccess = false;
-	try
-	{
-		_gameCommands->ChangeLevel(false, level);
-		isSuccess = true;
-	}
-	catch (...)
-	{
-		LogMessage("Could not start level for unknown reasons. level=" + std::to_string(level));
-	}
-	return isSuccess;
-}
-
-events LevelManager::HandleEvent(std::shared_ptr<Event> event)
-{
-	gamelib::events newEvents;
+	gamelib::ListOfEvents newEvents;
 	std::shared_ptr<GameObjectEvent> gameObjectEvent = nullptr;
+	std::stringstream output; 
 	
 	switch(event->type)
 	{
@@ -66,28 +50,29 @@ events LevelManager::HandleEvent(std::shared_ptr<Event> event)
 		break;
 	case EventType::FetchedPickup:
 		_gameCommands->FetchedPickup();
-		break;
-	case EventType::GameObject:
-		gameObjectEvent = dynamic_pointer_cast<GameObjectEvent>(event);
-		
-		// Deal with GameObject contextual events:
-		switch(gameObjectEvent->context)
-		{
-			case GameObjectEventContext::Remove:
-				RemoveGameObject(*gameObjectEvent->gameObject);
-				break;
-			default:
-				std::stringstream output; 
-				output << "Unknown Game Object Event:" << ToString(gameObjectEvent->context);
-				gamelib::Logger::Get()->LogThis(output.str());
-		}
-		break;
+		break;		
 	case EventType::GenerateNewLevel:
 		GenerateNewLevel();
 		break;
 	case EventType::LevelChangedEventType:
 		OnLevelChanged(event);
 		break;
+	case EventType::GameObject:
+		gameObjectEvent = dynamic_pointer_cast<GameObjectEvent>(event);
+		switch(gameObjectEvent->context)
+		{
+			case GameObjectEventContext::Remove:
+				RemoveGameObject(*gameObjectEvent->gameObject);
+				break;
+			default:				
+				output << "Unknown Game Object Event:" << ToString(gameObjectEvent->context);
+				gamelib::Logger::Get()->LogThis(output.str());
+		}
+		break;
+	default:
+		output << "Unknown EventType:" << ToString(event->type);
+		gamelib::Logger::Get()->LogThis(output.str());
+
 	}
 
 	return newEvents;
@@ -111,13 +96,11 @@ void LevelManager::RemoveAllGameObjects()
 	GameData::Get()->SetGameObjects(&SceneManager::Get()->GetGameWorld().GetGameObjects());
 }
 
-
 void LevelManager::OnLevelChanged(std::shared_ptr<gamelib::Event>& evt)
 {
 	const auto levelChangedEvent = dynamic_pointer_cast<SceneChangedEvent>(evt);
 	auto level = levelChangedEvent->scene_id;
 
-	// Could encode this into the scene file instead of hardcoding it
 	switch(level)
 	{
 		case 1:
@@ -274,41 +257,46 @@ void LevelManager::GetKeyboardInput()
 	}
 }
 
-/// <summary>
-/// Get random number between [min, max]
-/// </summary>
 size_t LevelManager::GetRandomIndex(const int min, const int max) { return rand() % (max - min + 1) + min; }
 
-coordinate<int> GetCenterOfRoom(const Room &room, const int w, const int h)
-{
-	auto const room_x_mid = room.GetX() + (room.GetWidth() / 2);
-	auto const room_y_mid = room.GetY() + (room.GetHeight() / 2);
-	auto const x = room_x_mid - w /2;
-	auto const y = room_y_mid - h /2;			
-	return coordinate<int>(x, y);
-}
-
-/// <summary>
-/// Create the player
-/// </summary>
-shared_ptr<gamelib::GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>> rooms, const int w, const int h) const
+shared_ptr<gamelib::GameObject> LevelManager::CreatePlayer(const vector<shared_ptr<Room>> rooms, const int playerWidth, const int playerHeight) const
 {	
 	const auto minNumRooms = 0;
 	const auto playerRoomIndex = GetRandomIndex(minNumRooms, rooms.size());
 	const auto playerRoom = rooms[playerRoomIndex];
-	const auto positionInRoom = playerRoom->GetCenter(w, h);
-	
-	// create the player
-	const auto player =  shared_ptr<Player>(new Player(positionInRoom.GetX(), positionInRoom.GetY(), w, h));
-	
+	const auto positionInRoom = playerRoom->GetCenter(playerWidth, playerHeight);	
+	const auto player =  shared_ptr<Player>(new Player(positionInRoom.GetX(), positionInRoom.GetY(), playerWidth, playerHeight));	
 	auto moveStrategy = SettingsManager::Get()->GetString("player", "moveStrategy");
+
 	std::string spriteAssetName;
-	if(moveStrategy == "snap")
+
+	GetPlayerAssetName(moveStrategy, player, spriteAssetName);
+
+	player->SetRoom(playerRoomIndex);
+	player->SetTag(constants::playerTag);
+	player->LoadSettings();
+	player->RaiseEvent(std::make_shared<AddGameObjectToCurrentSceneEvent>(player, 100));
+	player->CenterPlayerInRoom(playerRoom);
+
+	auto spriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(spriteAssetName));
+	auto sprite = AnimatedSprite::Create(player->x, player->y, spriteAsset);
+		
+	player->SetSprite(sprite);
+
+	// We keep track of the player globally
+	SceneManager::Get()->GetGameWorld().player = player;
+
+	return player;
+}
+
+void LevelManager::GetPlayerAssetName(std::string& moveStrategy, const std::shared_ptr<Player>& player, std::string& spriteAssetName) const
+{
+	if (moveStrategy == "snap")
 	{
 		player->SetMoveStrategy(shared_ptr<SnapToRoomStrategy>(new SnapToRoomStrategy(player)));
 		spriteAssetName = "snap_player";
 	}
-	else if(moveStrategy == "edge")
+	else if (moveStrategy == "edge")
 	{
 		player->SetMoveStrategy(shared_ptr<EdgeTowardsRoomStrategy>(new EdgeTowardsRoomStrategy(player, 2)));
 		spriteAssetName = "edge_player";
@@ -317,67 +305,38 @@ shared_ptr<gamelib::GameObject> LevelManager::CreatePlayer(const vector<shared_p
 	{
 		THROW(12, "Unknown Move strategy", "Create Player");
 	}
-
-	player->SetRoom(playerRoomIndex);	
-
-	player->SetTag(constants::playerTag);
-	
-	// Load in external settings for the player
-	player->LoadSettings();
-
-	// Add the player to the current scene/level
-	player->RaiseEvent(std::make_shared<AddGameObjectToCurrentSceneEvent>(player, 100));
-
-	// Place the player in a random room
-	player->CenterPlayerInRoom(playerRoom);
-
-	// Setup the player sprite
-	
-	
-	auto spriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(spriteAssetName));
-	auto sprite = AnimatedSprite::Create(player->x, player->y, spriteAsset);
-
-	// Set player's sprite
-	player->SetSprite(sprite);
-	SceneManager::Get()->GetGameWorld().player = player;
-
-	return player;
 }
 
-/// <summary>
-/// Create the pickups
-/// </summary>
-ListOfGameObjects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& rooms, const int w, const int h)
+ListOfGameObjects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& rooms, const int pickupWidth, const int pickupHeight)
 {
 	ListOfGameObjects pickups;
-	const auto num_pickups = 10;
-	auto part = num_pickups / 3;
+	const auto numPickups = SettingsManager::Get()->GetInt("global", "numPickups");
+	auto part = numPickups / 3;
 
-	for(auto i = 0; i < num_pickups; i++)
+	for(auto i = 0; i < numPickups; i++)
 	{
 		const auto rand_index = GetRandomIndex(0, rooms.size()-1);
 		const auto random_room = rooms[rand_index];	
-		const auto positionInRoom = random_room->GetCenter(w, h);
+		const auto positionInRoom = random_room->GetCenter(pickupWidth, pickupHeight);
 
-		auto npc = std::shared_ptr<Pickup>(new Pickup(positionInRoom.GetX(), positionInRoom.GetY(), w, h, true));
+		auto pickup = std::shared_ptr<Pickup>(new Pickup(positionInRoom.GetX(), positionInRoom.GetY(), pickupWidth, pickupHeight, true));
 
 		// Place 3 sets evently of each type of pickup	
 		if(i < 1 * part) 
 		{
-			npc->stringProperties["assetName"] = SettingsManager::Get()->GetString("pickup1", "assetName");		
+			pickup->stringProperties["assetName"] = SettingsManager::Get()->GetString("pickup1", "assetName");		
 		}
 		else if(i >= 1 * part && i < 2 * part) 
 		{ 
-			npc->stringProperties["assetName"] = SettingsManager::Get()->GetString("pickup2", "assetName"); 
+			pickup->stringProperties["assetName"] = SettingsManager::Get()->GetString("pickup2", "assetName"); 
 		}
 		else if(i >= 2 * part)
 		{
-			npc->stringProperties["assetName"] = SettingsManager::Get()->GetString("pickup3", "assetName");
+			pickup->stringProperties["assetName"] = SettingsManager::Get()->GetString("pickup3", "assetName");
 		}
 
-		npc->Initialize();
-
-		pickups.push_back(npc);
+		pickup->Initialize();
+		pickups.push_back(pickup);
 	}
 	return pickups;
 }
@@ -439,4 +398,19 @@ ListOfGameObjects LevelManager::CreateAutoLevel()
 	GameData::Get()->SetGameObjects(&gameObjectsPtr);
 		
 	return gameObjectsPtr;
+}
+
+bool LevelManager::ChangeLevel(int level)
+{
+	bool isSuccess = false;
+	try
+	{
+		_gameCommands->ChangeLevel(false, level);
+		isSuccess = true;
+	}
+	catch (...)
+	{
+		LogMessage("Could not start level for unknown reasons. level=" + std::to_string(level));
+	}
+	return isSuccess;
 }

@@ -16,21 +16,21 @@ public:
 
 	std::string GetSubscriberName() override;;
 
-	void Fire(bool be_verbose);
-	void MoveUp(bool be_verbose);
-	void MoveDown(bool be_verbose);
-	void MoveLeft(bool be_verbose);
-	void MoveRight(bool be_verbose);
+	void Fire(bool verbose);
+	void MoveUp(bool verbose);
+	void MoveDown(bool verbose);
+	void MoveLeft(bool verbose);
+	void MoveRight(bool verbose);
 	void PlaySoundEffect(Mix_Chunk* effect);
-	void ChangeLevel(bool be_verbose, short newLevel);
-	void ReloadSettings(bool be_verbose);
-	void GenerateNewLevel(bool be_verbose);
-	void ToggleMusic(bool be_verbose);
-	void Quit(bool be_verbose);
-	void InvalidMove(bool be_verbose = false);
-	void FetchedPickup(bool be_verbose = false);
+	void ChangeLevel(bool verbose, short newLevel);
+	void ReloadSettings(bool verbose);
+	void GenerateNewLevel(bool verbose);
+	void ToggleMusic(bool verbose);
+	void Quit(bool verbose);
+	void InvalidMove(bool verbose = false);
+	void FetchedPickup(bool verbose = false);
 private:
-	bool _be_verbose;
+	bool verbose;
 
 	// Inherited via EventSubscriber
 	virtual std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt) override;

@@ -10,26 +10,29 @@
 using namespace std;
 using namespace gamelib;
 
-Room::Room(int number, int x, int y, int width, int height, bool fill) : DrawableGameObject(x, y, true),
-	fill(fill),
-	topRoomIndex(0), 
-	rightRoomIndex(0),  
-	bottomRoomIndex(0), 
-	Width(width), 
-	Height(height), 
-	leftRoomIndex(0), 
-	innerBoundsOffset(0)
+Room::Room(int number, int x, int y, int width, int height, bool fill) : DrawableGameObject(x, y, true)	
 {
-	// Bounds of this room
 	this->Bounds = { x, y, width, height };
 	this->InnerBounds = { Bounds.x + innerBoundsOffset, Bounds.y + innerBoundsOffset, Bounds.w - innerBoundsOffset, Bounds.h - innerBoundsOffset };
 	this->Width = width;
 	this->Height = height;
 	this->RoomNumber = number;
+	this->logWallRemovals = false;
+	this->fill = fill;
+	this->topRoomIndex = 0;
+	this->rightRoomIndex = 0;
+	this->bottomRoomIndex = 0;
+	this->Width = width;
+	this->Height = height; 
+	this->leftRoomIndex = 0;
+	this->innerBoundsOffset = 0;	 
+	this->abcd = ABCDRectangle(x, y, width, height); // Room geometry helper
 
-	// Room geometry helper
-	this->abcd = ABCDRectangle(x, y, width, height);
+	SetupWalls();
+}
 
+void Room::SetupWalls()
+{
 	// Calculate the geometry of the walls
 	auto& rect = this->abcd;
 	const auto ax = rect.GetAx();
@@ -69,10 +72,10 @@ Room::Room(int number, int x, int y, int width, int height, bool fill) : Drawabl
 	walls[0] = IsTopWalled = true;
 	walls[1] = IsRightWalled = true;
 	walls[2] = IsBottomWalled = true;
-	walls[3] = IsLeftWalled = true;	 
+	walls[3] = IsLeftWalled = true;
 }
 
-vector<shared_ptr<Event>> Room::HandleEvent(const std::shared_ptr<Event> event)
+gamelib::ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event)
 {	
 	auto generatedEvents(GameObject::HandleEvent(event));
 
@@ -86,65 +89,57 @@ vector<shared_ptr<Event>> Room::HandleEvent(const std::shared_ptr<Event> event)
 		break;
 	default:
 		std::stringstream message("Unhandled subscribed event in Room class:");
-			message << event->ToString();
+		
+		message << event->ToString();
 		gamelib::Logger::Get()->LogThis(message.str());
 	}
 			
 	return generatedEvents;
 }
 
-vector<shared_ptr<Event>>& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedEvents)
+gamelib::ListOfEvents& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedEvents)
 {
-	if(GetGameObjectType() != GameObjectType::Room)
-	{
-		return generatedEvents;
-	}
-
-	const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);
-		
-	// Set if the player is in this room or not		
+	const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);				
 	auto x1 = player->GetHotspot().GetX();
 	auto y1 = player->GetHotspot().GetY();
+
+	// Player's hotspot needs to intersect with rooms inner bounds to be considered within it
 	isPlayerWithinRoom = SDL_IntersectRectAndLine(&InnerBounds, &x1, &y1, &x1, &y1);
-			
-	// Tell the player that its in this room
+	
 	if(isPlayerWithinRoom)
 	{
 		player->SetRoom(RoomNumber);
 	}
+
 	return generatedEvents;
 }
 
-
 void Room::DrawWalls(SDL_Renderer* renderer)
 {
-	// Keep track of walls
-	const auto hasTopWall = this->walls[0];
-	const auto hasRightWall = this->walls[1];
-	const auto hasBottomWall = this->walls[2];
-	const auto hasLeftWall = this->walls[3];
+	if (HasTopWall())
+	{
+		DrawLine(renderer, TopLine);
+	}
+		
+	if (HasRightWall())
+	{
+		DrawLine(renderer, RightLine);
+	}
+			
+	if (HasBottomWall())
+	{
+		DrawLine(renderer, BottomLine);
+	}
+		
+	if (HasLeftWall())
+	{
+		DrawLine(renderer, LeftLine);
+	}
+}
 
-	// Draw the walls as lines
-	if (hasTopWall)
-	{
-		SDL_RenderDrawLine(renderer, TopLine.x1, TopLine.y1, TopLine.x2, TopLine.y2);
-	}
-		
-	if (hasRightWall)
-	{
-		SDL_RenderDrawLine(renderer, RightLine.x1, RightLine.y1, RightLine.x2, RightLine.y2);
-	}
-
-		
-	if (hasBottomWall)
-	{
-		SDL_RenderDrawLine(renderer, BottomLine.x1, BottomLine.y1, BottomLine.x2, BottomLine.y2);
-	}
-		
-	if (hasLeftWall)
-	{
-		SDL_RenderDrawLine(renderer, LeftLine.x1, LeftLine.y1, LeftLine.x2, LeftLine.y2);
-	}
+void Room::DrawLine(SDL_Renderer* renderer, gamelib::Line& line)
+{
+	SDL_RenderDrawLine(renderer, line.x1, line.y1, line.x2, line.y2);
 }
 
 void Room::DrawDiagnostics(SDL_Renderer* renderer)
@@ -213,6 +208,7 @@ void Room::LoadSettings()
 
 	fill = SettingsManager::Get()->GetBool("room_fill", "enable");
 	innerBoundsOffset = SettingsManager::Get()->GetInt("room", "innerBoundsOffset");
+	logWallRemovals = SettingsManager::Get()->GetBool("room", "logWallRemovals");
 }
 
 ABCDRectangle& Room::GetABCDRectangle()
@@ -313,14 +309,24 @@ bool Room::HasRightWall()
 	return IsWalled(Side::Right);
 }
 
-void Room::Update(float deltaMs)
-{
-}
+void Room::Update(float deltaMs) { }
 
 void Room::RemoveWall(Side wall)
-{
+{	
 	this->walls[(int)wall] = false;
 	SetNotWalled(wall);
+
+	LogWallRemoval(wall);
+}
+
+void Room::LogWallRemoval(Side wall)
+{
+	if (logWallRemovals)
+	{
+		std::stringstream message;
+		message << "Removed " << ToString(wall) << " wall in room number " << GetRoomNumber();
+		gamelib::Logger::Get()->LogThis(message.str());
+	}
 }
 
 void Room::SetNotWalled(Side wall)

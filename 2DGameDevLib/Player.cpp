@@ -58,7 +58,7 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event)
 	return createdEvents;
 }
 
-const events& Player::OnControllerMove(const shared_ptr<Event>& event, events& createdEvents)
+const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, ListOfEvents& createdEvents)
 {
 	auto controllerMoveEvent = dynamic_pointer_cast<ControllerMoveEvent>(event);	
 	auto movementDirection = controllerMoveEvent->direction;
@@ -399,7 +399,7 @@ const std::shared_ptr<Room> Player::GetTopNeighbourRoom()
 	return GetRoom(CurrentRoom->GetNeighbourIndex(Side::Top));
 }
 
-void Player::BaseProcessEvent(const shared_ptr<Event>& event, events& createdEvents)
+void Player::BaseProcessEvent(const shared_ptr<Event>& event, ListOfEvents& createdEvents)
 {
 	for (auto& createdEvent : GameObject::HandleEvent(event))
 	{

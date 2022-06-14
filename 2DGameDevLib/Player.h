@@ -72,9 +72,9 @@ public:
 
 	const std::shared_ptr<Room> GetTopNeighbourRoom();
 
-	void BaseProcessEvent(const std::shared_ptr<gamelib::Event>& event, gamelib::events& createdEvents);
+	void BaseProcessEvent(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents);
 
-	const gamelib::events& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::events& createdEvents);
+	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents);
 
 	
 	std::shared_ptr<Room> GetTargettedRoom(std::shared_ptr<gamelib::ControllerMoveEvent>& positionChangedEvent, std::shared_ptr<Room>& topRoom, std::shared_ptr<Room>& bottomRoom, std::shared_ptr<Room>& leftRoom, std::shared_ptr<Room>& rightRoom);

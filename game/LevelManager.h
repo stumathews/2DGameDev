@@ -37,9 +37,7 @@ public:
     /// <summary>
     /// Handle Level events
     /// </summary>
-    std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt) override;
-
-    void ProcessGameObjectEvent(std::shared_ptr<gamelib::Event>& evt);
+    gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> evt) override;
 
     /// <summary>
     /// Generates a new level
@@ -86,12 +84,17 @@ private:
     std::shared_ptr<gamelib::GameObject> CreatePlayer(std::vector<std::shared_ptr<Room>> rooms, const int w, const int h) const;
 
     /// <summary>
+    /// GetPlayerAssetName
+    /// </summary>
+    void GetPlayerAssetName(std::string& moveStrategy, const std::shared_ptr<Player>& player, std::string& spriteAssetName) const;
+
+    /// <summary>
     /// Create the Pickups
     /// </summary>
     ListOfGameObjects CreatePickups(const std::vector<std::shared_ptr<Room>>& rooms, const int w, const int h);
     
     /// <summary>
-    /// Game commands
+    /// Game commands - all game commands that we handle in this game.
     /// </summary>
     std::shared_ptr<GameCommands> _gameCommands;
 
@@ -110,5 +113,8 @@ private:
     /// </summary>
     void InitGameWorldData() const;
 
+    /// <summary>
+    /// Be verbose or not in logging
+    /// </summary>
     bool verbose;
 };

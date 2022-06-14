@@ -15,6 +15,7 @@
     <setting name="use_3d_render_manager" type="bool">false</setting>
     <setting name="print_debugging_text" type="bool">true</setting>
     <setting name="print_debugging_text_neighbours_only" type="bool">true</setting>
+		<setting name="numPickups" type="int">20</setting>
   </global>
       
   <!-- Maze Settings -->
@@ -29,7 +30,7 @@
     <setting name="drawHotSpot" type="bool">false</setting>
     <setting name="drawinnerBounds" type="bool">false</setting>	
     <setting name="innerBoundsOffset" type="int">1</setting>	
-  
+    <setting name="logWallRemovals" type="bool">true</setting>
   </room>
   
   <pickup1>
@@ -86,7 +87,7 @@
     <setting name="r" type="int">0</setting>
     <setting name="g" type="int">255</setting>
     <setting name="b" type="int">0</setting>
-    <setting name="a" type="int">0</setting>
+    <setting name="a" type="int">0</setting>		
   </pickup>
 
 </settings>
