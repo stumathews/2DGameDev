@@ -4,9 +4,14 @@
 #include "room.h"
 #include <common/Logger.h>
 #include <sstream>
+#include <util/SettingsManager.h>
 
-Movement::Movement(float durationMs, std::shared_ptr<Room> towardsRoom, int maxPixels)
+
+int Movement::id = 0;
+
+Movement::Movement(float durationMs, std::shared_ptr<Room> towardsRoom, int maxPixels, bool debug)
 {
+	id++;
 	this->durationMs = durationMs;
 	this->totalTargetMovePixels = maxPixels;
 	this->pixelsPerMs = totalTargetMovePixels / durationMs;
@@ -14,6 +19,12 @@ Movement::Movement(float durationMs, std::shared_ptr<Room> towardsRoom, int maxP
 	this->pixelsToMove = 0;
 	this->isComplete = false;
 	this->towardsRoom = towardsRoom;
+	this->debug = debug;
+}
+
+Movement::~Movement()
+{
+	
 }
 
 bool Movement::IsComplete()
@@ -32,15 +43,14 @@ void Movement::Update(float deltaMs)
 	{
 		isComplete = true;
 	}
-	std::stringstream message;
-	message << "Move " 
-			<< pixelsToMove 
-			<< " towards room " 
-			<< towardsRoom->GetRoomNumber() 
-			<< ". "
-			<< GetPixelsTraveled() << "/" << totalTargetMovePixels;
+
+	if(debug)
+	{
+		std::stringstream message;
+		message << id << ": " << "Move " << pixelsToMove << " towards room " << towardsRoom->GetRoomNumber() << ". " << GetPixelsTraveled() << "/" << totalTargetMovePixels;
 			
-	gamelib::Logger::Get()->LogThis(message.str());
+		gamelib::Logger::Get()->LogThis(message.str());
+	}
 }
 
 float Movement::TakePixelsToMove()

@@ -109,4 +109,6 @@ private:
     /// Set basic game world defaults
     /// </summary>
     void InitGameWorldData() const;
+
+    bool verbose;
 };

@@ -13,7 +13,7 @@
     <setting name="frames_per_column" type="int">3</setting>
     <setting name="verbose" type="bool">true</setting>
     <setting name="use_3d_render_manager" type="bool">false</setting>
-    <setting name="print_debugging_text" type="bool">false</setting>
+    <setting name="print_debugging_text" type="bool">true</setting>
     <setting name="print_debugging_text_neighbours_only" type="bool">true</setting>
   </global>
       
@@ -58,7 +58,7 @@
     <setting name="y" type="int">400</setting>
     <setting name="move_interval" type="int">1</setting>
     <setting name="draw_box" type="bool">false</setting>
-    <setting name="hotspotSize" type="int">20</setting>
+    <setting name="hotspotSize" type="int">50</setting>
     <setting name="drawHotspot" type="bool">true</setting>
     <setting name="hideSprite" type="bool">false</setting>
     <setting name="box_width" type="int">10</setting>
@@ -69,10 +69,11 @@
     <setting name="verbose" type="bool">true</setting>
     <setting name="ignore-restrictions" type="bool">false</setting>
     <setting name="moveStrategy" type="string">edge</setting> <!-- 'snap' or 'edge' strategy -->
+		<setting name="debugMovement" type="bool">false</setting>
   </player>
 	
 	<EventManager>
-		<setting name="logEvents" type="bool">false</setting>
+		<setting name="logEvents" type="bool">true</setting>
 	</EventManager>
   
   <!-- Room fill settings-->

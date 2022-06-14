@@ -38,6 +38,8 @@ bool LevelManager::Initialize()
 	EventManager::Get()->SubscribeToEvent(EventType::FetchedPickup, this);
 	EventManager::Get()->SubscribeToEvent(EventType::GameObject, this);
 	EventManager::Get()->SubscribeToEvent(EventType::LevelChangedEventType, this);
+
+	verbose = SettingsManager::Get()->GetBool("global", "verbose");
 		
 	return true;
 }
@@ -219,9 +221,7 @@ void LevelManager::InitGameWorldData() const
 void LevelManager::GetKeyboardInput()
 {
 	SDL_Event sdlEvent;
-	const auto bVerbose = SettingsManager::Get()->GetBool("global", "verbose");
-	
-	while (SDL_PollEvent(&sdlEvent) != 0)
+	while (SDL_PollEvent(&sdlEvent))
 	{
 		// look for any key press
 		if (sdlEvent.type == SDL_KEYDOWN)
@@ -229,43 +229,43 @@ void LevelManager::GetKeyboardInput()
 			switch (sdlEvent.key.keysym.sym)
 			{
 			case SDLK_SPACE:				
-				_gameCommands->Fire(bVerbose);
+				_gameCommands->Fire(verbose);
 				break;
 			case SDLK_w:
 			case SDLK_UP:				
-				_gameCommands->MoveUp(bVerbose);
+				_gameCommands->MoveUp(verbose);
 				break;
 			case SDLK_s:
 			case SDLK_DOWN:				
-				_gameCommands->MoveDown(bVerbose);
+				_gameCommands->MoveDown(verbose);
 				break;
 			case SDLK_a:
 			case SDLK_LEFT:				
-				_gameCommands->MoveLeft(bVerbose);
+				_gameCommands->MoveLeft(verbose);
 				break;
 			case SDLK_d:
 			case SDLK_RIGHT:				
-				_gameCommands->MoveRight(bVerbose);
+				_gameCommands->MoveRight(verbose);
 				break;
 			case SDLK_q:
 			case SDLK_ESCAPE:
-				_gameCommands->Quit(bVerbose);
+				_gameCommands->Quit(verbose);
 				break;
 			case SDLK_j:	
 				GenerateNewLevel();
-				_gameCommands->ChangeLevel(bVerbose, 1);
+				_gameCommands->ChangeLevel(verbose, 1);
 				break;
 			case SDLK_k:
 				GenerateNewLevel();
-				_gameCommands->ChangeLevel(bVerbose, 2);
+				_gameCommands->ChangeLevel(verbose, 2);
 				break;
 			case SDLK_l:
 				GenerateNewLevel();
-				_gameCommands->ChangeLevel(bVerbose, 3);
+				_gameCommands->ChangeLevel(verbose, 3);
 				break;
 			case SDLK_x:
 				GenerateNewLevel();
-				_gameCommands->ChangeLevel(bVerbose, 4);
+				_gameCommands->ChangeLevel(verbose, 4);
 				break;
 			case SDLK_1:
 				AudioManager::Get()->Play(gamelib::AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("high.wav"))->AsSoundEffect());
@@ -280,17 +280,17 @@ void LevelManager::GetKeyboardInput()
 				AudioManager::Get()->Play(gamelib::AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("scratch.wav"))->AsSoundEffect());
 				break;
 			case SDLK_9:
-				_gameCommands->ToggleMusic(bVerbose);
+				_gameCommands->ToggleMusic(verbose);
 				break;
 			case SDLK_r:				
-				_gameCommands->ReloadSettings(bVerbose);
+				_gameCommands->ReloadSettings(verbose);
 				break;
 			case SDLK_g:				
-				_gameCommands->GenerateNewLevel(bVerbose);
+				_gameCommands->GenerateNewLevel(verbose);
 				break;
 			default:
 				std::cout << "Unknown control key" << std::endl;
-				LogMessage("Unknown control key", bVerbose);
+				LogMessage("Unknown control key", verbose);
 				break;
 			}
 		}
@@ -298,7 +298,7 @@ void LevelManager::GetKeyboardInput()
 		// quit
 		if (sdlEvent.type == SDL_QUIT)
 		{
-			_gameCommands->Quit(bVerbose);
+			_gameCommands->Quit(verbose);
 			return;
 		}
 	}
