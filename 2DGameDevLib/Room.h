@@ -39,6 +39,11 @@ public:
 	void SetSorroundingRooms(const int top_index, const int right_index, const int bottom_index,
 		                            const int left_index);
 
+	/// <summary>
+	/// Get the center coordinates of the room
+	/// </summary>
+	const gamelib::coordinate<int> GetCenter(const int w, const int h);
+
 	int GetNeighbourIndex(Side index) const;
 
 	/// <summary>

@@ -129,6 +129,14 @@ public:
 	/// </summary>
 	void Update(float deltaMs) override;
 
+	void UpdateSprite(float deltaMs);
+
+	bool HasPendingMoves();
+
+	void ProcessMovements(float deltaMs);
+
+	void SetSpriteAnimationFrameGroup();
+
 	bool IsWithinRoom(std::shared_ptr<Room> room);
 
 	/// <summary>
@@ -196,7 +204,7 @@ private:
 	int width;
 	int height;
 	int playerRoomIndex = 0;
-	bool drawBox = false;
+	bool drawBounds = false;
 	gamelib::Direction currentMovingDirection;
 	gamelib::Direction currentFacingDirection;
 	std::shared_ptr<IMoveStrategy> moveStrategy;

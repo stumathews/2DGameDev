@@ -90,6 +90,11 @@ void GameCommands::MoveRight(bool be_verbose)
 	}, true, true);
 }
 
+void GameCommands::PlaySoundEffect(Mix_Chunk* effect)
+{
+	AudioManager::Get()->Play(effect);
+}
+
 void GameCommands::ChangeLevel(bool be_verbose, short newLevel)
 {
 	string message = "Change to level " + newLevel;

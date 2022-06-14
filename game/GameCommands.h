@@ -21,6 +21,7 @@ public:
 	void MoveDown(bool be_verbose);
 	void MoveLeft(bool be_verbose);
 	void MoveRight(bool be_verbose);
+	void PlaySoundEffect(Mix_Chunk* effect);
 	void ChangeLevel(bool be_verbose, short newLevel);
 	void ReloadSettings(bool be_verbose);
 	void GenerateNewLevel(bool be_verbose);

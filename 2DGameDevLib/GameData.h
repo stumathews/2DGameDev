@@ -22,6 +22,8 @@ public:
 
 	void SetGameObjects(std::vector<std::shared_ptr<gamelib::GameObject>>* gameObjects);
 
+	void ClassifyGameObjects();
+
 	protected:
 	GameData();
 	static GameData* Instance;

@@ -1,3 +1,4 @@
+#include "Room.h"
 #include "pch.h"
 #include "Room.h"
 #include "util/RectDebugging.h"
@@ -235,6 +236,15 @@ void Room::SetSorroundingRooms(const int top_index, const int right_index, const
 	this->rightRoomIndex = right_index;
 	this->bottomRoomIndex = bottom_index;
 	this->leftRoomIndex = left_index;
+}
+
+const coordinate<int> Room::GetCenter(const int w, const int h)
+{
+	auto const room_x_mid = GetX() + (GetWidth() / 2);
+	auto const room_y_mid = GetY() + (GetHeight() / 2);
+	auto const x = room_x_mid - w /2;
+	auto const y = room_y_mid - h /2;			
+	return coordinate<int>(x, y);
 }
 
 int Room::GetNeighbourIndex(Side side) const

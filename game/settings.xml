@@ -52,12 +52,8 @@
   
   <!-- Player settings -->
   <player>
-    <setting name="player_init_pos_x" type="int">0</setting>
-    <setting name="player_init_pos_y" type="int">0</setting>
-    <setting name="x" type="int">400</setting>
-    <setting name="y" type="int">400</setting>
     <setting name="move_interval" type="int">1</setting>
-    <setting name="draw_box" type="bool">false</setting>
+    <setting name="drawBounds" type="bool">false</setting>
     <setting name="hotspotSize" type="int">50</setting>
     <setting name="drawHotspot" type="bool">false</setting>
     <setting name="hideSprite" type="bool">false</setting>
@@ -67,7 +63,7 @@
     <setting name="b" type="int">0</setting>
     <setting name="a" type="int">0</setting> 
     <setting name="verbose" type="bool">true</setting>
-    <setting name="ignore-restrictions" type="bool">false</setting>
+    <setting name="ignoreRestrictions" type="bool">false</setting>
     <setting name="moveStrategy" type="string">edge</setting> <!-- 'snap' or 'edge' strategy -->
 		<setting name="debugMovement" type="bool">false</setting>
   </player>

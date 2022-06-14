@@ -111,91 +111,103 @@ void Player::Draw(SDL_Renderer* renderer)
 
 void Player::Update(float deltaMs)
 {
-	// if facing up use keyframes tagged with up
-	if (sprite)
-	{
-		switch (currentFacingDirection)
-		{
-		case Direction::Up:
-			sprite->SetAnimationFrameGroup("up");
-			break;
-		case Direction::Right:
-			sprite->SetAnimationFrameGroup("right");
-			break;
-		case Direction::Down:
-			sprite->SetAnimationFrameGroup("down");
-			break;
-		case Direction::Left:
-			sprite->SetAnimationFrameGroup("left");
-			break;
-		}
+	ProcessMovements(deltaMs);	
 
-		if(!moveQueue.empty())
-		{
-			sprite->StartAnimation();
-		}
+	Bounds = { x, y, width, height };
 
-		// Process queued movements
-		for(auto& movement : moveQueue)
-		{
-			if(!movement->IsComplete())
-			{
-				// Calculate the movement in pixels to move for the amount of time that has elapsed
-				movement->Update(deltaMs);
-				
-				// Each movement target towards a room, represented by a room number
-				auto targetRoom = GameData::Get()->GetRoom(std::atoi(movement->GetMovementTargetId().c_str()));
+	UpdateSprite(deltaMs);
+}
 
-				// Move the player towards to target room according to the calculated movement
-				moveStrategy->MoveTo(targetRoom, movement);
-
-				// Check if player is within the target room yet
-				if(IsWithinRoom(targetRoom))
-				{
-					SetRoom(targetRoom->GetRoomNumber());
-				}
-
-				// Update the list of current restrictions based on current position of player				
-				OnAfterMove(currentMovingDirection);
-			}
-		}	
-
-		// Remove moves if they have all been completed.
-		moveQueue.erase(std::remove_if(moveQueue.begin(), moveQueue.end(), [&](const std::shared_ptr<Movement> movement)-> bool 
-		{ 
-			return movement->IsComplete(); 
-		}), moveQueue.end());
-
-		// If there are no moves pending, stop the animation
-		if(moveQueue.empty())
-		{
-			sprite->StopAnimation();
-		}
-
-		// Update the bounds of the player for others to use
-		Bounds = { x, 	y, width, height };
+void Player::UpdateSprite(float deltaMs)
+{
+	if(!sprite) { return; }
 		
-		sprite->x = x;
-		sprite->y = y;
+	SetSpriteAnimationFrameGroup();
 
-		// Advance the sprite image
-		sprite->Update(deltaMs);
+	if (HasPendingMoves())
+	{
+		sprite->StartAnimation();
+	}
+	else
+	{
+		sprite->StopAnimation();
+	}
+
+	// Move the sprite with the player
+	sprite->x = x;
+	sprite->y = y;
+
+	// Advance the sprite image
+	sprite->Update(deltaMs);
+	
+}
+
+
+void Player::ProcessMovements(float deltaMs)
+{
+	// Process queued movements
+	for (auto& currentMovement : moveQueue)
+	{
+		if (!currentMovement->IsComplete())
+		{
+			// Calculate the movement in pixels to move for the amount of time that has elapsed
+			currentMovement->Update(deltaMs);
+
+			// Each movement target towards a room, represented by a room number
+			auto targetRoom = GameData::Get()->GetRoom(std::atoi(currentMovement->GetMovementTargetId().c_str()));
+
+			// Move the player towards to target room according to the calculated movement
+			moveStrategy->MoveTo(targetRoom, currentMovement);
+
+			// Check if player is within the target room yet
+			if (IsWithinRoom(targetRoom))
+			{
+				SetRoom(targetRoom->GetRoomNumber());
+			}
+
+			// Update the list of current restrictions based on current position of player				
+			OnAfterMove(currentMovingDirection);
+		}
+	}
+
+	// Remove moves if they have all been completed.
+	moveQueue.erase(std::remove_if(moveQueue.begin(), moveQueue.end(), [&](const std::shared_ptr<Movement> movement)-> bool 
+	{ 
+		return movement->IsComplete(); 
+	}), moveQueue.end());
+}
+
+void Player::SetSpriteAnimationFrameGroup()
+{
+	switch (currentFacingDirection)
+	{
+	case Direction::Up:
+		sprite->SetAnimationFrameGroup("up");
+		break;
+	case Direction::Right:
+		sprite->SetAnimationFrameGroup("right");
+		break;
+	case Direction::Down:
+		sprite->SetAnimationFrameGroup("down");
+		break;
+	case Direction::Left:
+		sprite->SetAnimationFrameGroup("left");
+		break;
 	}
 }
 
 void Player::LoadSettings()
 {
 	GameObject::LoadSettings();
-	drawBox = SettingsManager::Get()->GetBool("player", "draw_box");
-	ignoreRestrictions = SettingsManager::Get()->GetBool("player", "ignore-restrictions");
+
+	drawBounds = SettingsManager::Get()->GetBool("player", "drawBounds");
+	ignoreRestrictions = SettingsManager::Get()->GetBool("player", "ignoreRestrictions");
 	debugMovement = gamelib::SettingsManager::Get()->GetBool("player", "debugMovement");
 	verbose = SettingsManager::Get()->GetBool("global", "verbose");
 }
 
 void Player::OnAfterMove(const gamelib::Direction& movementDirection)
 {
-	CurrentRoom = GetCurrentRoom();
-
 	SetRoomRestrictions();
 }
 
@@ -290,7 +302,6 @@ void Player::SetRoom(int roomIndex)
 { 
 	playerRoomIndex = roomIndex; 	
 	CurrentRoom = dynamic_pointer_cast<Room>(SceneManager::Get()->GetGameWorld().GetGameObjects()[playerRoomIndex]);
-	SetRoomRestrictions();
 }
 
 int Player::GetWidth() 
@@ -406,7 +417,7 @@ void Player::DrawSprite(SDL_Renderer* renderer)
 
 void Player::DrawBounds(SDL_Renderer* renderer)
 {
-	if (drawBox)
+	if (drawBounds)
 	{
 		SDL_Color colour = { 255, 0 ,0 ,0 };
 		SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
@@ -482,4 +493,9 @@ void Player::CenterPlayerInRoom(shared_ptr<Room> targetRoom)
 	y = coords.GetY();
 	x = coords.GetX();
 	Update(0.0f);
+}
+
+bool Player::HasPendingMoves()
+{
+	return !moveQueue.empty();
 }
