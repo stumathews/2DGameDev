@@ -15,6 +15,9 @@
 #include <deque>
 #include <events/ControllerMoveEvent.h>
 
+typedef std::vector<std::shared_ptr<gamelib::Event>> ListOfEvents;
+typedef std::vector<std::shared_ptr<gamelib::GameObject>> ListOfGameObjects;
+
 namespace gamelib
 {
 	enum class Direction;
@@ -79,11 +82,12 @@ public:
 
 	void OnAfterMove(const gamelib::Direction& movementDirection);
 
+	//void SetRoomRestrictions(const gamelib::Direction& movementDirection);
 	void SetRoomRestrictions();
 
 	void SetPlayerDirection(gamelib::Direction direction);
 
-	const ptrdiff_t CountRoomGameObjects(std::vector<std::shared_ptr<gamelib::GameObject>>& gameObjects);
+	const ptrdiff_t CountRoomGameObjects(ListOfGameObjects& gameObjects);
 
 	const std::shared_ptr<Room> GetCurrentRoom();
 
@@ -101,6 +105,12 @@ public:
 	/// </summary>
 	/// <param name="renderer"></param>
 	void Draw(SDL_Renderer* renderer) override;
+
+	void DrawSprite(SDL_Renderer* renderer);
+
+	void DrawBounds(SDL_Renderer* renderer);
+
+	void DrawHotspot(SDL_Renderer* renderer);
 
 	/// <summary>
 	/// Get Name
@@ -171,12 +181,7 @@ public:
 	/// <summary>
 	/// All game objects
 	/// </summary>
-	std::vector<std::shared_ptr<gamelib::GameObject>>& GameObjectsPtr;
-	
-	/// <summary>
-	/// Animation timeout timer
-	/// </summary>
-	gamelib::Timer animationTimeoutTimer;
+	ListOfGameObjects& GameObjectsPtr;
 
 	/// <summary>
 	/// Calculate player hostspot position
@@ -198,5 +203,6 @@ private:
 	std::deque<std::shared_ptr<Movement>> moveQueue;
 	bool ignoreRestrictions;
 	bool debugMovement;
+	bool verbose;
 };
 

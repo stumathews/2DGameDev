@@ -9,13 +9,7 @@ public:
 	std::shared_ptr<Room> RightRoom = nullptr;
 	std::shared_ptr<Room> BottomRoom = nullptr;
 	std::shared_ptr<Room> LeftRoom = nullptr;
-
 	
-	bool IsMovingRight;
-	bool IsMovingDown;
-	bool IsMovingUp;
-	bool IsMovingLeft;
-	bool IsMoving;
 
 	bool CanMoveRight;
 	bool CanMoveLeft;

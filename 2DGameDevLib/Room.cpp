@@ -156,39 +156,39 @@ void Room::DrawDiagnostics(SDL_Renderer* renderer)
 	if(SettingsManager::Get()->GetBool("global", "print_debugging_text"))
 	{
 		const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);
-		SDL_Color color = { 255, 255, 255 };
-		
+		const SDL_Color Red = { 255, 0, 0, 0};
+		const SDL_Color Yellow = { 255, 255, 0, 0};
+
 		if(SettingsManager::Get()->GetBool("global", "print_debugging_text_neighbours_only"))
 		{			
 			auto playerRoom = player->GetCurrentRoom();
 			if(RoomNumber == playerRoom->topRoomIndex || RoomNumber == playerRoom->rightRoomIndex || 
 			   RoomNumber == playerRoom->bottomRoomIndex || RoomNumber == playerRoom->leftRoomIndex)
 			{
-				color = { 255, 255, 0, 0};
-				RectDebugging::printInRect(renderer, GetTag(), &Bounds, color);
+				RectDebugging::printInRect(renderer, GetTag(), &Bounds, Yellow);
 			}
 
 			if(RoomNumber == player->CurrentRoom->RoomNumber)
 			{
-				color = { 255, 0, 0, 0};
-				RectDebugging::printInRect(renderer, GetTag(), &Bounds, color);
+				RectDebugging::printInRect(renderer, GetTag(), &Bounds, Red);
 			}			
 		}
 		else
 		{			
-			RectDebugging::printInRect(renderer, GetTag(), &Bounds, color);
+			RectDebugging::printInRect(renderer, GetTag(), &Bounds, Yellow);
 		}
 	}
 	
 	if(SettingsManager::Get()->GetBool("room","drawHotSpot"))
 	{
 		SDL_Rect point_bounds = { GetHotspot().GetX() - Width/2, GetHotspot().GetY() +Height/2 };
-		DrawFilledRect(renderer, &point_bounds , { 0, 255, 255, 0 }); // Cyan
+		SDL_Color Cyan = { 0, 255, 255, 0 };
+		DrawFilledRect(renderer, &point_bounds , Cyan);
 	}
 
 	if(SettingsManager::Get()->GetBool("room","drawinnerBounds"))
 	{
-		SDL_SetRenderDrawColor(renderer, 255, 255 , 0,0); // Yellow
+		SDL_SetRenderDrawColor(renderer, 255, 255 ,0, 0); // Yellow
 		auto innerBounds = SDL_Rect { Bounds.x + innerBoundsOffset, Bounds.y + innerBoundsOffset, Bounds.w - innerBoundsOffset, Bounds.h - innerBoundsOffset };
 		SDL_RenderDrawRect(renderer, &innerBounds);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
