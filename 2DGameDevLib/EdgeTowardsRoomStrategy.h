@@ -1,7 +1,7 @@
 #pragma once
 #include "MoveStrategy.h"
 #include <util/Tuple.h>
-#include "Movement.h"
+#include <Movement/Movement.h>
 
 class Player;
 class Room;

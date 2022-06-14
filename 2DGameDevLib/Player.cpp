@@ -110,7 +110,7 @@ const events& Player::OnControllerMove(const shared_ptr<Event>& event, events& c
 	auto moveDurationMs = 500; // half a second
 	auto InterpolateMaxPixels = 10;
 
-	moveQueue.push_back(std::shared_ptr<Movement>(new Movement(moveDurationMs, moveTowardsRoom, InterpolateMaxPixels, debugMovement)));
+	moveQueue.push_back(std::shared_ptr<Movement>(new Movement(moveDurationMs, std::to_string(moveTowardsRoom->GetRoomNumber()), InterpolateMaxPixels, debugMovement)));
 	
 	sprite->StartAnimation();
 	
@@ -326,8 +326,8 @@ void Player::Update(float deltaMs)
 				// Calculate the movement in pixels to move for the amount of time that has elapsed
 				movement->Update(deltaMs);
 				
-				// Each movement is targetted towards a room
-				auto targetRoom = movement->GetTargetRoom();
+				// Each movement target towards a room, represented by a room number
+				auto targetRoom = GameData::Get()->GetRoom(std::atoi(movement->GetMovementTargetId().c_str()));
 
 				// Move the player towards to target room according to the calculated movement
 				moveStrategy->MoveTo(targetRoom, movement);
