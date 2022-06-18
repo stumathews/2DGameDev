@@ -25,10 +25,10 @@ int main(int argc, char *args[])
 		const auto beVerbose = SettingsManager::Get()->GetBool("global", "verbose");
 
 		// Create game infrastructure
-		GameStructure game = GameStructure([&]() { levels.GetKeyboardInput(); });
+		GameStructure infrastructure = GameStructure([&]() { levels.GetKeyboardInput(); });
 		
 		// Initialize key parts of the game
-		const auto isGameStructureInitialized = IsSuccess(game.InitializeGameSubSystems(800, 600, "Mazer 2d"), "Initialize Game subsystems...");
+		const auto isGameStructureInitialized = IsSuccess(infrastructure.InitializeGameSubSystems(1024, 768, "Mazer 2d"), "Initialize Game subsystems...");
 		const auto IsLevelsInitialized = IsSuccess(levels.Initialize(), "Initializing Level Manager...");
 		
 		// Abort game if initialization failed
@@ -46,16 +46,10 @@ int main(int argc, char *args[])
 		levels.ChangeLevel(1);
 
 		// Create the level
-		levels.CreateAutoLevel();		
+		levels.CreateAutoLevel();
 
-		// Start main game Loop		
-		const auto loop_result = LogThis("Beginning game loop...", beVerbose, [&]() { return game.DoGameLoop(); }, true, true);
-		
-		// Game loop ended, start unloading the game...		
-		const auto unload_result = LogThis("Unloading game...", beVerbose, [&]() { return game.UnloadGameSubsystems(); }, true, true);
-		
-		return IsSuccess(loop_result, "Game loop failed") && 
-			   IsSuccess(unload_result, "Content unload failed");
+		return IsSuccess(infrastructure.DoGameLoop(), "Game loop failed") && 
+			   IsSuccess(infrastructure.UnloadGameSubsystems(), "Content unload failed");
 	
 	}
 	catch(EngineException& e)

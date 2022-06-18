@@ -279,7 +279,7 @@ shared_ptr<gamelib::GameObject> LevelManager::CreatePlayer(const vector<shared_p
 	player->CenterPlayerInRoom(playerRoom);
 
 	auto spriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(spriteAssetName));
-	auto sprite = AnimatedSprite::Create(player->x, player->y, spriteAsset);
+	auto sprite = AnimatedSprite::Create(player->Position.GetX(), player->Position.GetY(), spriteAsset);
 		
 	player->SetSprite(sprite);
 

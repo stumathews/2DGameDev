@@ -17,6 +17,13 @@
     <setting name="print_debugging_text_neighbours_only" type="bool">true</setting>
 		<setting name="numPickups" type="int">20</setting>
   </global>
+	
+	<networking>
+		<setting name="isGameServer" type="bool">true</setting>
+		<setting name="gameServerAddress" type="string">Surface</setting>
+		<setting name="gameServerPort" type="string">8080</setting>
+		<setting name="maxPlayers" type="int">4</setting>
+	</networking>
       
   <!-- Maze Settings -->
   <grid>

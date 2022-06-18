@@ -23,8 +23,8 @@ void SnapToRoomStrategy::CenterPlayerInRoom(std::shared_ptr<Room> room)
 	auto const x = room_x_mid - player->GetWidth() / 2;
 	auto const y = room_y_mid - player->GetHeight() / 2;
 	auto coords = gamelib::coordinate<int>(x, y);
-	player->x = coords.GetX();
-	player->y = coords.GetY();
+	player->Position.SetX(coords.GetX());
+	player->Position.SetY(coords.GetY());
 	player->Update(10.f);
 }
 

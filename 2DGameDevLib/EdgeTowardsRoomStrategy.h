@@ -13,6 +13,7 @@ public:
 
     // Inherited via IMoveStrategy
     virtual void MoveTo(std::shared_ptr<Room> room) override;
+	void SetPlayerPosition(gamelib::coordinate<int>& resultingMove);
 	virtual void MoveTo(std::shared_ptr<Room> room, std::shared_ptr<Movement> movement) override;
 private:
 	std::shared_ptr<Player> player;

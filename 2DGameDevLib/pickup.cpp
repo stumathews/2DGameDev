@@ -20,8 +20,11 @@ namespace gamelib
 		fillColour = { };		
 	}
 
-	Pickup::Pickup(const bool visible) : DrawableGameObject(0, 0, visible), width(0), height(0), fillColour({})
+	Pickup::Pickup(const bool visible) : DrawableGameObject(0, 0, visible)
 	{
+		this->width = width;
+		this->height = height;
+		fillColour = { };	
 	}
 
 	void Pickup::Initialize()
@@ -35,7 +38,7 @@ namespace gamelib
 		};
 
 		auto spriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(stringProperties["assetName"]));
-		sprite = AnimatedSprite::Create(x, y, spriteAsset);;
+		sprite = AnimatedSprite::Create(Position.GetX(), Position.GetY(), spriteAsset);;
 	}
 
 	gamelib::ListOfEvents Pickup::HandleEvent(shared_ptr<gamelib::Event> event)
@@ -75,21 +78,20 @@ namespace gamelib
 	{
 		if(!sprite)
 		{
-			SDL_Rect dimensions = { x, y, width, height };		 
+			SDL_Rect dimensions = { Position.GetX(), Position.GetY(), width, height };		 
 			DrawFilledRect(renderer, &dimensions, fillColour);
 			return;
 		}
 		
-		sprite->Draw(renderer);
-		
+		sprite->Draw(renderer);		
 	}
 
 	void Pickup::Update(float deltaMs)
 	{
-		Bounds = { x, y, width, height };
+		Bounds = { Position.GetX(), Position.GetY(), width, height };
 
-		sprite->x = x;
-		sprite->y = y;
+		sprite->Position.SetX(Position.GetX());
+		sprite->Position.SetY(Position.GetY());
 
 		sprite->Update(deltaMs);
 	}

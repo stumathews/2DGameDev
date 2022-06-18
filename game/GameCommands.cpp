@@ -13,6 +13,8 @@ using namespace std;
 GameCommands::GameCommands()
 {
 	this->verbose = false;
+	
+	EventManager::Get()->SubscribeToEvent(EventType::NetworkPlayerJoined, this);
 }
 
 void GameCommands::Fire(bool verbose)
@@ -112,8 +114,14 @@ void GameCommands::FetchedPickup(bool verbose)
 	AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "fetched_pickup")))->AsSoundEffect());
 }
 
-std::vector<std::shared_ptr<Event>> GameCommands::HandleEvent(std::shared_ptr<Event> evt)
+std::vector<std::shared_ptr<Event>> GameCommands::HandleEvent(std::shared_ptr<Event> event)
 {
+	switch (event->type)
+	{
+	case EventType::NetworkPlayerJoined:
+		Logger::Get()->LogThis("---------------------------Network Player joined");
+		break;
+	}
 	// Dont currently handle any events yet
 	return std::vector<std::shared_ptr<Event>>();
 }

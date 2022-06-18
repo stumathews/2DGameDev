@@ -113,7 +113,7 @@ void Player::Update(float deltaMs)
 {
 	ProcessMovements(deltaMs);	
 
-	Bounds = { x, y, width, height };
+	Bounds = { Position.GetX(), Position.GetY(), width, height };
 
 	UpdateSprite(deltaMs);
 }
@@ -134,8 +134,8 @@ void Player::UpdateSprite(float deltaMs)
 	}
 
 	// Move the sprite with the player
-	sprite->x = x;
-	sprite->y = y;
+	sprite->Position.SetX(Position.GetX());
+	sprite->Position.SetY(Position.GetY());
 
 	// Advance the sprite image
 	sprite->Update(deltaMs);
@@ -287,7 +287,7 @@ gamelib::coordinate<int> Player::CalculateHotspotPosition(int x, int y)
 
 gamelib::coordinate<int> Player::GetHotspot()
 {
-	return CalculateHotspotPosition(x,y);
+	return CalculateHotspotPosition(Position.GetX(), Position.GetY());
 }
 
 bool Player::IsWithinRoom(std::shared_ptr<Room> room)
@@ -490,8 +490,8 @@ void Player::CenterPlayerInRoom(shared_ptr<Room> targetRoom)
 	};
 
 	const auto coords = centerPlayerFunc(*targetRoom, *this);
-	y = coords.GetY();
-	x = coords.GetX();
+	Position.SetY(coords.GetY());
+	Position.SetX(coords.GetX());
 	Update(0.0f);
 }
 

@@ -266,12 +266,12 @@ int Room::GetNeighbourIndex(Side side) const
 
 int Room::GetX() const
 {
-	return this->x;
+	return this->Position.GetX();
 }
 
 int Room::GetY() const
 {
-	return this->y;
+	return this->Position.GetY();
 }
 
 int Room::GetWidth() const

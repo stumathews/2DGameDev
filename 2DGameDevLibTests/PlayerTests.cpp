@@ -4,8 +4,8 @@
 TEST(PlayerTests, Basic)
 {
 	Player player(0,0,0,0);
-	EXPECT_EQ(player.x, 0);
-	EXPECT_EQ(player.y, 0);
+	EXPECT_EQ(player.Position.GetX(), 0);
+	EXPECT_EQ(player.Position.GetY(), 0);
 	EXPECT_EQ(player.Bounds.w, 0);
 	EXPECT_EQ(player.Bounds.h, 0);
 	EXPECT_EQ(player.Bounds.x, 0);

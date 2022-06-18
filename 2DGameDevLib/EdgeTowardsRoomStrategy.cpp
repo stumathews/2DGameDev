@@ -54,8 +54,8 @@ gamelib::coordinate<int> EdgeTowardsRoomStrategy::CalculatePlayerMoveTo(std::sha
 	int resulting_x;	
 	int resulting_y; 
 	
-	resulting_y = player->y;
-	resulting_x = player->x;
+	resulting_y = player->Position.GetY();
+	resulting_x = player->Position.GetX();
 
 	switch(directionTowardsRoom)
 	{
@@ -82,8 +82,13 @@ void EdgeTowardsRoomStrategy::MoveTo(std::shared_ptr<Room> room)
 	auto resultingMove = CalculatePlayerMoveTo(room);
 
 	// Set the player's new position
-	player->x = resultingMove.GetX();
-	player->y = resultingMove.GetY();
+	SetPlayerPosition(resultingMove);
+}
+
+void EdgeTowardsRoomStrategy::SetPlayerPosition(gamelib::coordinate<int>& resultingMove)
+{
+	player->Position.SetX(resultingMove.GetX());
+	player->Position.SetY(resultingMove.GetY());
 }
 
 void EdgeTowardsRoomStrategy::MoveTo(std::shared_ptr<Room> room, std::shared_ptr<Movement> movement)
@@ -92,8 +97,7 @@ void EdgeTowardsRoomStrategy::MoveTo(std::shared_ptr<Room> room, std::shared_ptr
 	auto resultingMove = CalculatePlayerMoveTo(room, movement->TakePixelsToMove());
 
 	// Set the player's new position
-	player->x = resultingMove.GetX();
-	player->y = resultingMove.GetY();
+	SetPlayerPosition(resultingMove);
 }
 
 
