@@ -6,6 +6,9 @@
 #include "scene/SceneManager.h"
 #include <iostream>
 #include <events/GameObjectEvent.h>
+#include <events/NetworkTrafficRecievedEvent.h>
+#include <sstream>
+#include <net/NetworkManager.h>
 
 using namespace gamelib;
 using namespace std;
@@ -15,6 +18,7 @@ GameCommands::GameCommands()
 	this->verbose = false;
 	
 	EventManager::Get()->SubscribeToEvent(EventType::NetworkPlayerJoined, this);
+	EventManager::Get()->SubscribeToEvent(EventType::NetworkTrafficReceived, this);
 }
 
 void GameCommands::Fire(bool verbose)
@@ -114,12 +118,26 @@ void GameCommands::FetchedPickup(bool verbose)
 	AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "fetched_pickup")))->AsSoundEffect());
 }
 
+void GameCommands::PingGameServer()
+{
+	NetworkManager::Get()->PingGameServer();
+}
+
 std::vector<std::shared_ptr<Event>> GameCommands::HandleEvent(std::shared_ptr<Event> event)
 {
 	switch (event->type)
 	{
 	case EventType::NetworkPlayerJoined:
 		Logger::Get()->LogThis("---------------------------Network Player joined");
+		break;
+	case EventType::NetworkTrafficReceived:
+		auto networkPlayerTrafficReceivedEvent = dynamic_pointer_cast<gamelib::NetworkTrafficRecievedEvent>(event);
+		std::stringstream message;
+		message << "---------------------------Network traffic received: " 
+			    << networkPlayerTrafficReceivedEvent->Identifier << " Bytes received: "
+			    << networkPlayerTrafficReceivedEvent->bytesReceived << " Message: " << networkPlayerTrafficReceivedEvent->Message;
+		    
+		Logger::Get()->LogThis(message.str());
 		break;
 	}
 	// Dont currently handle any events yet

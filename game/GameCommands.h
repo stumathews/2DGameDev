@@ -29,6 +29,7 @@ public:
 	void Quit(bool verbose);
 	void InvalidMove(bool verbose = false);
 	void FetchedPickup(bool verbose = false);
+	void PingGameServer();
 private:
 	bool verbose;
 

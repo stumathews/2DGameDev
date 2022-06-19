@@ -242,6 +242,9 @@ void LevelManager::GetKeyboardInput()
 			case SDLK_g:				
 				_gameCommands->GenerateNewLevel(verbose);
 				break;
+			case SDLK_p:
+				_gameCommands->PingGameServer();
+				break;
 			default:
 				std::cout << "Unknown control key" << std::endl;
 				LogMessage("Unknown control key", verbose);
