@@ -17,12 +17,13 @@
 using namespace std;
 using namespace gamelib;
 	
-Player::Player(const int x, const int y, const int playerWidth, const int playerHeight) : DrawableGameObject(x, y, true), GameObjectsPtr(SceneManager::Get()->GetGameWorld().GetGameObjects())
+Player::Player(const int x, const int y, const int playerWidth, const int playerHeight, const std::string identifier) : DrawableGameObject(x, y, true), GameObjectsPtr(SceneManager::Get()->GetGameWorld().GetGameObjects())
 {	
 	this->width = playerWidth;
 	this->height = playerHeight;
 	this->currentFacingDirection = this->currentMovingDirection;
 	this->sprite = nullptr;
+	this->Identifier = identifier;
 
 	SubscribeToEvent(EventType::ControllerMoveEvent);
 	SubscribeToEvent(EventType::SettingsReloaded);
@@ -71,11 +72,10 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 
 	SetPlayerDirection(movementDirection);
 	
-	if (!IsValidMove(movementDirection, 
-		moveStrategy->CanMoveDown(movementDirection == Direction::Down, currentRoom, bottomRoom), 
-		moveStrategy->CanMoveLeft(movementDirection == Direction::Left, currentRoom, leftRoom), 
-		moveStrategy->CanMoveRight(movementDirection == Direction::Right, currentRoom, rightRoom), 
-		moveStrategy->CanMoveUp(movementDirection == Direction::Up, currentRoom, topRoom)))
+	if (!IsValidMove(movementDirection, moveStrategy->CanMoveDown(movementDirection == Direction::Down, currentRoom, bottomRoom), 
+										moveStrategy->CanMoveLeft(movementDirection == Direction::Left, currentRoom, leftRoom), 
+										moveStrategy->CanMoveRight(movementDirection == Direction::Right, currentRoom, rightRoom), 
+										moveStrategy->CanMoveUp(movementDirection == Direction::Up, currentRoom, topRoom)))
 	{	
 		createdEvents.push_back(make_shared<Event>(EventType::InvalidMove));
 		return createdEvents;
@@ -441,7 +441,7 @@ void Player::DrawHotspot(SDL_Renderer* renderer)
 
 string Player::GetName()
 {
-	return "player";
+	return Identifier;
 }
 
 GameObjectType Player::GetGameObjectType() 

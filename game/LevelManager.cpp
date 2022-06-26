@@ -33,6 +33,7 @@ bool LevelManager::Initialize()
 	EventManager::Get()->SubscribeToEvent(EventType::LevelChangedEventType, this);
 
 	verbose = SettingsManager::Get()->GetBool("global", "verbose");
+	SceneManager::Get()->GetGameWorld().IsNetworkGame = SettingsManager::Get()->GetBool("global", "isNetworkGame");
 		
 	return true;
 }
@@ -268,7 +269,10 @@ shared_ptr<gamelib::GameObject> LevelManager::CreatePlayer(const vector<shared_p
 	const auto playerRoomIndex = GetRandomIndex(minNumRooms, rooms.size());
 	const auto playerRoom = rooms[playerRoomIndex];
 	const auto positionInRoom = playerRoom->GetCenter(playerWidth, playerHeight);	
-	const auto player =  shared_ptr<Player>(new Player(positionInRoom.GetX(), positionInRoom.GetY(), playerWidth, playerHeight));	
+	const auto playerNickName = SceneManager::Get()->GetGameWorld().IsNetworkGame ? 
+								SettingsManager::Get()->GetString("networking", "nickname")
+								: "Player1";
+	const auto player =  shared_ptr<Player>(new Player(positionInRoom.GetX(), positionInRoom.GetY(), playerWidth, playerHeight, playerNickName));	
 	auto moveStrategy = SettingsManager::Get()->GetString("player", "moveStrategy");
 
 	std::string spriteAssetName;

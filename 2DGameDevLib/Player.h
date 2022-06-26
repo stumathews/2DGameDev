@@ -31,7 +31,7 @@ class Player final : public gamelib::DrawableGameObject
 {		
 public:
 		
-	Player(int x, int y, int w, int h);
+	Player(int x, int y, int w, int h, const std::string identifier);
 		
 	/// <summary>
 	/// Load player settings
@@ -198,6 +198,8 @@ public:
 	/// <param name="y"></param>
 	/// <returns></returns>
 	gamelib::coordinate<int> CalculateHotspotPosition(int x, int y);
+
+	std::string Identifier;
 private:
 	
 	std::shared_ptr<gamelib::AnimatedSprite> sprite;

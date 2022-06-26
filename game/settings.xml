@@ -16,6 +16,7 @@
     <setting name="print_debugging_text" type="bool">true</setting>
     <setting name="print_debugging_text_neighbours_only" type="bool">true</setting>
 		<setting name="numPickups" type="int">20</setting>
+		<setting name="isNetworkGame" type="bool">true</setting>
   </global>
 	
 	<networking>
@@ -23,6 +24,9 @@
 		<setting name="gameServerAddress" type="string">Surface</setting>
 		<setting name="gameServerPort" type="string">8080</setting>
 		<setting name="maxPlayers" type="int">4</setting>
+		<setting name="nickname" type="string">Charlie</setting>
+		<!-- If its not TCP, we're using 'connected' udp -->
+		<setting name="isTcp" type="bool">false</setting>
 	</networking>
       
   <!-- Maze Settings -->
