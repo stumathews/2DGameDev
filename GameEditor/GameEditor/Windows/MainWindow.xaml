@@ -1,0 +1,100 @@
+﻿<Window x:Class="GameEditor.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xcpg="http://schemas.xceed.com/wpf/xaml/propertygrid"
+        xmlns:local="clr-namespace:GameEditor"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        Title="2D GameDev Game Editor" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+
+    <Grid x:Name="grid" MouseUp="grid_MouseUp">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="MenuBarRow" Height="Auto" /> <!-- Note how Auto fits the the content, and ignores being equal to other rows (which is the default)-->
+            <RowDefinition x:Name="ToolBarRow" Height="Auto" />
+            <RowDefinition x:Name="MainContentRow" Height="*"/> <!-- Fill in whats left -->
+            <RowDefinition x:Name="StatusBarRow" Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        
+        <!-- Menu -->
+        <Menu Name="mainMenu" Grid.Row="0" Grid.ColumnSpan="2">
+            <!-- File Menu -->
+            <MenuItem Header="File" Name="fileMenuItem" >
+                <MenuItem Name="newMenuItem" Header="New" Click="newMenuItem_Click" ></MenuItem>
+                <MenuItem Name="openMenuItem" Header="Open"></MenuItem>
+                <MenuItem Name="saveAsMenuItem" Header="Save as..." Click="saveAsMenuItem_Click"></MenuItem>
+                <MenuItem Name="closeMenuItem" Header="Close" Click="closeMenuItem_Click"></MenuItem>
+            </MenuItem>
+            
+            <!-- Edit Menu -->
+            <MenuItem Header="Edit" Name="editMenuItem">
+                <MenuItem Header="Add object">
+                    <MenuItem.Icon>
+                        <Image>
+                            <Image.Source>
+                                <BitmapImage UriSource="pack://application:,,,/images/Add.png"/>
+                            </Image.Source>
+                        </Image>                
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Remove object">
+                    <MenuItem.Icon>
+                        <Image>
+                            <Image.Source>
+                                <BitmapImage UriSource="pack://application:,,,/images/Delete.png"/>
+                            </Image.Source>
+                        </Image>                
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            
+            <!-- About Menu -->
+            <MenuItem Header="About" Name="aboutMenuItem" Click="aboutMenuItem_Click"></MenuItem>
+        </Menu>
+       
+        <!-- ToolBar -->
+        <ToolBarTray  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+            <ToolBar Band="1" BandIndex="1">
+                <!-- Add Object -->
+                <Button>
+                    <Image>
+                        <Image.Source>
+                            <BitmapImage UriSource="pack://application:,,,/images/Add.png"/>
+                        </Image.Source>
+                    </Image>                    
+                </Button>
+                
+                <!-- Remove Object-->
+                <Button>
+                    <Button>
+                    <Image>
+                        <Image.Source>
+                            <BitmapImage UriSource="pack://application:,,,/images/Delete.png"/>
+                        </Image.Source>
+                    </Image>                    
+                </Button>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+        
+        <!-- Note: The main content will be dynamically populated -->
+        
+        
+        <xctk:PropertyGrid Name="propertyGrid" Grid.Row="2" Grid.Column="1" SelectedObject="{Binding}">
+            
+        </xctk:PropertyGrid>
+        
+        <!-- Status Bar -->
+         <StatusBar Grid.Row="3" Grid.ColumnSpan="2">
+            <StatusBarItem>
+                <TextBlock Name="status"></TextBlock>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

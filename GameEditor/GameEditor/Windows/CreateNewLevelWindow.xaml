@@ -1,0 +1,46 @@
+﻿<Window x:Class="GameEditor.Windows.CreateNewLevelWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Create new level" Height="120" Width="500" WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <Style TargetType="{x:Type FrameworkElement}" x:Key="numberBox">
+            <Setter Property="Margin" Value="10 0 0 0"/>
+        </Style>
+        
+        <Style TargetType="{x:Type FrameworkElement}" x:Key="spaceAround">
+            <Setter Property="Margin" Value="2"/>
+        </Style>
+    </Window.Resources>
+    <Grid Name="grid">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+            <StackPanel Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock>Please Enter room Details: </TextBlock>
+                <GroupBox Header="Walls" VerticalAlignment="Center" >
+                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource numberBox}">Height</TextBlock>
+                        <TextBox Style="{StaticResource numberBox }" Text="{Binding WallHeight}" MinWidth="50"/>
+                        <TextBlock Style="{StaticResource numberBox}">Width</TextBlock>
+                        <TextBox Style="{StaticResource numberBox }" Text="{Binding WallWidth}"  MinWidth="50"/>            
+                        <TextBlock Style="{StaticResource numberBox}">Rows</TextBlock>
+                        <TextBox Style="{StaticResource numberBox }" Text="{Binding NumRows}"  MinWidth="50"/>
+                        <TextBlock Style="{StaticResource numberBox}">Columns</TextBlock>
+                        <TextBox Style="{StaticResource numberBox }" Text="{Binding NumCols}" MinWidth="50"/>
+                    </StackPanel>
+                </GroupBox>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button HorizontalAlignment="Center" Style="{StaticResource spaceAround }" Command="{Binding SubmitCommand}">OK</Button>
+                <Button HorizontalAlignment="Center" Style="{StaticResource spaceAround }" Command="{Binding CancelCommand}">Cancel</Button>
+                </StackPanel>
+            </StackPanel>
+            
+    </Grid>
+
+</Window>
