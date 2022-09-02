@@ -27,9 +27,9 @@
             <!-- File Menu -->
             <MenuItem Header="File" Name="fileMenuItem" >
                 <MenuItem Name="newMenuItem" Header="New" Click="newMenuItem_Click" ></MenuItem>
-                <MenuItem Name="openMenuItem" Header="Open"></MenuItem>
+                <MenuItem Name="openMenuItem" Header="Open" Click="openMenuItem_Click"></MenuItem>
                 <MenuItem Name="saveAsMenuItem" Header="Save as..." Click="saveAsMenuItem_Click"></MenuItem>
-                <MenuItem Name="closeMenuItem" Header="Close" Click="closeMenuItem_Click"></MenuItem>
+                <MenuItem Name="closeMenuItem" Header="Close" Command="{Binding CloseCommand}"></MenuItem>
             </MenuItem>
             
             <!-- Edit Menu -->
@@ -55,7 +55,7 @@
             </MenuItem>
             
             <!-- About Menu -->
-            <MenuItem Header="About" Name="aboutMenuItem" Click="aboutMenuItem_Click"></MenuItem>
+            <MenuItem Header="About" Name="aboutMenuItem" Command="{Binding ShowAboutCommand}"></MenuItem>
         </Menu>
        
         <!-- ToolBar -->

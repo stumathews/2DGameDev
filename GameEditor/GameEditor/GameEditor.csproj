@@ -96,6 +96,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="RoomCreation\RoomCreationParameters.cs" />
+    <Compile Include="ViewModels\Level.cs" />
+    <Compile Include="ViewModels\LevelManager.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\RoomView.xaml.cs">
       <DependentUpon>RoomView.xaml</DependentUpon>
     </Compile>
