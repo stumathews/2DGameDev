@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <net/NetworkManager.h>
 #include <Windows.h>
 #include "LevelManager.h"
 #include "GameStructure.h"
@@ -8,61 +9,81 @@
 using namespace std;
 using namespace gamelib;
 
+/*
+  	##   ##    ##     ### ##   ### ###  ### ##            ## ##    ### ##
+  	## ##      ##    ##  ##    ##  ##   ##  ##           ##  ##    ##  ##
+  	# ### #   ## ##      ##     ##       ##  ##               ##    ##  ##  
+  	## # ##   ##  ##    ##      ## ##    ## ##               ##     ##  ##
+  	##   ##   ## ###   ##       ##       ## ##              ##      ##  ##
+  	##   ##   ##  ##  ##  ##    ##  ##   ##  ##            #   ##   ##  ##
+  	##   ##  ###  ##  # ####   ### ###  #### ##           ######   ### ##
+*/
+
 
 int main(int argc, char *args[])
 {
-	auto logManager = ErrorLogManager::GetErrorLogManager();
-	logManager->Create("GameErrors.txt");
+	ErrorLogManager::GetErrorLogManager()->Create("GameErrors.txt");
 
 	try
 	{
-		LevelManager levels;
-
-		// Read game settings
-		SettingsManager::Get()->Load("game/settings.xml");
-
-		// Read verbosity setting
-		const auto beVerbose = SettingsManager::Get()->GetBool("global", "verbose");
-
-		// Create game infrastructure
-		GameStructure infrastructure = GameStructure([&]() { levels.GetKeyboardInput(); });
-		
-		// Initialize key parts of the game
-		const auto isGameStructureInitialized = IsSuccess(infrastructure.InitializeGameSubSystems(1024, 768, "Mazer 2d"), "Initialize Game subsystems...");
-		const auto IsLevelsInitialized = IsSuccess(levels.Initialize(), "Initializing Level Manager...");
-		
-		// Abort game if initialization failed
-		if(!isGameStructureInitialized || !IsLevelsInitialized)
-		{
-			auto message = string("Game initialization failed.") + 
-				           string("GameStructured initialized=") + std::to_string(isGameStructureInitialized) + 
-				           string(" LevelInitialized=") + std::to_string(IsLevelsInitialized);
-			LogMessage(message, beVerbose, true);
+		// Create our game structure that uses the level manager's polling function for keyboard input
+		GameStructure infrastructure([&]() { LevelManager::Get()->GetKeyboardInput(); });
+				
+		// Initialize all the required game sub systems
+		if (InitializeGameSubSystems(infrastructure)) 
 			return -1;
-		}
 
-		// Sets up level becuase we want these events to be in the queue before the level events
-		
-		levels.ChangeLevel(1);
+		// Prepare the level before starting the game loop
+		PrepareLevel();
 
-		// Create the level
-		levels.CreateAutoLevel();
-
+		// Start the game loop which will pump update/draw events onto the event system, which certain objects subscribe to
 		return IsSuccess(infrastructure.DoGameLoop(), "Game loop failed") && 
-			   IsSuccess(infrastructure.UnloadGameSubsystems(), "Content unload failed");
-	
+			   IsSuccess(infrastructure.UnloadGameSubsystems(), "Content unload failed");	
 	}
 	catch(EngineException& e)
 	{
-		MessageBoxA(nullptr, e.what(), "", MB_OK);
+		MessageBoxA(nullptr, e.what(), "Game Error", MB_OK);
 		
-		logManager->Buffer << "****ERROR****\n";
-		logManager->Flush();
-		logManager->LogException(e);
-		logManager->Buffer << "*************\n";
-		logManager->Flush();
-
+		ErrorLogManager::GetErrorLogManager()->Buffer << "****ERROR****\n";
+		ErrorLogManager::GetErrorLogManager()->Flush();
+		ErrorLogManager::GetErrorLogManager()->LogException(e);
+		ErrorLogManager::GetErrorLogManager()->Buffer << "*************\n";
+		ErrorLogManager::GetErrorLogManager()->Flush();
 	}
 
+	return 0;
+}
+
+void PrepareLevel()
+{
+	if (!SceneManager::Get()->GetGameWorld().IsNetworkGame)
+	{
+		if (SettingsManager::Get()->GetBool("global", "createAutoLevel"))
+		{
+			LevelManager::Get()->CreateAutoLevel();
+		}
+		else
+		{
+			LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global","level1FileName"));
+		}
+	}
+
+	Logger::Get()->LogThis(SceneManager::Get()->GetGameWorld().IsNetworkGame
+		? NetworkManager::Get()->IsGameServer()
+			? "Waiting for network players. Press 'n' to start network game."
+			: "Waiting for the server to start the network game to begin." 
+		: "Creating Single player level...");
+}
+
+int InitializeGameSubSystems(gamelib::GameStructure& infrastructure)
+{
+	const auto screenWidth = 0; // 0 will mean it will get read from the settings file
+	const auto screenHeight = 0; // 0 will mean it will get read from the settings file
+	if (!IsSuccess(infrastructure.InitializeGameSubSystems(screenWidth, screenHeight, "Mazer 2d"), "Initialize Game subsystems...") ||
+		!IsSuccess(LevelManager::Get()->Initialize(), "Initializing Level Manager..."))
+	{
+		LogMessage("Game initialization failed.", SettingsManager::Get()->GetBool("global", "verbose"), true);
+		return -1;
+	}
 	return 0;
 }

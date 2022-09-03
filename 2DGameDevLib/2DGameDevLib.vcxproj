@@ -30,26 +30,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -163,7 +163,8 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameObjectEventFactory.h" />
-    <ClInclude Include="LevelGenerator.h" />
+    <ClInclude Include="Level.h" />
+    <ClInclude Include="RoomGenerator.h" />
     <ClInclude Include="MoveStrategy.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="pickup.h" />
@@ -171,13 +172,15 @@
     <ClInclude Include="PlayerComponent.h" />
     <ClInclude Include="Restrictions.h" />
     <ClInclude Include="Room.h" />
+    <ClInclude Include="Rooms.h" />
     <ClInclude Include="SnapToRoomStrategy.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EdgeTowardsRoomStrategy.cpp" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameObjectEventFactory.cpp" />
-    <ClCompile Include="LevelGenerator.cpp" />
+    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="RoomGenerator.cpp" />
     <ClCompile Include="MoveStrategy.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -191,6 +194,7 @@
     <ClCompile Include="Restrictions.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="2DGameDevLib.cpp" />
+    <ClCompile Include="Rooms.cpp" />
     <ClCompile Include="SnapToRoomStrategy.cpp" />
   </ItemGroup>
   <ItemGroup>

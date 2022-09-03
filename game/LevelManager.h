@@ -9,19 +9,19 @@
 #include "scene/SceneManager.h"
 #include "GameCommands.h"
 #include "Room.h"
+#include <events/EventFactory.h>
 
 typedef std::vector<std::shared_ptr<gamelib::GameObject>> ListOfGameObjects;
 
 class gamelib::GameWorldData;
+class gamelib::EventManager;
 
 class LevelManager : public gamelib::EventSubscriber
 {
 public:
 
-    /// <summary>
-    /// Construct a Level Manager
-    /// </summary>
-    LevelManager() = default;
+    static LevelManager* Get();
+    ~LevelManager();
 
     /// <summary>
     /// Initialize the level
@@ -38,6 +38,10 @@ public:
     /// Handle Level events
     /// </summary>
     gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> evt) override;
+
+    void OnStartNetworkLevel(std::shared_ptr<gamelib::Event> evt);
+
+    void OnNetworkPlayerJoined(std::shared_ptr<gamelib::Event> evt);
 
     /// <summary>
     /// Generates a new level
@@ -69,12 +73,28 @@ public:
     /// <summary>
     /// Create the Level's game objects
     /// </summary>
-    ListOfGameObjects CreateAutoLevel();	
+    ListOfGameObjects CreateAutoLevel();
+    void InitializePickups(const ListOfGameObjects& pickups, ListOfGameObjects& gameObjectsPtr);
+    void InitializeRooms(std::vector<std::shared_ptr<Room>>& rooms, ListOfGameObjects& gameObjectsPtr);
+
+
+    /// <summary>
+    /// Create a level from a level file
+    /// </summary>
+    /// <param name="filename">path to level file</param>
+    /// <returns>ListOfGameObjects</returns>
+    ListOfGameObjects CreateLevel(std::string filename);
 
     /// <summary>
     /// Starts the level 
     /// </summary>
     bool ChangeLevel(int levelNumber);
+protected:
+    /// <summary>
+    /// Construct a Level Manager
+    /// </summary>
+    LevelManager() = default;
+    static LevelManager* Instance;
     
 private:
 
@@ -92,11 +112,16 @@ private:
     /// Create the Pickups
     /// </summary>
     ListOfGameObjects CreatePickups(const std::vector<std::shared_ptr<Room>>& rooms, const int w, const int h);
+
+    
     
     /// <summary>
     /// Game commands - all game commands that we handle in this game.
     /// </summary>
     std::shared_ptr<GameCommands> _gameCommands;
+
+    gamelib::EventManager* eventManager;
+    gamelib::EventFactory* eventFactory;
 
     /// <summary>
     /// Remove game object

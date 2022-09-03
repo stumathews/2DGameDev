@@ -8,8 +8,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "2DGameDev", "GameDev.vcxpro
 		{669A9E46-91FC-4BF2-9D51-8B9C350D4D0D} = {669A9E46-91FC-4BF2-9D51-8B9C350D4D0D}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentManager", "ContentManager\ContentManager\ContentManager.csproj", "{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CppGameLib", "..\cppgamelib\cppgamelib.vcxproj", "{478A3EF4-5780-4567-BE58-56BECCD9D215}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CppGameLibTests", "..\cppgamelib\Tests\Tests\Tests.vcxproj", "{669A9E46-91FC-4BF2-9D51-8B9C350D4D0D}"
@@ -19,6 +17,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "2DGameDevLib", "2DGameDevLib\2DGameDevLib.vcxproj", "{825D337D-0F78-428C-9590-FDB39F79C6E9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "2DGameDevLibTests", "2DGameDevLibTests\2DGameDevLibTests.vcxproj", "{DD33B97B-06EB-4264-80CA-CE685A995029}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameEditor", "GameEditor\GameEditor\GameEditor.csproj", "{C8100667-08D9-4344-BF68-B9E2F7E34CC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,18 +41,6 @@ Global
 		{A335C1BA-CFDA-41FD-A0E3-307EBDF715CC}.Release|x64.Build.0 = Release|x64
 		{A335C1BA-CFDA-41FD-A0E3-307EBDF715CC}.Release|x86.ActiveCfg = Release|Win32
 		{A335C1BA-CFDA-41FD-A0E3-307EBDF715CC}.Release|x86.Build.0 = Release|Win32
-		{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}.Debug|x64.Build.0 = Debug|Any CPU
-		{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}.Debug|x86.Build.0 = Debug|Any CPU
-		{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}.Release|x64.ActiveCfg = Release|Any CPU
-		{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}.Release|x64.Build.0 = Release|Any CPU
-		{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}.Release|x86.ActiveCfg = Release|Any CPU
-		{3B33ACBF-A010-4CA5-A9C8-420A0DF7A943}.Release|x86.Build.0 = Release|Any CPU
 		{478A3EF4-5780-4567-BE58-56BECCD9D215}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{478A3EF4-5780-4567-BE58-56BECCD9D215}.Debug|Any CPU.Build.0 = Debug|Win32
 		{478A3EF4-5780-4567-BE58-56BECCD9D215}.Debug|x64.ActiveCfg = Debug|x64
@@ -107,6 +95,18 @@ Global
 		{DD33B97B-06EB-4264-80CA-CE685A995029}.Release|x64.Build.0 = Release|x64
 		{DD33B97B-06EB-4264-80CA-CE685A995029}.Release|x86.ActiveCfg = Release|Win32
 		{DD33B97B-06EB-4264-80CA-CE685A995029}.Release|x86.Build.0 = Release|Win32
+		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Debug|x64.Build.0 = Debug|Any CPU
+		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Debug|x86.Build.0 = Debug|Any CPU
+		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Release|x64.ActiveCfg = Release|Any CPU
+		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Release|x64.Build.0 = Release|Any CPU
+		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Release|x86.ActiveCfg = Release|Any CPU
+		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,6 +9,8 @@
 #include <events/NetworkTrafficRecievedEvent.h>
 #include <sstream>
 #include <net/NetworkManager.h>
+#include <events/EventFactory.h>
+#include <events/StartNetworkLevelEvent.h>
 
 using namespace gamelib;
 using namespace std;
@@ -76,6 +78,7 @@ void GameCommands::ReloadSettings(bool verbose)
 void GameCommands::GenerateNewLevel(bool verbose)
 {
 	Logger::Get()->LogThis("GameCommand: GenerateNewLevel", verbose);
+	ChangeLevel(false, 1);
 	EventManager::Get()->RaiseEvent(make_shared<gamelib::Event>(gamelib::EventType::GenerateNewLevel), this);
 }
 
@@ -116,6 +119,22 @@ void GameCommands::FetchedPickup(bool verbose)
 {
 	Logger::Get()->LogThis("GameCommand: FetchedPickup", verbose);
 	AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "fetched_pickup")))->AsSoundEffect());
+}
+
+void GameCommands::StartNetworkLevel()
+{
+	// This only works on the Game server
+	if(!SceneManager::Get()->GetGameWorld().IsNetworkGame)
+	{
+		return;
+	}
+
+	Logger::Get()->LogThis("GameCommand: StartNetworkLevel", verbose);
+
+	// Ask the LevelManager to prepare a level description and pass that to StartNetworkLevelEvent
+	// and let that propogate to all players
+
+	EventManager::Get()->RaiseEvent(std::make_unique<gamelib::StartNetworkLevelEvent>(1), this);
 }
 
 void GameCommands::PingGameServer()
