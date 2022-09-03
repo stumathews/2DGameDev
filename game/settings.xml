@@ -7,8 +7,8 @@
     <setting name="square_width" type="int">150</setting>
     <setting name="sprite_width" type="int">50</setting>
     <setting name="max_loops" type="int">4</setting>
-    <setting name="screen_width" type="int">800</setting>
-    <setting name="screen_height" type="int">600</setting>
+    <setting name="screen_width" type="int">640</setting>
+    <setting name="screen_height" type="int">480</setting>
     <setting name="frames_per_row" type="int">3</setting>
     <setting name="frames_per_column" type="int">3</setting>
     <setting name="verbose" type="bool">true</setting>
@@ -16,14 +16,14 @@
     <setting name="print_debugging_text" type="bool">false</setting>
     <setting name="print_debugging_text_neighbours_only" type="bool">false</setting>
 		<setting name="numPickups" type="int">20</setting>
-		<setting name="isNetworkGame" type="bool">false</setting>
+		<setting name="isNetworkGame" type="bool">true</setting>
 		<setting name="createAutoLevel" type="bool">false</setting>
 		<setting name="level1FileName" type="string">game\\Level1.xml</setting>
 		<setting name="level2FileName" type="string">game\\Level2.xml</setting>
   </global>
 	
 	<networking>
-		<setting name="isGameServer" type="bool">false</setting>
+		<setting name="isGameServer" type="bool">true</setting>
 		<setting name="gameServerAddress" type="string">Surface</setting>
 		<setting name="gameServerPort" type="string">8080</setting>
 		<setting name="maxPlayers" type="int">4</setting>

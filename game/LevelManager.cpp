@@ -419,17 +419,17 @@ ListOfGameObjects LevelManager::CreateLevel(string filename)
 	
 	auto rooms = level.Rooms;
 
-	InitializeRooms(rooms, gameObjectsPtr);
-
-	// Create the player
-	const auto playerWidth = rowWidth / 2;
-	const auto playerHeight = rowHeight / 2;
-	const auto player = CreatePlayer(rooms, playerWidth, playerHeight);
+	InitializeRooms(rooms, gameObjectsPtr);	
 
 	// Create the pickups
 	const auto pickupWidth = rowWidth / 2;
 	const auto pickupHeight = rowHeight / 2;
 	const auto pickups = CreatePickups(rooms, pickupWidth, pickupHeight);
+
+	// Create the player
+	const auto playerWidth = rowWidth / 2;
+	const auto playerHeight = rowHeight / 2;
+	const auto player = CreatePlayer(rooms, playerWidth, playerHeight);
 
 	// Setup the pickups
 	InitializePickups(pickups, gameObjectsPtr);

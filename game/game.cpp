@@ -64,7 +64,7 @@ void PrepareLevel()
 		}
 		else
 		{
-			LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global","level1FileName"));
+			LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level1FileName"));
 		}
 	}
 
@@ -79,7 +79,9 @@ int InitializeGameSubSystems(gamelib::GameStructure& infrastructure)
 {
 	const auto screenWidth = 0; // 0 will mean it will get read from the settings file
 	const auto screenHeight = 0; // 0 will mean it will get read from the settings file
-	if (!IsSuccess(infrastructure.InitializeGameSubSystems(screenWidth, screenHeight, "Mazer 2d"), "Initialize Game subsystems...") ||
+	
+
+	if (!IsSuccess(infrastructure.InitializeGameSubSystems(screenWidth, screenHeight, ""), "Initialize Game subsystems...") ||
 		!IsSuccess(LevelManager::Get()->Initialize(), "Initializing Level Manager..."))
 	{
 		LogMessage("Game initialization failed.", SettingsManager::Get()->GetBool("global", "verbose"), true);
