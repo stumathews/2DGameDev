@@ -60,7 +60,7 @@ namespace gamelib
 				// Basic collision detection (check if the player moved into me)				
 				if (player->GetCurrentRoom()->GetRoomNumber() == RoomNumber)
 				{
-					if (SDL_IntersectRect(&playerHostpotBounds, &Bounds, &result))
+					if (SDL_IntersectRect(&player->Bounds, &Bounds, &result))
 					{
 						generated_events.push_back(make_shared<gamelib::Event>(gamelib::EventType::FetchedPickup));
 						generated_events.push_back(make_shared<gamelib::GameObjectEvent>(Id, this, gamelib::GameObjectEventContext::Remove));
