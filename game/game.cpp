@@ -33,10 +33,10 @@ int main(int argc, char *args[])
 		if (InitializeGameSubSystems(infrastructure)) 
 			return -1;
 
-		// Prepare the level before starting the game loop
+		// Create game objects which will subscribe to events
 		PrepareLevel();
 
-		// Start the game loop which will pump update/draw events onto the event system, which certain objects subscribe to
+		// Start the game loop which will pump update/draw events onto the event system, which level objects subscribe to
 		return IsSuccess(infrastructure.DoGameLoop(), "Game loop failed") && 
 			   IsSuccess(infrastructure.UnloadGameSubsystems(), "Content unload failed");	
 	}
@@ -56,6 +56,7 @@ int main(int argc, char *args[])
 
 void PrepareLevel()
 {
+	// Single player mode
 	if (!SceneManager::Get()->GetGameWorld().IsNetworkGame)
 	{
 		if (SettingsManager::Get()->GetBool("global", "createAutoLevel"))
@@ -64,6 +65,7 @@ void PrepareLevel()
 		}
 		else
 		{
+			// We start by creating level 1
 			LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level1FileName"));
 		}
 	}

@@ -16,7 +16,7 @@
     <setting name="print_debugging_text" type="bool">false</setting>
     <setting name="print_debugging_text_neighbours_only" type="bool">false</setting>
 		<setting name="numPickups" type="int">20</setting>
-		<setting name="isNetworkGame" type="bool">true</setting>
+		<setting name="isNetworkGame" type="bool">false</setting>
 		<setting name="createAutoLevel" type="bool">false</setting>
 		<setting name="level1FileName" type="string">game\\Level1.xml</setting>
 		<setting name="level2FileName" type="string">game\\Level2.xml</setting>
@@ -34,6 +34,7 @@
       
   <!-- Maze Settings -->
   <grid>
+		<!-- createAutoLevel: -->
     <setting name="rows" type="int">10</setting>
     <setting name="cols" type="int">10</setting>
     <setting name="removeSidesRandomly" type="bool">true</setting>
@@ -81,6 +82,8 @@
     <setting name="ignoreRestrictions" type="bool">false</setting>
     <setting name="moveStrategy" type="string">edge</setting> <!-- 'snap' or 'edge' strategy -->
 		<setting name="debugMovement" type="bool">false</setting>
+		<setting name="moveDurationMs" type="int">250</setting>
+		<setting name="maxPixelsToMove" type="int">20</setting>
   </player>
 	
 	<EventManager>

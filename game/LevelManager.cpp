@@ -24,21 +24,6 @@
 using namespace gamelib;
 using namespace std;
 
-LevelManager* LevelManager::Get()
-{
-	if (Instance == nullptr)
-	{
-		Instance = new LevelManager();
-	}
-	return Instance;
-}
-
-LevelManager::~LevelManager()
-{
-	Instance = nullptr;
-}
-
-LevelManager* LevelManager::Instance = nullptr;
 
 bool LevelManager::Initialize()
 {
@@ -382,6 +367,8 @@ ListOfGameObjects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& ro
 		const auto positionInRoom = random_room->GetCenter(pickupWidth, pickupHeight);
 
 		auto pickup = std::shared_ptr<Pickup>(new Pickup(positionInRoom.GetX(), positionInRoom.GetY(), pickupWidth, pickupHeight, true));
+		
+		
 
 		// Place 3 sets evently of each type of pickup	
 		if(i < 1 * part) 
@@ -398,6 +385,7 @@ ListOfGameObjects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& ro
 		}
 
 		pickup->Initialize();
+		pickup->RoomNumber = rand_index;
 		pickups.push_back(pickup);
 	}
 	return pickups;
@@ -407,13 +395,11 @@ ListOfGameObjects LevelManager::CreateLevel(string filename)
 {	
 	LevelManager::Get()->ChangeLevel(1);
 
-	auto level = Level(filename);
+	Level level(filename);
 	level.Load();
-
-	const auto screenWidth = SettingsManager::Get()->GetInt("global", "screen_width");
-	const auto screenHeight = SettingsManager::Get()->GetInt("global", "screen_height");
-	const auto rowWidth = screenWidth / level.NumCols;
-	const auto rowHeight = screenHeight / level.NumRows;
+		
+	const auto rowWidth = SettingsManager::Get()->GetInt("global", "screen_width") / level.NumCols;
+	const auto rowHeight = SettingsManager::Get()->GetInt("global", "screen_height") / level.NumRows;
 
 	auto& gameObjectsPtr = SceneManager::Get()->GetGameWorld().GetGameObjects();
 	
@@ -489,13 +475,12 @@ void LevelManager::InitializePickups(const ListOfGameObjects& pickups, ListOfGam
 {
 	for (const auto& pickup : pickups)
 	{
-		auto gameObject = std::dynamic_pointer_cast<Pickup>(pickup);
-		auto addEvent = new AddGameObjectToCurrentSceneEvent(gameObject);
-
+		pickup->LoadSettings();
 		pickup->SubscribeToEvent(EventType::PlayerMovedEventType);
-		pickup->SubscribeToEvent(gamelib::EventType::DoLogicUpdateEventType);
+		pickup->SubscribeToEvent(EventType::DoLogicUpdateEventType);
 
-		pickup->RaiseEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(addEvent));
+		auto gameObject = std::dynamic_pointer_cast<Pickup>(pickup);
+		pickup->RaiseEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(gameObject)));
 
 		gameObjectsPtr.push_back(pickup);
 	}
@@ -508,6 +493,7 @@ void LevelManager::InitializeRooms(std::vector<std::shared_ptr<Room>>& rooms, Li
 		room->LoadSettings();
 		room->SubscribeToEvent(EventType::PlayerMovedEventType);
 		room->SubscribeToEvent(EventType::SettingsReloaded);
+
 		room->RaiseEvent(std::make_shared<AddGameObjectToCurrentSceneEvent>(std::dynamic_pointer_cast<Room>(room)));
 
 		gameObjectsPtr.push_back(dynamic_pointer_cast<gamelib::GameObject>(room));
@@ -528,3 +514,19 @@ bool LevelManager::ChangeLevel(int level)
 	}
 	return isSuccess;
 }
+
+LevelManager* LevelManager::Get()
+{
+	if (Instance == nullptr)
+	{
+		Instance = new LevelManager();
+	}
+	return Instance;
+}
+
+LevelManager::~LevelManager()
+{
+	Instance = nullptr;
+}
+
+LevelManager* LevelManager::Instance = nullptr;

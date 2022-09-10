@@ -145,7 +145,7 @@
     <colorkey red="255" blue="255" green="255"/>
     <sprite>
     <animation>
-      <keyframes duration="100"> <!-- Wait 0 ms before switching to next frame -->
+      <keyframes duration="100"> <!-- Wait 100 ms before switching to next frame -->
         <keyframe x="0" y="0" w="32" h="32" />
         <keyframe x="32" y="0" w="32" h="32" />
         <keyframe x="64" y="0" w="32" h="32" />

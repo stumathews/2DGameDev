@@ -20,7 +20,10 @@ class LevelManager : public gamelib::EventSubscriber
 {
 public:
 
+    // Get Singelton access to LevelManager
     static LevelManager* Get();
+
+    // Called on destruction of LevelManager (end of program)
     ~LevelManager();
 
     /// <summary>
@@ -74,7 +77,11 @@ public:
     /// Create the Level's game objects
     /// </summary>
     ListOfGameObjects CreateAutoLevel();
+
+    // Subscribe pickups to events, add to scene graph etc
     void InitializePickups(const ListOfGameObjects& pickups, ListOfGameObjects& gameObjectsPtr);
+
+    // Subscribe rooms to events, add to scene graph etc
     void InitializeRooms(std::vector<std::shared_ptr<Room>>& rooms, ListOfGameObjects& gameObjectsPtr);
 
 
@@ -89,11 +96,15 @@ public:
     /// Starts the level 
     /// </summary>
     bool ChangeLevel(int levelNumber);
+
 protected:
+
     /// <summary>
     /// Construct a Level Manager
     /// </summary>
     LevelManager() = default;
+
+    // Singleton Instance of LevelManager
     static LevelManager* Instance;
     
 private:
