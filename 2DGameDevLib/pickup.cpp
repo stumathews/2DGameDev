@@ -8,6 +8,7 @@
 #include <memory>
 #include <SpriteAsset.h>
 #include <common/aliases.h>
+#include <events/DoLogicUpdateEvent.h>
 
 using namespace std;
 
@@ -56,18 +57,20 @@ namespace gamelib
 			case gamelib::EventType::PlayerMovedEventType:				
 				SDL_Rect result;
 			
-				// Basic collision detection (check if the player moved into me)
-				// TODO: Optimation would be to know which room this pickup is in and which room the player is in
-				
-				if(SDL_IntersectRect(&playerHostpotBounds, &Bounds, &result))
+				// Basic collision detection (check if the player moved into me)				
+				if (player->GetCurrentRoom()->GetRoomNumber() == RoomNumber)
 				{
-					generated_events.push_back(make_shared<gamelib::Event>(gamelib::EventType::FetchedPickup));
-					generated_events.push_back(make_shared<gamelib::GameObjectEvent>(Id, this, gamelib::GameObjectEventContext::Remove));
-				}	
+					if (SDL_IntersectRect(&playerHostpotBounds, &Bounds, &result))
+					{
+						generated_events.push_back(make_shared<gamelib::Event>(gamelib::EventType::FetchedPickup));
+						generated_events.push_back(make_shared<gamelib::GameObjectEvent>(Id, this, gamelib::GameObjectEventContext::Remove));
+					}
+				}
 				break;
 			case gamelib::EventType::DoLogicUpdateEventType:
-				// Update bounds etc.
-				Update(0.0f);
+
+				auto updateInfo = std::static_pointer_cast<gamelib::LogicUpdateEvent>(event);
+				Update(updateInfo->deltaMs);
 				break;
 
 		}

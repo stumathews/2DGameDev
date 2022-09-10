@@ -73,8 +73,11 @@ namespace gamelib
 		///  Update Pickup
 		/// </summary>
 		void Update(float deltaMs) override;
+
+		int RoomNumber;
 		
 	private:
+
 
 		/// <summary>
 		/// Pickup width

@@ -13,11 +13,12 @@ public:
 
     // Inherited via IMoveStrategy
     virtual void MoveTo(std::shared_ptr<Room> room) override;
-	void SetPlayerPosition(gamelib::coordinate<int>& resultingMove);
+	void SetPlayerPosition(gamelib::coordinate<int> resultingMove);
 	virtual void MoveTo(std::shared_ptr<Room> room, std::shared_ptr<Movement> movement) override;
 private:
 	std::shared_ptr<Player> player;
 	int edgeIncrement;
+	bool debug;
 
 	// Inherited via IMoveStrategy
 	virtual bool CanMoveUp(const bool& isMovingUp, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& aboveRoom) override;

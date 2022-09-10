@@ -51,6 +51,10 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event)
 		case EventType::Fire:
 			Fire();
 			break;
+		case EventType::SettingsReloaded:
+			LogMessage("Reloading player settings", verbose);
+			LoadSettings();
+			break;
 		case EventType::InvalidMove:
 			LogMessage("Invalid move", verbose);
 			break;
@@ -59,41 +63,54 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event)
 	return createdEvents;
 }
 
+shared_ptr<Room> Player::GetTopRoom()
+{
+	return GetAdjacentRoomTo(GetCurrentRoom(), Side::Top);
+}
+shared_ptr<Room> Player::GetBottomRoom()
+{
+	return GetAdjacentRoomTo(GetCurrentRoom(), Side::Bottom);
+}
+shared_ptr<Room> Player::GetRightRoom()
+{
+	return GetAdjacentRoomTo(GetCurrentRoom(), Side::Right);
+}
+shared_ptr<Room> Player::GetLeftRoom()
+{
+	return GetAdjacentRoomTo(GetCurrentRoom(), Side::Left);
+}
+
 const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, ListOfEvents& createdEvents)
 {
 	auto controllerMoveEvent = dynamic_pointer_cast<ControllerMoveEvent>(event);	
 	auto movementDirection = controllerMoveEvent->direction;
-	auto currentRoom = GetCurrentRoom();
-	auto topRoom = GetAdjacentRoomTo(currentRoom, Side::Top);
-	auto rightRoom = GetAdjacentRoomTo(currentRoom, Side::Right);
-	auto bottomRoom = GetAdjacentRoomTo(currentRoom, Side::Bottom);
-	auto leftRoom = GetAdjacentRoomTo(currentRoom, Side::Left);			
-	auto moveTowardsRoom = GetTargettedRoom(controllerMoveEvent, topRoom, bottomRoom, leftRoom, rightRoom);
-
+	
 	SetPlayerDirection(movementDirection);
 	
-	if (!IsValidMove(movementDirection, moveStrategy->CanMoveDown(movementDirection == Direction::Down, currentRoom, bottomRoom), 
-										moveStrategy->CanMoveLeft(movementDirection == Direction::Left, currentRoom, leftRoom), 
-										moveStrategy->CanMoveRight(movementDirection == Direction::Right, currentRoom, rightRoom), 
-										moveStrategy->CanMoveUp(movementDirection == Direction::Up, currentRoom, topRoom)))
+	if (!IsValidMove(movementDirection))
 	{	
+		// We create an invalid move event as part of handling the move event 
 		createdEvents.push_back(make_shared<Event>(EventType::InvalidMove));
 		return createdEvents;
 	}	
 	
 	// Cancel last move
-	// TODO: This probbaly can be improved
+	// TODO: This probably can be improved
 	if(moveQueue.size() > 0)
 	{
+		if(debugMovement)
+			Logger::Get()->LogThis("Canceling last movement.");
+
 		moveQueue.clear();
 	}
 	
-	// Put new move in queue
-	// TODO: This probably could be improved
-	auto moveDurationMs = 500; // half a second
-	auto InterpolateMaxPixels = 10;
+	// A movement is a co-ordinated set of discreet moves
+	auto targetRoom = GetTargettedRoom(controllerMoveEvent, GetTopRoom(), GetBottomRoom(), GetLeftRoom(), GetRightRoom());
 
-	moveQueue.push_back(std::shared_ptr<Movement>(new Movement(moveDurationMs, std::to_string(moveTowardsRoom->GetRoomNumber()), InterpolateMaxPixels, debugMovement)));
+	// Put new move in queue	
+	auto movement = std::shared_ptr<Movement>(new Movement(moveDurationMs, std::to_string(targetRoom->GetRoomNumber()), maxPixelsToMove, debugMovement));
+
+	moveQueue.push_back(movement);
 		
 	// Player moved. Tell the world.
 	createdEvents.push_back(make_shared<PlayerMovedEvent>(movementDirection));
@@ -113,9 +130,14 @@ void Player::Update(float deltaMs)
 {
 	ProcessMovements(deltaMs);	
 
-	Bounds = { Position.GetX(), Position.GetY(), width, height };
+	Bounds = CalculateBounds(Position.GetX(), Position.GetY());
 
 	UpdateSprite(deltaMs);
+}
+
+SDL_Rect Player::CalculateBounds(int x, int y)
+{
+	return { x, y, width, height };
 }
 
 void Player::UpdateSprite(float deltaMs)
@@ -204,6 +226,9 @@ void Player::LoadSettings()
 	ignoreRestrictions = SettingsManager::Get()->GetBool("player", "ignoreRestrictions");
 	debugMovement = gamelib::SettingsManager::Get()->GetBool("player", "debugMovement");
 	verbose = SettingsManager::Get()->GetBool("global", "verbose");
+	moveDurationMs = SettingsManager::Get()->GetInt("player", "moveDurationMs");
+	maxPixelsToMove = SettingsManager::Get()->GetInt("player", "maxPixelsToMove");
+	
 }
 
 void Player::OnAfterMove(const gamelib::Direction& movementDirection)
@@ -245,6 +270,30 @@ bool Player::IsValidMove(const Direction& moveDirection, const bool& canMoveDown
 		moveDirection == Direction::Up && canMoveUp;
 }
 
+bool Player::IsValidMove(const Direction& movementDirection)
+{
+	if (ignoreRestrictions)
+	{
+		return true;
+	}
+
+	auto currentRoom = GetCurrentRoom();
+	auto topRoom = GetAdjacentRoomTo(currentRoom, Side::Top);
+	auto rightRoom = GetAdjacentRoomTo(currentRoom, Side::Right);
+	auto bottomRoom = GetAdjacentRoomTo(currentRoom, Side::Bottom);
+	auto leftRoom = GetAdjacentRoomTo(currentRoom, Side::Left);
+
+	auto canMoveDown = moveStrategy->CanMoveDown(movementDirection == Direction::Down, currentRoom, bottomRoom);
+	auto canMoveLeft = moveStrategy->CanMoveLeft(movementDirection == Direction::Left, currentRoom, leftRoom);
+	auto canMoveRight = moveStrategy->CanMoveRight(movementDirection == Direction::Right, currentRoom, rightRoom);
+	auto canMoveUp = moveStrategy->CanMoveUp(movementDirection == Direction::Up, currentRoom, topRoom);
+
+	return movementDirection == Direction::Down && canMoveDown ||
+		movementDirection == Direction::Left && canMoveLeft ||
+		movementDirection == Direction::Right && canMoveRight ||
+		movementDirection == Direction::Up && canMoveUp;
+}
+
 void Player::SetPlayerDirection(Direction direction)
 {
 	currentMovingDirection = direction;
@@ -273,7 +322,7 @@ const std::shared_ptr<Room> Player::GetRoom(int index)
 	return GameData::Get()->GetRoom(index);
 }
 
-const shared_ptr<Room> Player::GetAdjacentRoomTo(shared_ptr<Room>& currentRoom, Side side)
+const shared_ptr<Room> Player::GetAdjacentRoomTo(shared_ptr<Room> currentRoom, Side side)
 {
 	return GameData::Get()->GetRoom(currentRoom->GetNeighbourIndex(side));
 }
@@ -454,7 +503,7 @@ void Player::Fire()
 	RemoveWall(currentFacingDirection);	
 }
 
-std::shared_ptr<Room> Player::GetTargettedRoom(std::shared_ptr<gamelib::ControllerMoveEvent>& positionChangedEvent, std::shared_ptr<Room>& topRoom, std::shared_ptr<Room>& bottomRoom, std::shared_ptr<Room>& leftRoom, std::shared_ptr<Room>& rightRoom)
+std::shared_ptr<Room> Player::GetTargettedRoom(std::shared_ptr<gamelib::ControllerMoveEvent> positionChangedEvent, std::shared_ptr<Room> topRoom, std::shared_ptr<Room> bottomRoom, std::shared_ptr<Room> leftRoom, std::shared_ptr<Room> rightRoom)
 {
 	std::shared_ptr<Room> moveTowardsRoom = nullptr;
 

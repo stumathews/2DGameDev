@@ -7,11 +7,13 @@
 #include <common/Logger.h>
 #include <sstream>
 #include <exceptions/EngineException.h>
+#include <util/SettingsManager.h>
 
 EdgeTowardsRoomStrategy::EdgeTowardsRoomStrategy(std::shared_ptr<Player> player, int edgeIncrement)
 {
 	this->player = player;
 	this->edgeIncrement = edgeIncrement;
+	this->debug = gamelib::SettingsManager::Get()->GetBool("player", "debugMovement");
 }
 
 gamelib::Direction EdgeTowardsRoomStrategy::GetDirectionTowardsRoom(std::shared_ptr<Room> targetRoom)
@@ -40,8 +42,15 @@ gamelib::Direction EdgeTowardsRoomStrategy::GetDirectionTowardsRoom(std::shared_
 	else
 	{
 		std::stringstream message;
-		message << "The room number :" <<  roomNumber << " not in the neighbourhood of the player.";
-		gamelib::Logger::Get()->LogThis(message.str());
+		if (debug)
+		{
+			message << "The room number :" 
+				    << roomNumber 
+				    << " not in the neighbourhood of the player. Cannot determine direction towards targetted room.";
+
+			gamelib::Logger::Get()->LogThis(message.str());
+		}
+
 		moveDirection = gamelib::Direction::None;
 	}
 
@@ -85,19 +94,18 @@ void EdgeTowardsRoomStrategy::MoveTo(std::shared_ptr<Room> room)
 	SetPlayerPosition(resultingMove);
 }
 
-void EdgeTowardsRoomStrategy::SetPlayerPosition(gamelib::coordinate<int>& resultingMove)
+void EdgeTowardsRoomStrategy::SetPlayerPosition(gamelib::coordinate<int> resultingMove)
 {
 	player->Position.SetX(resultingMove.GetX());
 	player->Position.SetY(resultingMove.GetY());
 }
 
-void EdgeTowardsRoomStrategy::MoveTo(std::shared_ptr<Room> room, std::shared_ptr<Movement> movement)
+void EdgeTowardsRoomStrategy::MoveTo(std::shared_ptr<Room> targetRoom, std::shared_ptr<Movement> movement)
 {
-	// Edge player towards the room
-	auto resultingMove = CalculatePlayerMoveTo(room, movement->TakePixelsToMove());
+	if (!player->IsValidMove(GetDirectionTowardsRoom(targetRoom)))
+		return;
 
-	// Set the player's new position
-	SetPlayerPosition(resultingMove);
+	SetPlayerPosition(CalculatePlayerMoveTo(targetRoom, movement->TakePixelsToMove()));	
 }
 
 

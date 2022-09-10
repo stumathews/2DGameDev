@@ -52,6 +52,14 @@ public:
 	/// <returns></returns>
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event) override;
 
+	std::shared_ptr<Room> GetTopRoom();
+
+	std::shared_ptr<Room> GetBottomRoom();
+
+	std::shared_ptr<Room> GetRightRoom();
+
+	std::shared_ptr<Room> GetLeftRoom();
+
 	void Fire();
 
 	void RemoveWall(gamelib::Direction facaingDirection);
@@ -77,7 +85,7 @@ public:
 	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents);
 
 	
-	std::shared_ptr<Room> GetTargettedRoom(std::shared_ptr<gamelib::ControllerMoveEvent>& positionChangedEvent, std::shared_ptr<Room>& topRoom, std::shared_ptr<Room>& bottomRoom, std::shared_ptr<Room>& leftRoom, std::shared_ptr<Room>& rightRoom);
+	std::shared_ptr<Room> GetTargettedRoom(std::shared_ptr<gamelib::ControllerMoveEvent> positionChangedEvent, std::shared_ptr<Room> topRoom, std::shared_ptr<Room> bottomRoom, std::shared_ptr<Room> leftRoom, std::shared_ptr<Room> rightRoom);
 
 
 	void OnAfterMove(const gamelib::Direction& movementDirection);
@@ -85,6 +93,7 @@ public:
 	//void SetRoomRestrictions(const gamelib::Direction& movementDirection);
 	void SetRoomRestrictions();
 
+	// Sets the players direction
 	void SetPlayerDirection(gamelib::Direction direction);
 
 	const ptrdiff_t CountRoomGameObjects(ListOfGameObjects& gameObjects);
@@ -93,9 +102,11 @@ public:
 
 	const std::shared_ptr<Room> GetRoom(int index);
 
-	const std::shared_ptr<Room> GetAdjacentRoomTo(std::shared_ptr<Room>& currentRoom, Side side);
+	const std::shared_ptr<Room> GetAdjacentRoomTo(std::shared_ptr<Room> currentRoom, Side side);
 
 	bool IsValidMove(const gamelib::Direction& moveDirection, const bool& canMoveDown, const bool& canMoveLeft, const bool& canMoveRight, const bool& canMoveUp);
+
+	bool IsValidMove(const gamelib:: Direction& movementDirection);
 
 	gamelib::coordinate<int> GetHotspot();
 	
@@ -138,6 +149,8 @@ public:
 	void SetSpriteAnimationFrameGroup();
 
 	bool IsWithinRoom(std::shared_ptr<Room> room);
+
+	SDL_Rect CalculateBounds(int x, int y);
 
 	/// <summary>
 	/// Set the player's room
@@ -201,7 +214,8 @@ public:
 
 	std::string Identifier;
 private:
-	
+	int moveDurationMs = 0;
+	int maxPixelsToMove = 0;
 	std::shared_ptr<gamelib::AnimatedSprite> sprite;
 	int width;
 	int height;
