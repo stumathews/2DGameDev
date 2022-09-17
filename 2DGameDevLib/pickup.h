@@ -3,7 +3,7 @@
 #include "Room.h"
 #include "objects/DrawableGameObject.h"
 #include <events/IEventSubscriber.h>
-#include <objects/Sprite.h>
+#include <objects/AnimatedSprite.h>
 
 namespace gamelib
 {

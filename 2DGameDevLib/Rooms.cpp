@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Rooms.h"
 #include <util/SettingsManager.h>
+#include <functional>
 
 using namespace gamelib;
 
@@ -23,17 +24,32 @@ void Rooms::ConfigureRooms(int rows, int columns, std::vector<std::shared_ptr<Ro
 		auto canRemoveRightWall = roomCol >= 0 && roomCol < (columns - 1);
 
 		// Calculate indexes of sorrounding/adjacent rooms
-		auto roomIndexAbove = canRemoveTopWall ? (i - columns) : i;
-		auto roomIndexBelow = canRemoveBottomWall ? (i + columns) : i;
-		auto roomIndexLeft = canRemoveLeftWall ? prevIndex : i;
-		auto roomIndexRight = canRemoveRightWall ? nextIndex : i;
-		auto& thisRoom = rooms[i];
-		auto& nextRoom = nextIndex == totalRooms ? rooms[i] : rooms[nextIndex];
+		auto roomIndexAbove = canRemoveTopWall ? (i - columns) : -1;
+		auto roomIndexBelow = canRemoveBottomWall ? (i + columns) : -1;
+		auto roomIndexLeft = canRemoveLeftWall ? prevIndex : -1;
+		auto roomIndexRight = canRemoveRightWall ? nextIndex : -1;
+		auto thisRoom = rooms[i];
+		auto nextRoom = nextIndex == totalRooms ? nullptr : rooms[nextIndex];
 
 		thisRoom->SetSorroundingRooms(roomIndexAbove, roomIndexRight, roomIndexBelow, roomIndexLeft);
 
 		ConfigureWalls(thisRoom, canRemoveTopWall, rooms, nextRoom, canRemoveRightWall, canRemoveBottomWall, canRemoveLeftWall, prevIndex);
 	}
+}
+
+gamelib::coordinate<int> Rooms::CenterOfRoom(std::shared_ptr<Room> room, int yourWidth, int yourheight)
+{
+	// local func to the center the player in the given room
+	const std::function<coordinate<int>(Room, int, int)> centerPlayerFunc = [](const Room& room, int w, int h)
+	{
+		auto const room_x_mid = room.GetX() + (room.GetWidth() / 2);
+		auto const room_y_mid = room.GetY() + (room.GetHeight() / 2);
+		auto const x = room_x_mid - w / 2;
+		auto const y = room_y_mid - h / 2;
+		return coordinate<int>(x, y);
+	};
+
+	return centerPlayerFunc(*room, yourWidth, yourheight);
 }
 
 void Rooms::ConfigureWalls(std::shared_ptr<Room>&thisRoom, bool& canRemoveWallAbove, std::vector<std::shared_ptr<Room>>&rooms, std::shared_ptr<Room>&nextRoom, bool& canRemoveWallRight, bool& canRemoveWallBelow, bool& canRemoveWallLeft, const int& prevIndex)

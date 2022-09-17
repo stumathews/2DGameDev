@@ -9,9 +9,8 @@
 #include "Player.h"
 #include <memory>
 #include <events/SceneChangedEvent.h>
-#include <SpriteAsset.h>
+//#include <SpriteAsset.h>
 #include <objects/GameObjectFactory.h>
-#include "SnapToRoomStrategy.h"
 #include "EdgeTowardsRoomStrategy.h"
 #include "GameObjectEventFactory.h"
 #include <GameData.h>
@@ -20,6 +19,8 @@
 #include <events/StartNetworkLevelEvent.h>
 #include <Level.h>
 #include <Rooms.h>
+#include <objects/StaticSprite.h>
+#include <events/DoLogicUpdateEvent.h>
 
 using namespace gamelib;
 using namespace std;
@@ -44,6 +45,10 @@ bool LevelManager::Initialize()
 
 	verbose = SettingsManager::Get()->GetBool("global", "verbose");
 	SceneManager::Get()->GetGameWorld().IsNetworkGame = SettingsManager::Get()->GetBool("global", "isNetworkGame");
+
+
+	keyFrameTimer.Start(1000);
+	currentFrameNumber = 0;
 		
 	return true;
 }
@@ -61,6 +66,8 @@ gamelib::ListOfEvents LevelManager::HandleEvent(std::shared_ptr<Event> event)
 		break;
 	case EventType::FetchedPickup:
 		_gameCommands->FetchedPickup();
+		currentFrameNumber = currentFrameNumber < hudItem->GetNumKeyFrames() - 1 ? currentFrameNumber + 1 : 0;
+		hudItem->SetFrame(currentFrameNumber);
 		break;		
 	case EventType::GenerateNewLevel:
 		GenerateNewLevel();
@@ -86,14 +93,12 @@ gamelib::ListOfEvents LevelManager::HandleEvent(std::shared_ptr<Event> event)
 	case EventType::StartNetworkLevel:
 		OnStartNetworkLevel(event);
 		break;
-	default:
-		output << "Unknown EventType:" << ToString(event->type);
-		gamelib::Logger::Get()->LogThis(output.str());
 
 	}
 
 	return newEvents;
 }
+
 
 void LevelManager::OnStartNetworkLevel(std::shared_ptr<gamelib::Event> evt)
 {
@@ -319,7 +324,7 @@ shared_ptr<gamelib::GameObject> LevelManager::CreatePlayer(const vector<shared_p
 
 	GetPlayerAssetName(moveStrategy, player, spriteAssetName);
 
-	player->SetRoom(playerRoomIndex);
+	player->SetPlayerRoom(playerRoomIndex);
 	player->SetTag(constants::playerTag);
 	player->LoadSettings();
 	player->RaiseEvent(std::make_shared<AddGameObjectToCurrentSceneEvent>(player, 100));
@@ -337,21 +342,9 @@ shared_ptr<gamelib::GameObject> LevelManager::CreatePlayer(const vector<shared_p
 }
 
 void LevelManager::GetPlayerAssetName(std::string& moveStrategy, const std::shared_ptr<Player>& player, std::string& spriteAssetName) const
-{
-	if (moveStrategy == "snap")
-	{
-		player->SetMoveStrategy(shared_ptr<SnapToRoomStrategy>(new SnapToRoomStrategy(player)));
-		spriteAssetName = "snap_player";
-	}
-	else if (moveStrategy == "edge")
-	{
-		player->SetMoveStrategy(shared_ptr<EdgeTowardsRoomStrategy>(new EdgeTowardsRoomStrategy(player, 2)));
-		spriteAssetName = "edge_player";
-	}
-	else
-	{
-		THROW(12, "Unknown Move strategy", "Create Player");
-	}
+{	
+	player->SetMoveStrategy(shared_ptr<EdgeTowardsRoomStrategy>(new EdgeTowardsRoomStrategy(player, 2)));
+	spriteAssetName = "edge_player";
 }
 
 ListOfGameObjects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& rooms, const int pickupWidth, const int pickupHeight)
@@ -388,6 +381,9 @@ ListOfGameObjects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& ro
 		pickup->RoomNumber = rand_index;
 		pickups.push_back(pickup);
 	}
+
+	numLevelPickups = pickups.size();
+
 	return pickups;
 }
 
@@ -395,15 +391,15 @@ ListOfGameObjects LevelManager::CreateLevel(string filename)
 {	
 	LevelManager::Get()->ChangeLevel(1);
 
-	Level level(filename);
-	level.Load();
+	level = std::shared_ptr<Level>(new Level(filename));	
+	level->Load();
 		
-	const auto rowWidth = SettingsManager::Get()->GetInt("global", "screen_width") / level.NumCols;
-	const auto rowHeight = SettingsManager::Get()->GetInt("global", "screen_height") / level.NumRows;
+	const auto rowWidth = SettingsManager::Get()->GetInt("global", "screen_width") / level->NumCols;
+	const auto rowHeight = SettingsManager::Get()->GetInt("global", "screen_height") / level->NumRows;
 
 	auto& gameObjectsPtr = SceneManager::Get()->GetGameWorld().GetGameObjects();
 	
-	auto rooms = level.Rooms;
+	auto rooms = level->Rooms;
 
 	InitializeRooms(rooms, gameObjectsPtr);	
 
@@ -417,6 +413,22 @@ ListOfGameObjects LevelManager::CreateLevel(string filename)
 	const auto playerHeight = rowHeight / 2;
 	const auto player = CreatePlayer(rooms, playerWidth, playerHeight);
 
+	// Create Hud
+
+	auto spriteAsset = dynamic_pointer_cast<gamelib::SpriteAsset>(ResourceManager::Get()->GetAssetInfo("hudspritesheet"));
+
+	auto center = Rooms::CenterOfRoom(rooms[rooms.size() - 1], 32, 32);
+	hudItem = StaticSprite::Create(center.GetX(), center.GetY(), spriteAsset);
+	hudItem->LoadSettings();
+	hudItem->Initialize();
+	hudItem->SubscribeToEvent(EventType::PlayerMovedEventType);
+	hudItem->SubscribeToEvent(EventType::DoLogicUpdateEventType);
+
+	auto gameObject = std::dynamic_pointer_cast<GameObject>(hudItem);
+	hudItem->RaiseEvent(std::shared_ptr<AddGameObjectToCurrentSceneEvent>(new AddGameObjectToCurrentSceneEvent(gameObject)));
+
+	gameObjectsPtr.push_back(hudItem);
+
 	// Setup the pickups
 	InitializePickups(pickups, gameObjectsPtr);
 
@@ -427,6 +439,8 @@ ListOfGameObjects LevelManager::CreateLevel(string filename)
 
 	return gameObjectsPtr;
 }
+
+
 
 ListOfGameObjects LevelManager::CreateAutoLevel()
 {
@@ -513,6 +527,21 @@ bool LevelManager::ChangeLevel(int level)
 		LogMessage("Could not start level for unknown reasons. level=" + std::to_string(level));
 	}
 	return isSuccess;
+}
+
+int LevelManager::ReducePickupCount()
+{
+	return --numLevelPickups;
+}
+
+int LevelManager::IncreasePickupCount()
+{
+	return ++numLevelPickups;
+}
+
+shared_ptr<Level> LevelManager::GetLevel()
+{
+	return level;
 }
 
 LevelManager* LevelManager::Get()

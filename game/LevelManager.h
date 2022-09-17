@@ -10,11 +10,13 @@
 #include "GameCommands.h"
 #include "Room.h"
 #include <events/EventFactory.h>
+#include <objects/StaticSprite.h>
 
 typedef std::vector<std::shared_ptr<gamelib::GameObject>> ListOfGameObjects;
 
 class gamelib::GameWorldData;
 class gamelib::EventManager;
+class Level;
 
 class LevelManager : public gamelib::EventSubscriber
 {
@@ -97,12 +99,17 @@ public:
     /// </summary>
     bool ChangeLevel(int levelNumber);
 
-protected:
+    // Reduces the pickup count and returns the current pickup acount as a result
+    int ReducePickupCount();
 
-    /// <summary>
-    /// Construct a Level Manager
-    /// </summary>
-    LevelManager() = default;
+    // Increases the pickup count and returns the current pickup acount as a result
+    int IncreasePickupCount();
+
+    void Update(float deltaMs);
+
+    std::shared_ptr<Level> GetLevel();
+
+protected:
 
     // Singleton Instance of LevelManager
     static LevelManager* Instance;
@@ -123,9 +130,7 @@ private:
     /// Create the Pickups
     /// </summary>
     ListOfGameObjects CreatePickups(const std::vector<std::shared_ptr<Room>>& rooms, const int w, const int h);
-
-    
-    
+        
     /// <summary>
     /// Game commands - all game commands that we handle in this game.
     /// </summary>
@@ -153,4 +158,10 @@ private:
     /// Be verbose or not in logging
     /// </summary>
     bool verbose;
+
+    int numLevelPickups = 0;
+    gamelib::Timer keyFrameTimer;
+    gamelib::uint currentFrameNumber;
+    std::shared_ptr<StaticSprite> hudItem;
+    std::shared_ptr<Level> level = nullptr;
 };

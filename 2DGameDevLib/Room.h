@@ -41,6 +41,8 @@ public:
 	/// </summary>
 	Room(int number, int x, int y, int width, int height, bool fill = false);
 
+	void CalculateInnerBounds();
+
 	void SetupWalls();
 				
 	/// <summary>
@@ -193,6 +195,10 @@ public:
 	gamelib::Line BottomLine;
 	gamelib::Line LeftLine;
 
+	int GetRowNumber(int MaxCols);
+
+	int GetColumnNumber(int MaxCols);
+
 protected:
 
 	/// <summary>
@@ -268,6 +274,11 @@ private:
 	/// Add log entries when walls are removed
 	/// </summary>
 	bool logWallRemovals;
+
+	bool drawInnerBounds;
+	bool drawHotSpot;
+	bool printDebuggingTextNeighboursOnly;
+	bool printDebuggingText;
 	
 };
 

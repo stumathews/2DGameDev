@@ -8,6 +8,8 @@
 #include <sstream>
 #include <exceptions/EngineException.h>
 #include <util/SettingsManager.h>
+#include "../game/LevelManager.h"
+#include "Level.h"
 
 EdgeTowardsRoomStrategy::EdgeTowardsRoomStrategy(std::shared_ptr<Player> player, int edgeIncrement)
 {
@@ -57,41 +59,31 @@ gamelib::Direction EdgeTowardsRoomStrategy::GetDirectionTowardsRoom(std::shared_
 	return moveDirection;
 }
 
-gamelib::coordinate<int> EdgeTowardsRoomStrategy::CalculatePlayerMoveTo(std::shared_ptr<Room> room, int move_interval)
+gamelib::coordinate<int> EdgeTowardsRoomStrategy::CalculatePlayerMove(std::shared_ptr<Movement> movement, int pixelsToMove)
 {		
-	auto directionTowardsRoom = GetDirectionTowardsRoom(room);
 	int resulting_x;	
 	int resulting_y; 
 	
 	resulting_y = player->Position.GetY();
 	resulting_x = player->Position.GetX();
 
-	switch(directionTowardsRoom)
+	switch(movement->direction)
 	{
 	case gamelib::Direction::Down:
-		resulting_y += move_interval;
+		resulting_y += pixelsToMove;
 		break;	
 	case gamelib::Direction::Up:
-		resulting_y -= move_interval;
+		resulting_y -= pixelsToMove;
 		break;
 	case gamelib::Direction::Left:
-		resulting_x -= move_interval;
+		resulting_x -= pixelsToMove;
 		break;
 	case gamelib::Direction::Right:
-		resulting_x += move_interval;
+		resulting_x += pixelsToMove;
 		break;
 	}
 	
 	return gamelib::coordinate<int>(resulting_x, resulting_y);
-}
-
-void EdgeTowardsRoomStrategy::MoveTo(std::shared_ptr<Room> room)
-{
-	// Edge player towards the room
-	auto resultingMove = CalculatePlayerMoveTo(room);
-
-	// Set the player's new position
-	SetPlayerPosition(resultingMove);
 }
 
 void EdgeTowardsRoomStrategy::SetPlayerPosition(gamelib::coordinate<int> resultingMove)
@@ -100,75 +92,86 @@ void EdgeTowardsRoomStrategy::SetPlayerPosition(gamelib::coordinate<int> resulti
 	player->Position.SetY(resultingMove.GetY());
 }
 
-void EdgeTowardsRoomStrategy::MoveTo(std::shared_ptr<Room> targetRoom, std::shared_ptr<Movement> movement)
+void EdgeTowardsRoomStrategy::MovePlayer( std::shared_ptr<Movement> movement)
 {
-	if (!player->IsValidMove(GetDirectionTowardsRoom(targetRoom)))
+	if (!player->IsValidMove(movement))
 		return;
 
-	SetPlayerPosition(CalculatePlayerMoveTo(targetRoom, movement->TakePixelsToMove()));	
+	SetPlayerPosition(CalculatePlayerMove(movement, movement->TakePixelsToMove()));
 }
 
 
-bool EdgeTowardsRoomStrategy::WouldHitInnerBounds(std::shared_ptr<Room>& room)
+bool EdgeTowardsRoomStrategy::WouldPlayerHotspotHitRoomInnerBounds(std::shared_ptr<Room>& room, std::shared_ptr<Movement> movement)
 {
 	// Calculate where the player would be if the move is done
-	auto mockPlayerPosition = CalculatePlayerMoveTo(room);
+	auto mockPlayerPosition = CalculatePlayerMove(movement, movement->PreviewPixelsToMove());
 
 	// Calculate the location of the hotspot at that location
 	auto mockPlayerHotSpot = player->CalculateHotspotPosition(mockPlayerPosition.GetX(), mockPlayerPosition.GetY());
 
 	// Setup the bounds for the simulated hotspot
-	auto mockPlayerHotSpotBounds = SDL_Rect { mockPlayerHotSpot.GetX(), mockPlayerHotSpot.GetY(), 1, 1 };
+	auto mockPlayerHotSpotBounds = SDL_Rect { mockPlayerHotSpot.GetX(), mockPlayerHotSpot.GetY(), player->GetHotSpotLength() , player->GetHotSpotLength() };
 	
 	// Check if the player would intersect with the inner bounds of the room
 	SDL_Rect result;
-	return SDL_IntersectRect(&room->InnerBounds, &mockPlayerHotSpotBounds, &result);
+	auto isWithinRoom = SDL_IntersectRect(&room->InnerBounds, &mockPlayerHotSpotBounds, &result) == SDL_TRUE ? true : false;
+
+	/*std::stringstream ss2;
+	ss2 << "Room Inner Bounds (" << room->InnerBounds.x << ", " << room->InnerBounds.y << ", w=" << room->InnerBounds.w << " h=" << room->InnerBounds.h << std::endl;
+	gamelib::Logger::Get()->LogThis(ss2.str());
+	
+	std::stringstream ss;
+	ss << "Hotspot Preview: (" << mockPlayerHotSpotBounds.x << ", " << mockPlayerHotSpotBounds.y << ", w=" << mockPlayerHotSpotBounds.w << " h=" << mockPlayerHotSpotBounds.h << std::endl;
+	gamelib::Logger::Get()->LogThis(ss.str());
+	
+	std::stringstream ss1;	
+	ss1 << "Result Preview: (" << result.x << ", " << result.y << ", w=" << result.w << " h=" << result.h << std::endl;
+	gamelib::Logger::Get()->LogThis(ss1.str());
+
+	std::stringstream ss3;
+	ss3 << "IsWithinRoom: " << room->GetRoomNumber() << std::string((isWithinRoom ? "yes" : "no")) << std::endl;
+	gamelib::Logger::Get()->LogThis(ss3.str());*/
+	return isWithinRoom;
 }
 
-bool EdgeTowardsRoomStrategy::IsTerminalRooms(std::shared_ptr<Room> room1, std::shared_ptr<Room> room2)
-{
-	return room1->GetRoomNumber() == room2->GetRoomNumber();
-}
 
-bool EdgeTowardsRoomStrategy::CanMoveUp(const bool& isMovingUp, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& aboveRoom)
+bool EdgeTowardsRoomStrategy::CanPlayerMoveUp(std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& aboveRoom, std::shared_ptr<Movement> movement)
 {
-	if(!isMovingUp)
-		return false;
-
-	auto hasBlockingWalls = aboveRoom->HasBottomWall() && currentRoom->HasTopWall();
-	return IsTerminalRooms(aboveRoom, currentRoom) ?  WouldHitInnerBounds(currentRoom) : !hasBlockingWalls || !WouldHitInnerBounds(aboveRoom);
+	auto hasValidTargetRoom = aboveRoom != nullptr;
+	auto hasBlockingWalls = (!hasValidTargetRoom || aboveRoom->HasBottomWall() && currentRoom->HasTopWall());
+	auto isWithinCurrentRoom = WouldPlayerHotspotHitRoomInnerBounds(currentRoom, movement);
+	auto isInNoMansLand = !isWithinCurrentRoom && (hasValidTargetRoom && !WouldPlayerHotspotHitRoomInnerBounds(aboveRoom, movement));
+	
+	return isWithinCurrentRoom || isInNoMansLand || (!hasBlockingWalls);
 }
 
 
-bool EdgeTowardsRoomStrategy::CanMoveDown(const bool& isMovingDown, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& bottomRoom)
+bool EdgeTowardsRoomStrategy::CanPlayerMoveDown(std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& bottomRoom, std::shared_ptr<Movement> movement)
 {
-	if(!isMovingDown)
-		return false;
+	auto hasValidTargetRoom = bottomRoom != nullptr;
+	auto hasBlockingWalls = (!hasValidTargetRoom || bottomRoom->HasTopWall()) && currentRoom->HasBottomWall();
+	auto isWithinCurrentRoom = WouldPlayerHotspotHitRoomInnerBounds(currentRoom, movement);
+	auto isInNoMansLand = !isWithinCurrentRoom && (hasValidTargetRoom && !WouldPlayerHotspotHitRoomInnerBounds(bottomRoom, movement));
 
-	auto hasNoBlockingWalls = !bottomRoom->HasTopWall() && !currentRoom->HasBottomWall();
-	return IsTerminalRooms(bottomRoom, currentRoom) 
-		? WouldHitInnerBounds(currentRoom) 
-		: hasNoBlockingWalls || !WouldHitInnerBounds(bottomRoom);
+	return isWithinCurrentRoom || isInNoMansLand || (!hasBlockingWalls);
 }
 
-bool EdgeTowardsRoomStrategy::CanMoveLeft(const bool& isMovingLeft, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& leftRoom)
+bool EdgeTowardsRoomStrategy::CanPlayerMoveLeft(std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& leftRoom, std::shared_ptr<Movement> movement)
 {
-	if(!isMovingLeft)
-		return false;
+	auto hasValidTargetRoom = leftRoom != nullptr;
+	auto hasBlockingWalls = (!hasValidTargetRoom || leftRoom->HasRightWall()) && currentRoom->HasLeftWall();
+	auto isWithinCurrentRoom = WouldPlayerHotspotHitRoomInnerBounds(currentRoom, movement);
+	auto isInNoMansLand = !isWithinCurrentRoom && (hasValidTargetRoom && !WouldPlayerHotspotHitRoomInnerBounds(leftRoom, movement));
 
-	auto hasNoBlockingWalls = !leftRoom->HasRightWall() && !currentRoom->HasLeftWall();
-	return IsTerminalRooms(leftRoom, currentRoom) 
-		? WouldHitInnerBounds(currentRoom) 
-		: hasNoBlockingWalls || !WouldHitInnerBounds(leftRoom);
+	return isWithinCurrentRoom || isInNoMansLand || (!hasBlockingWalls);
 }
 
-bool EdgeTowardsRoomStrategy::CanMoveRight(const bool& isMovingRight, std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& rightRoom)
+bool EdgeTowardsRoomStrategy::CanPlayerMoveRight(std::shared_ptr<Room>& currentRoom, std::shared_ptr<Room>& rightRoom, std::shared_ptr<Movement> movement)
 {
-	if(!isMovingRight)
-		return false;
+	auto hasValidTargetRoom = rightRoom != nullptr;
+	auto hasBlockingWalls = (!hasValidTargetRoom || rightRoom->HasLeftWall()) && currentRoom->HasRightWall();
+	auto isWithinCurrentRoom = WouldPlayerHotspotHitRoomInnerBounds(currentRoom, movement);
+	auto isInNoMansLand = !isWithinCurrentRoom && (hasValidTargetRoom && !WouldPlayerHotspotHitRoomInnerBounds(rightRoom, movement));
 
-	auto hasNoBlockingWalls = !rightRoom->HasLeftWall() && !currentRoom->HasRightWall();
-	return IsTerminalRooms(rightRoom, currentRoom) 
-		? WouldHitInnerBounds(currentRoom) 
-		: hasNoBlockingWalls || !WouldHitInnerBounds(rightRoom);
+	return isWithinCurrentRoom || isInNoMansLand || (!hasBlockingWalls);
 }

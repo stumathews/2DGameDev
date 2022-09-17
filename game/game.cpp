@@ -33,7 +33,7 @@ int main(int argc, char *args[])
 		if (InitializeGameSubSystems(infrastructure)) 
 			return -1;
 
-		// Create game objects which will subscribe to events
+		// Create/add game objects
 		PrepareLevel();
 
 		// Start the game loop which will pump update/draw events onto the event system, which level objects subscribe to

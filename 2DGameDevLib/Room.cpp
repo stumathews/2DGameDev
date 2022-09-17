@@ -13,7 +13,7 @@ using namespace gamelib;
 Room::Room(int number, int x, int y, int width, int height, bool fill) : DrawableGameObject(x, y, true)	
 {
 	this->Bounds = { x, y, width, height };
-	this->InnerBounds = { Bounds.x + innerBoundsOffset, Bounds.y + innerBoundsOffset, Bounds.w - innerBoundsOffset, Bounds.h - innerBoundsOffset };
+	
 	this->Width = width;
 	this->Height = height;
 	this->RoomNumber = number;
@@ -28,11 +28,30 @@ Room::Room(int number, int x, int y, int width, int height, bool fill) : Drawabl
 	this->innerBoundsOffset = 0;	 
 	this->abcd = ABCDRectangle(x, y, width, height); // Room geometry helper
 
+	CalculateInnerBounds();
 	SetupWalls();
+}
+
+void Room::CalculateInnerBounds()
+{
+	this->InnerBounds = SDL_Rect 
+	{ 
+		Bounds.x + innerBoundsOffset, 
+		Bounds.y + innerBoundsOffset,
+		Bounds.w - innerBoundsOffset * 2,
+		Bounds.h - innerBoundsOffset * 2
+	};
 }
 
 void Room::SetupWalls()
 {
+	/*
+		A(ax,ay)----B(bx,by)
+		|                  |
+		|                  |
+		D(dx,dy)----C(cx,cy)
+	*/
+
 	// Calculate the geometry of the walls
 	auto& rect = this->abcd;
 	const auto ax = rect.GetAx();
@@ -108,7 +127,7 @@ gamelib::ListOfEvents& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedE
 	
 	if(isPlayerWithinRoom)
 	{
-		player->SetRoom(RoomNumber);
+		player->SetPlayerRoom(RoomNumber);
 	}
 
 	return generatedEvents;
@@ -149,13 +168,13 @@ void Room::DrawDiagnostics(SDL_Renderer* renderer)
 		DrawFilledRect(renderer, &Bounds, { 255, 0 ,0 ,0 });
 	}
 		
-	if(SettingsManager::Get()->GetBool("global", "print_debugging_text"))
+	if(printDebuggingText)
 	{
 		const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);
 		const SDL_Color Red = { 255, 0, 0, 0};
 		const SDL_Color Yellow = { 255, 255, 0, 0};
 
-		if(SettingsManager::Get()->GetBool("global", "print_debugging_text_neighbours_only"))
+		if(printDebuggingTextNeighboursOnly)
 		{			
 			auto playerRoom = player->GetCurrentRoom();
 			if(RoomNumber == playerRoom->topRoomIndex || RoomNumber == playerRoom->rightRoomIndex || 
@@ -175,18 +194,17 @@ void Room::DrawDiagnostics(SDL_Renderer* renderer)
 		}
 	}
 	
-	if(SettingsManager::Get()->GetBool("room","drawHotSpot"))
+	if(drawHotSpot)
 	{
 		SDL_Rect point_bounds = { GetHotspot().GetX() - Width/2, GetHotspot().GetY() +Height/2 };
 		SDL_Color Cyan = { 0, 255, 255, 0 };
 		DrawFilledRect(renderer, &point_bounds , Cyan);
 	}
 
-	if(SettingsManager::Get()->GetBool("room","drawinnerBounds"))
+	if(drawInnerBounds)
 	{
 		SDL_SetRenderDrawColor(renderer, 255, 255 ,0, 0); // Yellow
-		auto innerBounds = SDL_Rect { Bounds.x + innerBoundsOffset, Bounds.y + innerBoundsOffset, Bounds.w - innerBoundsOffset, Bounds.h - innerBoundsOffset };
-		SDL_RenderDrawRect(renderer, &innerBounds);
+		SDL_RenderDrawRect(renderer, &InnerBounds);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	}
 }
@@ -208,7 +226,13 @@ void Room::LoadSettings()
 
 	fill = SettingsManager::Get()->GetBool("room_fill", "enable");
 	innerBoundsOffset = SettingsManager::Get()->GetInt("room", "innerBoundsOffset");
+	CalculateInnerBounds();
 	logWallRemovals = SettingsManager::Get()->GetBool("room", "logWallRemovals");
+	drawInnerBounds = SettingsManager::Get()->GetBool("room", "drawinnerBounds");
+	drawHotSpot = SettingsManager::Get()->GetBool("room", "drawHotSpot");
+	printDebuggingTextNeighboursOnly = SettingsManager::Get()->GetBool("global", "print_debugging_text_neighbours_only");
+	printDebuggingText = SettingsManager::Get()->GetBool("global", "print_debugging_text");
+	
 }
 
 ABCDRectangle& Room::GetABCDRectangle()
@@ -224,6 +248,20 @@ gamelib::coordinate<int> Room::GetHotspot()
 int Room::GetRoomNumber()
 {
 	return RoomNumber;
+}
+
+int Room::GetRowNumber(int MaxCols)
+{
+	auto row = GetRoomNumber() / MaxCols; // row for this roomNumber		
+	return row;
+}
+
+int Room::GetColumnNumber(int MaxCols)
+{
+	auto row = GetRowNumber(MaxCols); // row for this roomNumber
+	auto rowCol0 = row * MaxCols; // column 0 in this row
+	auto col = GetRoomNumber() - rowCol0; // col for this roomNumber
+	return col;
 }
 
 void Room::SetSorroundingRooms(const int top_index, const int right_index, const int bottom_index, const int left_index)

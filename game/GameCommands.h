@@ -33,6 +33,7 @@ public:
 	void PingGameServer();
 private:
 	bool verbose;
+	bool logCommands;
 
 	// Inherited via EventSubscriber
 	virtual std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt) override;

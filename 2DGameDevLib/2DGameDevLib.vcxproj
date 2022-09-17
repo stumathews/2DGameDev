@@ -173,7 +173,6 @@
     <ClInclude Include="Restrictions.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="Rooms.h" />
-    <ClInclude Include="SnapToRoomStrategy.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EdgeTowardsRoomStrategy.cpp" />
@@ -195,7 +194,6 @@
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="2DGameDevLib.cpp" />
     <ClCompile Include="Rooms.cpp" />
-    <ClCompile Include="SnapToRoomStrategy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\cppgamelib\cppgamelib.vcxproj">

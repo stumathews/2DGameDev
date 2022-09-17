@@ -11,13 +11,15 @@
 #include <net/NetworkManager.h>
 #include <events/EventFactory.h>
 #include <events/StartNetworkLevelEvent.h>
+#include "LevelManager.h"
 
 using namespace gamelib;
 using namespace std;
 
 GameCommands::GameCommands()
 {
-	this->verbose = false;
+	verbose = SettingsManager::Get()->GetBool("global", "verbose");
+	logCommands = SettingsManager::Get()->GetBool("global", "verbose");
 	
 	EventManager::Get()->SubscribeToEvent(EventType::NetworkPlayerJoined, this);
 	EventManager::Get()->SubscribeToEvent(EventType::NetworkTrafficReceived, this);
@@ -25,7 +27,8 @@ GameCommands::GameCommands()
 
 void GameCommands::Fire(bool verbose)
 {
-	Logger::Get()->LogThis("GameCommand: Fire", true);
+	if(logCommands)
+		Logger::Get()->LogThis("GameCommand: Fire", verbose);
 	
 	PlaySoundEffect(gamelib::AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("scratch.wav"))->AsSoundEffect());
 	
@@ -34,57 +37,75 @@ void GameCommands::Fire(bool verbose)
 
 void GameCommands::MoveUp(bool verbose)
 {
-	Logger::Get()->LogThis("GameCommand: MoveUp", true);
+	if (logCommands)
+		Logger::Get()->LogThis("GameCommand: MoveUp", verbose);
+	
 	EventManager::Get()->RaiseEvent(std::make_unique<gamelib::ControllerMoveEvent>(gamelib::Direction::Up), this);
 }
 
 void GameCommands::MoveDown(bool verbose)
 {
-	Logger::Get()->LogThis("GameCommand: MoveDown", true);
+	if (logCommands)
+		Logger::Get()->LogThis("GameCommand: MoveDown", verbose);
+	
 	EventManager::Get()->RaiseEvent(std::make_unique<gamelib::ControllerMoveEvent>(gamelib::Direction::Down), this);
 }
 
 void GameCommands::MoveLeft(bool verbose)
 {
-	Logger::Get()->LogThis("GameCommand: MoveLeft", true);
+	if (logCommands)
+		Logger::Get()->LogThis("GameCommand: MoveLeft", verbose);
+
 	EventManager::Get()->RaiseEvent(std::make_unique<gamelib::ControllerMoveEvent>(gamelib::Direction::Left), this);
 }
 
 void GameCommands::MoveRight(bool verbose)
 {
-	Logger::Get()->LogThis("GameCommand: MoveRight", true);
+	if (logCommands)
+		Logger::Get()->LogThis("GameCommand: MoveRight", verbose);
+
 	EventManager::Get()->RaiseEvent(std::make_unique<gamelib::ControllerMoveEvent>(gamelib::Direction::Right), this);
 }
 
 void GameCommands::PlaySoundEffect(Mix_Chunk* effect)
 {
-	Logger::Get()->LogThis("GameCommand: PlaySoundEffect", true);
+	if (logCommands)
+		Logger::Get()->LogThis("GameCommand: PlaySoundEffect", verbose);
+
 	AudioManager::Get()->Play(effect);
 }
 
 void GameCommands::ChangeLevel(bool verbose, short newLevel)
 {
-	Logger::Get()->LogThis("GameCommand: ChangeLevel", verbose);
+	if (logCommands)
+		Logger::Get()->LogThis("GameCommand: ChangeLevel", verbose);
+
 	EventManager::Get()->RaiseEvent(std::make_unique<gamelib::SceneChangedEvent>(newLevel), this);
 }
 
 void GameCommands::ReloadSettings(bool verbose)
 {
-	Logger::Get()->LogThis("GameCommand: ReloadSettings", verbose);
+	if (logCommands)
+		Logger::Get()->LogThis("GameCommand: ReloadSettings", verbose);
+
 	SettingsManager::Get()->Reload();
 	EventManager::Get()->RaiseEvent(make_shared<gamelib::Event>(gamelib::EventType::SettingsReloaded), this);
 }
 
 void GameCommands::GenerateNewLevel(bool verbose)
 {
-	Logger::Get()->LogThis("GameCommand: GenerateNewLevel", verbose);
+	if (logCommands)
+		Logger::Get()->LogThis("GameCommand: GenerateNewLevel", verbose);
+
 	ChangeLevel(false, 1);
 	EventManager::Get()->RaiseEvent(make_shared<gamelib::Event>(gamelib::EventType::GenerateNewLevel), this);
 }
 
 void GameCommands::ToggleMusic(bool verbose)
 {	
-	Logger::Get()->LogThis("GameCommand: ToggleMusic", verbose);
+	if (logCommands)
+		Logger::Get()->LogThis("GameCommand: ToggleMusic", verbose);
+
 	if (!Mix_PlayingMusic())
 	{
 		AudioManager::Get()->Play(gamelib::AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("MainTheme.wav"))->AsMusic());
@@ -104,21 +125,32 @@ void GameCommands::ToggleMusic(bool verbose)
 
 void GameCommands::Quit(bool verbose)
 {	
-	Logger::Get()->LogThis("GameCommand: Quitting", verbose);
+	if (logCommands)
+		Logger::Get()->LogThis("GameCommand: Quitting", verbose);
+
 	SceneManager::Get()->GetGameWorld().IsGameDone = 1;
 }
 
 void GameCommands::InvalidMove(bool verbose)
 {
-	Logger::Get()->LogThis("GameCommand: Invalid move!", verbose);
+	if (logCommands)
+		Logger::Get()->LogThis("GameCommand: Invalid move!", verbose);
+
 	AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "invalid_move")))->AsSoundEffect());
 
 }
 
 void GameCommands::FetchedPickup(bool verbose)
 {
-	Logger::Get()->LogThis("GameCommand: FetchedPickup", verbose);
+	if (logCommands)
+		Logger::Get()->LogThis("GameCommand: FetchedPickup", verbose);
+
 	AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "fetched_pickup")))->AsSoundEffect());
+
+	if(LevelManager::Get()->ReducePickupCount() == 0)
+	{
+		Logger::Get()->LogThis("All Pickups Collected Well Done!");
+	}
 }
 
 void GameCommands::StartNetworkLevel()
@@ -129,7 +161,8 @@ void GameCommands::StartNetworkLevel()
 		return;
 	}
 
-	Logger::Get()->LogThis("GameCommand: StartNetworkLevel", verbose);
+	if (logCommands)
+		Logger::Get()->LogThis("GameCommand: StartNetworkLevel", verbose);
 
 	// Ask the LevelManager to prepare a level description and pass that to StartNetworkLevelEvent
 	// and let that propogate to all players

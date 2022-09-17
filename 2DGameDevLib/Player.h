@@ -6,7 +6,7 @@
 #include "events/Event.h"
 #include "Room.h"
 #include <ai/FSM.h>
-#include <objects/sprite.h>
+#include <objects/AnimatedSprite.h>
 #include "MoveStrategy.h"
 #include "util/Tuple.h"
 #include "Restrictions.h"
@@ -62,7 +62,8 @@ public:
 
 	void Fire();
 
-	void RemoveWall(gamelib::Direction facaingDirection);
+	// Remove the wall that is on the side the direction the player is facing
+	void RemovePlayerFacingWall();
 
 	void RemoveRightWall();
 
@@ -84,11 +85,14 @@ public:
 
 	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents);
 
+	// Add to player's list of movements to process during its next update cycle
+	void AddToPlayerMovements(std::shared_ptr<gamelib::ControllerMoveEvent>& controllerMoveEvent, ListOfEvents& createdEvents);
+
 	
 	std::shared_ptr<Room> GetTargettedRoom(std::shared_ptr<gamelib::ControllerMoveEvent> positionChangedEvent, std::shared_ptr<Room> topRoom, std::shared_ptr<Room> bottomRoom, std::shared_ptr<Room> leftRoom, std::shared_ptr<Room> rightRoom);
 
 
-	void OnAfterMove(const gamelib::Direction& movementDirection);
+	void OnAfterMove();
 
 	//void SetRoomRestrictions(const gamelib::Direction& movementDirection);
 	void SetRoomRestrictions();
@@ -104,9 +108,9 @@ public:
 
 	const std::shared_ptr<Room> GetAdjacentRoomTo(std::shared_ptr<Room> currentRoom, Side side);
 
-	bool IsValidMove(const gamelib::Direction& moveDirection, const bool& canMoveDown, const bool& canMoveLeft, const bool& canMoveRight, const bool& canMoveUp);
+	bool IsValidMove(const gamelib::Direction& moveDirection, const bool& canMoveDown, const bool& canMoveLeft, const bool& canMoveRight, const bool& canMoveUp, std::shared_ptr<Movement> movement);
 
-	bool IsValidMove(const gamelib:: Direction& movementDirection);
+	bool IsValidMove(std::shared_ptr<Movement> movement);
 
 	gamelib::coordinate<int> GetHotspot();
 	
@@ -142,12 +146,14 @@ public:
 
 	void UpdateSprite(float deltaMs);
 
-	bool HasPendingMoves();
+	bool PlayerHasPendingMoves();
 
 	void ProcessMovements(float deltaMs);
 
+	// Depending on the player's direction, a diffirent group/set of key frames in the sprite will cycle
 	void SetSpriteAnimationFrameGroup();
 
+	// Set if the player is in this room or not		
 	bool IsWithinRoom(std::shared_ptr<Room> room);
 
 	SDL_Rect CalculateBounds(int x, int y);
@@ -156,7 +162,7 @@ public:
 	/// Set the player's room
 	/// </summary>
 	/// <param name="roomIndex"></param>
-	void SetRoom(int roomIndex);
+	void SetPlayerRoom(int roomIndex);
 
 	/// <summary>
 	/// Get players width
@@ -187,7 +193,7 @@ public:
 	/// Set the movement strategy
 	/// </summary>
 	/// <param name="moveStrategy"></param>
-	void SetMoveStrategy(std::shared_ptr<IMoveStrategy> moveStrategy);
+	void SetMoveStrategy(std::shared_ptr<IPlayerMoveStrategy> moveStrategy);
 
 	/// <summary>
 	/// Restrictions
@@ -212,6 +218,8 @@ public:
 	/// <returns></returns>
 	gamelib::coordinate<int> CalculateHotspotPosition(int x, int y);
 
+	int GetHotSpotLength();
+
 	std::string Identifier;
 private:
 	int moveDurationMs = 0;
@@ -221,9 +229,12 @@ private:
 	int height;
 	int playerRoomIndex = 0;
 	bool drawBounds = false;
+	bool hideSprite = false;
+	bool drawHotSpot = false;
+	int hotspotSize = 0;
 	gamelib::Direction currentMovingDirection;
 	gamelib::Direction currentFacingDirection;
-	std::shared_ptr<IMoveStrategy> moveStrategy;
+	std::shared_ptr<IPlayerMoveStrategy> moveStrategy;
 	std::deque<std::shared_ptr<Movement>> moveQueue;
 	bool ignoreRestrictions;
 	bool debugMovement;
