@@ -160,8 +160,14 @@ private:
     bool verbose;
 
     int numLevelPickups = 0;
-    gamelib::Timer keyFrameTimer;
-    gamelib::uint currentFrameNumber;
+
+    /// <summary>
+    /// Hud item at the bottom right of the screen
+    /// </summary>
     std::shared_ptr<StaticSprite> hudItem;
+
+    /// <summary>
+    /// Current level
+    /// </summary>
     std::shared_ptr<Level> level = nullptr;
 };

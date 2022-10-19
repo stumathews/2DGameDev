@@ -75,7 +75,7 @@ void GameCommands::PlaySoundEffect(Mix_Chunk* effect)
 	AudioManager::Get()->Play(effect);
 }
 
-void GameCommands::ChangeLevel(bool verbose, short newLevel)
+void GameCommands::RaiseChangedLevel(bool verbose, short newLevel)
 {
 	if (logCommands)
 		Logger::Get()->LogThis("GameCommand: ChangeLevel", verbose);
@@ -97,8 +97,30 @@ void GameCommands::GenerateNewLevel(bool verbose)
 	if (logCommands)
 		Logger::Get()->LogThis("GameCommand: GenerateNewLevel", verbose);
 
-	ChangeLevel(false, 1);
+	RaiseChangedLevel(false, 1);
 	EventManager::Get()->RaiseEvent(make_shared<gamelib::Event>(gamelib::EventType::GenerateNewLevel), this);
+}
+
+void GameCommands::LoadNewLevel(int level)
+{
+	switch (level)
+	{
+	case 1:
+		LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level1FileName"));
+		break;
+	case 2:
+		LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level2FileName"));
+		break;
+	case 3:
+		LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level3FileName"));
+		break;
+	case 4:
+		LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level4FileName"));
+		break;
+	}
+
+	RaiseChangedLevel(verbose, level);
+	
 }
 
 void GameCommands::ToggleMusic(bool verbose)

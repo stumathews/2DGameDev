@@ -9,7 +9,6 @@
 #include "Player.h"
 #include <memory>
 #include <events/SceneChangedEvent.h>
-//#include <SpriteAsset.h>
 #include <objects/GameObjectFactory.h>
 #include "EdgeTowardsRoomStrategy.h"
 #include "GameObjectEventFactory.h"
@@ -21,10 +20,10 @@
 #include <Rooms.h>
 #include <objects/StaticSprite.h>
 #include <events/DoLogicUpdateEvent.h>
+#include <events/SceneChangedEvent.h>
 
 using namespace gamelib;
 using namespace std;
-
 
 bool LevelManager::Initialize()
 {
@@ -44,12 +43,9 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(EventType::StartNetworkLevel, this);
 
 	verbose = SettingsManager::Get()->GetBool("global", "verbose");
+
 	SceneManager::Get()->GetGameWorld().IsNetworkGame = SettingsManager::Get()->GetBool("global", "isNetworkGame");
-
-
-	keyFrameTimer.Start(1000);
-	currentFrameNumber = 0;
-		
+			
 	return true;
 }
 
@@ -66,8 +62,7 @@ gamelib::ListOfEvents LevelManager::HandleEvent(std::shared_ptr<Event> event)
 		break;
 	case EventType::FetchedPickup:
 		_gameCommands->FetchedPickup();
-		currentFrameNumber = currentFrameNumber < hudItem->GetNumKeyFrames() - 1 ? currentFrameNumber + 1 : 0;
-		hudItem->SetFrame(currentFrameNumber);
+		hudItem->AdvanceFrame();
 		break;		
 	case EventType::GenerateNewLevel:
 		GenerateNewLevel();
@@ -125,7 +120,8 @@ void LevelManager::GenerateNewLevel()
 
 void LevelManager::RemoveAllGameObjects()
 {
-	std::for_each(std::begin(SceneManager::Get()->GetGameWorld().GetGameObjects()), std::end(SceneManager::Get()->GetGameWorld().GetGameObjects()), [this](std::shared_ptr<gamelib::GameObject> gameObject) 
+	auto objects = SceneManager::Get()->GetGameWorld().GetGameObjects();
+	std::for_each(std::begin(objects), std::end(objects), [this](std::shared_ptr<gamelib::GameObject> gameObject)
 	{
 		eventManager->RaiseEvent(GameObjectEventFactory::MakeRemoveObjectEvent(&(*gameObject)), this);
 	});
@@ -244,21 +240,17 @@ void LevelManager::GetKeyboardInput()
 			case SDLK_ESCAPE:
 				_gameCommands->Quit(verbose);
 				break;
-			case SDLK_j:	
-				GenerateNewLevel();
-				_gameCommands->ChangeLevel(verbose, 1);
+			case SDLK_h:	
+				_gameCommands->LoadNewLevel(1);
+				break;
+			case SDLK_j:
+				_gameCommands->LoadNewLevel(2);
 				break;
 			case SDLK_k:
-				GenerateNewLevel();
-				_gameCommands->ChangeLevel(verbose, 2);
+				_gameCommands->LoadNewLevel(3);
 				break;
 			case SDLK_l:
-				GenerateNewLevel();
-				_gameCommands->ChangeLevel(verbose, 3);
-				break;
-			case SDLK_x:
-				GenerateNewLevel();
-				_gameCommands->ChangeLevel(verbose, 4);
+				_gameCommands->LoadNewLevel(4);
 				break;
 			case SDLK_1:
 				_gameCommands->PlaySoundEffect(gamelib::AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("high.wav"))->AsSoundEffect());				
@@ -389,8 +381,7 @@ ListOfGameObjects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& ro
 
 ListOfGameObjects LevelManager::CreateLevel(string filename)
 {	
-	LevelManager::Get()->ChangeLevel(1);
-
+	RemoveAllGameObjects();
 	level = std::shared_ptr<Level>(new Level(filename));	
 	level->Load();
 		
@@ -519,7 +510,7 @@ bool LevelManager::ChangeLevel(int level)
 	bool isSuccess = false;
 	try
 	{
-		_gameCommands->ChangeLevel(false, level);
+		_gameCommands->RaiseChangedLevel(false, level);
 		isSuccess = true;
 	}
 	catch (...)

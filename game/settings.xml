@@ -19,7 +19,9 @@
 		<setting name="isNetworkGame" type="bool">false</setting>
 		<setting name="createAutoLevel" type="bool">false</setting>
 		<setting name="level1FileName" type="string">game\\Level1.xml</setting>
-		<setting name="level2FileName" type="string">game\\Level2.xml</setting>
+		<setting name="level2FileName" type="string">game\\balls.xml</setting>
+    <setting name="level3FileName" type="string">game\\eight.xml</setting>
+    <setting name="level4FileName" type="string">game\\stu.xml</setting>
   </global>
 
 	<gamecommands>
@@ -75,23 +77,23 @@
     <setting name="move_interval" type="int">1</setting>
     <setting name="drawBounds" type="bool">false</setting>
     <setting name="hotspotSize" type="int">2</setting>
-    <setting name="drawHotspot" type="bool">true</setting>
+    <setting name="drawHotspot" type="bool">false</setting>
     <setting name="hideSprite" type="bool">false</setting>
     <setting name="box_width" type="int">10</setting>
     <setting name="r" type="int">255</setting>
     <setting name="g" type="int">0</setting>
     <setting name="b" type="int">0</setting>
     <setting name="a" type="int">0</setting> 
-    <setting name="verbose" type="bool">true</setting>
+    <setting name="verbose" type="bool">false</setting>
     <setting name="ignoreRestrictions" type="bool">false</setting>
     <setting name="moveStrategy" type="string">edge</setting> <!-- 'snap' or 'edge' strategy -->
-		<setting name="debugMovement" type="bool">true</setting>
+		<setting name="debugMovement" type="bool">false</setting>
 		<setting name="moveDurationMs" type="int">200</setting>
 		<setting name="maxPixelsToMove" type="int">10</setting>
   </player>
 
 	<sprite>
-		<setting name="debug" type="bool">true</setting>
+		<setting name="debug" type="bool">false</setting>
 	</sprite>
 	
 	<EventManager>

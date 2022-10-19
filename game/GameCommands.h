@@ -22,9 +22,10 @@ public:
 	void MoveLeft(bool verbose);
 	void MoveRight(bool verbose);
 	void PlaySoundEffect(Mix_Chunk* effect);
-	void ChangeLevel(bool verbose, short newLevel);
+	void RaiseChangedLevel(bool verbose, short newLevel);
 	void ReloadSettings(bool verbose);
 	void GenerateNewLevel(bool verbose);
+	void LoadNewLevel(int level);
 	void ToggleMusic(bool verbose);
 	void Quit(bool verbose);
 	void InvalidMove(bool verbose = false);
