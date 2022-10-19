@@ -77,18 +77,22 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 
 void Player::AddToPlayerMovements(std::shared_ptr<gamelib::ControllerMoveEvent>& controllerMoveEvent, ListOfEvents& createdEvents)
 {
-	auto targetRoom = GetTargettedRoom(controllerMoveEvent, GetTopRoom(), GetBottomRoom(), GetLeftRoom(), GetRightRoom());
-	auto targetRoomNumberAsString = targetRoom != nullptr ? std::to_string(targetRoom->GetRoomNumber()) : "";
-	auto lastMoveIsSameAsCurrent = PlayerHasPendingMoves() ? moveQueue.back()->GetMovementTargetId() == targetRoomNumberAsString : false;
-
-	// The player will process all its own movements in its update function
+	auto lastMoveIsSameAsCurrent = PlayerHasPendingMoves() 
+		? moveQueue.back()->direction == controllerMoveEvent->Direction
+		: false;
+	
 	if (!lastMoveIsSameAsCurrent)
 	{
-		if (debugMovement)
-			Logger::Get()->LogThis("Canceling last movement.");
-
 		// Cancel any pending moves 
-		moveQueue.clear();
+		if (PlayerHasPendingMoves())
+		{
+			if (debugMovement)
+				Logger::Get()->LogThis("Canceling last movement.");
+
+			moveQueue.clear();
+		}
+
+		// The player will process all its own movements in its update function
 		moveQueue.push_back(std::shared_ptr<Movement>(new Movement(moveDurationMs, controllerMoveEvent->Direction, maxPixelsToMove, debugMovement)));
 	}		
 
