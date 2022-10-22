@@ -102,9 +102,16 @@ void Player::AddToPlayerMovements(std::shared_ptr<gamelib::ControllerMoveEvent>&
 
 void Player::Update(float deltaMs)
 {
+	// Calculate players new position, based on the movements created by the controller
 	ProcessMovements(deltaMs);
+
+	// Calculate new bounds based on position
 	Bounds = CalculateBounds(Position.GetX(), Position.GetY());
+
 	UpdateSprite(deltaMs);
+
+	// Move the sprite to match the position of the player
+	sprite->MoveSprite(Position.GetX(), Position.GetY());
 }
 
 void Player::Draw(SDL_Renderer* renderer)
@@ -124,19 +131,21 @@ void Player::UpdateSprite(float deltaMs)
 	if(!sprite)
 		return;
 		
+	// Select the key frames relevant for the direction the player is facing
 	SetSpriteAnimationFrameGroup();
 
+	// Allow animation, i.e frames to be switched if there are moves pending to animate
 	if (PlayerHasPendingMoves())
 	{
-		sprite->StartAnimation();
+		sprite->EnableAnimation();
 	}
 	else
 	{
-		sprite->StopAnimation();
+		sprite->DisableAnimation();
 	}
 
+	// Allow the sprite to process duration of last frame
 	sprite->Update(deltaMs);
-	sprite->MoveSprite(Position.GetX(), Position.GetY());
 }
 
 void Player::ProcessMovements(float deltaMs)
@@ -145,7 +154,7 @@ void Player::ProcessMovements(float deltaMs)
 	for (auto& currentMovement : moveQueue)
 	{
 		if (!currentMovement->IsComplete())
-		{			
+		{
 			currentMovement->Update(deltaMs);	
 			
 			// Actually move player (set player's position)
@@ -154,16 +163,6 @@ void Player::ProcessMovements(float deltaMs)
 			OnAfterMove();
 		}
 	}
-
-	/*if (!moveQueue.empty())
-	{
-		auto lastMove = moveQueue.back();
-		auto targetRoom = GameData::Get()->GetRoom(std::atoi(lastMove->GetMovementTargetId().c_str()));
-		if (!IsWithinRoom(CurrentRoom) && !IsWithinRoom(targetRoom))
-		{
-			moveStrategy->MovePlayerTo()
-		}
-	}*/
 
 	// Remove moves if they have all been completed.
 	moveQueue.erase(std::remove_if(moveQueue.begin(), moveQueue.end(), [&](const std::shared_ptr<Movement> movement)-> bool 

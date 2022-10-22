@@ -80,6 +80,8 @@ public:
     /// </summary>
     ListOfGameObjects CreateAutoLevel();
 
+    void InitializePlayer(std::shared_ptr<Player> player);
+
     // Subscribe pickups to events, add to scene graph etc
     void InitializePickups(const ListOfGameObjects& pickups, ListOfGameObjects& gameObjectsPtr);
 
@@ -109,6 +111,8 @@ public:
 
     std::shared_ptr<Level> GetLevel();
 
+    void RegisterGameObject(std::shared_ptr<gamelib::GameObject> obj);
+
 protected:
 
     // Singleton Instance of LevelManager
@@ -119,7 +123,7 @@ private:
     /// <summary>
     /// Create the Player
     /// </summary>
-    std::shared_ptr<gamelib::GameObject> CreatePlayer(std::vector<std::shared_ptr<Room>> rooms, const int w, const int h) const;
+    std::shared_ptr<Player> CreatePlayer(std::vector<std::shared_ptr<Room>> rooms, const int w, const int h) const;
 
     /// <summary>
     /// GetPlayerAssetName
@@ -170,4 +174,6 @@ private:
     /// Current level
     /// </summary>
     std::shared_ptr<Level> level = nullptr;
+
+    void AddGameObjectToScene(std::shared_ptr<gamelib::GameObject> object);
 };
