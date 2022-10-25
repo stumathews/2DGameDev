@@ -8,6 +8,7 @@
 #include <geometry/Line.h>
 #include <common/aliases.h>
 
+// Side of a room
 enum class Side
 {
 	Top,
@@ -16,6 +17,7 @@ enum class Side
 	Left
 };
 
+// Turns a side enum into a loggable string
 inline const char* ToString(Side side)
 {
 	switch (side)
@@ -41,19 +43,21 @@ public:
 	/// </summary>
 	Room(int number, int x, int y, int width, int height, bool fill = false);
 
+	// The inner bounds are a inner ring within the bounds of the wall. Useful to indicate if things fall within the room
 	void CalculateInnerBounds();
 
+	// Configure the walls of the room somehow
 	void SetupWalls();
 				
 	/// <summary>
-	/// Get Sorrounding rooms
+	/// Get Sorrounding rooms - i.e the 4 sorrounding rooms of this room
 	/// </summary>
-	void SetSorroundingRooms(const int top_index, const int right_index, const int bottom_index, const int left_index);
+	void SetSorroundingRooms(const int topIndex, const int rightIndex, const int bottomIndex, const int leftIndex);
 
 	/// <summary>
 	/// Get the center coordinates of the room
 	/// </summary>
-	const gamelib::coordinate<int> GetCenter(const int w, const int h);
+	const gamelib::coordinate<int> GetCenter(const int width, const int height);
 
 	/// <summary>
 	/// Get Neighbour on side index
@@ -85,33 +89,26 @@ public:
 	int GetHeight() const;
 
 	/// <summary>
-	/// IsWalled (zero based)
+	/// IsWalled (zero based). Does this room have a wall errected on specified side.
 	/// </summary>
-	/// <param name="wall"></param>
-	/// <returns></returns>
 	bool IsWalled(Side wall);
-
 	bool HasTopWall();
 	bool HasBottomWall();
 	bool HasLeftWall();
 	bool HasRightWall();
-
-	/// <summary>
-	/// Remove wall
-	/// </summary>
 	void RemoveWall(Side wall);
-
 	void LogWallRemoval(Side wall);
 
+	// Specifically mark wall as not being errected
 	void SetNotWalled(Side wall);
+
+	// Specifically mark wall as being errected
+	void SetWalled(Side wall);
 
 	/// <summary>
 	/// Add a wall
 	/// </summary>
-	/// <param name="wall"></param>
-	void AddWall(Side wall);
-
-	void SetWalled(Side wall);
+	void AddWall(Side wall);	
 
 	/// <summary>
 	/// Remove wall
@@ -147,9 +144,7 @@ public:
 	gamelib::ListOfEvents& OnPlayerMoved(std::vector<std::shared_ptr<gamelib::Event>>& generatedEvents);
 
 	void DrawWalls(SDL_Renderer* renderer);
-
 	void DrawLine(SDL_Renderer* renderer, gamelib::Line& line);
-
 	void DrawDiagnostics(SDL_Renderer* renderer);
 
 	/// <summary>
@@ -196,7 +191,6 @@ public:
 	gamelib::Line LeftLine;
 
 	int GetRowNumber(int MaxCols);
-
 	int GetColumnNumber(int MaxCols);
 
 protected:
@@ -252,7 +246,6 @@ protected:
 	/// </summary>
 	int Height;	
 
-
 private:
 	
 	/// <summary>
@@ -274,12 +267,10 @@ private:
 	/// Add log entries when walls are removed
 	/// </summary>
 	bool logWallRemovals;
-
 	bool drawInnerBounds;
 	bool drawHotSpot;
 	bool printDebuggingTextNeighboursOnly;
-	bool printDebuggingText;
-	
+	bool printDebuggingText;	
 };
 
 

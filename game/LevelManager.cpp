@@ -280,8 +280,9 @@ void LevelManager::GetKeyboardInput()
 				_gameCommands->StartNetworkLevel();				
 				break;
 			default:
-				std::cout << "Unknown control key" << std::endl;
-				LogMessage("Unknown control key", verbose);
+				std::string msg = "Unknown control key:" + sdlEvent.key.keysym.sym;
+				std::cout << msg << std::endl;
+				LogMessage(msg, verbose);
 				break;
 			}
 		}
@@ -301,34 +302,20 @@ size_t LevelManager::GetRandomIndex(const int min, const int max)
 }
 
 shared_ptr<Player> LevelManager::CreatePlayer(const vector<shared_ptr<Room>> rooms, const int playerWidth, const int playerHeight) const
-{	
-	
-	const auto minNumRooms = 0;
-	const auto playerRoomIndex = GetRandomIndex(minNumRooms, rooms.size());
+{		
+	const auto playerRoomIndex = GetRandomIndex(0, rooms.size());
 	
 	// Automatically determine which room to place the player - random
 	const auto playerRoom = rooms[playerRoomIndex];
-	const auto positionInRoom = playerRoom->GetCenter(playerWidth, playerHeight);	
-	const auto playerNickName = SceneManager::Get()->GetGameWorld().IsNetworkGame ? 
-								SettingsManager::Get()->GetString("networking", "nickname")
+	const auto centerPositionInRoom = playerRoom->GetCenter(playerWidth, playerHeight);	
+
+	// Read the player's name from config file. In the future there could be a player xml definition
+	const auto playerNickName = SceneManager::Get()->GetGameWorld().IsNetworkGame 
+								? SettingsManager::Get()->GetString("networking", "nickname")
 								: "Player1";
 
-	// Create the player and place its coorginates in the room
-	auto const player =  shared_ptr<Player>(new Player(positionInRoom.GetX(), positionInRoom.GetY(), playerWidth, playerHeight, playerNickName));	
-
-	// Allow the player to know which room it is in
-	player->SetPlayerRoom(playerRoomIndex);
-	player->CenterPlayerInRoom(playerRoom);
-
-	// TODO: Pass the room object to the player constructor
-
-	return player;
-}
-
-void LevelManager::GetPlayerAssetName(std::string& moveStrategy, const std::shared_ptr<Player>& player, std::string& spriteAssetName) const
-{	
-	player->SetMoveStrategy(shared_ptr<EdgeTowardsRoomStrategy>(new EdgeTowardsRoomStrategy(player, 2)));
-	spriteAssetName = "edge_player";
+	// Create the player in room
+	return shared_ptr<Player>(new Player(playerRoom, playerWidth, playerHeight, playerNickName));
 }
 
 ListOfGameObjects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& rooms, const int pickupWidth, const int pickupHeight)
@@ -345,8 +332,6 @@ ListOfGameObjects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& ro
 
 		auto pickup = std::shared_ptr<Pickup>(new Pickup(positionInRoom.GetX(), positionInRoom.GetY(), pickupWidth, pickupHeight, true));
 		
-		
-
 		// Place 3 sets evently of each type of pickup	
 		if(i < 1 * part) 
 		{
@@ -374,14 +359,19 @@ ListOfGameObjects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& ro
 ListOfGameObjects LevelManager::CreateLevel(string filename)
 {	
 	RemoveAllGameObjects();
+
+	// Load the level definition file
 	level = std::shared_ptr<Level>(new Level(filename));	
 	level->Load();
 		
+	// Determine the dimensions of the rows and columns based on the available spaces
 	const auto rowWidth = SettingsManager::Get()->GetInt("global", "screen_width") / level->NumCols;
 	const auto rowHeight = SettingsManager::Get()->GetInt("global", "screen_height") / level->NumRows;
 
+	// Get reference to where all our game objects will be kept
 	auto& gameObjectsPtr = SceneManager::Get()->GetGameWorld().GetGameObjects();
 	
+	// Get reference to the list of rooms in the level
 	auto rooms = level->Rooms;
 
 	InitializeRooms(rooms, gameObjectsPtr);	
@@ -392,36 +382,23 @@ ListOfGameObjects LevelManager::CreateLevel(string filename)
 	const auto pickups = CreatePickups(rooms, pickupWidth, pickupHeight);
 
 	// Create the player
-	const auto playerWidth = rowWidth / 2;
-	const auto playerHeight = rowHeight / 2;
-	const auto player = CreatePlayer(rooms, playerWidth, playerHeight);
-
-	InitializePlayer(player);
+	auto playerSpriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo("edge_player"));
+	const auto player = CreatePlayer(rooms, playerSpriteAsset->Dimensions.GetWidth(), playerSpriteAsset->Dimensions.GetHeight());
 	
-	// Add player to game world
-	//gameObjectsPtr.push_back(player);	
+	InitializePlayer(player, playerSpriteAsset);
 	RegisterGameObject(player);
 
 	// Create Hud
+	hudItem = StaticSprite::Create(rooms[rooms.size() - 1]->GetCenter(player->GetWidth(), player->GetHeight()), 
+		dynamic_pointer_cast<gamelib::SpriteAsset>(ResourceManager::Get()->GetAssetInfo("hudspritesheet")));
 
-	auto spriteAsset = dynamic_pointer_cast<gamelib::SpriteAsset>(ResourceManager::Get()->GetAssetInfo("hudspritesheet"));
-
-	auto center = Rooms::CenterOfRoom(rooms[rooms.size() - 1], 32, 32);
-	hudItem = StaticSprite::Create(center.GetX(), center.GetY(), spriteAsset);
-	hudItem->LoadSettings();
-	hudItem->Initialize();
-	hudItem->SubscribeToEvent(EventType::PlayerMovedEventType);
-	hudItem->SubscribeToEvent(EventType::DoLogicUpdateEventType);
-
-	
-
-	//gameObjectsPtr.push_back(hudItem);
+	InitializeHudItem(hudItem);
 	RegisterGameObject(hudItem);
 
 	// Setup the pickups
 	InitializePickups(pickups, gameObjectsPtr);
-
 	
+	// Add single UI elements to the scene
 	AddGameObjectToScene(player);
 	AddGameObjectToScene(hudItem);
 
@@ -430,6 +407,13 @@ ListOfGameObjects LevelManager::CreateLevel(string filename)
 	return gameObjectsPtr;
 }
 
+void LevelManager::InitializeHudItem(std::shared_ptr<StaticSprite> hudItem)
+{
+	hudItem->LoadSettings();
+	hudItem->Initialize();
+	hudItem->SubscribeToEvent(EventType::PlayerMovedEventType);
+	hudItem->SubscribeToEvent(EventType::DoLogicUpdateEventType);
+}
 
 void LevelManager::AddGameObjectToScene(std::shared_ptr<gamelib::GameObject> object)
 {
@@ -463,16 +447,16 @@ ListOfGameObjects LevelManager::CreateAutoLevel()
 	InitializeRooms(rooms, gameObjectsPtr);
 			
 	// Create the player
-	const auto playerWidth = rowWidth/2;
-	const auto playerHeight = rowHeight/2;
-	const auto player = CreatePlayer(rooms, playerWidth, playerHeight);
+	
+	auto playerSpriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo("edge_player"));
+	const auto player = CreatePlayer(rooms, playerSpriteAsset->Dimensions.GetWidth(), playerSpriteAsset->Dimensions.GetHeight());
 
 	// Setup the player
-	InitializePlayer(player);
+	InitializePlayer(player, playerSpriteAsset);
 
 	// Create the pickups
-	const auto pickupWidth = rowWidth/2;
-	const auto pickupHeight = rowHeight/2;
+	const auto pickupWidth = 32;
+	const auto pickupHeight = 32;
 	const auto pickups = CreatePickups(rooms, pickupWidth, pickupHeight);
 
 	// Setup the pickups
@@ -486,23 +470,20 @@ ListOfGameObjects LevelManager::CreateAutoLevel()
 	return gameObjectsPtr;
 }
 
-void LevelManager::InitializePlayer(std::shared_ptr<Player> player)
+void LevelManager::InitializePlayer(std::shared_ptr<Player> player, std::shared_ptr<gamelib::SpriteAsset> spriteAsset)
 {
-	auto moveStrategy = SettingsManager::Get()->GetString("player", "moveStrategy");
-
-	std::string spriteAssetName;
-
-	GetPlayerAssetName(moveStrategy, player, spriteAssetName);
-
+	// Set the player's control/movement strategy
+	player->SetMoveStrategy(shared_ptr<EdgeTowardsRoomStrategy>(new EdgeTowardsRoomStrategy(player, 2)));
 	player->SetTag(constants::playerTag);
+
+	// Player can load its own settings
 	player->LoadSettings();
 
-	auto spriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(spriteAssetName));
-	auto sprite = AnimatedSprite::Create(player->Position.GetX(), player->Position.GetY(), spriteAsset);
+	// Load/Create/Set the player's sprite
+	player->SetSprite(AnimatedSprite::Create(player->Position.GetX(), player->Position.GetY(),
+		spriteAsset));
 
-	player->SetSprite(sprite);
-
-	// We keep track of the player globally
+	// We keep a reference to track of the player globally
 	SceneManager::Get()->GetGameWorld().player = player;
 }
 

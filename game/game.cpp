@@ -22,27 +22,34 @@ using namespace gamelib;
 
 int main(int argc, char *args[])
 {
+	// Ready the game log
 	ErrorLogManager::GetErrorLogManager()->Create("GameErrors.txt");
 
 	try
 	{
 		// Create our game structure that uses the level manager's polling function for keyboard input
-		GameStructure infrastructure([&]() { LevelManager::Get()->GetKeyboardInput(); });
+		GameStructure infrastructure([&]() 
+			{
+				// We will inject our custom controller-input function into the game structure
+				LevelManager::Get()->GetKeyboardInput(); 
+			});
 				
 		// Initialize all the required game sub systems
 		if (InitializeGameSubSystems(infrastructure)) 
 			return -1;
 
-		// Create/add game objects
+		// Load level and create/add game objects
 		PrepareLevel();
 
 		// Start the game loop which will pump update/draw events onto the event system, which level objects subscribe to
 		return IsSuccess(infrastructure.DoGameLoop(), "Game loop failed") && 
+			   // Then unload the game subsystems
 			   IsSuccess(infrastructure.UnloadGameSubsystems(), "Content unload failed");	
 	}
 	catch(EngineException& e)
 	{
-		MessageBoxA(nullptr, e.what(), "Game Error", MB_OK);
+		// Something went wrong trying to start/setup the game!
+		MessageBoxA(nullptr, e.what(), "Game Error!", MB_OK);
 		
 		ErrorLogManager::GetErrorLogManager()->Buffer << "****ERROR****\n";
 		ErrorLogManager::GetErrorLogManager()->Flush();
@@ -60,13 +67,15 @@ void PrepareLevel()
 	if (!SceneManager::Get()->GetGameWorld().IsNetworkGame)
 	{
 		LevelManager::Get()->ChangeLevel(1);
+		
+		// We can automatically generate a maze of rooms
 		if (SettingsManager::Get()->GetBool("global", "createAutoLevel"))
 		{
 			LevelManager::Get()->CreateAutoLevel();
 		}
 		else
 		{
-			// We start by creating level 1
+			// Or - we can load a specific level, i.e read level 1's definition file
 			LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level1FileName"));
 		}
 	}

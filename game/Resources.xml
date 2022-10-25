@@ -73,7 +73,7 @@
   <Asset uid="15" scene="1" name="LevelMusic1" type="music" filename="Assets/Music/8BitMetal.wav"></Asset>
   <Asset uid="16" scene="2" name="LevelMusic2" type="music" filename="Assets/Music/FranticLevel.wav"></Asset>
   <Asset uid="17" scene="3" name="LevelMusic3" type="music" filename="Assets/Music/HappyLevel.wav"></Asset>
-  <Asset uid="18" scene="0" name="snap_player" type="graphic" filename="game/assets/character2.png" width="256" height="32">
+  <Asset uid="18" scene="0" name="snap_player" type="graphic" filename="game/assets/character2.png" width="32" height="32">
      <colorkey red="255" blue="255" green="255"/>
      <sprite>
       <animation>
@@ -90,7 +90,7 @@
       </animation> 
     </sprite>  
   </Asset>
-	<Asset uid="18" scene="0" name="edge_player" type="graphic" filename="game/assets/character1.png" width="256" height="32">
+	<Asset uid="18" scene="0" name="edge_player" type="graphic" filename="game/assets/character1.png" width="32" height="32">
      <colorkey red="255" blue="255" green="255"/>
      <sprite>
       <animation>
@@ -107,7 +107,7 @@
       </animation> 
     </sprite>  
   </Asset>
-	<Asset uid="19" scene="0" name="goldcoin" type="graphic" filename="game/assets/coin_gold.png" width="256" height="32">
+	<Asset uid="19" scene="0" name="goldcoin" type="graphic" filename="game/assets/coin_gold.png" width="32" height="32">
      <colorkey red="255" blue="255" green="255"/>
      <sprite>
       <animation>
@@ -124,7 +124,7 @@
       </animation> 
     </sprite>  
   </Asset>
-	<Asset uid="20" scene="0" name="silvercoin" type="graphic" filename="game/assets/coin_silver.png" width="256" height="32">
+	<Asset uid="20" scene="0" name="silvercoin" type="graphic" filename="game/assets/coin_silver.png" width="32" height="32">
      <colorkey red="255" blue="255" green="255"/>
      <sprite>
       <animation>
@@ -141,7 +141,7 @@
       </animation> 
     </sprite>  
   </Asset>
-	<Asset uid="21" scene="0" name="coppercoin" type="graphic" filename="game/assets/coin_copper.png" width="256" height="32">
+	<Asset uid="21" scene="0" name="coppercoin" type="graphic" filename="game/assets/coin_copper.png" width="32" height="32">
     <colorkey red="255" blue="255" green="255"/>
     <sprite>
     <animation>

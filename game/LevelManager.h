@@ -18,6 +18,9 @@ class gamelib::GameWorldData;
 class gamelib::EventManager;
 class Level;
 
+/// <summary>
+/// Does Level specific stuff
+/// </summary>
 class LevelManager : public gamelib::EventSubscriber
 {
 public:
@@ -35,7 +38,7 @@ public:
     bool Initialize();
     
     /// <summary>
-    /// Get Controller input
+    /// Get Controller input, and transaltes input to game commands
     /// </summary>
     void GetKeyboardInput();
 
@@ -80,7 +83,9 @@ public:
     /// </summary>
     ListOfGameObjects CreateAutoLevel();
 
-    void InitializePlayer(std::shared_ptr<Player> player);
+    void InitializeHudItem(std::shared_ptr<StaticSprite> hudItem);
+
+    void InitializePlayer(std::shared_ptr<Player> player, std::shared_ptr<gamelib::SpriteAsset> spriteAsset);
 
     // Subscribe pickups to events, add to scene graph etc
     void InitializePickups(const ListOfGameObjects& pickups, ListOfGameObjects& gameObjectsPtr);
@@ -124,11 +129,6 @@ private:
     /// Create the Player
     /// </summary>
     std::shared_ptr<Player> CreatePlayer(std::vector<std::shared_ptr<Room>> rooms, const int w, const int h) const;
-
-    /// <summary>
-    /// GetPlayerAssetName
-    /// </summary>
-    void GetPlayerAssetName(std::string& moveStrategy, const std::shared_ptr<Player>& player, std::string& spriteAssetName) const;
 
     /// <summary>
     /// Create the Pickups

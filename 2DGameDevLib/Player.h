@@ -31,8 +31,11 @@ class Player final : public gamelib::DrawableGameObject
 {		
 public:
 		
-	Player(int x, int y, int w, int h, const std::string identifier);
-		
+	Player(const int x, const int y, const int w, const int h, const std::string identifier);
+	Player(std::shared_ptr<Room> playerRoom, int playerWidth, int playerHeight, std::string identifier);
+	
+	void CommonInit(const int playerWidth, const int playerHeight, const std::string inIdentifier);
+
 	/// <summary>
 	/// Load player settings
 	/// </summary>
@@ -148,7 +151,7 @@ public:
 
 	bool PlayerHasPendingMoves();
 
-	void ProcessMovements(float deltaMs);
+	void Move(float deltaMs);
 
 	// Depending on the player's direction, a diffirent group/set of key frames in the sprite will cycle
 	void SetSpriteAnimationFrameGroup();
