@@ -11,6 +11,7 @@
 #include "Room.h"
 #include <events/EventFactory.h>
 #include <objects/StaticSprite.h>
+#include "DrawableFrameRate.h"
 
 typedef std::vector<std::shared_ptr<gamelib::GameObject>> ListOfGameObjects;
 
@@ -174,6 +175,8 @@ private:
     /// Current level
     /// </summary>
     std::shared_ptr<Level> level = nullptr;
+
+    std::shared_ptr<DrawableFrameRate> drawableFrameRate;
 
     void AddGameObjectToScene(std::shared_ptr<gamelib::GameObject> object);
 

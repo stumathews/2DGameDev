@@ -19,7 +19,7 @@
 #include <Level.h>
 #include <Rooms.h>
 #include <objects/StaticSprite.h>
-#include <events/DoLogicUpdateEvent.h>
+#include <events/UpdateAllGameObjectsEvent.h>
 #include <events/SceneChangedEvent.h>
 #include "util/RectDebugging.h"
 #include "windows.h"
@@ -408,7 +408,12 @@ ListOfGameObjects LevelManager::CreateLevel(string filename)
 	AddGameObjectToScene(player);
 	AddGameObjectToScene(hudItem);
 
-	GameData::Get()->SetGameObjects(&gameObjectsPtr);
+	// Add the framerate
+	drawableFrameRate = std::shared_ptr<DrawableFrameRate>(new DrawableFrameRate(&level->Rooms[level->Rooms.size()-2]->Bounds));
+	AddGameObjectToScene(drawableFrameRate);
+	RegisterGameObject(drawableFrameRate);
+
+	GameData::Get()->SetGameObjects(&gameObjectsPtr);	
 
 	return gameObjectsPtr;
 }
@@ -417,7 +422,6 @@ void LevelManager::InitializeHudItem(std::shared_ptr<StaticSprite> hudItem)
 {
 	hudItem->LoadSettings();
 	hudItem->SubscribeToEvent(EventType::PlayerMovedEventType);
-	hudItem->SubscribeToEvent(EventType::DoLogicUpdateEventType);
 }
 
 void LevelManager::AddGameObjectToScene(std::shared_ptr<gamelib::GameObject> object)
@@ -499,7 +503,6 @@ void LevelManager::InitializePickups(const ListOfGameObjects& pickups, ListOfGam
 	{
 		pickup->LoadSettings();
 		pickup->SubscribeToEvent(EventType::PlayerMovedEventType);
-		pickup->SubscribeToEvent(EventType::DoLogicUpdateEventType);
 
 		// Register game object with the scene
 		AddGameObjectToScene(pickup);

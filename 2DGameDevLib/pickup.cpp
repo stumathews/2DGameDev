@@ -8,7 +8,7 @@
 #include <memory>
 #include <SpriteAsset.h>
 #include <common/aliases.h>
-#include <events/DoLogicUpdateEvent.h>
+#include <events/UpdateAllGameObjectsEvent.h>
 
 using namespace std;
 
@@ -66,11 +66,6 @@ namespace gamelib
 						generated_events.push_back(make_shared<gamelib::GameObjectEvent>(Id, this, gamelib::GameObjectEventContext::Remove));
 					}
 				}
-				break;
-			case gamelib::EventType::DoLogicUpdateEventType:
-
-				auto updateInfo = std::static_pointer_cast<gamelib::LogicUpdateEvent>(event);
-				Update(updateInfo->deltaMs);
 				break;
 
 		}

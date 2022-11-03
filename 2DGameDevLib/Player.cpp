@@ -11,7 +11,7 @@
 #include "Room.h"
 #include <events/Event.h>
 #include <functional>
-#include <events/DoLogicUpdateEvent.h>
+#include <events/UpdateAllGameObjectsEvent.h>
 #include "GameData.h"
 
 using namespace std;
@@ -34,7 +34,6 @@ void Player::CommonInit(const int playerWidth, const int playerHeight, const std
 
 	SubscribeToEvent(EventType::ControllerMoveEvent); // Player responds to move commands
 	SubscribeToEvent(EventType::SettingsReloaded); // We can reload the player's settings dynamically
-	SubscribeToEvent(EventType::DoLogicUpdateEventType); // We get updates when the system says we can update
 	SubscribeToEvent(EventType::Fire); // Player response to fire command
 
 	// We can set a flag that means the player does not check for restrictions
@@ -67,10 +66,7 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event)
 	{		
 		case EventType::ControllerMoveEvent: // We got a controller movement
 			return OnControllerMove(event, createdEvents);
-			break;		
-		case EventType::DoLogicUpdateEventType: // The system wants us to update ourselves
-			Update(dynamic_pointer_cast<LogicUpdateEvent>(event)->deltaMs);
-			break;		
+			break;	
 		case EventType::Fire: // The user pressed the fire command.
 			LogMessage("Fire!", verbose);
 			Fire();
