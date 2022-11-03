@@ -36,7 +36,7 @@ int main(int argc, char *args[])
 				
 		// Initialize all the required game sub systems
 		if (InitializeGameSubSystems(infrastructure)) 
-			return -1;
+			THROW(12, "There was a problem initializing the game subsystems","Initialize Subsystems");
 
 		// Load level and create/add game objects
 		PrepareLevel();
@@ -92,7 +92,8 @@ int InitializeGameSubSystems(gamelib::GameStructure& infrastructure)
 	const auto screenWidth = 0; // 0 will mean it will get read from the settings file
 	const auto screenHeight = 0; // 0 will mean it will get read from the settings file	
 
-	if (!IsSuccess(infrastructure.InitializeGameSubSystems(screenWidth, screenHeight, "Initialize Game subsystems...", "game\\Resources.xml"), "InitializeGameSubSystems...") ||
+	if (!IsSuccess(infrastructure.InitializeGameSubSystems(screenWidth, screenHeight, "Initialize Game subsystems...", 
+		"game\\Resources.xml"), "InitializeGameSubSystems...") ||
 		!IsSuccess(LevelManager::Get()->Initialize(), "Initializing Level Manager..."))
 	{
 		LogMessage("Game initialization failed.", SettingsManager::Get()->GetBool("global", "verbose"), true);

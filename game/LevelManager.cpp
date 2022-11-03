@@ -21,6 +21,8 @@
 #include <objects/StaticSprite.h>
 #include <events/DoLogicUpdateEvent.h>
 #include <events/SceneChangedEvent.h>
+#include "util/RectDebugging.h"
+#include "windows.h"
 
 using namespace gamelib;
 using namespace std;
@@ -29,9 +31,13 @@ bool LevelManager::Initialize()
 {
 	InitGameWorldData();
 
+	// easy access to subscribing and raising events
 	eventManager = EventManager::Get();
+
+	// easy way to create known events
 	eventFactory = EventFactory::Get();
 
+	// level manager translates input into game commands
 	_gameCommands = shared_ptr<GameCommands>(new GameCommands());
 
 	eventManager->SubscribeToEvent(EventType::GenerateNewLevel, this);
@@ -44,6 +50,7 @@ bool LevelManager::Initialize()
 
 	verbose = SettingsManager::Get()->GetBool("global", "verbose");
 
+	// Determine if the settings indicate if we should start in network game mode
 	SceneManager::Get()->GetGameWorld().IsNetworkGame = SettingsManager::Get()->GetBool("global", "isNetworkGame");
 			
 	return true;
@@ -53,7 +60,7 @@ gamelib::ListOfEvents LevelManager::HandleEvent(std::shared_ptr<Event> event)
 {
 	gamelib::ListOfEvents newEvents;
 	std::shared_ptr<GameObjectEvent> gameObjectEvent = nullptr;
-	std::stringstream output; 
+	std::stringstream output;
 	
 	switch(event->type)
 	{
@@ -88,7 +95,6 @@ gamelib::ListOfEvents LevelManager::HandleEvent(std::shared_ptr<Event> event)
 	case EventType::StartNetworkLevel:
 		OnStartNetworkLevel(event);
 		break;
-
 	}
 
 	return newEvents;
@@ -410,7 +416,6 @@ ListOfGameObjects LevelManager::CreateLevel(string filename)
 void LevelManager::InitializeHudItem(std::shared_ptr<StaticSprite> hudItem)
 {
 	hudItem->LoadSettings();
-	hudItem->Initialize();
 	hudItem->SubscribeToEvent(EventType::PlayerMovedEventType);
 	hudItem->SubscribeToEvent(EventType::DoLogicUpdateEventType);
 }

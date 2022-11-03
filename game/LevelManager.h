@@ -176,4 +176,6 @@ private:
     std::shared_ptr<Level> level = nullptr;
 
     void AddGameObjectToScene(std::shared_ptr<gamelib::GameObject> object);
+
+    unsigned long deltaMs;
 };
