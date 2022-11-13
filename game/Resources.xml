@@ -201,5 +201,5 @@
 			</animation>
 		</sprite>
 	</Asset>
-
+	<Asset uid="23" scene="0" name="win.wav" type="fx" filename="Assets/win.wav"></Asset>
 </Assets>

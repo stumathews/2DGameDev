@@ -13,6 +13,7 @@
 #include <functional>
 #include <events/UpdateAllGameObjectsEvent.h>
 #include "GameData.h"
+#include <events/EventFactory.h>
 
 using namespace std;
 using namespace gamelib;
@@ -26,6 +27,7 @@ Player::Player(const int x, const int y, const int playerWidth, const int player
 
 void Player::CommonInit(const int playerWidth, const int playerHeight, const std::string inIdentifier)
 {
+	// Initialize 
 	width = playerWidth;
 	height = playerHeight;
 	sprite = nullptr;
@@ -35,9 +37,6 @@ void Player::CommonInit(const int playerWidth, const int playerHeight, const std
 	SubscribeToEvent(EventType::ControllerMoveEvent); // Player responds to move commands
 	SubscribeToEvent(EventType::SettingsReloaded); // We can reload the player's settings dynamically
 	SubscribeToEvent(EventType::Fire); // Player response to fire command
-
-	// We can set a flag that means the player does not check for restrictions
-	ignoreRestrictions = false;
 
 	// Should the player log everything its doing to log file?
 	verbose = false;
@@ -51,7 +50,6 @@ Player::Player(std::shared_ptr<Room> playerRoom, int playerWidth, int playerHeig
 {
 	CommonInit(playerWidth, playerHeight, identifier);
 
-	// Allow the player to know which room it is in
 	SetPlayerRoom(playerRoom->GetRoomNumber());
 	CenterPlayerInRoom(playerRoom);
 }
@@ -86,40 +84,37 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event)
 
 const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, ListOfEvents& createdEvents)
 {
-	// Set the player's direction based on the movement direction
-	auto controllerMoveEvent = dynamic_pointer_cast<ControllerMoveEvent>(event);		
-	SetPlayerDirection(controllerMoveEvent->Direction);
+	auto controllerMoveEvent = dynamic_pointer_cast<ControllerMoveEvent>(event);	
 	
-	// Add this move as a 'movement' which the player will process later to update its position etc.s
-	AddToPlayerMovements(controllerMoveEvent, createdEvents);
+	AddToPlayerMovements(controllerMoveEvent, createdEvents); // NB: movements will be processed udirng updates
+
 	return createdEvents;
 }
 
 void Player::AddToPlayerMovements(std::shared_ptr<gamelib::ControllerMoveEvent>& controllerMoveEvent, ListOfEvents& createdEvents)
 {
+	SetPlayerDirection(controllerMoveEvent->Direction);
+
 	auto doesPlayerHaveMoves = PlayerHasPendingMoves();
-	auto lastMoveIsSameAsCurrent = doesPlayerHaveMoves
+	auto lastDirectionIsSameAsCurrent = doesPlayerHaveMoves
 		? moveQueue.back()->direction == controllerMoveEvent->Direction
 		: false;
 	
-	// Player has moved in a new direction
-	if (!lastMoveIsSameAsCurrent)
+	// Player has moved in a new direction?
+	if (!lastDirectionIsSameAsCurrent)
 	{
 		// Cancel any pending moves in the other direction
 		if (doesPlayerHaveMoves)
 		{
-			if (debugMovement) {
+			if (debugMovement) 
+			{
 				Logger::Get()->LogThis("Canceling last movement.");
 			}
 
 			moveQueue.clear();
 		}
 
-		// A movement is defined as a movement in a specified direction, over a time period in which it must reach its destination.
-		auto movement = std::shared_ptr<Movement>(new Movement(moveDurationMs, // How long should this movement take overall to comeplete
-			controllerMoveEvent->Direction, // Direction of the movements
-			maxPixelsToMove, // The total distance that the movement should move once its complete, this linearly interpolated over the duration of the move
-			debugMovement));
+		auto movement = std::shared_ptr<Movement>(new Movement(moveDurationMs, controllerMoveEvent->Direction, maxPixelsToMove, debugMovement));
 		
 		// Add this as a player move, to the list of pending player moves
 		moveQueue.push_back(movement);
@@ -127,17 +122,10 @@ void Player::AddToPlayerMovements(std::shared_ptr<gamelib::ControllerMoveEvent>&
 }
 
 void Player::Update(float deltaMs)
-{
-	// Calculate players new position, based on the movements created by the controller
-	Move(deltaMs);
+{	
+	Move(deltaMs); // Calculate players new position, based on the movements created by the controller	
 
-	// Calculate new bounds based on position
-	Bounds = CalculateBounds(Position.GetX(), Position.GetY());
-
-	UpdateSprite(deltaMs);
-
-	// Move the sprite to match the position of the player
-	sprite->MoveSprite(Position.GetX(), Position.GetY());
+	Bounds = CalculateBounds(Position.GetX(), Position.GetY()); // Calculate new bounds based on position
 }
 
 void Player::Draw(SDL_Renderer* renderer)
@@ -185,13 +173,14 @@ void Player::Move(float deltaMs)
 			currentMovement->Update(deltaMs);	
 			
 			// Actually move player (set player's position) based on the movement
-			moveStrategy->MovePlayer(currentMovement);
+			if (!moveStrategy->MovePlayer(currentMovement))
+			{
+				EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(gamelib::EventType::InvalidMove), this);
+			}
 
 			if (currentMovement->IsComplete())
 			{
-				// If the movement is complete
-				// Tell the world that the player moved
-				EventManager::Get()->RaiseEvent(make_shared<PlayerMovedEvent>(currentMovement->direction), this);
+				EventManager::Get()->RaiseEvent(EventFactory::Get()->CreatePlayerMovedEvent(currentMovement->direction), this);
 			}
 		}
 	}
@@ -200,7 +189,11 @@ void Player::Move(float deltaMs)
 	moveQueue.erase(std::remove_if(moveQueue.begin(), moveQueue.end(), [&](const std::shared_ptr<Movement> movement)-> bool 
 	{ 
 		return movement->IsComplete(); 
-	}), moveQueue.end());
+	}), moveQueue.end());	
+
+	UpdateSprite(deltaMs);
+
+	sprite->MoveSprite(Position.GetX(), Position.GetY()); // Move the sprite to match the position of the player
 }
 
 // based on the facing direction, select key frame for sprite that matches that direction
@@ -228,7 +221,6 @@ void Player::LoadSettings()
 	GameObject::LoadSettings();
 
 	drawBounds = SettingsManager::Get()->GetBool("player", "drawBounds");
-	ignoreRestrictions = SettingsManager::Get()->GetBool("player", "ignoreRestrictions");
 	debugMovement = gamelib::SettingsManager::Get()->GetBool("player", "debugMovement");
 	verbose = SettingsManager::Get()->GetBool("global", "verbose");
 	moveDurationMs = SettingsManager::Get()->GetInt("player", "moveDurationMs");
@@ -236,66 +228,6 @@ void Player::LoadSettings()
 	hotspotSize = SettingsManager::Get()->GetInt("player", "hotspotSize");
 	drawHotSpot = SettingsManager::Get()->GetBool("player", "drawHotspot");
 	hideSprite = SettingsManager::Get()->GetBool("player", "hideSprite");
-}
-
-void Player::SetRoomRestrictions()
-{
-	if (!CurrentRoom)
-	{
-		CurrentRoom = GetCurrentRoom();
-	}
-
-	restrictions.TopRoom = GetAdjacentRoomTo(CurrentRoom, Side::Top);
-	restrictions.RightRoom = GetAdjacentRoomTo(CurrentRoom, Side::Right);
-	restrictions.BottomRoom = GetAdjacentRoomTo(CurrentRoom, Side::Bottom);
-	restrictions.LeftRoom = GetAdjacentRoomTo(CurrentRoom, Side::Left);
-}
-
-
-bool Player::IsValidMove(const Direction& moveDirection, const bool& canMoveDown, const bool& canMoveLeft, const bool& canMoveRight, const bool& canMoveUp, std::shared_ptr<Movement> movement)
-{	
-	if(ignoreRestrictions)
-	{
-		Logger::Get()->LogThis("Ignoring all movement restrictions.");
-		return true;
-	}
-
-	// A valid move is moving  in a direction that you can move in
-	return moveDirection == Direction::Down && canMoveDown || 
-		moveDirection == Direction::Left && canMoveLeft || 
-		moveDirection == Direction::Right && canMoveRight ||
-		moveDirection == Direction::Up && canMoveUp;
-}
-
-bool Player::IsValidMove(std::shared_ptr<Movement> movement)
-{
-	if (ignoreRestrictions)
-	{
-		Logger::Get()->LogThis("Ignoring all movement restrictions.");
-		return true;
-	}
-
-	auto currentRoom = GetCurrentRoom();
-	auto topRoom = GetAdjacentRoomTo(currentRoom, Side::Top);
-	auto rightRoom = GetAdjacentRoomTo(currentRoom, Side::Right);
-	auto bottomRoom = GetAdjacentRoomTo(currentRoom, Side::Bottom);
-	auto leftRoom = GetAdjacentRoomTo(currentRoom, Side::Left);
-
-	switch (movement->direction)
-	{
-	case Direction::Down:
-		return moveStrategy->CanPlayerMoveDown(currentRoom, bottomRoom, movement);
-		break;
-	case Direction::Left:
-		return moveStrategy->CanPlayerMoveLeft(currentRoom, leftRoom, movement);
-		break;
-	case Direction::Right:
-		return moveStrategy->CanPlayerMoveRight(currentRoom, rightRoom, movement);
-		break;
-	case Direction::Up:
-		return moveStrategy->CanPlayerMoveUp(currentRoom, topRoom, movement);
-		break;
-	}
 }
 
 void Player::SetPlayerDirection(Direction direction)

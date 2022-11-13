@@ -95,11 +95,6 @@ public:
 	std::shared_ptr<Room> GetTargettedRoom(std::shared_ptr<gamelib::ControllerMoveEvent> positionChangedEvent, std::shared_ptr<Room> topRoom, std::shared_ptr<Room> bottomRoom, std::shared_ptr<Room> leftRoom, std::shared_ptr<Room> rightRoom);
 
 
-	void OnAfterMove();
-
-	//void SetRoomRestrictions(const gamelib::Direction& movementDirection);
-	void SetRoomRestrictions();
-
 	// Sets the players direction
 	void SetPlayerDirection(gamelib::Direction direction);
 
@@ -110,10 +105,6 @@ public:
 	const std::shared_ptr<Room> GetRoom(int index);
 
 	const std::shared_ptr<Room> GetAdjacentRoomTo(std::shared_ptr<Room> currentRoom, Side side);
-
-	bool IsValidMove(const gamelib::Direction& moveDirection, const bool& canMoveDown, const bool& canMoveLeft, const bool& canMoveRight, const bool& canMoveUp, std::shared_ptr<Movement> movement);
-
-	bool IsValidMove(std::shared_ptr<Movement> movement);
 
 	gamelib::coordinate<int> GetHotspot();
 	
@@ -238,8 +229,7 @@ private:
 	gamelib::Direction currentMovingDirection;
 	gamelib::Direction currentFacingDirection;
 	std::shared_ptr<IPlayerMoveStrategy> moveStrategy;
-	std::deque<std::shared_ptr<Movement>> moveQueue;
-	bool ignoreRestrictions;
+	std::deque<std::shared_ptr<Movement>> moveQueue;	
 	bool debugMovement;
 	bool verbose;
 };

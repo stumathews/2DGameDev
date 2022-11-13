@@ -172,6 +172,9 @@ void GameCommands::FetchedPickup(bool verbose)
 	if(LevelManager::Get()->ReducePickupCount() == 0)
 	{
 		Logger::Get()->LogThis("All Pickups Collected Well Done!");
+		ToggleMusic(verbose);
+		AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "win_music")))->AsSoundEffect());
+
 	}
 }
 

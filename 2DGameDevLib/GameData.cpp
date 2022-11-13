@@ -44,13 +44,12 @@ void GameData::SetGameObjects(std::vector<std::shared_ptr<gamelib::GameObject>>*
 
 void GameData::ClassifyGameObjects()
 {
-	for (auto object : *ptrGameObjects)
-	{
+	for (auto& object : *ptrGameObjects)
+	{		
 		switch (object->GetGameObjectType())
 		{
 		case gamelib::GameObjectType::Room:
-			std::shared_ptr<Room> room = std::dynamic_pointer_cast<Room>(object);
-			AddRoom(room);
+			AddRoom(std::dynamic_pointer_cast<Room>(object));
 			break;
 		}
 	}

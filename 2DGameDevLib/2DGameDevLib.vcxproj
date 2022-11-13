@@ -159,7 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="EdgeTowardsRoomStrategy.h" />
+    <ClInclude Include="PlayerMoveStrategy.h" />
     <ClInclude Include="DrawableFrameRate.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameData.h" />
@@ -177,7 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DrawableFrameRate.cpp" />
-    <ClCompile Include="EdgeTowardsRoomStrategy.cpp" />
+    <ClCompile Include="PlayerMoveStrategy.cpp" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="GameObjectEventFactory.cpp" />
     <ClCompile Include="Level.cpp" />

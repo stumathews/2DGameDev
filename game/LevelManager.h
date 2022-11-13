@@ -155,11 +155,6 @@ private:
     static size_t GetRandomIndex(const int min, const int max);	
 
     /// <summary>
-    /// Set basic game world defaults
-    /// </summary>
-    void InitGameWorldData() const;
-
-    /// <summary>
     /// Be verbose or not in logging
     /// </summary>
     bool verbose;

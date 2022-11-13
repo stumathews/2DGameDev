@@ -39,7 +39,7 @@
     <ClInclude Include="MoveStrategy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EdgeTowardsRoomStrategy.h">
+    <ClInclude Include="PlayerMoveStrategy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectEventFactory.h">
@@ -86,7 +86,7 @@
     <ClCompile Include="MoveStrategy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EdgeTowardsRoomStrategy.cpp">
+    <ClCompile Include="PlayerMoveStrategy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameObjectEventFactory.cpp">

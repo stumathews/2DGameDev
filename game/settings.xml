@@ -3,7 +3,7 @@
   <!-- Global Game Settings -->
   <global>
     <!-- 1 update very 20 ms = 50 times a second (1000 milliseconds) -->
-    <setting name="tick_time_ms" type="int">20</setting>
+    <setting name="tick_time_ms" type="int">16</setting>
     <setting name="square_width" type="int">150</setting>
     <setting name="sprite_width" type="int">50</setting>
     <setting name="max_loops" type="int">4</setting>
@@ -70,6 +70,7 @@
   <audio>
     <setting name="invalid_move" type="string">low.wav</setting>
     <setting name="fetched_pickup" type="string">boop.wav</setting>
+	<setting name="win_music" type="string">win.wav</setting>
   </audio>
   
   <!-- Player settings -->
@@ -89,7 +90,7 @@
     <setting name="moveStrategy" type="string">edge</setting> <!-- 'snap' or 'edge' strategy -->
 		<setting name="debugMovement" type="bool">false</setting>
 		<setting name="moveDurationMs" type="int">200</setting>
-		<setting name="maxPixelsToMove" type="int">10</setting>
+		<setting name="maxPixelsToMove" type="int">15</setting>
   </player>
 
 	<sprite>

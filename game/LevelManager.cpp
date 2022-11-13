@@ -10,7 +10,7 @@
 #include <memory>
 #include <events/SceneChangedEvent.h>
 #include <objects/GameObjectFactory.h>
-#include "EdgeTowardsRoomStrategy.h"
+#include "PlayerMoveStrategy.h"
 #include "GameObjectEventFactory.h"
 #include <GameData.h>
 #include <sstream>
@@ -29,7 +29,10 @@ using namespace std;
 
 bool LevelManager::Initialize()
 {
-	InitGameWorldData();
+	// Initialize game world data
+	SceneManager::Get()->GetGameWorld().IsGameDone = false;
+	SceneManager::Get()->GetGameWorld().IsNetworkGame = false;
+	SceneManager::Get()->GetGameWorld().CanDraw = true;
 
 	// easy access to subscribing and raising events
 	eventManager = EventManager::Get();
@@ -126,7 +129,7 @@ void LevelManager::GenerateNewLevel()
 
 void LevelManager::RemoveAllGameObjects()
 {
-	auto objects = SceneManager::Get()->GetGameWorld().GetGameObjects();
+	auto& objects = SceneManager::Get()->GetGameWorld().GetGameObjects();
 	std::for_each(std::begin(objects), std::end(objects), [this](std::shared_ptr<gamelib::GameObject> gameObject)
 	{
 		eventManager->RaiseEvent(GameObjectEventFactory::MakeRemoveObjectEvent(&(*gameObject)), this);
@@ -205,13 +208,6 @@ void LevelManager::RemoveGameObject(gamelib::GameObject& gameObject)
 	}
 
 	GameData::Get()->SetGameObjects(&gameObjects);
-}
-
-void LevelManager::InitGameWorldData() const
-{	
-	SceneManager::Get()->GetGameWorld().IsGameDone = false;
-	SceneManager::Get()->GetGameWorld().IsNetworkGame = false;
-	SceneManager::Get()->GetGameWorld().CanDraw = true;
 }
 
 void LevelManager::GetKeyboardInput()
@@ -482,7 +478,7 @@ ListOfGameObjects LevelManager::CreateAutoLevel()
 void LevelManager::InitializePlayer(std::shared_ptr<Player> player, std::shared_ptr<gamelib::SpriteAsset> spriteAsset)
 {
 	// Set the player's control/movement strategy
-	player->SetMoveStrategy(shared_ptr<EdgeTowardsRoomStrategy>(new EdgeTowardsRoomStrategy(player, 2)));
+	player->SetMoveStrategy(shared_ptr<PlayerMoveStrategy>(new PlayerMoveStrategy(player, 2)));
 	player->SetTag(constants::playerTag);
 
 	// Player can load its own settings
