@@ -12,6 +12,7 @@
 #include <events/EventFactory.h>
 #include <objects/StaticSprite.h>
 #include "DrawableFrameRate.h"
+#include <processes/ProcessManager.h>
 
 typedef std::vector<std::shared_ptr<gamelib::GameObject>> ListOfGameObjects;
 
@@ -113,8 +114,6 @@ public:
     // Increases the pickup count and returns the current pickup acount as a result
     int IncreasePickupCount();
 
-    void Update(float deltaMs);
-
     std::shared_ptr<Level> GetLevel();
 
     void RegisterGameObject(std::shared_ptr<gamelib::GameObject> obj);
@@ -140,7 +139,7 @@ private:
     /// Game commands - all game commands that we handle in this game.
     /// </summary>
     std::shared_ptr<GameCommands> _gameCommands;
-
+    unsigned int currentLevel = 1;
     gamelib::EventManager* eventManager;
     gamelib::EventFactory* eventFactory;
 
@@ -176,4 +175,5 @@ private:
     void AddGameObjectToScene(std::shared_ptr<gamelib::GameObject> object);
 
     unsigned long deltaMs;
+    gamelib::ProcessManager processManager;
 };

@@ -23,6 +23,10 @@
 #include <events/SceneChangedEvent.h>
 #include "util/RectDebugging.h"
 #include "windows.h"
+#include <events/UpdateProcessesEvent.h>
+#include <processes/DelayProcess.h>
+#include <processes/Action.h>
+#include <functional>
 
 using namespace gamelib;
 using namespace std;
@@ -50,6 +54,8 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(EventType::LevelChangedEventType, this);
 	eventManager->SubscribeToEvent(EventType::NetworkPlayerJoined, this);
 	eventManager->SubscribeToEvent(EventType::StartNetworkLevel, this);
+	eventManager->SubscribeToEvent(EventType::UpdateProcesses, this);
+
 
 	verbose = SettingsManager::Get()->GetBool("global", "verbose");
 
@@ -67,12 +73,33 @@ gamelib::ListOfEvents LevelManager::HandleEvent(std::shared_ptr<Event> event)
 	
 	switch(event->type)
 	{
+	case EventType::UpdateProcesses:
+		{
+			processManager.UpdateProcesses(dynamic_pointer_cast<UpdateProcessesEvent>(event)->deltaMs);
+		}
+		break;
 	case EventType::InvalidMove:
 		_gameCommands->InvalidMove();
 		break;
 	case EventType::FetchedPickup:
 		_gameCommands->FetchedPickup();
 		hudItem->AdvanceFrame();
+		if (numLevelPickups == 0)
+		{
+			auto toggleMusicOffProcess = std::shared_ptr<Action>(new Action([&]() { _gameCommands->ToggleMusic(verbose); }));
+			auto playVictoryMusicProcess = std::shared_ptr<Action>(new Action([&]() { AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "win_music")))->AsSoundEffect()); }));
+			auto loadNextLevelProcess = std::shared_ptr<Action>(new Action([&]() { currentLevel = currentLevel < 4 ? ++currentLevel : 1; _gameCommands->LoadNewLevel(currentLevel); }));
+			auto delayFive = std::shared_ptr<Process>(new DelayProcess(5000));
+			
+			toggleMusicOffProcess->AttachChild(playVictoryMusicProcess);
+			playVictoryMusicProcess->AttachChild(delayFive);
+			delayFive->AttachChild(loadNextLevelProcess);
+
+			processManager.AttachProcess(toggleMusicOffProcess);
+			Logger::Get()->LogThis("All Pickups Collected Well Done!");
+			
+		}
+		
 		break;		
 	case EventType::GenerateNewLevel:
 		GenerateNewLevel();
@@ -244,15 +271,19 @@ void LevelManager::GetKeyboardInput()
 				break;
 			case SDLK_h:	
 				_gameCommands->LoadNewLevel(1);
+				currentLevel = 1;
 				break;
 			case SDLK_j:
 				_gameCommands->LoadNewLevel(2);
+				currentLevel = 2;
 				break;
 			case SDLK_k:
 				_gameCommands->LoadNewLevel(3);
+				currentLevel = 3;
 				break;
 			case SDLK_l:
 				_gameCommands->LoadNewLevel(4);
+				currentLevel = 4;
 				break;
 			case SDLK_1:
 				_gameCommands->PlaySoundEffect(gamelib::AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("high.wav"))->AsSoundEffect());				

@@ -168,14 +168,14 @@ void GameCommands::FetchedPickup(bool verbose)
 		Logger::Get()->LogThis("GameCommand: FetchedPickup", verbose);
 
 	AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "fetched_pickup")))->AsSoundEffect());
+	LevelManager::Get()->ReducePickupCount();
 
-	if(LevelManager::Get()->ReducePickupCount() == 0)
+	/*if(LevelManager::Get()->ReducePickupCount() == 0)
 	{
 		Logger::Get()->LogThis("All Pickups Collected Well Done!");
 		ToggleMusic(verbose);
-		AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "win_music")))->AsSoundEffect());
-
-	}
+		AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "win_music")))->AsSoundEffect());		
+	}*/
 }
 
 void GameCommands::StartNetworkLevel()
