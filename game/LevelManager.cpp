@@ -56,7 +56,6 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(EventType::StartNetworkLevel, this);
 	eventManager->SubscribeToEvent(EventType::UpdateProcesses, this);
 
-
 	verbose = SettingsManager::Get()->GetBool("global", "verbose");
 
 	// Determine if the settings indicate if we should start in network game mode
@@ -98,8 +97,7 @@ gamelib::ListOfEvents LevelManager::HandleEvent(std::shared_ptr<Event> event)
 			processManager.AttachProcess(toggleMusicOffProcess);
 			Logger::Get()->LogThis("All Pickups Collected Well Done!");
 			
-		}
-		
+		}		
 		break;		
 	case EventType::GenerateNewLevel:
 		GenerateNewLevel();
@@ -198,10 +196,9 @@ void LevelManager::PlayLevelMusic(std::string levelMusicAssetName)
 	auto asset = ResourceManager::Get()->GetAssetInfo(levelMusicAssetName);
 	if (asset->isLoadedInMemory)
 	{
-		auto audioAsset = gamelib::AudioManager::ToAudioAsset(asset);
 		if (asset && asset->isLoadedInMemory)
 		{
-			AudioManager::Get()->Play(audioAsset->AsMusic());
+			AudioManager::Get()->Play(gamelib::AudioManager::ToAudioAsset(asset)->AsMusic());
 		}
 	}
 }
@@ -239,32 +236,37 @@ void LevelManager::RemoveGameObject(gamelib::GameObject& gameObject)
 
 void LevelManager::GetKeyboardInput()
 {
+	auto keyState = SDL_GetKeyboardState(NULL);
+	
+	// continuous-response keys
+	if (keyState[SDL_SCANCODE_UP] || keyState[SDL_SCANCODE_W])
+	{
+		_gameCommands->MoveUp(verbose);
+	}
+	if (keyState[SDL_SCANCODE_DOWN] || keyState[SDL_SCANCODE_S])
+	{
+		_gameCommands->MoveDown(verbose);
+	}
+	if (keyState[SDL_SCANCODE_LEFT] || keyState[SDL_SCANCODE_A])
+	{
+		_gameCommands->MoveLeft(verbose);
+	}
+	if (keyState[SDL_SCANCODE_RIGHT] || keyState[SDL_SCANCODE_D])
+	{
+		_gameCommands->MoveRight(verbose);
+	}
+
 	SDL_Event sdlEvent;
 	while (SDL_PollEvent(&sdlEvent))
-	{
+	{		
+		// single-hit keys, mouse and other general SDL events (eg. windowing)
 		if (sdlEvent.type == SDL_KEYDOWN)
 		{
 			switch (sdlEvent.key.keysym.sym)
 			{
-			case SDLK_SPACE:				
+			case SDLK_SPACE:
 				_gameCommands->Fire(verbose);
-				break;
-			case SDLK_w:
-			case SDLK_UP:				
-				_gameCommands->MoveUp(verbose);
-				break;
-			case SDLK_s:
-			case SDLK_DOWN:				
-				_gameCommands->MoveDown(verbose);
-				break;
-			case SDLK_a:
-			case SDLK_LEFT:				
-				_gameCommands->MoveLeft(verbose);
-				break;
-			case SDLK_d:
-			case SDLK_RIGHT:				
-				_gameCommands->MoveRight(verbose);
-				break;
+				break;			
 			case SDLK_q:
 			case SDLK_ESCAPE:
 				_gameCommands->Quit(verbose);
@@ -311,11 +313,6 @@ void LevelManager::GetKeyboardInput()
 				break;
 			case SDLK_n:
 				_gameCommands->StartNetworkLevel();				
-				break;
-			default:
-				std::string msg = "Unknown control key:" + sdlEvent.key.keysym.sym;
-				std::cout << msg << std::endl;
-				LogMessage(msg, verbose);
 				break;
 			}
 		}

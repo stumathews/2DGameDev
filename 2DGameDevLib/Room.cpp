@@ -351,10 +351,13 @@ void Room::Update(float deltaMs) { }
 
 void Room::RemoveWall(Side wall)
 {	
-	this->walls[(int)wall] = false;
-	SetNotWalled(wall);
+	if (walls)
+	{
+		this->walls[(int)wall] = false;
+		SetNotWalled(wall);
 
-	LogWallRemoval(wall);
+		LogWallRemoval(wall);
+	}
 }
 
 void Room::LogWallRemoval(Side wall)
