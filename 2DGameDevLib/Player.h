@@ -55,57 +55,113 @@ public:
 	/// <returns></returns>
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event) override;
 
+	/// <summary>
+	/// Get Top Room
+	/// </summary>
+	/// <returns></returns>
 	std::shared_ptr<Room> GetTopRoom();
 
+	/// <summary>
+	/// Get player's bottom room
+	/// </summary>
+	/// <returns></returns>
 	std::shared_ptr<Room> GetBottomRoom();
 
+	/// <summary>
+	/// Get player's right room
+	/// </summary>
+	/// <returns>Right room</returns>
 	std::shared_ptr<Room> GetRightRoom();
 
+	/// <summary>
+	/// Get player's left room
+	/// </summary>
+	/// <returns>Room left of player</returns>
 	std::shared_ptr<Room> GetLeftRoom();
 
+	/// <summary>
+	/// Remove wall in front of the player
+	/// </summary>
 	void Fire();
 
-	// Remove the wall that is on the side the direction the player is facing
+	/// <summary>
+	/// Remove the wall that is on the side the direction the player is facing
+	/// </summary>
 	void RemovePlayerFacingWall();
 
+	/// <summary>
+	/// Remove wall in room to the right of player's current room
+	/// </summary>
 	void RemoveRightWall();
 
-	const std::shared_ptr<Room> GetRightNeighbourRoom();
-
+	/// <summary>
+	/// Remove wall in room to the left of player
+	/// </summary>
 	void RemoveLeftWall();
 
-	const std::shared_ptr<Room> GetLeftNeighbourRoom();
-
+	/// <summary>
+	/// Remove wall below the player
+	/// </summary>
 	void RemoveBottomWall();
 
-	const std::shared_ptr<Room> GetBottomNeighbourRoom();
-
+	/// <summary>
+	/// Remove wall above player
+	/// </summary>
 	void RemoveTopWall();
 
-	const std::shared_ptr<Room> GetTopNeighbourRoom();
-
+	/// <summary>
+	/// Allow Game Object to process events
+	/// </summary>
+	/// <param name="event"></param>
+	/// <param name="createdEvents"></param>
 	void BaseProcessEvent(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents);
 
+	/// <summary>
+	/// What to do when the controller is pressed
+	/// </summary>
+	/// <param name="event"></param>
+	/// <param name="createdEvents"></param>
+	/// <returns></returns>
 	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents);
 
-	// Add to player's list of movements to process during its next update cycle
+	/// <summary>
+	/// Add to player's list of movements to process during its next update cycle
+	/// </summary>
+	/// <param name="controllerMoveEvent"></param>
+	/// <param name="createdEvents"></param>
 	void AddToPlayerMovements(std::shared_ptr<gamelib::ControllerMoveEvent>& controllerMoveEvent, ListOfEvents& createdEvents);
 
-	
-	std::shared_ptr<Room> GetTargettedRoom(std::shared_ptr<gamelib::ControllerMoveEvent> positionChangedEvent, std::shared_ptr<Room> topRoom, std::shared_ptr<Room> bottomRoom, std::shared_ptr<Room> leftRoom, std::shared_ptr<Room> rightRoom);
 
-
-	// Sets the players direction
+	/// <summary>
+	/// Sets the players direction
+	/// </summary>
+	/// <param name="direction"></param>
 	void SetPlayerDirection(gamelib::Direction direction);
 
 	const ptrdiff_t CountRoomGameObjects(ListOfGameObjects& gameObjects);
 
+	/// <summary>
+	/// Get player's room
+	/// </summary>
+	/// <returns></returns>
 	const std::shared_ptr<Room> GetCurrentRoom();
 
-	const std::shared_ptr<Room> GetRoom(int index);
+	/// <summary>
+	/// Get specific room by index
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	const std::shared_ptr<Room> GetRoomByIndex(int index);
 
+	/// <summary>
+	/// Get a side of any room
+	/// </summary>
 	const std::shared_ptr<Room> GetAdjacentRoomTo(std::shared_ptr<Room> currentRoom, Side side);
 
+	/// <summary>
+	/// Get the Hotspot position
+	/// </summary>
+	/// <returns></returns>
 	gamelib::coordinate<int> GetHotspot();
 	
 
@@ -115,10 +171,21 @@ public:
 	/// <param name="renderer"></param>
 	void Draw(SDL_Renderer* renderer) override;
 
+	/// <summary>
+	/// Draw the sprite
+	/// </summary>
 	void DrawSprite(SDL_Renderer* renderer);
 
+	/// <summary>
+	/// Draw the bounds
+	/// </summary>
+	/// <param name="renderer"></param>
 	void DrawBounds(SDL_Renderer* renderer);
 
+	/// <summary>
+	/// Draw the hotspot
+	/// </summary>
+	/// <param name="renderer"></param>
 	void DrawHotspot(SDL_Renderer* renderer);
 
 	/// <summary>
@@ -138,18 +205,37 @@ public:
 	/// </summary>
 	void Update(float deltaMs) override;
 
+	/// <summary>
+	/// Update sprite
+	/// </summary>
+	/// <param name="deltaMs"></param>
 	void UpdateSprite(float deltaMs);
 
+	/// <summary>
+	/// Check if player has pending moves
+	/// </summary>
+	/// <returns></returns>
 	bool PlayerHasPendingMoves();
 
+	/// <summary>
+	/// Move the player
+	/// </summary>
+	/// <param name="deltaMs"></param>
 	void Move(float deltaMs);
 
-	// Depending on the player's direction, a diffirent group/set of key frames in the sprite will cycle
+	/// <summary>
+	/// Depending on the player's direction, a diffirent group/set of key frames in the sprite will cycle
+	/// </summary>
 	void SetSpriteAnimationFrameGroup();
 
-	// Set if the player is in this room or not		
+	/// <summary>	
+	/// Set if the player is in this room or not	
+	/// </summary>
 	bool IsWithinRoom(std::shared_ptr<Room> room);
 
+	/// <summary>
+	/// Calculate the bounds
+	/// </summary>
 	SDL_Rect CalculateBounds(int x, int y);
 
 	/// <summary>
@@ -212,9 +298,17 @@ public:
 	/// <returns></returns>
 	gamelib::coordinate<int> CalculateHotspotPosition(int x, int y);
 
+	/// <summary>
+	/// Get Hotspot length
+	/// </summary>
+	/// <returns></returns>
 	int GetHotSpotLength();
 
+	/// <summary>
+	/// Identifer of the player
+	/// </summary>
 	std::string Identifier;
+
 private:
 	int moveDurationMs = 0;
 	int maxPixelsToMove = 0;

@@ -34,6 +34,8 @@ void Player::CommonInit(const int playerWidth, const int playerHeight, const std
 	currentFacingDirection = this->currentMovingDirection;
 	Identifier = inIdentifier;
 
+	isVisible = true;
+
 	SubscribeToEvent(EventType::ControllerMoveEvent); // Player responds to move commands
 	SubscribeToEvent(EventType::SettingsReloaded); // We can reload the player's settings dynamically
 	SubscribeToEvent(EventType::Fire); // Player response to fire command
@@ -250,17 +252,17 @@ const ptrdiff_t Player::CountRoomGameObjects(ListOfGameObjects& gameObjects)
 
 inline const std::shared_ptr<Room> Player::GetCurrentRoom()
 {
-	return GameData::Get()->GetRoom(playerRoomIndex);
+	return GameData::Get()->GetRoomByIndex(playerRoomIndex);
 }
 
-const std::shared_ptr<Room> Player::GetRoom(int index)
+const std::shared_ptr<Room> Player::GetRoomByIndex(int index)
 {
-	return GameData::Get()->GetRoom(index);
+	return GameData::Get()->GetRoomByIndex(index);
 }
 
 const shared_ptr<Room> Player::GetAdjacentRoomTo(shared_ptr<Room> room, Side side)
 {
-	return GameData::Get()->GetRoom(room->GetNeighbourIndex(side));
+	return GameData::Get()->GetRoomByIndex(room->GetNeighbourIndex(side));
 }
 
 gamelib::coordinate<int> Player::CalculateHotspotPosition(int x, int y)
@@ -342,45 +344,25 @@ void Player::RemovePlayerFacingWall()
 void Player::RemoveRightWall()
 {
 	CurrentRoom->RemoveWall(Side::Right);
-	GetRightNeighbourRoom()->RemoveWall(Side::Left);
+	GetRightRoom()->RemoveWall(Side::Left);
 }
 
 void Player::RemoveLeftWall()
 {
 	CurrentRoom->RemoveWall(Side::Left);
-	GetLeftNeighbourRoom()->RemoveWall(Side::Right);
+	GetLeftRoom()->RemoveWall(Side::Right);
 }
 
 void Player::RemoveBottomWall()
 {
 	CurrentRoom->RemoveWall(Side::Bottom);
-	GetBottomNeighbourRoom()->RemoveWall(Side::Top);
+	GetBottomRoom()->RemoveWall(Side::Top);
 }
 
 void Player::RemoveTopWall()
 {
 	CurrentRoom->RemoveWall(Side::Top);
-	GetTopNeighbourRoom()->RemoveWall(Side::Bottom);
-}
-
-const std::shared_ptr<Room> Player::GetRightNeighbourRoom()
-{
-	return GetRoom(CurrentRoom->GetNeighbourIndex(Side::Right));
-}
-
-const std::shared_ptr<Room> Player::GetLeftNeighbourRoom()
-{
-	return GetRoom(CurrentRoom->GetNeighbourIndex(Side::Left));
-}
-
-const std::shared_ptr<Room> Player::GetBottomNeighbourRoom()
-{
-	return GetRoom(CurrentRoom->GetNeighbourIndex(Side::Bottom));
-}
-
-const std::shared_ptr<Room> Player::GetTopNeighbourRoom()
-{
-	return GetRoom(CurrentRoom->GetNeighbourIndex(Side::Top));
+	GetTopRoom()->RemoveWall(Side::Bottom);
 }
 
 void Player::BaseProcessEvent(const shared_ptr<Event>& event, ListOfEvents& createdEvents)
@@ -437,29 +419,6 @@ GameObjectType Player::GetGameObjectType()
 void Player::Fire()
 {
 	RemovePlayerFacingWall();	
-}
-
-std::shared_ptr<Room> Player::GetTargettedRoom(std::shared_ptr<gamelib::ControllerMoveEvent> positionChangedEvent, std::shared_ptr<Room> topRoom, std::shared_ptr<Room> bottomRoom, std::shared_ptr<Room> leftRoom, std::shared_ptr<Room> rightRoom)
-{
-	std::shared_ptr<Room> moveTowardsRoom = nullptr;
-
-	switch (positionChangedEvent->Direction)
-	{
-	case Direction::Up:
-		moveTowardsRoom = topRoom;
-		break;
-	case Direction::Down:
-		moveTowardsRoom = bottomRoom;
-		break;
-	case Direction::Left:
-		moveTowardsRoom = leftRoom;
-		break;
-	case Direction::Right:
-		moveTowardsRoom = rightRoom;
-		break;
-	}
-
-	return moveTowardsRoom;
 }
 
 void Player::CenterPlayerInRoom(shared_ptr<Room> targetRoom)

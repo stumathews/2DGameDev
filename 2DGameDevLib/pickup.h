@@ -36,19 +36,28 @@ namespace gamelib
 		/// Provide name to event system
 		/// </summary>
 		/// <returns>Subscriber name</returns>
-		std::string GetSubscriberName() override;
+		std::string GetSubscriberName() override
+		{
+			return "pickup";
+		}
 
 		/// <summary>
 		/// Provide Pickup game type
 		/// </summary>
 		/// <returns>Pickup</returns>
-		gamelib::GameObjectType GetGameObjectType() override;
+		gamelib::GameObjectType GetGameObjectType() override
+		{
+			return gamelib::GameObjectType::Pickup;
+		}
 
 		/// <summary>
 		/// Provide name
 		/// </summary>
 		/// <returns>Name</returns>
-		std::string GetName() override;
+		std::string GetName() override
+		{
+			return "pickup";
+		}
 
 		/// <summary>
 		/// Handle pickup events
@@ -61,7 +70,7 @@ namespace gamelib
 		/// Load pickup settings
 		/// </summary>
 		/// <param name="settingsManager">settingsManager</param>
-		void LoadSettings() override;
+		void LoadSettings() override { }
 
 		/// <summary>
 		/// Draw Pickup
@@ -75,7 +84,10 @@ namespace gamelib
 		void Update(float deltaMs) override;
 
 		int RoomNumber;
-		
+	protected:
+
+		// Update our bounds
+		void UpdateBounds();
 	private:
 
 

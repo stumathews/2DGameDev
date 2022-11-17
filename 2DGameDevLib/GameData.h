@@ -18,7 +18,7 @@ public:
 
 	void AddRoom(std::shared_ptr<Room> room);
 	void RemoveRoom(std::shared_ptr<Room> room);
-	std::shared_ptr<Room> GetRoom(int roomNumber);
+	std::shared_ptr<Room> GetRoomByIndex(int roomNumber);
 
 	void SetGameObjects(std::vector<std::shared_ptr<gamelib::GameObject>>* gameObjects);
 

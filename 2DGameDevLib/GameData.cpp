@@ -29,7 +29,7 @@ void GameData::RemoveRoom(std::shared_ptr<Room> room)
 	_rooms.erase(room->GetRoomNumber());
 }
 
-std::shared_ptr<Room> GameData::GetRoom(int roomNumber)
+std::shared_ptr<Room> GameData::GetRoomByIndex(int roomNumber)
 {
 	return _rooms[roomNumber];
 }

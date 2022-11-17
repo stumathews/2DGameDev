@@ -75,9 +75,9 @@
   
   <!-- Player settings -->
   <player>
-    <setting name="move_interval" type="int">1</setting>
+    <!--<setting name="move_interval" type="int">1</setting>-->
     <setting name="drawBounds" type="bool">false</setting>
-    <setting name="hotspotSize" type="int">2</setting>
+    <setting name="hotspotSize" type="int">12</setting>
     <setting name="drawHotspot" type="bool">false</setting>
     <setting name="hideSprite" type="bool">false</setting>
     <setting name="box_width" type="int">10</setting>
