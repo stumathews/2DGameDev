@@ -37,7 +37,6 @@ namespace gamelib
 			this->RoomNumber = 0;
 		}
 
-
 		/// <summary>
 		/// The Pickup's room number
 		/// </summary>
@@ -91,7 +90,10 @@ namespace gamelib
 		void Update(float deltaMs) override;
 
 	protected:
-		// Update our bounds
+		
+		/// <summary>
+		/// Update our bounds
+		/// </summary>
 		void SetBounds();
 	private:
 
@@ -108,6 +110,6 @@ namespace gamelib
 		/// <summary>
 		/// Animated sprite
 		/// </summary>
-		std::shared_ptr<gamelib::AnimatedSprite> sprite;
+		std::shared_ptr<gamelib::AnimatedSprite> _sprite;
 	};
 }

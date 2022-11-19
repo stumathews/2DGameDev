@@ -54,9 +54,13 @@ void Level::Load()
 			auto SetWall = [&](std::string isSideVisible, Side side, std::shared_ptr<Room> room) -> void
 			{
 				if (isSideVisible == "True")
+				{
 					room->AddWall(side);
+				}
 				else
+				{
 					room->RemoveWall(side);
+				}
 			};
 
 			SetWall(right, Side::Right, room);

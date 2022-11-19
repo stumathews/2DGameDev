@@ -56,15 +56,12 @@ void Rooms::ConfigureWalls(std::shared_ptr<Room>&thisRoom, bool& canRemoveWallAb
 {
 	if (SettingsManager::Get()->GetBool("grid", "nowalls"))
 	{
-		// Temporary measure to lift all wall restrictions
 		RemoveAllWalls(thisRoom);
 	}
 }
 
 void Rooms::RemoveAllWalls(std::shared_ptr<Room>&thisRoom)
 {
-	thisRoom->RemoveWall(Side::Top);
-	thisRoom->RemoveWall(Side::Right);
-	thisRoom->RemoveWall(Side::Bottom);
-	thisRoom->RemoveWall(Side::Left);
+	thisRoom->RemoveWall(Side::Top); thisRoom->RemoveWall(Side::Right);
+	thisRoom->RemoveWall(Side::Bottom); thisRoom->RemoveWall(Side::Left);
 }

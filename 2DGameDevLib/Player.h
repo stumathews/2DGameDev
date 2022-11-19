@@ -9,11 +9,11 @@
 #include <objects/AnimatedSprite.h>
 #include "MoveStrategy.h"
 #include "util/Tuple.h"
-#include "Restrictions.h"
 #include <Timer.h>
 #include <Movement/Movement.h>
 #include <deque>
 #include <events/ControllerMoveEvent.h>
+#include <Hotspot.h>
 
 typedef std::vector<std::shared_ptr<gamelib::Event>> ListOfEvents;
 typedef std::vector<std::shared_ptr<gamelib::GameObject>> ListOfGameObjects;
@@ -34,6 +34,9 @@ public:
 	Player(gamelib::coordinate<int> position, const int w, const int h, const std::string identifier);
 	Player(std::shared_ptr<Room> playerRoom, int playerWidth, int playerHeight, std::string identifier);
 	
+	/// <summary>
+	/// Common initilization routine
+	/// </summary>
 	void CommonInit(const int playerWidth, const int playerHeight, const std::string inIdentifier);
 
 	/// <summary>
@@ -59,25 +62,25 @@ public:
 	/// Get Top Room
 	/// </summary>
 	/// <returns></returns>
-	std::shared_ptr<Room> GetTopRoom();
+	std::shared_ptr<Room> GetTopRoom() { return GetAdjacentRoomTo(GetCurrentRoom(), Side::Top); }
 
 	/// <summary>
 	/// Get player's bottom room
 	/// </summary>
 	/// <returns></returns>
-	std::shared_ptr<Room> GetBottomRoom();
+	std::shared_ptr<Room> GetBottomRoom() { return GetAdjacentRoomTo(GetCurrentRoom(), Side::Bottom); }
 
 	/// <summary>
 	/// Get player's right room
 	/// </summary>
 	/// <returns>Right room</returns>
-	std::shared_ptr<Room> GetRightRoom();
+	std::shared_ptr<Room> GetRightRoom() { return GetAdjacentRoomTo(GetCurrentRoom(), Side::Right); }
 
 	/// <summary>
 	/// Get player's left room
 	/// </summary>
 	/// <returns>Room left of player</returns>
-	std::shared_ptr<Room> GetLeftRoom();
+	std::shared_ptr<Room> GetLeftRoom() { return GetAdjacentRoomTo(GetCurrentRoom(), Side::Left); }
 
 	/// <summary>
 	/// Remove wall in front of the player
@@ -157,34 +160,10 @@ public:
 	const std::shared_ptr<Room> GetAdjacentRoomTo(std::shared_ptr<Room> currentRoom, Side side);
 
 	/// <summary>
-	/// Get the Hotspot position
-	/// </summary>
-	/// <returns></returns>
-	gamelib::coordinate<int> GetHotspot();
-	
-
-	/// <summary>
 	/// Draw player
 	/// </summary>
 	/// <param name="renderer"></param>
 	void Draw(SDL_Renderer* renderer) override;
-
-	/// <summary>
-	/// Draw the sprite
-	/// </summary>
-	void DrawSprite(SDL_Renderer* renderer);
-
-	/// <summary>
-	/// Draw the bounds
-	/// </summary>
-	/// <param name="renderer"></param>
-	void DrawBounds(SDL_Renderer* renderer);
-
-	/// <summary>
-	/// Draw the hotspot
-	/// </summary>
-	/// <param name="renderer"></param>
-	void DrawHotspot(SDL_Renderer* renderer);
 
 	/// <summary>
 	/// Get Name
@@ -232,11 +211,6 @@ public:
 	bool IsWithinRoom(std::shared_ptr<Room> room);
 
 	/// <summary>
-	/// Calculate the bounds
-	/// </summary>
-	SDL_Rect CalculateBounds(int x, int y);
-
-	/// <summary>
 	/// Set the player's room
 	/// </summary>
 	/// <param name="roomIndex"></param>
@@ -255,27 +229,16 @@ public:
 	int GetHeight() { return height; }
 
 	/// <summary>
-	/// Get Direction
-	/// </summary>
-	/// <returns></returns>
-	gamelib::Direction GetDirection();
-
-	/// <summary>
 	/// Set the sprite of the player
 	/// </summary>
 	/// <param name="sprite"></param>
-	void SetSprite(std::shared_ptr<gamelib::AnimatedSprite> inSprite) { sprite = inSprite; }
+	void SetSprite(std::shared_ptr<gamelib::AnimatedSprite> inSprite) { _sprite = inSprite; }
 
 	/// <summary>
 	/// Set the movement strategy
 	/// </summary>
 	/// <param name="moveStrategy"></param>
 	void SetMoveStrategy(std::shared_ptr<IPlayerMoveStrategy> inMoveStrategy) { moveStrategy = inMoveStrategy; }
-
-	/// <summary>
-	/// Restrictions
-	/// </summary>
-	Restrictions restrictions;
 
 	/// <summary>
 	/// Current room
@@ -288,14 +251,6 @@ public:
 	ListOfGameObjects& GameObjectsPtr;
 
 	/// <summary>
-	/// Calculate player hostspot position
-	/// </summary>
-	/// <param name="x"></param>
-	/// <param name="y"></param>
-	/// <returns></returns>
-	gamelib::coordinate<int> CalculateHotspotPosition(int x, int y);
-
-	/// <summary>
 	/// Get Hotspot length
 	/// </summary>
 	/// <returns></returns>
@@ -306,18 +261,23 @@ public:
 	/// </summary>
 	std::string Identifier;
 
+	/// <summary>
+	/// Player's Hotspot
+	/// </summary>
+	std::shared_ptr<gamelib::Hotspot> Hotspot;
+
 private:
 
 	/// <summary>
 	/// How long is 1 movement
 	/// </summary>
-	int moveDurationMs = 0;
+	unsigned long moveDurationMs = 0;
 	int maxPixelsToMove = 0;
-	std::shared_ptr<gamelib::AnimatedSprite> sprite;
+	std::shared_ptr<gamelib::AnimatedSprite> _sprite;
 	int width;
 	int height;
 	int playerRoomIndex = 0;
-	bool drawBounds = false;
+	bool _drawBounds = false;
 	bool hideSprite = false;
 	bool drawHotSpot = false;
 	int hotspotSize = 0;
@@ -327,5 +287,6 @@ private:
 	std::deque<std::shared_ptr<Movement>> moveQueue;	
 	bool debugMovement;
 	bool verbose;
+
 };
 

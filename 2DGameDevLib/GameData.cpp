@@ -13,16 +13,13 @@ GameData* GameData::Get()
 	return Instance;
 }
 
-GameData::~GameData()
-{
-	Instance = nullptr;
-}
 
+/// <summary>
+/// Add room to the list of game rooms
+/// </summary>
+/// <param name="room"></param>
 
-void GameData::AddRoom(std::shared_ptr<Room> room)
-{
-	_rooms[room->GetRoomNumber()] = room;
-}
+void GameData::AddRoom(std::shared_ptr<Room> room) { _rooms[room->GetRoomNumber()] = room; }
 
 void GameData::RemoveRoom(std::shared_ptr<Room> room)
 {

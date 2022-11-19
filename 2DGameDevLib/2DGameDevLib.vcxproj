@@ -161,7 +161,6 @@
   <ItemGroup>
     <ClInclude Include="PlayerMoveStrategy.h" />
     <ClInclude Include="DrawableFrameRate.h" />
-    <ClInclude Include="framework.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameObjectEventFactory.h" />
     <ClInclude Include="Level.h" />
@@ -171,19 +170,18 @@
     <ClInclude Include="pickup.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerComponent.h" />
-    <ClInclude Include="Restrictions.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="Rooms.h" />
     <ClInclude Include="SDLCollisionDetection.h" />
+    <ClInclude Include="Side.h" />
+    <ClInclude Include="SideUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DrawableFrameRate.cpp" />
     <ClCompile Include="PlayerMoveStrategy.cpp" />
     <ClCompile Include="GameData.cpp" />
-    <ClCompile Include="GameObjectEventFactory.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="RoomGenerator.cpp" />
-    <ClCompile Include="MoveStrategy.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -193,9 +191,7 @@
     <ClCompile Include="pickup.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerComponent.cpp" />
-    <ClCompile Include="Restrictions.cpp" />
     <ClCompile Include="Room.cpp" />
-    <ClCompile Include="2DGameDevLib.cpp" />
     <ClCompile Include="Rooms.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -20,9 +20,9 @@ using namespace gamelib;
 	
 // Create a player 
 Player::Player(gamelib::coordinate<int> position, const int width, const int height, const std::string inIdentifier) 
-	: DrawableGameObject(position, true), GameObjectsPtr(SceneManager::Get()->GetGameWorld().GetGameObjects())
-{	
-	CommonInit(width, height, inIdentifier);
+	: DrawableGameObject(position, true), GameObjectsPtr(SceneManager::Get()->GetGameWorld().GetGameObjects()) 
+{
+	CommonInit(width, height, inIdentifier); 
 }
 
 Player::Player(std::shared_ptr<Room> room, int width, int height, std::string identifier) : DrawableGameObject(room->GetCenter(width, height), true), 
@@ -37,9 +37,10 @@ void Player::CommonInit(const int inWidth, const int inHeight, const std::string
 {
 	width = inWidth;
 	height = inHeight;
-	sprite = nullptr;
+	_sprite = nullptr;
 	currentFacingDirection = this->currentMovingDirection;
 	Identifier = inIdentifier;
+	Hotspot = std::shared_ptr<gamelib::Hotspot>(new gamelib::Hotspot(width, height, width/2));
 
 	SubscribeToEvent(EventType::ControllerMoveEvent);
 	SubscribeToEvent(EventType::SettingsReloaded);
@@ -115,21 +116,34 @@ void Player::Update(float deltaMs)
 {	
 	Move(deltaMs);
 
-	Bounds = CalculateBounds(Position.GetX(), Position.GetY()); // Calculate new bounds based on position
+	Hotspot->Update(Position);
+
+	UpdateBounds(width, height);	
 }
 
 void Player::Draw(SDL_Renderer* renderer)
 {
-	DrawSprite(renderer);	
-	DrawHotspot(renderer);
-	DrawBounds(renderer);	
-}
+	if (!hideSprite)
+	{
+		_sprite->Draw(renderer);
+	}
 
-SDL_Rect Player::CalculateBounds(int x, int y) { return { x, y, width, height }; }
+	if (drawHotSpot)
+	{
+		Hotspot->Draw(renderer);
+	}
+
+	if (_drawBounds)
+	{
+		SDL_Color colour = { 255, 0 ,0 ,0 };
+		SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
+		SDL_RenderDrawRect(renderer, &Bounds);
+	}
+}
 
 void Player::UpdateSprite(float deltaMs)
 {
-	if (!sprite)
+	if (!_sprite)
 	{
 		return;
 	}
@@ -138,14 +152,14 @@ void Player::UpdateSprite(float deltaMs)
 
 	if (PlayerHasPendingMoves())
 	{
-		sprite->EnableAnimation();
+		_sprite->EnableAnimation();
 	}
 	else
 	{
-		sprite->DisableAnimation();
+		_sprite->DisableAnimation();
 	}
 
-	sprite->Update(deltaMs);
+	_sprite->Update(deltaMs);
 }
 
 void Player::Move(float deltaMs)
@@ -176,7 +190,7 @@ void Player::Move(float deltaMs)
 
 	UpdateSprite(deltaMs);
 
-	sprite->MoveSprite(Position.GetX(), Position.GetY()); // Move the sprite to match the position of the player
+	_sprite->MoveSprite(Position.GetX(), Position.GetY()); // Move the sprite to match the position of the player
 }
 
 void Player::SetSpriteAnimationFrameGroup()
@@ -184,16 +198,16 @@ void Player::SetSpriteAnimationFrameGroup()
 	switch (currentFacingDirection)
 	{
 	case Direction::Up:
-		sprite->SetAnimationFrameGroup("up");
+		_sprite->SetAnimationFrameGroup("up");
 		break;
 	case Direction::Right:
-		sprite->SetAnimationFrameGroup("right");
+		_sprite->SetAnimationFrameGroup("right");
 		break;
 	case Direction::Down:
-		sprite->SetAnimationFrameGroup("down");
+		_sprite->SetAnimationFrameGroup("down");
 		break;
 	case Direction::Left:
-		sprite->SetAnimationFrameGroup("left");
+		_sprite->SetAnimationFrameGroup("left");
 		break;
 	}
 }
@@ -202,7 +216,7 @@ void Player::LoadSettings()
 {
 	GameObject::LoadSettings();
 
-	drawBounds = SettingsManager::Get()->GetBool("player", "drawBounds");
+	_drawBounds = SettingsManager::Get()->GetBool("player", "drawBounds");
 	debugMovement = gamelib::SettingsManager::Get()->GetBool("player", "debugMovement");
 	verbose = SettingsManager::Get()->GetBool("global", "verbose");
 	moveDurationMs = SettingsManager::Get()->GetInt("player", "moveDurationMs");
@@ -210,6 +224,8 @@ void Player::LoadSettings()
 	hotspotSize = SettingsManager::Get()->GetInt("player", "hotspotSize");
 	drawHotSpot = SettingsManager::Get()->GetBool("player", "drawHotspot");
 	hideSprite = SettingsManager::Get()->GetBool("player", "hideSprite");
+
+	Hotspot->Width = hotspotSize;
 }
 
 void Player::SetPlayerDirection(Direction direction)
@@ -218,44 +234,22 @@ void Player::SetPlayerDirection(Direction direction)
 	currentFacingDirection = direction;
 }	
 
-inline const std::shared_ptr<Room> Player::GetCurrentRoom()
-{
-	return GameData::Get()->GetRoomByIndex(playerRoomIndex);
-}
+const std::shared_ptr<Room> Player::GetCurrentRoom() { return GameData::Get()->GetRoomByIndex(playerRoomIndex); }
 
-const std::shared_ptr<Room> Player::GetRoomByIndex(int index)
-{
-	return GameData::Get()->GetRoomByIndex(index);
-}
+const std::shared_ptr<Room> Player::GetRoomByIndex(int index) { return GameData::Get()->GetRoomByIndex(index); }
 
-const shared_ptr<Room> Player::GetAdjacentRoomTo(shared_ptr<Room> room, Side side)
-{
-	return GameData::Get()->GetRoomByIndex(room->GetNeighbourIndex(side));
-}
-
-gamelib::coordinate<int> Player::CalculateHotspotPosition(int x, int y)
-{
-	auto mid_x = x + GetWidth()/2;
-	auto mid_y = y + GetHeight()/2;
-	return coordinate<int>(mid_x, mid_y);
-}
-
-gamelib::coordinate<int> Player::GetHotspot()
-{
-	return CalculateHotspotPosition(Position.GetX(), Position.GetY());
-}
+const shared_ptr<Room> Player::GetAdjacentRoomTo(shared_ptr<Room> room, Side side) { return GameData::Get()->GetRoomByIndex(room->GetNeighbourIndex(side)); }
 
 bool Player::IsWithinRoom(std::shared_ptr<Room> room)
 {
-	auto x1 = GetHotspot().GetX();
-	auto y1 = GetHotspot().GetY();
+	auto x1 = Hotspot->GetPosition().GetX();
+	auto y1 = Hotspot->GetPosition().GetY();
 	return SDL_IntersectRectAndLine(&room->InnerBounds, &x1, &y1, &x1, &y1);
 }
 
 void Player::SetPlayerRoom(int roomIndex) 
 { 
-	playerRoomIndex = roomIndex; 	
-	CurrentRoom = dynamic_pointer_cast<Room>(SceneManager::Get()->GetGameWorld().GetGameObjects()[playerRoomIndex]);
+	playerRoomIndex = roomIndex; CurrentRoom = dynamic_pointer_cast<Room>(SceneManager::Get()->GetGameWorld().GetGameObjects()[playerRoomIndex]);
 }
 
 void Player::RemovePlayerFacingWall()
@@ -277,74 +271,21 @@ void Player::RemovePlayerFacingWall()
 	}
 }
 
-void Player::RemoveRightWall()
-{
-	CurrentRoom->RemoveWall(Side::Right);
-	GetRightRoom()->RemoveWall(Side::Left);
-}
+void Player::RemoveRightWall() { CurrentRoom->RemoveWall(Side::Right); GetRightRoom()->RemoveWall(Side::Left); }
 
-void Player::RemoveLeftWall()
-{
-	CurrentRoom->RemoveWall(Side::Left);
-	GetLeftRoom()->RemoveWall(Side::Right);
-}
+void Player::RemoveLeftWall() { CurrentRoom->RemoveWall(Side::Left); GetLeftRoom()->RemoveWall(Side::Right); }
 
-void Player::RemoveBottomWall()
-{
-	CurrentRoom->RemoveWall(Side::Bottom);
-	GetBottomRoom()->RemoveWall(Side::Top);
-}
+void Player::RemoveBottomWall() { CurrentRoom->RemoveWall(Side::Bottom); GetBottomRoom()->RemoveWall(Side::Top); }
 
-void Player::RemoveTopWall()
-{
-	CurrentRoom->RemoveWall(Side::Top);
-	GetTopRoom()->RemoveWall(Side::Bottom);
-}
+void Player::RemoveTopWall() {	CurrentRoom->RemoveWall(Side::Top); GetTopRoom()->RemoveWall(Side::Bottom); }
+
+void Player::Fire() { RemovePlayerFacingWall();	}
+
+bool Player::PlayerHasPendingMoves() { return !moveQueue.empty(); }
 
 void Player::BaseProcessEvent(const shared_ptr<Event>& event, ListOfEvents& createdEvents)
 {
-	for (auto& createdEvent : GameObject::HandleEvent(event))
-	{
-		createdEvents.push_back(createdEvent);
-	}
-}
-
-void Player::DrawSprite(SDL_Renderer* renderer)
-{
-	if (!hideSprite)
-	{
-		sprite->Draw(renderer);
-	}
-}
-
-void Player::DrawBounds(SDL_Renderer* renderer)
-{
-	if (drawBounds)
-	{
-		SDL_Color colour = { 255, 0 ,0 ,0 };
-		SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
-		SDL_RenderDrawRect(renderer, &Bounds);
-	}
-}
-
-void Player::DrawHotspot(SDL_Renderer* renderer)
-{
-	if (drawHotSpot)
-	{		
-		SDL_Rect point_bounds =
-		{
-			GetHotspot().GetX(), 
-			GetHotspot().GetY(), 
-			GetHotSpotLength(),
-			GetHotSpotLength()
-		};
-		DrawFilledRect(renderer, &point_bounds, { 255, 0 ,0 ,0 });
-	}
-}
-
-void Player::Fire()
-{
-	RemovePlayerFacingWall();	
+	for (auto& createdEvent : GameObject::HandleEvent(event)) { createdEvents.push_back(createdEvent); }
 }
 
 void Player::CenterPlayerInRoom(shared_ptr<Room> targetRoom)
@@ -362,26 +303,4 @@ void Player::CenterPlayerInRoom(shared_ptr<Room> targetRoom)
 	const auto coords = centerPlayerFunc(*targetRoom, *this);
 	Position.SetY(coords.GetY());
 	Position.SetX(coords.GetX());
-}
-
-bool Player::PlayerHasPendingMoves()
-{
-	return !moveQueue.empty();
-}
-
-shared_ptr<Room> Player::GetTopRoom()
-{
-	return GetAdjacentRoomTo(GetCurrentRoom(), Side::Top);
-}
-shared_ptr<Room> Player::GetBottomRoom()
-{
-	return GetAdjacentRoomTo(GetCurrentRoom(), Side::Bottom);
-}
-shared_ptr<Room> Player::GetRightRoom()
-{
-	return GetAdjacentRoomTo(GetCurrentRoom(), Side::Right);
-}
-shared_ptr<Room> Player::GetLeftRoom()
-{
-	return GetAdjacentRoomTo(GetCurrentRoom(), Side::Left);
 }

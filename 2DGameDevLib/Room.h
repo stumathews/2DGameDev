@@ -7,29 +7,7 @@
 #include "util/Tuple.h"
 #include <geometry/Line.h>
 #include <common/aliases.h>
-
-// Side of a room
-enum class Side
-{
-	Top,
-	Right,
-	Bottom,
-	Left
-};
-
-// Turns a side enum into a loggable string
-inline const char* ToString(Side side)
-{
-	switch (side)
-	{
-		case Side::Top:   return "Top";
-		case Side::Right: return "Right";
-		case Side::Bottom: return "Bottom";
-		case Side::Left: return "Left";
-		default:      
-			return "[Unknown Side]";
-	}
-}
+#include "Side.h"
 
 /// <summary>
 /// Conceptual room object
@@ -44,7 +22,7 @@ public:
 	Room(int number, int x, int y, int width, int height, bool fill = false);
 
 	// The inner bounds are a inner ring within the bounds of the wall. Useful to indicate if things fall within the room
-	void CalculateInnerBounds();
+	void UpdateInnerBounds();
 
 	// Configure the walls of the room somehow
 	void SetupWalls();
@@ -123,13 +101,13 @@ public:
 	/// <summary>
 	/// Provide Room type
 	/// </summary>
-	gamelib::GameObjectType GetGameObjectType() override;
+	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::Room; }
 
 	/// <summary>
 	/// Name
 	/// </summary>
 	/// <returns></returns>
-	std::string GetName() override;
+	std::string GetName() override { return "Room"; }
 		
 	/// <summary>
 	/// Handle room events
@@ -167,7 +145,7 @@ public:
 	/// Get coordinates of the room's hotspot
 	/// </summary>
 	/// <returns></returns>
-	gamelib::coordinate<int> GetHotspot();
+	gamelib::coordinate<int> GetPosition();
 
 	/// <summary>
 	/// Get Room Number

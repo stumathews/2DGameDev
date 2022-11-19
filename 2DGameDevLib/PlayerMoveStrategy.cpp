@@ -70,7 +70,7 @@ bool PlayerMoveStrategy::WouldPlayerHotspotHitRoomInnerBounds(std::shared_ptr<Ro
 	auto mockPlayerPosition = CalculatePlayerMove(movement, movement->PreviewPixelsToMove());
 
 	// Calculate the location of the hotspot at that location
-	auto mockPlayerHotSpot = player->CalculateHotspotPosition(mockPlayerPosition.GetX(), mockPlayerPosition.GetY());
+	auto mockPlayerHotSpot = player->Hotspot->CalculateHotspotPosition(mockPlayerPosition.GetX(), mockPlayerPosition.GetY());
 
 	// Setup the bounds for the simulated hotspot
 	auto mockPlayerHotSpotBounds = SDL_Rect { mockPlayerHotSpot.GetX(), mockPlayerHotSpot.GetY(), player->GetHotSpotLength() , player->GetHotSpotLength() };
