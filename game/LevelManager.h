@@ -49,6 +49,10 @@ public:
     /// </summary>
     gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> evt) override;
 
+    void OnGameObjectEventReceived(std::shared_ptr<gamelib::Event>& event);
+
+    void OnFetchedPickup();
+
     void OnStartNetworkLevel(std::shared_ptr<gamelib::Event> evt);
 
     void OnNetworkPlayerJoined(std::shared_ptr<gamelib::Event> evt);
@@ -78,14 +82,14 @@ public:
     /// <summary>
     /// Name for event subsystem
     /// </summary>
-    std::string GetSubscriberName() override;
+    std::string GetSubscriberName() override { return "level_manager"; }
     
     /// <summary>
     /// Create the Level's game objects
     /// </summary>
     ListOfGameObjects CreateAutoLevel();
 
-    void InitializeHudItem(std::shared_ptr<StaticSprite> hudItem);
+    void InitializeHudItem(std::shared_ptr<StaticSprite> _hudItem);
 
     void InitializePlayer(std::shared_ptr<Player> player, std::shared_ptr<gamelib::SpriteAsset> spriteAsset);
 
@@ -140,8 +144,8 @@ private:
     /// </summary>
     std::shared_ptr<GameCommands> _gameCommands;
     unsigned int currentLevel = 1;
-    gamelib::EventManager* eventManager;
-    gamelib::EventFactory* eventFactory;
+    gamelib::EventManager* _eventManager;
+    gamelib::EventFactory* _eventFactory;
 
     /// <summary>
     /// Remove game object
@@ -151,19 +155,19 @@ private:
     /// <summary>
     /// Get Random Index between [min and max] 
     /// </summary>
-    static size_t GetRandomIndex(const int min, const int max);	
+    static size_t GetRandomIndex(const int min, const int max) { return rand() % (max - min + 1) + min; }
 
     /// <summary>
     /// Be verbose or not in logging
     /// </summary>
-    bool verbose;
+    bool _verbose;
 
     int numLevelPickups = 0;
 
     /// <summary>
     /// Hud item at the bottom right of the screen
     /// </summary>
-    std::shared_ptr<StaticSprite> hudItem;
+    std::shared_ptr<StaticSprite> _hudItem;
 
     /// <summary>
     /// Current level
@@ -177,3 +181,5 @@ private:
     unsigned long deltaMs;
     gamelib::ProcessManager processManager;
 };
+
+void OnFetchedPickup();

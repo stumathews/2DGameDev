@@ -17,11 +17,11 @@ namespace gamelib
 		/// <summary>
 		/// Create a new pickup at specific coordinates
 		/// </summary>
-		Pickup(int x, int y, int width, int height, bool visible) : DrawableGameObject(x, y, IsVisible)
+		Pickup(int x, int y, int width, int height, bool visible, int inRoomNumber) : DrawableGameObject(x, y, IsVisible)
 		{
 			this->width = width;
 			this->height = height;
-			this->RoomNumber = 0;
+			this->RoomNumber = inRoomNumber;
 		}
 		
 		/// <summary>

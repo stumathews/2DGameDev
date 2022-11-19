@@ -68,15 +68,13 @@ void PrepareLevel()
 	{
 		LevelManager::Get()->ChangeLevel(1);
 		
-		// We can automatically generate a maze of rooms
-		if (SettingsManager::Get()->GetBool("global", "createAutoLevel"))
+		if (SettingsManager::Get()->GetBool("global", "createAutoLevel")) 
 		{
 			LevelManager::Get()->CreateAutoLevel();
 		}
-		else
-		{
-			// Or - we can load a specific level, i.e read level 1's definition file
-			LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level1FileName"));
+		else 
+		{ 
+			LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level1FileName")); 
 		}
 	}
 

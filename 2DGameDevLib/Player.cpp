@@ -62,19 +62,19 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event)
 		break;	
 		case EventType::Fire:
 		{
-			LogMessage("Fire!", verbose);
+			LogMessage("Fire!", _verbose);
 			Fire();
 		}
 		break;
 		case EventType::SettingsReloaded:
 		{
-			LogMessage("Reloading player settings", verbose);
+			LogMessage("Reloading player settings", _verbose);
 			LoadSettings();
 		}
 		break;
 		case EventType::InvalidMove:
 		{
-			LogMessage("Invalid move", verbose);
+			LogMessage("Invalid move", _verbose);
 		}
 		break;
 	}
@@ -218,7 +218,7 @@ void Player::LoadSettings()
 
 	_drawBounds = SettingsManager::Get()->GetBool("player", "drawBounds");
 	debugMovement = gamelib::SettingsManager::Get()->GetBool("player", "debugMovement");
-	verbose = SettingsManager::Get()->GetBool("global", "verbose");
+	_verbose = SettingsManager::Get()->GetBool("global", "verbose");
 	moveDurationMs = SettingsManager::Get()->GetInt("player", "moveDurationMs");
 	maxPixelsToMove = SettingsManager::Get()->GetInt("player", "maxPixelsToMove");	
 	hotspotSize = SettingsManager::Get()->GetInt("player", "hotspotSize");

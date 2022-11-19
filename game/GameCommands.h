@@ -14,26 +14,26 @@ public:
 	GameCommands();
 	GameCommands(const GameCommands& copy) = delete;
 
-	std::string GetSubscriberName() override;;
+	std::string GetSubscriberName() override { return "GameCommands"; }
 
-	void Fire(bool verbose);
-	void MoveUp(bool verbose);
-	void MoveDown(bool verbose);
-	void MoveLeft(bool verbose);
-	void MoveRight(bool verbose);
+	void Fire(bool _verbose);
+	void MoveUp(bool _verbose);
+	void MoveDown(bool _verbose);
+	void MoveLeft(bool _verbose);
+	void MoveRight(bool _verbose);
 	void PlaySoundEffect(Mix_Chunk* effect);
-	void RaiseChangedLevel(bool verbose, short newLevel);
-	void ReloadSettings(bool verbose);
-	void GenerateNewLevel(bool verbose);
+	void RaiseChangedLevel(bool _verbose, short newLevel);
+	void ReloadSettings(bool _verbose);
+	void GenerateNewLevel(bool _verbose);
 	void LoadNewLevel(int level);
-	void ToggleMusic(bool verbose);
-	void Quit(bool verbose);
-	void InvalidMove(bool verbose = false);
-	void FetchedPickup(bool verbose = false);
+	void ToggleMusic(bool _verbose);
+	void Quit(bool _verbose);
+	void InvalidMove(bool _verbose = false);
+	void FetchedPickup(bool _verbose = false);
 	void StartNetworkLevel();
 	void PingGameServer();
 private:
-	bool verbose;
+	bool _verbose;
 	bool logCommands;
 
 	// Inherited via EventSubscriber

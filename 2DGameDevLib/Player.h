@@ -286,7 +286,7 @@ private:
 	std::shared_ptr<IPlayerMoveStrategy> moveStrategy;
 	std::deque<std::shared_ptr<Movement>> moveQueue;	
 	bool debugMovement;
-	bool verbose;
+	bool _verbose;
 
 };
 
