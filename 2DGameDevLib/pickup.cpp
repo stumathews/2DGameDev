@@ -10,32 +10,18 @@
 #include <SpriteAsset.h>
 #include <common/aliases.h>
 #include <events/UpdateAllGameObjectsEvent.h>
+#include "SDLCollisionDetection.h"
 
 using namespace std;
 
 namespace gamelib 
 {
-	Pickup::Pickup(const int x, const int y, const int width, const int height, const bool isVisible): DrawableGameObject(x, y, isVisible)
-	{
-		this->width = width;
-		this->height = height;
-		this->RoomNumber = 0;
-		this->fillColour = {0};		
-	}
-
-	Pickup::Pickup(const bool visible) : DrawableGameObject(0, 0, visible)
-	{
-		this->width = 0;
-		this->height = 0;
-		this->RoomNumber = 0;
-		this->fillColour = {0};	
-	}
-
 	void Pickup::Initialize()
 	{		
-		// Create the sprite from the asset associated with pickup
+		SetBounds();
+
 		sprite = AnimatedSprite::Create(Position.GetX(), Position.GetY(), 
-			dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(stringProperties["assetName"])));		
+			dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(stringProperties["assetName"])));
 	}
 
 	gamelib::ListOfEvents Pickup::HandleEvent(shared_ptr<gamelib::Event> event)
@@ -46,14 +32,11 @@ namespace gamelib
 		{
 			case gamelib::EventType::PlayerMovedEventType:	
 			{
-				SDL_Rect result;
-
 				const auto player = dynamic_pointer_cast<Player>(SceneManager::Get()->GetGameWorld().player);
 
-				// Basic collision detection (check if the player moved into me)				
 				if (player->GetCurrentRoom()->GetRoomNumber() == RoomNumber)
 				{
-					if (SDL_IntersectRect(&player->Bounds, &Bounds, &result))
+					if (SDLCollisionDetection::IsColliding(&player->Bounds, &Bounds))
 					{
 						generated_events.push_back(make_shared<gamelib::Event>(gamelib::EventType::FetchedPickup));
 						generated_events.push_back(make_shared<gamelib::GameObjectEvent>(Id, this, gamelib::GameObjectEventContext::Remove));
@@ -70,15 +53,10 @@ namespace gamelib
 		sprite->Draw(renderer);		
 	}
 
-	void Pickup::UpdateBounds()
-	{
-		Bounds = { Position.GetX(), Position.GetY(), width, height };
-	}
+	void Pickup::SetBounds() { Bounds = { Position.GetX(), Position.GetY(), width, height }; }
 
 	void Pickup::Update(float deltaMs)
 	{
-		UpdateBounds();		
-
 		sprite->Position.SetX(Position.GetX());
 		sprite->Position.SetY(Position.GetY());
 
@@ -86,4 +64,5 @@ namespace gamelib
 		sprite->Update(deltaMs);
 	}
 
+	
 }

@@ -3,7 +3,7 @@
 
 TEST(PlayerTests, Basic)
 {
-	Player player(0,0,0,0, "player1");
+	Player player(gamelib::coordinate<int>(0,0), 0, 0, "player1");
 	EXPECT_EQ(player.Position.GetX(), 0);
 	EXPECT_EQ(player.Position.GetY(), 0);
 	EXPECT_EQ(player.Bounds.w, 0);
@@ -16,5 +16,5 @@ TEST(PlayerTests, Basic)
 
 TEST(PlayerTests, HandleEvents)
 {
-	Player player(0, 0, 0, 0, "player1");
+	Player player(gamelib::coordinate<int>(0, 0), 0, 0, "player1");
 }

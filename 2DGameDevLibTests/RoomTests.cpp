@@ -17,7 +17,7 @@ TEST(RoomTests, Basic)
 	EXPECT_TRUE(room.IsWalled(Side::Left));
 	EXPECT_TRUE(room.IsWalled(Side::Right));
 	EXPECT_TRUE(room.IsActive);
-	EXPECT_TRUE(room.isVisible);
+	EXPECT_TRUE(room.IsVisible);
 	EXPECT_EQ(room.GetWidth(), width);
 	EXPECT_EQ(room.GetHeight(), height);
 	EXPECT_EQ(room.GetX(), x);

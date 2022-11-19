@@ -17,7 +17,12 @@ namespace gamelib
 		/// <summary>
 		/// Create a new pickup at specific coordinates
 		/// </summary>
-		Pickup(int x, int y, int width, int height, bool visible);
+		Pickup(int x, int y, int width, int height, bool visible) : DrawableGameObject(x, y, IsVisible)
+		{
+			this->width = width;
+			this->height = height;
+			this->RoomNumber = 0;
+		}
 		
 		/// <summary>
 		/// Create a new pickup with undefined coordinates
@@ -25,7 +30,18 @@ namespace gamelib
 		/// <param name="visible">initial visible state</param>
 		/// <param name="settingsManager">settingsManager</param>
 		/// <param name="eventManager">eventManager</param>
-		Pickup(bool visible);
+		Pickup(bool visible) : DrawableGameObject(0, 0, visible)
+		{
+			this->width = 0;
+			this->height = 0;
+			this->RoomNumber = 0;
+		}
+
+
+		/// <summary>
+		/// The Pickup's room number
+		/// </summary>
+		int RoomNumber;
 
 		/// <summary>
 		/// Initialize the pickup
@@ -36,28 +52,19 @@ namespace gamelib
 		/// Provide name to event system
 		/// </summary>
 		/// <returns>Subscriber name</returns>
-		std::string GetSubscriberName() override
-		{
-			return "pickup";
-		}
+		std::string GetSubscriberName() override { return "pickup"; }
 
 		/// <summary>
 		/// Provide Pickup game type
 		/// </summary>
 		/// <returns>Pickup</returns>
-		gamelib::GameObjectType GetGameObjectType() override
-		{
-			return gamelib::GameObjectType::Pickup;
-		}
+		gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::Pickup; }
 
 		/// <summary>
 		/// Provide name
 		/// </summary>
 		/// <returns>Name</returns>
-		std::string GetName() override
-		{
-			return "pickup";
-		}
+		std::string GetName() override { return "pickup"; }
 
 		/// <summary>
 		/// Handle pickup events
@@ -83,13 +90,10 @@ namespace gamelib
 		/// </summary>
 		void Update(float deltaMs) override;
 
-		int RoomNumber;
 	protected:
-
 		// Update our bounds
-		void UpdateBounds();
+		void SetBounds();
 	private:
-
 
 		/// <summary>
 		/// Pickup width
@@ -100,11 +104,6 @@ namespace gamelib
 		/// Pickup height
 		/// </summary>
 		int height;
-
-		/// <summary>
-		/// Colour of the pickup
-		/// </summary>
-		SDL_Color fillColour;
 
 		/// <summary>
 		/// Animated sprite

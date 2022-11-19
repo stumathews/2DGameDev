@@ -19,41 +19,31 @@ using namespace std;
 using namespace gamelib;
 	
 // Create a player 
-Player::Player(const int x, const int y, const int playerWidth, const int playerHeight, const std::string inIdentifier) 
-	: DrawableGameObject(x, y, true), GameObjectsPtr(SceneManager::Get()->GetGameWorld().GetGameObjects())
+Player::Player(gamelib::coordinate<int> position, const int width, const int height, const std::string inIdentifier) 
+	: DrawableGameObject(position, true), GameObjectsPtr(SceneManager::Get()->GetGameWorld().GetGameObjects())
 {	
-	CommonInit(playerWidth, playerHeight, inIdentifier);
+	CommonInit(width, height, inIdentifier);
 }
 
-void Player::CommonInit(const int playerWidth, const int playerHeight, const std::string inIdentifier)
+Player::Player(std::shared_ptr<Room> room, int width, int height, std::string identifier) : DrawableGameObject(room->GetCenter(width, height), true), 
+	GameObjectsPtr(SceneManager::Get()->GetGameWorld().GetGameObjects())
 {
-	// Initialize 
-	width = playerWidth;
-	height = playerHeight;
+	CommonInit(width, height, identifier);
+	SetPlayerRoom(room->GetRoomNumber());
+	CenterPlayerInRoom(room);
+}
+
+void Player::CommonInit(const int inWidth, const int inHeight, const std::string inIdentifier)
+{
+	width = inWidth;
+	height = inHeight;
 	sprite = nullptr;
 	currentFacingDirection = this->currentMovingDirection;
 	Identifier = inIdentifier;
 
-	isVisible = true;
-
-	SubscribeToEvent(EventType::ControllerMoveEvent); // Player responds to move commands
-	SubscribeToEvent(EventType::SettingsReloaded); // We can reload the player's settings dynamically
-	SubscribeToEvent(EventType::Fire); // Player response to fire command
-
-	// Should the player log everything its doing to log file?
-	verbose = false;
-
-	// How long is 1 movement
-	moveDurationMs = SettingsManager::Get()->GetInt("player", "moveDurationMs");
-}
-
-Player::Player(std::shared_ptr<Room> playerRoom, int playerWidth, int playerHeight, std::string identifier)
-	:DrawableGameObject(playerRoom->GetCenter(playerWidth, playerHeight), true), GameObjectsPtr(SceneManager::Get()->GetGameWorld().GetGameObjects())
-{
-	CommonInit(playerWidth, playerHeight, identifier);
-
-	SetPlayerRoom(playerRoom->GetRoomNumber());
-	CenterPlayerInRoom(playerRoom);
+	SubscribeToEvent(EventType::ControllerMoveEvent);
+	SubscribeToEvent(EventType::SettingsReloaded);
+	SubscribeToEvent(EventType::Fire);
 }
 
 ListOfEvents Player::HandleEvent(const shared_ptr<Event> event)
@@ -64,20 +54,28 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event)
 	
 	switch (event->type)
 	{		
-		case EventType::ControllerMoveEvent: // We got a controller movement
+		case EventType::ControllerMoveEvent:
+		{
 			return OnControllerMove(event, createdEvents);
-			break;	
-		case EventType::Fire: // The user pressed the fire command.
+		}
+		break;	
+		case EventType::Fire:
+		{
 			LogMessage("Fire!", verbose);
 			Fire();
-			break;
-		case EventType::SettingsReloaded: // The system wan't us to re-load our settings
+		}
+		break;
+		case EventType::SettingsReloaded:
+		{
 			LogMessage("Reloading player settings", verbose);
 			LoadSettings();
-			break;
-		case EventType::InvalidMove: // The system says that an invalid move was made
+		}
+		break;
+		case EventType::InvalidMove:
+		{
 			LogMessage("Invalid move", verbose);
-			break;
+		}
+		break;
 	}
 
 	return createdEvents;
@@ -86,9 +84,9 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event)
 
 const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, ListOfEvents& createdEvents)
 {
-	auto controllerMoveEvent = dynamic_pointer_cast<ControllerMoveEvent>(event);	
+	auto moveDetails = dynamic_pointer_cast<ControllerMoveEvent>(event);	
 	
-	AddToPlayerMovements(controllerMoveEvent, createdEvents); // NB: movements will be processed udirng updates
+	AddToPlayerMovements(moveDetails, createdEvents); // NB: movements will be processed udirng updates
 
 	return createdEvents;
 }
@@ -101,31 +99,21 @@ void Player::AddToPlayerMovements(std::shared_ptr<gamelib::ControllerMoveEvent>&
 	auto lastDirectionIsSameAsCurrent = doesPlayerHaveMoves
 		? moveQueue.back()->direction == controllerMoveEvent->Direction
 		: false;
-	
-	// Player has moved in a new direction?
+
 	if (!lastDirectionIsSameAsCurrent)
 	{
-		// Cancel any pending moves in the other direction
 		if (doesPlayerHaveMoves)
 		{
-			if (debugMovement) 
-			{
-				Logger::Get()->LogThis("Canceling last movement.");
-			}
-
 			moveQueue.clear();
 		}
 
-		auto movement = std::shared_ptr<Movement>(new Movement(moveDurationMs, controllerMoveEvent->Direction, maxPixelsToMove, debugMovement));
-		
-		// Add this as a player move, to the list of pending player moves
-		moveQueue.push_back(movement);
+		moveQueue.push_back(std::shared_ptr<Movement>(new Movement(moveDurationMs, controllerMoveEvent->Direction, maxPixelsToMove, debugMovement)));
 	}
 }
 
 void Player::Update(float deltaMs)
 {	
-	Move(deltaMs); // Calculate players new position, based on the movements created by the controller	
+	Move(deltaMs);
 
 	Bounds = CalculateBounds(Position.GetX(), Position.GetY()); // Calculate new bounds based on position
 }
@@ -137,20 +125,17 @@ void Player::Draw(SDL_Renderer* renderer)
 	DrawBounds(renderer);	
 }
 
-SDL_Rect Player::CalculateBounds(int x, int y)
-{
-	return { x, y, width, height };
-}
+SDL_Rect Player::CalculateBounds(int x, int y) { return { x, y, width, height }; }
 
 void Player::UpdateSprite(float deltaMs)
 {
-	if(!sprite)
+	if (!sprite)
+	{
 		return;
+	}
 		
-	// Select the key frames relevant for the direction the player is facing
 	SetSpriteAnimationFrameGroup();
 
-	// Allow animation, i.e frames to be switched if there are moves pending to animate
 	if (PlayerHasPendingMoves())
 	{
 		sprite->EnableAnimation();
@@ -160,21 +145,17 @@ void Player::UpdateSprite(float deltaMs)
 		sprite->DisableAnimation();
 	}
 
-	// Allow the sprite to process duration of last frame
 	sprite->Update(deltaMs);
 }
 
 void Player::Move(float deltaMs)
 {
-	// Process queued movements
 	for (auto& currentMovement : moveQueue)
 	{
 		if (!currentMovement->IsComplete())
 		{
-			// calculate the number of pixels that we should move based on the duration that this movement has had
 			currentMovement->Update(deltaMs);	
 			
-			// Actually move player (set player's position) based on the movement
 			if (!moveStrategy->MovePlayer(currentMovement))
 			{
 				EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(gamelib::EventType::InvalidMove), this);
@@ -198,7 +179,6 @@ void Player::Move(float deltaMs)
 	sprite->MoveSprite(Position.GetX(), Position.GetY()); // Move the sprite to match the position of the player
 }
 
-// based on the facing direction, select key frame for sprite that matches that direction
 void Player::SetSpriteAnimationFrameGroup()
 {
 	switch (currentFacingDirection)
@@ -238,18 +218,6 @@ void Player::SetPlayerDirection(Direction direction)
 	currentFacingDirection = direction;
 }	
 
-const ptrdiff_t Player::CountRoomGameObjects(ListOfGameObjects& gameObjects)
-{
-	return count_if(begin(gameObjects), end(gameObjects), [](std::weak_ptr<gamelib::GameObject> gameObject)
-	{
-		if (auto ptr = gameObject.lock())
-		{
-			return ptr->GetGameObjectType() == GameObjectType::Room;
-		}
-		return false;
-	});
-}
-
 inline const std::shared_ptr<Room> Player::GetCurrentRoom()
 {
 	return GameData::Get()->GetRoomByIndex(playerRoomIndex);
@@ -272,11 +240,6 @@ gamelib::coordinate<int> Player::CalculateHotspotPosition(int x, int y)
 	return coordinate<int>(mid_x, mid_y);
 }
 
-int Player::GetHotSpotLength()
-{
-	return hotspotSize;
-}
-
 gamelib::coordinate<int> Player::GetHotspot()
 {
 	return CalculateHotspotPosition(Position.GetX(), Position.GetY());
@@ -295,33 +258,6 @@ void Player::SetPlayerRoom(int roomIndex)
 	CurrentRoom = dynamic_pointer_cast<Room>(SceneManager::Get()->GetGameWorld().GetGameObjects()[playerRoomIndex]);
 }
 
-int Player::GetWidth() 
-{ 
-	return width; 
-}
-	
-int Player::GetHeight()
-{
-	return height;
-}
-
-Direction Player::GetDirection()
-{
-	return Direction();
-}
-
-// without a sprite object, the player has no visible elements
-void Player::SetSprite(shared_ptr<AnimatedSprite> sprite)
-{
-	this->sprite = sprite;
-}
-
-void Player::SetMoveStrategy(shared_ptr<IPlayerMoveStrategy> moveStrategy)
-{
-	this->moveStrategy = moveStrategy;
-}
-
-// Remove the wall in front of the player, i.e in the direction the player is facing
 void Player::RemovePlayerFacingWall()
 {		
 	switch(currentFacingDirection)
@@ -406,16 +342,6 @@ void Player::DrawHotspot(SDL_Renderer* renderer)
 	}
 }
 
-string Player::GetName()
-{
-	return Identifier;
-}
-
-GameObjectType Player::GetGameObjectType() 
-{ 
-	return GameObjectType::Player;
-}
-
 void Player::Fire()
 {
 	RemovePlayerFacingWall();	
@@ -423,7 +349,7 @@ void Player::Fire()
 
 void Player::CenterPlayerInRoom(shared_ptr<Room> targetRoom)
 {
-	// local func to the center the player in the given room
+	// local func
 	const function<coordinate<int>(Room, Player)> centerPlayerFunc = [](const Room& room, Player p)
 	{
 		auto const room_x_mid = room.GetX() + (room.GetWidth() / 2);

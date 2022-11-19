@@ -31,7 +31,7 @@ class Player final : public gamelib::DrawableGameObject
 {		
 public:
 		
-	Player(const int x, const int y, const int w, const int h, const std::string identifier);
+	Player(gamelib::coordinate<int> position, const int w, const int h, const std::string identifier);
 	Player(std::shared_ptr<Room> playerRoom, int playerWidth, int playerHeight, std::string identifier);
 	
 	void CommonInit(const int playerWidth, const int playerHeight, const std::string inIdentifier);
@@ -138,8 +138,6 @@ public:
 	/// <param name="direction"></param>
 	void SetPlayerDirection(gamelib::Direction direction);
 
-	const ptrdiff_t CountRoomGameObjects(ListOfGameObjects& gameObjects);
-
 	/// <summary>
 	/// Get player's room
 	/// </summary>
@@ -192,13 +190,13 @@ public:
 	/// Get Name
 	/// </summary>
 	/// <returns></returns>
-	std::string GetName() override;
+	std::string GetName() override { return Identifier; }
 
 	/// <summary>
-	/// Get Game oibject type
+	/// Get Game object type
 	/// </summary>
 	/// <returns></returns>
-	gamelib::GameObjectType GetGameObjectType() override;
+	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::Player; }
 
 	/// <summary>
 	/// Update player
@@ -248,13 +246,13 @@ public:
 	/// Get players width
 	/// </summary>
 	/// <returns></returns>
-	int GetWidth();
+	int GetWidth() { return width; }
 
 	/// <summary>
 	/// Get player's height
 	/// </summary>
 	/// <returns></returns>
-	int GetHeight();
+	int GetHeight() { return height; }
 
 	/// <summary>
 	/// Get Direction
@@ -262,18 +260,17 @@ public:
 	/// <returns></returns>
 	gamelib::Direction GetDirection();
 
-
 	/// <summary>
 	/// Set the sprite of the player
 	/// </summary>
 	/// <param name="sprite"></param>
-	void SetSprite(std::shared_ptr<gamelib::AnimatedSprite> sprite);
+	void SetSprite(std::shared_ptr<gamelib::AnimatedSprite> inSprite) { sprite = inSprite; }
 
 	/// <summary>
 	/// Set the movement strategy
 	/// </summary>
 	/// <param name="moveStrategy"></param>
-	void SetMoveStrategy(std::shared_ptr<IPlayerMoveStrategy> moveStrategy);
+	void SetMoveStrategy(std::shared_ptr<IPlayerMoveStrategy> inMoveStrategy) { moveStrategy = inMoveStrategy; }
 
 	/// <summary>
 	/// Restrictions
@@ -302,7 +299,7 @@ public:
 	/// Get Hotspot length
 	/// </summary>
 	/// <returns></returns>
-	int GetHotSpotLength();
+	int GetHotSpotLength() { return hotspotSize; }
 
 	/// <summary>
 	/// Identifer of the player
@@ -310,6 +307,10 @@ public:
 	std::string Identifier;
 
 private:
+
+	/// <summary>
+	/// How long is 1 movement
+	/// </summary>
 	int moveDurationMs = 0;
 	int maxPixelsToMove = 0;
 	std::shared_ptr<gamelib::AnimatedSprite> sprite;
