@@ -12,20 +12,22 @@
 #include "Level.h"
 #include "GameData.h"
 
-PlayerMoveStrategy::PlayerMoveStrategy(std::shared_ptr<Player> player, int edgeIncrement)
+PlayerMoveStrategy::PlayerMoveStrategy(std::shared_ptr<Player> inPlayer, int edgeIncrement)
 {
-	this->player = player;
-	this->debug = gamelib::SettingsManager::Get()->GetBool("player", "debugMovement");
-	this->ignoreRestrictions = gamelib::SettingsManager::Get()->GetBool("player", "ignoreRestrictions");
+	player = inPlayer;
+	debug = gamelib::SettingsManager::Get()->GetBool("player", "debugMovement");
+	ignoreRestrictions = gamelib::SettingsManager::Get()->GetBool("player", "ignoreRestrictions");
 }
 
 bool PlayerMoveStrategy::MovePlayer(std::shared_ptr<gamelib::IMovement> movement)
 {
-	if (!ignoreRestrictions && !IsValidMove(movement))
-		return false;
-
-	SetPlayerPosition(CalculatePlayerMove(movement, movement->GetPixelsToMove()));
-	return true;
+	auto isMoveValid = false;
+	if (IsValidMove(movement) || ignoreRestrictions) 
+	{
+		SetPlayerPosition(CalculatePlayerMove(movement, movement->GetPixelsToMove()));
+		isMoveValid = true;
+	}
+	return isMoveValid;
 }
 
 gamelib::coordinate<int> PlayerMoveStrategy::CalculatePlayerMove(std::shared_ptr<gamelib::IMovement> movement, int pixelsToMove)
@@ -38,18 +40,10 @@ gamelib::coordinate<int> PlayerMoveStrategy::CalculatePlayerMove(std::shared_ptr
 
 	switch(movement->GetDirection())
 	{
-	case gamelib::Direction::Down:
-		resulting_y += pixelsToMove;
-		break;	
-	case gamelib::Direction::Up:
-		resulting_y -= pixelsToMove;
-		break;
-	case gamelib::Direction::Left:
-		resulting_x -= pixelsToMove;
-		break;
-	case gamelib::Direction::Right:
-		resulting_x += pixelsToMove;
-		break;
+		case gamelib::Direction::Down:  resulting_y += pixelsToMove; break;	
+		case gamelib::Direction::Up:    resulting_y -= pixelsToMove; break;
+		case gamelib::Direction::Left:  resulting_x -= pixelsToMove; break;
+		case gamelib::Direction::Right: resulting_x += pixelsToMove; break;
 	}
 	
 	return gamelib::coordinate<int>(resulting_x, resulting_y);
@@ -60,9 +54,6 @@ void PlayerMoveStrategy::SetPlayerPosition(gamelib::coordinate<int> resultingMov
 	player->Position.SetX(resultingMove.GetX());
 	player->Position.SetY(resultingMove.GetY());
 }
-
-
-
 
 bool PlayerMoveStrategy::WouldPlayerHotspotHitRoomInnerBounds(std::shared_ptr<Room>& room, std::shared_ptr<gamelib::IMovement> movement)
 {

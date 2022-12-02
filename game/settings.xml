@@ -86,7 +86,7 @@
     <setting name="b" type="int">0</setting>
     <setting name="a" type="int">0</setting> 
     <setting name="verbose" type="bool">false</setting>
-    <setting name="ignoreRestrictions" type="bool">true</setting>
+    <setting name="ignoreRestrictions" type="bool">false</setting>
     <setting name="moveStrategy" type="string">edge</setting> <!-- 'snap' or 'edge' strategy -->
 		<setting name="debugMovement" type="bool">false</setting>
 		<setting name="moveDurationMs" type="int">200</setting>

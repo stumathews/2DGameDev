@@ -66,46 +66,32 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event, unsigned long de
 
 const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, ListOfEvents& createdEvents, unsigned long deltaMs)
 {
-	auto moveDetails = dynamic_pointer_cast<ControllerMoveEvent>(event);	
+	auto moveEvent = dynamic_pointer_cast<ControllerMoveEvent>(event);	
 	
-	SetPlayerDirection(moveDetails->Direction);
+	SetPlayerDirection(moveEvent->Direction);
 
-	auto move = std::shared_ptr<Movement>(new Movement(moveDetails->Direction, pixelsToMove));
+	auto isValidMove = moveStrategy->MovePlayer(std::shared_ptr<Movement>(new Movement(moveEvent->Direction, pixelsToMove)));
 
-	if (!moveStrategy->MovePlayer(move))
-	{		
-		EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(gamelib::EventType::InvalidMove), this);
-	}
+	if (!isValidMove) { EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(gamelib::EventType::InvalidMove), this); }
 
-	UpdateSprite(deltaMs);
-
-	_sprite->MoveSprite(Position.GetX(), Position.GetY());
+	UpdateSprite(deltaMs);	
 
 	Hotspot->Update(Position);
 
 	UpdateBounds(width, height);
 
 	// Tell objects that care, that we moved!
-	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreatePlayerMovedEvent(move->GetDirection()), this);
+	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreatePlayerMovedEvent(moveEvent->Direction), this);
 
 	return createdEvents;
 }
 
-void Player::Update(float deltaMs)
-{
-}
+void Player::Update(float deltaMs) { }
 
 void Player::Draw(SDL_Renderer* renderer)
 {
-	if (!hideSprite)
-	{
-		_sprite->Draw(renderer);
-	}
-
-	if (drawHotSpot)
-	{
-		Hotspot->Draw(renderer);
-	}
+	if (!hideSprite) { _sprite->Draw(renderer); }
+	if (drawHotSpot) { Hotspot->Draw(renderer); }	
 
 	if (_drawBounds)
 	{
@@ -117,37 +103,24 @@ void Player::Draw(SDL_Renderer* renderer)
 
 void Player::UpdateSprite(float deltaMs)
 {
-	if (!_sprite)
-	{
-		return;
-	}
-		
+	if (!_sprite) { return; }		
 	SetSpriteAnimationFrameGroup();
-
 	_sprite->Update(deltaMs);
-}
-
-void Player::Move(float deltaMs)
-{
-	
+	_sprite->MoveSprite(Position.GetX(), Position.GetY());
 }
 
 void Player::SetSpriteAnimationFrameGroup()
 {
 	switch (currentFacingDirection)
 	{
-	case Direction::Up:
-		_sprite->SetAnimationFrameGroup("up");
-		break;
-	case Direction::Right:
-		_sprite->SetAnimationFrameGroup("right");
-		break;
-	case Direction::Down:
-		_sprite->SetAnimationFrameGroup("down");
-		break;
-	case Direction::Left:
-		_sprite->SetAnimationFrameGroup("left");
-		break;
+		case Direction::Up: 
+			_sprite->SetAnimationFrameGroup("up"); break;
+		case Direction::Right: 
+			_sprite->SetAnimationFrameGroup("right"); break;
+		case Direction::Down: 
+			_sprite->SetAnimationFrameGroup("down"); break;
+		case Direction::Left: 
+			_sprite->SetAnimationFrameGroup("left"); 	break;
 	}
 }
 
@@ -158,11 +131,9 @@ void Player::LoadSettings()
 	_drawBounds = SettingsManager::Get()->GetBool("player", "drawBounds");
 	_verbose = SettingsManager::Get()->GetBool("global", "verbose");
 	pixelsToMove = SettingsManager::Get()->GetInt("player", "pixelsToMove");	
-	hotspotSize = SettingsManager::Get()->GetInt("player", "hotspotSize");
+	hotspotSize = Hotspot->Width = SettingsManager::Get()->GetInt("player", "hotspotSize");
 	drawHotSpot = SettingsManager::Get()->GetBool("player", "drawHotspot");
 	hideSprite = SettingsManager::Get()->GetBool("player", "hideSprite");
-
-	Hotspot->Width = hotspotSize;
 }
 
 void Player::SetPlayerDirection(Direction direction)
@@ -208,13 +179,29 @@ void Player::RemovePlayerFacingWall()
 	}
 }
 
-void Player::RemoveRightWall() { CurrentRoom->RemoveWall(Side::Right); GetRightRoom()->RemoveWall(Side::Left); }
+void Player::RemoveRightWall() 
+{ 
+	auto rightRoom = GetRightRoom(); 
+	if (rightRoom) { CurrentRoom->RemoveWall(Side::Right); rightRoom->RemoveWall(Side::Left); }
+}
 
-void Player::RemoveLeftWall() { CurrentRoom->RemoveWall(Side::Left); GetLeftRoom()->RemoveWall(Side::Right); }
+void Player::RemoveLeftWall() 
+{
+	auto leftRoom = GetLeftRoom();
+	if (leftRoom) { CurrentRoom->RemoveWall(Side::Left); leftRoom->RemoveWall(Side::Right); }
+}
 
-void Player::RemoveBottomWall() { CurrentRoom->RemoveWall(Side::Bottom); GetBottomRoom()->RemoveWall(Side::Top); }
+void Player::RemoveBottomWall() 
+{ 
+	auto bottomRoom = GetBottomRoom();
+	if (bottomRoom) { CurrentRoom->RemoveWall(Side::Bottom); bottomRoom->RemoveWall(Side::Top); }
+}
 
-void Player::RemoveTopWall() {	CurrentRoom->RemoveWall(Side::Top); GetTopRoom()->RemoveWall(Side::Bottom); }
+void Player::RemoveTopWall() 
+{
+	auto topRoom = GetTopRoom();
+	if (topRoom) { CurrentRoom->RemoveWall(Side::Top); topRoom->RemoveWall(Side::Bottom); }
+}
 
 void Player::Fire() { RemovePlayerFacingWall();	}
 

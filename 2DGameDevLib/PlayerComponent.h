@@ -8,7 +8,7 @@ using namespace gamelib;
 class PlayerComponent : public Component
 {
 public:
-	PlayerComponent(std::string component_name, Player* player);
+	PlayerComponent(std::string component_name, Player* _player);
 
 	Player* the_player;
 		

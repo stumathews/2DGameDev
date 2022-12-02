@@ -102,11 +102,11 @@ gamelib::ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, unsi
 
 gamelib::ListOfEvents& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedEvents)
 {
-	const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);				
-	auto playerHotSpotBounds = player->Hotspot->GetBounds();
+	const auto _player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld()._player);				
+	auto playerHotSpotBounds = _player->Hotspot->GetBounds();
 	SDL_Rect result;
 	isPlayerWithinRoom = SDL_IntersectRect(&InnerBounds, &playerHotSpotBounds, &result);
-	if(isPlayerWithinRoom) { player->SetPlayerRoom(RoomNumber); }
+	if(isPlayerWithinRoom) { _player->SetPlayerRoom(RoomNumber); }
 
 	return generatedEvents;
 }
@@ -129,19 +129,19 @@ void Room::DrawDiagnostics(SDL_Renderer* renderer)
 		
 	if(printDebuggingText)
 	{
-		const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);
+		const auto _player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld()._player);
 		
 
 		if(printDebuggingTextNeighboursOnly)
 		{			
-			auto playerRoom = player->GetCurrentRoom();
+			auto playerRoom = _player->GetCurrentRoom();
 			if(RoomNumber == playerRoom->topRoomIndex || RoomNumber == playerRoom->rightRoomIndex || 
 			   RoomNumber == playerRoom->bottomRoomIndex || RoomNumber == playerRoom->leftRoomIndex)
 			{
 				RectDebugging::printInRect(renderer, GetTag(), &Bounds, Yellow);
 			}
 
-			if(RoomNumber == player->CurrentRoom->RoomNumber) { RectDebugging::printInRect(renderer, GetTag(), &Bounds, Red); }			
+			if(RoomNumber == _player->CurrentRoom->RoomNumber) { RectDebugging::printInRect(renderer, GetTag(), &Bounds, Red); }			
 		}
 		else { RectDebugging::printInRect(renderer, GetTag(), &Bounds, Yellow); }
 	}

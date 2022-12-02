@@ -10,12 +10,12 @@ class Room;
 class PlayerMoveStrategy : public IPlayerMoveStrategy
 {
 public:
-	PlayerMoveStrategy(std::shared_ptr<Player> player, int edgeBy);
+	PlayerMoveStrategy(std::shared_ptr<Player> _player, int edgeBy);
 
 	virtual bool MovePlayer(std::shared_ptr<gamelib::IMovement> movement) override;
 	
 private:
-	std::shared_ptr<Player> player;
+	std::shared_ptr<Player> _player;
 	bool debug;	
 	bool WouldPlayerHotspotHitRoomInnerBounds(std::shared_ptr<Room>& room, std::shared_ptr<gamelib::IMovement> movement);
 	void SetPlayerPosition(gamelib::coordinate<int> resultingMove);

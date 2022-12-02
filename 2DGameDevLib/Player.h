@@ -187,12 +187,6 @@ public:
 	bool PlayerHasPendingMoves();
 
 	/// <summary>
-	/// Move the player
-	/// </summary>
-	/// <param name="deltaMs"></param>
-	void Move(float deltaMs);
-
-	/// <summary>
 	/// Depending on the player's direction, a diffirent group/set of key frames in the sprite will cycle
 	/// </summary>
 	void SetSpriteAnimationFrameGroup();
