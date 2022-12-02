@@ -125,7 +125,7 @@ public:
 	/// <param name="event"></param>
 	/// <param name="createdEvents"></param>
 	/// <returns></returns>
-	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents);
+	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents, unsigned long deltaMs);
 
 	/// <summary>
 	/// Sets the players direction
@@ -259,12 +259,7 @@ public:
 	std::shared_ptr<gamelib::Hotspot> Hotspot;
 
 private:
-
-	/// <summary>
-	/// How long is 1 movement
-	/// </summary>
-	unsigned long moveDurationMs = 0;
-	int maxPixelsToMove = 0;
+	int pixelsToMove = 0;
 	std::shared_ptr<gamelib::AnimatedSprite> _sprite;
 	int width;
 	int height;
@@ -277,7 +272,6 @@ private:
 	gamelib::Direction currentFacingDirection;
 	std::shared_ptr<IPlayerMoveStrategy> moveStrategy;
 	std::deque<std::shared_ptr<gamelib::IMovement>> moveQueue;
-	bool debugMovement;
 	bool _verbose;
 
 };

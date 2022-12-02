@@ -55,47 +55,29 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event, unsigned long de
 	
 	switch (event->type)
 	{		
-		case EventType::ControllerMoveEvent:
-		{
-			return OnControllerMove(event, createdEvents);
-		}
-		break;	
-		case EventType::Fire:
-		{
-			LogMessage("Fire!", _verbose);
-			Fire();
-		}
-		break;
-		case EventType::SettingsReloaded:
-		{
-			LogMessage("Reloading player settings", _verbose);
-			LoadSettings();
-		}
-		break;
-		case EventType::InvalidMove:
-		{
-			LogMessage("Invalid move", _verbose);
-		}
-		break;
+		case EventType::ControllerMoveEvent: { return OnControllerMove(event, createdEvents, deltaMs); } break;
+		case EventType::Fire: { LogMessage("Fire!", _verbose); Fire(); } break;
+		case EventType::SettingsReloaded: { LogMessage("Reloading player settings", _verbose); 	LoadSettings(); } break;
+		case EventType::InvalidMove: { LogMessage("Invalid move", _verbose); } 	break;
 	}
 
 	return createdEvents;
 }
 
-
-const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, ListOfEvents& createdEvents)
+const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, ListOfEvents& createdEvents, unsigned long deltaMs)
 {
 	auto moveDetails = dynamic_pointer_cast<ControllerMoveEvent>(event);	
 	
 	SetPlayerDirection(moveDetails->Direction);
 
-	auto move = std::shared_ptr<Movement>(new Movement(moveDurationMs, moveDetails->Direction, maxPixelsToMove, debugMovement));
+	auto move = std::shared_ptr<Movement>(new Movement(moveDetails->Direction, pixelsToMove));
 
 	if (!moveStrategy->MovePlayer(move))
-	{
-		
+	{		
 		EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(gamelib::EventType::InvalidMove), this);
 	}
+
+	UpdateSprite(deltaMs);
 
 	_sprite->MoveSprite(Position.GetX(), Position.GetY());
 
@@ -103,6 +85,7 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 
 	UpdateBounds(width, height);
 
+	// Tell objects that care, that we moved!
 	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreatePlayerMovedEvent(move->GetDirection()), this);
 
 	return createdEvents;
@@ -110,7 +93,6 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 
 void Player::Update(float deltaMs)
 {
-	UpdateSprite(deltaMs);		
 }
 
 void Player::Draw(SDL_Renderer* renderer)
@@ -174,10 +156,8 @@ void Player::LoadSettings()
 	GameObject::LoadSettings();
 
 	_drawBounds = SettingsManager::Get()->GetBool("player", "drawBounds");
-	debugMovement = gamelib::SettingsManager::Get()->GetBool("player", "debugMovement");
 	_verbose = SettingsManager::Get()->GetBool("global", "verbose");
-	moveDurationMs = SettingsManager::Get()->GetInt("player", "moveDurationMs");
-	maxPixelsToMove = SettingsManager::Get()->GetInt("player", "maxPixelsToMove");	
+	pixelsToMove = SettingsManager::Get()->GetInt("player", "pixelsToMove");	
 	hotspotSize = SettingsManager::Get()->GetInt("player", "hotspotSize");
 	drawHotSpot = SettingsManager::Get()->GetBool("player", "drawHotspot");
 	hideSprite = SettingsManager::Get()->GetBool("player", "hideSprite");

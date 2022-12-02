@@ -21,7 +21,7 @@ PlayerMoveStrategy::PlayerMoveStrategy(std::shared_ptr<Player> player, int edgeI
 
 bool PlayerMoveStrategy::MovePlayer(std::shared_ptr<gamelib::IMovement> movement)
 {
-	if (!IsValidMove(movement))
+	if (!ignoreRestrictions && !IsValidMove(movement))
 		return false;
 
 	SetPlayerPosition(CalculatePlayerMove(movement, movement->GetPixelsToMove()));
