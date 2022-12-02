@@ -32,11 +32,11 @@ namespace gamelib
 		{
 			case gamelib::EventType::PlayerMovedEventType:	
 			{
-				const auto _player = dynamic_pointer_cast<Player>(SceneManager::Get()->GetGameWorld()._player);
+				const auto player = dynamic_pointer_cast<Player>(SceneManager::Get()->GetGameWorld().player);
 
-				if (_player->GetCurrentRoom()->GetRoomNumber() == RoomNumber)
+				if (player->GetCurrentRoom()->GetRoomNumber() == RoomNumber)
 				{
-					if (SDLCollisionDetection::IsColliding(&_player->Bounds, &Bounds))
+					if (SDLCollisionDetection::IsColliding(&player->Bounds, &Bounds))
 					{
 						generated_events.push_back(make_shared<gamelib::Event>(gamelib::EventType::FetchedPickup));
 						generated_events.push_back(make_shared<gamelib::GameObjectEvent>(Id, this, gamelib::GameObjectEventContext::Remove));

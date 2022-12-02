@@ -55,25 +55,6 @@ void PlayerMoveStrategy::SetPlayerPosition(gamelib::coordinate<int> resultingMov
 	player->Position.SetY(resultingMove.GetY());
 }
 
-bool PlayerMoveStrategy::WouldPlayerHotspotHitRoomInnerBounds(std::shared_ptr<Room>& room, std::shared_ptr<gamelib::IMovement> movement)
-{
-	// Calculate where the player would be if the move is done
-	auto mockPlayerPosition = CalculatePlayerMove(movement, movement->GetPixelsToMove());
-
-	// Calculate the location of the hotspot at that location
-	auto mockPlayerHotSpot = gamelib::Hotspot(mockPlayerPosition, player->GetWidth(), player->GetHeight(), player->Hotspot->Width);;
-
-	// Setup the bounds for the simulated hotspot
-	auto mockPlayerHotSpotBounds = mockPlayerHotSpot.GetBounds();
-	
-	// Check if the player would intersect with the inner bounds of the room
-	SDL_Rect result;
-	auto isWithinRoom = SDL_IntersectRect(&room->InnerBounds, &mockPlayerHotSpotBounds, &result) == SDL_TRUE ? true : false;
-
-	return isWithinRoom;
-}
-
-
 bool PlayerMoveStrategy::IsValidMove(std::shared_ptr<gamelib::IMovement> movement)
 {
 	if (ignoreRestrictions)

@@ -91,7 +91,7 @@ public:
 
     void InitializeHudItem(std::shared_ptr<StaticSprite> _hudItem);
 
-    void InitializePlayer(std::shared_ptr<Player> _player, std::shared_ptr<gamelib::SpriteAsset> spriteAsset);
+    void InitializePlayer(std::shared_ptr<Player> player, std::shared_ptr<gamelib::SpriteAsset> spriteAsset);
 
     // Subscribe pickups to events, add to scene graph etc
     void InitializePickups(const ListOfGameObjects& pickups, ListOfGameObjects& gameObjectsPtr);
