@@ -24,7 +24,7 @@ namespace gamelib
 			dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(stringProperties["assetName"])));
 	}
 
-	gamelib::ListOfEvents Pickup::HandleEvent(shared_ptr<gamelib::Event> event)
+	gamelib::ListOfEvents Pickup::HandleEvent(shared_ptr<gamelib::Event> event, unsigned long deltaMs)
 	{
 		gamelib::ListOfEvents generated_events;
 

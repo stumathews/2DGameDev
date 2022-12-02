@@ -56,7 +56,7 @@ public:
 	/// </summary>
 	/// <param name="event"></param>
 	/// <returns></returns>
-	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event) override;
+	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 
 	/// <summary>
 	/// Get Top Room
@@ -117,7 +117,7 @@ public:
 	/// </summary>
 	/// <param name="event"></param>
 	/// <param name="createdEvents"></param>
-	void BaseProcessEvent(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents);
+	void BaseProcessEvent(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents, unsigned long deltaMs);
 
 	/// <summary>
 	/// What to do when the controller is pressed
@@ -126,14 +126,6 @@ public:
 	/// <param name="createdEvents"></param>
 	/// <returns></returns>
 	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents);
-
-	/// <summary>
-	/// Add to player's list of movements to process during its next update cycle
-	/// </summary>
-	/// <param name="controllerMoveEvent"></param>
-	/// <param name="createdEvents"></param>
-	void AddToPlayerMovements(std::shared_ptr<gamelib::ControllerMoveEvent>& controllerMoveEvent, ListOfEvents& createdEvents);
-
 
 	/// <summary>
 	/// Sets the players direction
@@ -180,7 +172,7 @@ public:
 	/// <summary>
 	/// Update player
 	/// </summary>
-	void Update(float deltaMs) override;
+	 void Update(float deltaMs) override;
 
 	/// <summary>
 	/// Update sprite
@@ -284,7 +276,7 @@ private:
 	gamelib::Direction currentMovingDirection;
 	gamelib::Direction currentFacingDirection;
 	std::shared_ptr<IPlayerMoveStrategy> moveStrategy;
-	std::deque<std::shared_ptr<Movement>> moveQueue;	
+	std::deque<std::shared_ptr<gamelib::IMovement>> moveQueue;
 	bool debugMovement;
 	bool _verbose;
 

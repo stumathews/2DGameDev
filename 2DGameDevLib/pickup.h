@@ -70,7 +70,7 @@ namespace gamelib
 		/// </summary>
 		/// <param name="event">incoming event</param>
 		/// <returns>generated events</returns>
-		std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event) override;
+		std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 
 		/// <summary>
 		/// Load pickup settings

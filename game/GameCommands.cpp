@@ -159,7 +159,7 @@ void GameCommands::StartNetworkLevel()
 
 void GameCommands::PingGameServer() { NetworkManager::Get()->PingGameServer(); }
 
-std::vector<std::shared_ptr<Event>> GameCommands::HandleEvent(std::shared_ptr<Event> event)
+std::vector<std::shared_ptr<Event>> GameCommands::HandleEvent(std::shared_ptr<Event> event, unsigned long deltaMs)
 {
 	switch (event->type)
 	{

@@ -79,9 +79,9 @@ void Room::SetupWalls()
 	walls[0] = walls[1] = walls[2] = walls[3] = IsLeftWalled = IsTopWalled = IsRightWalled = IsBottomWalled = true;
 }
 
-gamelib::ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event)
+gamelib::ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, unsigned long deltaMs)
 {	
-	auto generatedEvents(GameObject::HandleEvent(event));
+	auto generatedEvents(GameObject::HandleEvent(event, deltaMs));
 
 	switch(event->type)
 	{
@@ -103,9 +103,9 @@ gamelib::ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event)
 gamelib::ListOfEvents& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedEvents)
 {
 	const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);				
-	auto x1 = player->Position.GetX(); auto y1 = player->Position.GetY();
-
-	isPlayerWithinRoom = SDL_IntersectRectAndLine(&InnerBounds, &x1, &y1, &x1, &y1);	
+	auto playerHotSpotBounds = player->Hotspot->GetBounds();
+	SDL_Rect result;
+	isPlayerWithinRoom = SDL_IntersectRect(&InnerBounds, &playerHotSpotBounds, &result);
 	if(isPlayerWithinRoom) { player->SetPlayerRoom(RoomNumber); }
 
 	return generatedEvents;

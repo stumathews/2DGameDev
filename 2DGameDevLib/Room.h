@@ -114,7 +114,7 @@ public:
 	/// </summary>
 	/// <param name="event"></param>
 	/// <returns></returns>
-	gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> event) override;
+	gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 
 	/// <summary>
 	/// When a player moves...

@@ -37,7 +37,7 @@ private:
 	bool logCommands;
 
 	// Inherited via EventSubscriber
-	virtual std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt) override;
+	virtual std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long deltaMs) override;
 };
 
 

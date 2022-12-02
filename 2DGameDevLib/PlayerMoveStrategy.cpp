@@ -19,16 +19,16 @@ PlayerMoveStrategy::PlayerMoveStrategy(std::shared_ptr<Player> player, int edgeI
 	this->ignoreRestrictions = gamelib::SettingsManager::Get()->GetBool("player", "ignoreRestrictions");
 }
 
-bool PlayerMoveStrategy::MovePlayer(std::shared_ptr<Movement> movement)
+bool PlayerMoveStrategy::MovePlayer(std::shared_ptr<gamelib::IMovement> movement)
 {
 	if (!IsValidMove(movement))
 		return false;
 
-	SetPlayerPosition(CalculatePlayerMove(movement, movement->TakePixelsToMove()));
+	SetPlayerPosition(CalculatePlayerMove(movement, movement->GetPixelsToMove()));
 	return true;
 }
 
-gamelib::coordinate<int> PlayerMoveStrategy::CalculatePlayerMove(std::shared_ptr<Movement> movement, int pixelsToMove)
+gamelib::coordinate<int> PlayerMoveStrategy::CalculatePlayerMove(std::shared_ptr<gamelib::IMovement> movement, int pixelsToMove)
 {		
 	int resulting_x;	
 	int resulting_y; 
@@ -36,7 +36,7 @@ gamelib::coordinate<int> PlayerMoveStrategy::CalculatePlayerMove(std::shared_ptr
 	resulting_y = player->Position.GetY();
 	resulting_x = player->Position.GetX();
 
-	switch(movement->direction)
+	switch(movement->GetDirection())
 	{
 	case gamelib::Direction::Down:
 		resulting_y += pixelsToMove;
@@ -64,16 +64,16 @@ void PlayerMoveStrategy::SetPlayerPosition(gamelib::coordinate<int> resultingMov
 
 
 
-bool PlayerMoveStrategy::WouldPlayerHotspotHitRoomInnerBounds(std::shared_ptr<Room>& room, std::shared_ptr<Movement> movement)
+bool PlayerMoveStrategy::WouldPlayerHotspotHitRoomInnerBounds(std::shared_ptr<Room>& room, std::shared_ptr<gamelib::IMovement> movement)
 {
 	// Calculate where the player would be if the move is done
-	auto mockPlayerPosition = CalculatePlayerMove(movement, movement->PreviewPixelsToMove());
+	auto mockPlayerPosition = CalculatePlayerMove(movement, movement->GetPixelsToMove());
 
 	// Calculate the location of the hotspot at that location
-	auto mockPlayerHotSpot = player->Hotspot->CalculateHotspotPosition(mockPlayerPosition.GetX(), mockPlayerPosition.GetY());
+	auto mockPlayerHotSpot = gamelib::Hotspot(mockPlayerPosition, player->GetWidth(), player->GetHeight(), player->Hotspot->Width);;
 
 	// Setup the bounds for the simulated hotspot
-	auto mockPlayerHotSpotBounds = SDL_Rect { mockPlayerHotSpot.GetX(), mockPlayerHotSpot.GetY(), player->GetHotSpotLength() , player->GetHotSpotLength() };
+	auto mockPlayerHotSpotBounds = mockPlayerHotSpot.GetBounds();
 	
 	// Check if the player would intersect with the inner bounds of the room
 	SDL_Rect result;
@@ -83,7 +83,7 @@ bool PlayerMoveStrategy::WouldPlayerHotspotHitRoomInnerBounds(std::shared_ptr<Ro
 }
 
 
-bool PlayerMoveStrategy::IsValidMove(std::shared_ptr<Movement> movement)
+bool PlayerMoveStrategy::IsValidMove(std::shared_ptr<gamelib::IMovement> movement)
 {
 	if (ignoreRestrictions)
 	{
@@ -96,7 +96,7 @@ bool PlayerMoveStrategy::IsValidMove(std::shared_ptr<Movement> movement)
 	auto bottomRoom = player->GetBottomRoom();
 	auto leftRoom = player->GetLeftRoom();
 
-	switch (movement->direction)
+	switch (movement->GetDirection())
 	{
 	case gamelib::Direction::Down:
 		return CanPlayerMove(gamelib::Direction::Down, movement);
@@ -118,39 +118,49 @@ bool PlayerMoveStrategy::IsValidMove(std::shared_ptr<Movement> movement)
 }
 
 
-bool PlayerMoveStrategy::CanPlayerMove(gamelib::Direction direction, std::shared_ptr<Movement> movement)
+bool PlayerMoveStrategy::CanPlayerMove(gamelib::Direction direction, std::shared_ptr<gamelib::IMovement> movement)
 {
 	std::shared_ptr<Room> targetRoom = nullptr;
-	bool hasBlockingWalls = false, hasValidTargetRoom = false;
+	bool touchingBlockingWalls = false, hasValidTargetRoom = false;
 	auto currentRoom = player->GetCurrentRoom();
-
+	
+	auto IntersectsRectAndLine = [=](SDL_Rect bounds, gamelib::Line line) -> bool {
+		return SDL_IntersectRectAndLine(&bounds, &line.x1, &line.y1, &line.x2, &line.y2);
+	};
+	
 	if (direction == gamelib::Direction::Right)
 	{
 		targetRoom = player->GetRightRoom();
 		hasValidTargetRoom = targetRoom != nullptr;
-		hasBlockingWalls = (!hasValidTargetRoom || targetRoom->HasLeftWall()) && currentRoom->HasRightWall();
+		touchingBlockingWalls = 
+			(hasValidTargetRoom && targetRoom->HasLeftWall() && IntersectsRectAndLine(player->Bounds, targetRoom->LeftLine)) ||
+			currentRoom->HasRightWall() && IntersectsRectAndLine(player->Bounds, currentRoom->RightLine);
 	}
 	else if (direction == gamelib::Direction::Left)
-	{
+	{	
 		targetRoom = player->GetLeftRoom();
 		hasValidTargetRoom = targetRoom != nullptr;
-		hasBlockingWalls = (!hasValidTargetRoom || targetRoom->HasRightWall()) && currentRoom->HasLeftWall();
+		
+		touchingBlockingWalls =
+			(hasValidTargetRoom && targetRoom->HasRightWall() && IntersectsRectAndLine(player->Bounds, targetRoom->RightLine)) ||
+			currentRoom->HasLeftWall() && IntersectsRectAndLine(player->Bounds, currentRoom->LeftLine);
 	}
 	else if (direction == gamelib::Direction::Up)
 	{
 		targetRoom = player->GetTopRoom();
 		hasValidTargetRoom = targetRoom != nullptr;
-		hasBlockingWalls = (!hasValidTargetRoom || targetRoom->HasBottomWall() && currentRoom->HasTopWall());
+		touchingBlockingWalls =
+			(hasValidTargetRoom && targetRoom->HasBottomWall() && IntersectsRectAndLine(player->Bounds, targetRoom->BottomLine)) ||
+			currentRoom->HasTopWall() && IntersectsRectAndLine(player->Bounds, currentRoom->TopLine);
 	}
 	else if (direction == gamelib::Direction::Down)
 	{
 		targetRoom = player->GetBottomRoom();
 		hasValidTargetRoom = targetRoom != nullptr;
-		hasBlockingWalls = (!hasValidTargetRoom || targetRoom->HasTopWall()) && currentRoom->HasBottomWall();
+		touchingBlockingWalls =
+			(hasValidTargetRoom && targetRoom->HasTopWall() && IntersectsRectAndLine(player->Bounds, targetRoom->TopLine)) ||
+			currentRoom->HasBottomWall() && IntersectsRectAndLine(player->Bounds, currentRoom->BottomLine);
 	}
 
-	auto isWithinCurrentRoom = WouldPlayerHotspotHitRoomInnerBounds(currentRoom, movement);
-	auto isInNoMansLand = !isWithinCurrentRoom && (hasValidTargetRoom && !WouldPlayerHotspotHitRoomInnerBounds(targetRoom, movement));
+	return !touchingBlockingWalls;}
 
-	return isWithinCurrentRoom || isInNoMansLand || (!hasBlockingWalls);
-}

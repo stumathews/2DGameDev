@@ -57,13 +57,13 @@ bool LevelManager::Initialize()
 	return true;
 }
 
-gamelib::ListOfEvents LevelManager::HandleEvent(std::shared_ptr<Event> event)
+gamelib::ListOfEvents LevelManager::HandleEvent(std::shared_ptr<Event> event, unsigned long deltaMs)
 {
 	switch(event->type)
 	{
 		case EventType::GenerateNewLevel: {	GenerateNewLevel(); } break;
 		case EventType::LevelChangedEventType: { OnLevelChanged(event); } break;
-		case EventType::UpdateProcesses: { processManager.UpdateProcesses(dynamic_pointer_cast<UpdateProcessesEvent>(event)->deltaMs); } break;
+		case EventType::UpdateProcesses: { processManager.UpdateProcesses(deltaMs); } break;
 		case EventType::InvalidMove: { _gameCommands->InvalidMove(); } break;
 		case EventType::NetworkPlayerJoined: { 	OnNetworkPlayerJoined(event); }	break;
 		case EventType::StartNetworkLevel: { OnStartNetworkLevel(event); }	break;

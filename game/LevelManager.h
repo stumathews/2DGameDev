@@ -47,7 +47,7 @@ public:
     /// <summary>
     /// Handle Level events
     /// </summary>
-    gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> evt) override;
+    gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long deltaMs) override;
 
     void OnGameObjectEventReceived(std::shared_ptr<gamelib::Event>& event);
 

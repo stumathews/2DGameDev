@@ -40,18 +40,18 @@ void Player::CommonInit(const int inWidth, const int inHeight, const std::string
 	_sprite = nullptr;
 	currentFacingDirection = this->currentMovingDirection;
 	Identifier = inIdentifier;
-	Hotspot = std::shared_ptr<gamelib::Hotspot>(new gamelib::Hotspot(width, height, width/2));
+	Hotspot = std::shared_ptr<gamelib::Hotspot>(new gamelib::Hotspot(Position, width, height, width/2));
 
 	SubscribeToEvent(EventType::ControllerMoveEvent);
 	SubscribeToEvent(EventType::SettingsReloaded);
 	SubscribeToEvent(EventType::Fire);
 }
 
-ListOfEvents Player::HandleEvent(const shared_ptr<Event> event)
+ListOfEvents Player::HandleEvent(const shared_ptr<Event> event, unsigned long deltaMs)
 {
 	ListOfEvents createdEvents;
 
-	BaseProcessEvent(event, createdEvents);
+	BaseProcessEvent(event, createdEvents, deltaMs);
 	
 	switch (event->type)
 	{		
@@ -87,38 +87,30 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 {
 	auto moveDetails = dynamic_pointer_cast<ControllerMoveEvent>(event);	
 	
-	AddToPlayerMovements(moveDetails, createdEvents); // NB: movements will be processed udirng updates
+	SetPlayerDirection(moveDetails->Direction);
+
+	auto move = std::shared_ptr<Movement>(new Movement(moveDurationMs, moveDetails->Direction, maxPixelsToMove, debugMovement));
+
+	if (!moveStrategy->MovePlayer(move))
+	{
+		
+		EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(gamelib::EventType::InvalidMove), this);
+	}
+
+	_sprite->MoveSprite(Position.GetX(), Position.GetY());
+
+	Hotspot->Update(Position);
+
+	UpdateBounds(width, height);
+
+	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreatePlayerMovedEvent(move->GetDirection()), this);
 
 	return createdEvents;
 }
 
-void Player::AddToPlayerMovements(std::shared_ptr<gamelib::ControllerMoveEvent>& controllerMoveEvent, ListOfEvents& createdEvents)
-{
-	SetPlayerDirection(controllerMoveEvent->Direction);
-
-	auto doesPlayerHaveMoves = PlayerHasPendingMoves();
-	auto lastDirectionIsSameAsCurrent = doesPlayerHaveMoves
-		? moveQueue.back()->direction == controllerMoveEvent->Direction
-		: false;
-
-	if (!lastDirectionIsSameAsCurrent)
-	{
-		if (doesPlayerHaveMoves)
-		{
-			moveQueue.clear();
-		}
-
-		moveQueue.push_back(std::shared_ptr<Movement>(new Movement(moveDurationMs, controllerMoveEvent->Direction, maxPixelsToMove, debugMovement)));
-	}
-}
-
 void Player::Update(float deltaMs)
-{	
-	Move(deltaMs);
-
-	Hotspot->Update(Position);
-
-	UpdateBounds(width, height);	
+{
+	UpdateSprite(deltaMs);		
 }
 
 void Player::Draw(SDL_Renderer* renderer)
@@ -150,47 +142,12 @@ void Player::UpdateSprite(float deltaMs)
 		
 	SetSpriteAnimationFrameGroup();
 
-	if (PlayerHasPendingMoves())
-	{
-		_sprite->EnableAnimation();
-	}
-	else
-	{
-		_sprite->DisableAnimation();
-	}
-
 	_sprite->Update(deltaMs);
 }
 
 void Player::Move(float deltaMs)
 {
-	for (auto& currentMovement : moveQueue)
-	{
-		if (!currentMovement->IsComplete())
-		{
-			currentMovement->Update(deltaMs);	
-			
-			if (!moveStrategy->MovePlayer(currentMovement))
-			{
-				EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(gamelib::EventType::InvalidMove), this);
-			}
-
-			if (currentMovement->IsComplete())
-			{
-				EventManager::Get()->RaiseEvent(EventFactory::Get()->CreatePlayerMovedEvent(currentMovement->direction), this);
-			}
-		}
-	}
-
-	// Remove moves if they have all been completed.
-	moveQueue.erase(std::remove_if(moveQueue.begin(), moveQueue.end(), [&](const std::shared_ptr<Movement> movement)-> bool 
-	{ 
-		return movement->IsComplete(); 
-	}), moveQueue.end());	
-
-	UpdateSprite(deltaMs);
-
-	_sprite->MoveSprite(Position.GetX(), Position.GetY()); // Move the sprite to match the position of the player
+	
 }
 
 void Player::SetSpriteAnimationFrameGroup()
@@ -283,9 +240,9 @@ void Player::Fire() { RemovePlayerFacingWall();	}
 
 bool Player::PlayerHasPendingMoves() { return !moveQueue.empty(); }
 
-void Player::BaseProcessEvent(const shared_ptr<Event>& event, ListOfEvents& createdEvents)
+void Player::BaseProcessEvent(const shared_ptr<Event>& event, ListOfEvents& createdEvents, unsigned long deltaMs)
 {
-	for (auto& createdEvent : GameObject::HandleEvent(event)) { createdEvents.push_back(createdEvent); }
+	for (auto& createdEvent : GameObject::HandleEvent(event, deltaMs)) { createdEvents.push_back(createdEvent); }
 }
 
 void Player::CenterPlayerInRoom(shared_ptr<Room> targetRoom)
