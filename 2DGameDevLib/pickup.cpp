@@ -20,7 +20,7 @@ namespace gamelib
 	{		
 		SetBounds();
 
-		_sprite = AnimatedSprite::Create(Position.GetX(), Position.GetY(), 
+		_sprite = AnimatedSprite::Create(Position, 
 			dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(stringProperties["assetName"])));
 	}
 

@@ -27,6 +27,7 @@
 #include <processes/DelayProcess.h>
 #include <processes/Action.h>
 #include <functional>
+#include <events/Event.h>
 
 using namespace gamelib;
 using namespace std;
@@ -50,9 +51,9 @@ bool LevelManager::Initialize()
 	_eventManager->SubscribeToEvent(EventType::StartNetworkLevel, this);
 	_eventManager->SubscribeToEvent(EventType::UpdateProcesses, this);
 
-	_verbose = SettingsManager::Get()->GetBool("global", "verbose");
+	_verbose =  GetBoolSetting("global", "verbose");
 
-	SceneManager::Get()->GetGameWorld().IsNetworkGame = SettingsManager::Get()->GetBool("global", "isNetworkGame");
+	SceneManager::Get()->GetGameWorld().IsNetworkGame = GetBoolSetting("global", "isNetworkGame");
 			
 	return true;
 }
@@ -117,8 +118,12 @@ void LevelManager::OnStartNetworkLevel(std::shared_ptr<gamelib::Event> evt)
 	ChangeLevel(1);
 
 	// Network games all start on level 1 for now
-	CreateLevel(SettingsManager::Get()->GetString("global", "level1FileName"));
+	CreateLevel(GetSetting("global", "level1FileName"));
 }
+
+string LevelManager::GetSetting(std::string section, std::string settingName) const { return SettingsManager::Get()->GetString(section, settingName); }
+int LevelManager::GetIntSetting(std::string section, std::string settingName) const { return SettingsManager::Get()->GetInt(section, settingName); }
+bool LevelManager::GetBoolSetting(std::string section, std::string settingName) const { return SettingsManager::Get()->GetBool(section, settingName); }
 
 void LevelManager::OnNetworkPlayerJoined(std::shared_ptr<gamelib::Event> evt)
 {
@@ -184,11 +189,7 @@ void LevelManager::RemoveGameObject(gamelib::GameObject& gameObject)
 	
 	auto found = findResult != end(gameObjects);
 			
-	if(found)
-	{
-		_eventManager->Unsubscribe((*findResult)->Id);
-		gameObjects.erase(findResult);
-	}
+	if(found) { _eventManager->Unsubscribe((*findResult)->Id); gameObjects.erase(findResult); }
 
 	GameData::Get()->SetGameObjects(&gameObjects);
 }
@@ -215,10 +216,10 @@ void LevelManager::GetKeyboardInput()
 				case SDLK_j: _gameCommands->LoadNewLevel(2); currentLevel = 2; break;
 				case SDLK_k: _gameCommands->LoadNewLevel(3); currentLevel = 3; break;
 				case SDLK_l: _gameCommands->LoadNewLevel(4); currentLevel = 4; break;
-				case SDLK_1: _gameCommands->PlaySoundEffect(gamelib::AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("high.wav"))->AsSoundEffect()); break;
-				case SDLK_2: _gameCommands->PlaySoundEffect(gamelib::AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("medium.wav"))->AsSoundEffect()); break;
-				case SDLK_3: _gameCommands->PlaySoundEffect(gamelib::AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("low.wav"))->AsSoundEffect()); break;
-				case SDLK_4: _gameCommands->PlaySoundEffect(gamelib::AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("scratch.wav"))->AsSoundEffect()); break;
+				case SDLK_1: _gameCommands->PlaySoundEffect(GetSoundEffect("high.wav")); break;
+				case SDLK_2: _gameCommands->PlaySoundEffect(GetSoundEffect("medium.wav")); break;
+				case SDLK_3: _gameCommands->PlaySoundEffect(GetSoundEffect("low.wav")); break;
+				case SDLK_4: _gameCommands->PlaySoundEffect(GetSoundEffect("scratch.wav")); break;
 				case SDLK_9: _gameCommands->ToggleMusic(_verbose); break;
 				case SDLK_r: _gameCommands->ReloadSettings(_verbose); break;
 				case SDLK_g: _gameCommands->GenerateNewLevel(_verbose); break;
@@ -232,46 +233,38 @@ void LevelManager::GetKeyboardInput()
 	}
 }
 
+Mix_Chunk* LevelManager::GetSoundEffect(std::string name) { return gamelib::AudioManager::ToAudioAsset(GetAsset(name))->AsSoundEffect(); }
 
-shared_ptr<Player> LevelManager::CreatePlayer(const vector<shared_ptr<Room>> rooms, const int playerWidth, const int playerHeight) const
+
+shared_ptr<Player> LevelManager::CreatePlayer(const vector<shared_ptr<Room>> rooms, shared_ptr<SpriteAsset> playerSpriteAsset) const
 {		
 	const auto playerRoomIndex = GetRandomIndex(0, rooms.size());	
 	const auto& playerRoom = rooms[playerRoomIndex];
-	const auto centerPositionInRoom = playerRoom->GetCenter(playerWidth, playerHeight);	
 	const auto playerNickName = SceneManager::Get()->GetGameWorld().IsNetworkGame 
-								? SettingsManager::Get()->GetString("networking", "nickname")
+								?  GetSetting("networking", "nickname").c_str()
 								: "Player1";
 
-	return shared_ptr<Player>(new Player(playerRoom, playerWidth, playerHeight, playerNickName));
+	return shared_ptr<Player>(new Player(playerRoom, playerSpriteAsset->Dimensions.GetWidth(), playerSpriteAsset->Dimensions.GetHeight(), playerNickName));
 }
 
 ListOfGameObjects LevelManager::CreatePickups(const vector<shared_ptr<Room>>& rooms, const int pickupWidth, const int pickupHeight)
 {
 	ListOfGameObjects pickups;
-	const auto numPickups = SettingsManager::Get()->GetInt("global", "numPickups");
+	const auto numPickups = GetIntSetting("global", "numPickups");
 	auto part = numPickups / 3;
 
 	for(auto i = 0; i < numPickups; i++)
 	{
 		const auto rand_index = GetRandomIndex(0, rooms.size()-1);
-		const auto random_room = rooms[rand_index];	
+		const auto& random_room = rooms[rand_index];
 		const auto positionInRoom = random_room->GetCenter(pickupWidth, pickupHeight);
 
 		auto pickup = std::shared_ptr<Pickup>(new Pickup(positionInRoom.GetX(), positionInRoom.GetY(), pickupWidth, pickupHeight, true, rand_index));
 		
 		// Place 3 sets evently of each type of pickup	
-		if(i < 1 * part) 
-		{ 
-			pickup->stringProperties["assetName"] = SettingsManager::Get()->GetString("pickup1", "assetName");		
-		}
-		else if(i >= 1 * part && i < 2 * part) 
-		{ 
-			pickup->stringProperties["assetName"] = SettingsManager::Get()->GetString("pickup2", "assetName"); 
-		}
-		else if(i >= 2 * part)
-		{
-			pickup->stringProperties["assetName"] = SettingsManager::Get()->GetString("pickup3", "assetName");
-		}
+		if(i < 1 * part)  {	pickup->stringProperties["assetName"] = GetSetting("pickup1", "assetName"); }
+		else if(i >= 1 * part && i < 2 * part) { pickup->stringProperties["assetName"] = GetSetting("pickup2", "assetName"); }
+		else if(i >= 2 * part) { pickup->stringProperties["assetName"] = GetSetting("pickup3", "assetName"); }
 
 		pickup->Initialize();
 		pickups.push_back(pickup);
@@ -288,15 +281,10 @@ ListOfGameObjects LevelManager::CreateLevel(string filename)
 	// Load the level definition file
 	level = std::shared_ptr<Level>(new Level(filename));	
 	level->Load();
-		
-	// Determine the dimensions of the rows and columns based on the available spaces
-	const auto rowWidth = SettingsManager::Get()->GetInt("global", "screen_width") / level->NumCols;
-	const auto rowHeight = SettingsManager::Get()->GetInt("global", "screen_height") / level->NumRows;
 
-	// Get reference to where all our game objects will be kept
+	const auto rowWidth = GetIntSetting("global", "screen_width") / level->NumCols;
+	const auto rowHeight = GetIntSetting("global", "screen_height") / level->NumRows;
 	auto& gameObjectsPtr = SceneManager::Get()->GetGameWorld().GetGameObjects();
-	
-	// Get reference to the list of rooms in the level
 	auto& rooms = level->Rooms;
 
 	InitializeRooms(rooms, gameObjectsPtr);	
@@ -307,15 +295,15 @@ ListOfGameObjects LevelManager::CreateLevel(string filename)
 	const auto pickups = CreatePickups(rooms, pickupWidth, pickupHeight);
 
 	// Create the player
-	auto playerSpriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo("edge_player"));
-	const auto player = CreatePlayer(rooms, playerSpriteAsset->Dimensions.GetWidth(), playerSpriteAsset->Dimensions.GetHeight());
-	
+	auto playerSpriteAsset = dynamic_pointer_cast<SpriteAsset>(GetAsset("edge_player"));
+	const auto player = CreatePlayer(rooms, playerSpriteAsset);
+
 	InitializePlayer(player, playerSpriteAsset);
 	RegisterGameObject(player);
 
 	// Create Hud
 	_hudItem = StaticSprite::Create(rooms[rooms.size() - 1]->GetCenter(player->GetWidth(), player->GetHeight()), 
-		dynamic_pointer_cast<gamelib::SpriteAsset>(ResourceManager::Get()->GetAssetInfo("hudspritesheet")));
+		dynamic_pointer_cast<gamelib::SpriteAsset>(GetAsset("hudspritesheet")));
 
 	InitializeHudItem(_hudItem);
 	RegisterGameObject(_hudItem);
@@ -337,6 +325,8 @@ ListOfGameObjects LevelManager::CreateLevel(string filename)
 	return gameObjectsPtr;
 }
 
+const std::shared_ptr<gamelib::Asset> LevelManager::GetAsset(std::string name) const { return ResourceManager::Get()->GetAssetInfo(name); }
+
 void LevelManager::InitializeHudItem(std::shared_ptr<StaticSprite> _hudItem)
 {
 	_hudItem->LoadSettings();
@@ -354,11 +344,11 @@ ListOfGameObjects LevelManager::CreateAutoLevel()
 	LevelManager::Get()->ChangeLevel(1);
 
 	// Calculate room info
-	const auto rows = SettingsManager::Get()->GetInt("grid", "rows");
-	const auto cols = SettingsManager::Get()->GetInt("grid", "cols");
-	const auto screenWidth = SettingsManager::Get()->GetInt("global", "screen_width");
-	const auto screenHeight = SettingsManager::Get()->GetInt("global", "screen_height");
-	const auto removeRandomSides = SettingsManager::Get()->GetBool("grid", "removeSidesRandomly");
+	const auto rows = GetIntSetting("grid", "rows");
+	const auto cols = GetIntSetting("grid", "cols");
+	const auto screenWidth = GetIntSetting("global", "screen_width");
+	const auto screenHeight = GetIntSetting("global", "screen_height");
+	const auto removeRandomSides = GetBoolSetting("grid", "removeSidesRandomly");
 	const auto rowWidth = screenWidth / cols; 
 	const auto rowHeight = screenHeight / rows;
 
@@ -372,8 +362,8 @@ ListOfGameObjects LevelManager::CreateAutoLevel()
 			
 	// Create the player
 	
-	auto playerSpriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo("edge_player"));
-	const auto player = CreatePlayer(rooms, playerSpriteAsset->Dimensions.GetWidth(), playerSpriteAsset->Dimensions.GetHeight());
+	auto playerSpriteAsset = dynamic_pointer_cast<SpriteAsset>(GetAsset("edge_player"));
+	const auto player = CreatePlayer(rooms, playerSpriteAsset);
 
 	// Setup the player
 	InitializePlayer(player, playerSpriteAsset);
@@ -399,7 +389,7 @@ void LevelManager::InitializePlayer(std::shared_ptr<Player> player, std::shared_
 	player->SetMoveStrategy(shared_ptr<PlayerMoveStrategy>(new PlayerMoveStrategy(player, 2)));
 	player->SetTag(constants::playerTag);
 	player->LoadSettings();
-	player->SetSprite(AnimatedSprite::Create(player->Position.GetX(), player->Position.GetY(), spriteAsset));
+	player->SetSprite(AnimatedSprite::Create(player->Position, spriteAsset));
 
 	// We keep a reference to track of the player globally
 	SceneManager::Get()->GetGameWorld().player = player;
@@ -447,11 +437,7 @@ int LevelManager::ReducePickupCount() { return --numLevelPickups; }
 int LevelManager::IncreasePickupCount() { return ++numLevelPickups; }
 shared_ptr<Level> LevelManager::GetLevel() { return level; }
 
-LevelManager* LevelManager::Get()
-{
-	if (Instance == nullptr) { Instance = new LevelManager(); }
-	return Instance;
-}
+LevelManager* LevelManager::Get() { if (Instance == nullptr) { Instance = new LevelManager(); } return Instance; }
 
 LevelManager::~LevelManager() { Instance = nullptr; }
 LevelManager* LevelManager::Instance = nullptr;

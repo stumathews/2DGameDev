@@ -293,8 +293,6 @@ void Room::SetNotWalled(Side wall)
 	}
 }
 
-
-
 void Room::SetWalled(Side wall)
 {
 	switch (wall)

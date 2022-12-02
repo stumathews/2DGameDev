@@ -7,6 +7,7 @@
 #include "audio/AudioManager.h"
 #include <resource/ResourceManager.h>
 #include "GameWorld.h"
+#include <events/Event.h>
 
 class GameCommands :  public gamelib::EventSubscriber, public inheritable_enable_shared_from_this<GameCommands>
 {

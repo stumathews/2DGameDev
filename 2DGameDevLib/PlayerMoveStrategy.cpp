@@ -22,7 +22,7 @@ PlayerMoveStrategy::PlayerMoveStrategy(std::shared_ptr<Player> inPlayer, int edg
 bool PlayerMoveStrategy::MovePlayer(std::shared_ptr<gamelib::IMovement> movement)
 {
 	auto isMoveValid = false;
-	if (IsValidMove(movement) || ignoreRestrictions) 
+	if (IsValidMove(movement)) 
 	{
 		SetPlayerPosition(CalculatePlayerMove(movement, movement->GetPixelsToMove()));
 		isMoveValid = true;
@@ -57,38 +57,17 @@ void PlayerMoveStrategy::SetPlayerPosition(gamelib::coordinate<int> resultingMov
 
 bool PlayerMoveStrategy::IsValidMove(std::shared_ptr<gamelib::IMovement> movement)
 {
-	if (ignoreRestrictions)
-	{
-		return true;
-	}
-	
-	auto currentRoom = player->GetCurrentRoom();
-	auto topRoom = player->GetTopRoom();
-	auto rightRoom = player->GetRightRoom();
-	auto bottomRoom = player->GetBottomRoom();
-	auto leftRoom = player->GetLeftRoom();
+	if (ignoreRestrictions) { return true;}
 
 	switch (movement->GetDirection())
 	{
-	case gamelib::Direction::Down:
-		return CanPlayerMove(gamelib::Direction::Down, movement);
-		break;
-	case gamelib::Direction::Left:
-		return CanPlayerMove(gamelib::Direction::Left, movement);
-		break;
-	case gamelib::Direction::Right:
-		return CanPlayerMove(gamelib::Direction::Right, movement);
-		break;
-	case gamelib::Direction::Up:
-		return CanPlayerMove(gamelib::Direction::Up, movement);
-		break;
-	default:
-		return false;
-		break;
+		case gamelib::Direction::Down: return CanPlayerMove(gamelib::Direction::Down, movement);
+		case gamelib::Direction::Left: return CanPlayerMove(gamelib::Direction::Left, movement);
+		case gamelib::Direction::Right: return CanPlayerMove(gamelib::Direction::Right, movement);
+		case gamelib::Direction::Up: return CanPlayerMove(gamelib::Direction::Up, movement);
+		default: return false;
 	}
-	return false;
 }
-
 
 bool PlayerMoveStrategy::CanPlayerMove(gamelib::Direction direction, std::shared_ptr<gamelib::IMovement> movement)
 {
@@ -96,7 +75,8 @@ bool PlayerMoveStrategy::CanPlayerMove(gamelib::Direction direction, std::shared
 	bool touchingBlockingWalls = false, hasValidTargetRoom = false;
 	auto currentRoom = player->GetCurrentRoom();
 	
-	auto IntersectsRectAndLine = [=](SDL_Rect bounds, gamelib::Line line) -> bool {
+	auto IntersectsRectAndLine = [=](SDL_Rect bounds, gamelib::Line line) -> bool 
+	{
 		return SDL_IntersectRectAndLine(&bounds, &line.x1, &line.y1, &line.x2, &line.y2);
 	};
 	
@@ -134,5 +114,6 @@ bool PlayerMoveStrategy::CanPlayerMove(gamelib::Direction direction, std::shared
 			currentRoom->HasBottomWall() && IntersectsRectAndLine(player->Bounds, currentRoom->BottomLine);
 	}
 
-	return !touchingBlockingWalls;}
+	return !touchingBlockingWalls;
+}
 

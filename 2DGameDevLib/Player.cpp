@@ -18,26 +18,26 @@
 using namespace std;
 using namespace gamelib;
 	
-// Create a player 
 Player::Player(gamelib::coordinate<int> position, const int width, const int height, const std::string inIdentifier) 
 	: DrawableGameObject(position, true), GameObjectsPtr(SceneManager::Get()->GetGameWorld().GetGameObjects()) 
 {
-	CommonInit(width, height, inIdentifier); 
+	commonInit(width, height, inIdentifier); 
 }
 
-Player::Player(std::shared_ptr<Room> room, int width, int height, std::string identifier) : DrawableGameObject(room->GetCenter(width, height), true), 
+Player::Player(std::shared_ptr<Room> room, int width, int height, std::string identifier) 
+	: DrawableGameObject(room->GetCenter(width, height), true), 
 	GameObjectsPtr(SceneManager::Get()->GetGameWorld().GetGameObjects())
 {
-	CommonInit(width, height, identifier);
+	commonInit(width, height, identifier);
 	SetPlayerRoom(room->GetRoomNumber());
 	CenterPlayerInRoom(room);
 }
 
-void Player::CommonInit(const int inWidth, const int inHeight, const std::string inIdentifier)
+void Player::commonInit(const int inWidth, const int inHeight, const std::string inIdentifier)
 {
 	width = inWidth;
 	height = inHeight;
-	_sprite = nullptr;
+	sprite = nullptr;
 	currentFacingDirection = this->currentMovingDirection;
 	Identifier = inIdentifier;
 	Hotspot = std::shared_ptr<gamelib::Hotspot>(new gamelib::Hotspot(Position, width, height, width/2));
@@ -50,7 +50,6 @@ void Player::CommonInit(const int inWidth, const int inHeight, const std::string
 ListOfEvents Player::HandleEvent(const shared_ptr<Event> event, unsigned long deltaMs)
 {
 	ListOfEvents createdEvents;
-
 	BaseProcessEvent(event, createdEvents, deltaMs);
 	
 	switch (event->type)
@@ -74,13 +73,17 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 
 	if (!isValidMove) { EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(gamelib::EventType::InvalidMove), this); }
 
-	UpdateSprite(deltaMs);	
+	if (sprite) 
+	{
+		sprite->Update(deltaMs, GetSpriteAnimationFrameGroupForPlayer());
+		sprite->MoveSprite(Position.GetX(), Position.GetY());
+	}
 
 	Hotspot->Update(Position);
 
 	UpdateBounds(width, height);
 
-	// Tell objects that care, that we moved!
+	// Tell subscribers player moved
 	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreatePlayerMovedEvent(moveEvent->Direction), this);
 
 	return createdEvents;
@@ -90,7 +93,7 @@ void Player::Update(float deltaMs) { }
 
 void Player::Draw(SDL_Renderer* renderer)
 {
-	if (!hideSprite) { _sprite->Draw(renderer); }
+	if (!hideSprite) { sprite->Draw(renderer); }
 	if (drawHotSpot) { Hotspot->Draw(renderer); }	
 
 	if (_drawBounds)
@@ -101,26 +104,14 @@ void Player::Draw(SDL_Renderer* renderer)
 	}
 }
 
-void Player::UpdateSprite(float deltaMs)
-{
-	if (!_sprite) { return; }		
-	SetSpriteAnimationFrameGroup();
-	_sprite->Update(deltaMs);
-	_sprite->MoveSprite(Position.GetX(), Position.GetY());
-}
-
-void Player::SetSpriteAnimationFrameGroup()
+std::string Player::GetSpriteAnimationFrameGroupForPlayer()
 {
 	switch (currentFacingDirection)
 	{
-		case Direction::Up: 
-			_sprite->SetAnimationFrameGroup("up"); break;
-		case Direction::Right: 
-			_sprite->SetAnimationFrameGroup("right"); break;
-		case Direction::Down: 
-			_sprite->SetAnimationFrameGroup("down"); break;
-		case Direction::Left: 
-			_sprite->SetAnimationFrameGroup("left"); 	break;
+		case Direction::Up: return "up"; break;
+		case Direction::Right: return "right"; break;
+		case Direction::Down: return "down"; break;
+		case Direction::Left: return "left"; break;
 	}
 }
 
@@ -136,17 +127,12 @@ void Player::LoadSettings()
 	hideSprite = SettingsManager::Get()->GetBool("player", "hideSprite");
 }
 
-void Player::SetPlayerDirection(Direction direction)
-{
-	currentMovingDirection = direction;
-	currentFacingDirection = direction;
-}	
-
+void Player::SetPlayerDirection(Direction direction) { currentMovingDirection = direction; currentFacingDirection = direction; }	
 const std::shared_ptr<Room> Player::GetCurrentRoom() { return GameData::Get()->GetRoomByIndex(playerRoomIndex); }
-
 const std::shared_ptr<Room> Player::GetRoomByIndex(int index) { return GameData::Get()->GetRoomByIndex(index); }
-
 const shared_ptr<Room> Player::GetAdjacentRoomTo(shared_ptr<Room> room, Side side) { return GameData::Get()->GetRoomByIndex(room->GetNeighbourIndex(side)); }
+void Player::Fire() { RemovePlayerFacingWall(); }
+bool Player::PlayerHasPendingMoves() { return !moveQueue.empty(); }
 
 bool Player::IsWithinRoom(std::shared_ptr<Room> room)
 {
@@ -157,7 +143,8 @@ bool Player::IsWithinRoom(std::shared_ptr<Room> room)
 
 void Player::SetPlayerRoom(int roomIndex) 
 { 
-	playerRoomIndex = roomIndex; CurrentRoom = dynamic_pointer_cast<Room>(SceneManager::Get()->GetGameWorld().GetGameObjects()[playerRoomIndex]);
+	playerRoomIndex = roomIndex; 
+	CurrentRoom = dynamic_pointer_cast<Room>(SceneManager::Get()->GetGameWorld().GetGameObjects()[playerRoomIndex]);
 }
 
 void Player::RemovePlayerFacingWall()
@@ -202,10 +189,6 @@ void Player::RemoveTopWall()
 	auto topRoom = GetTopRoom();
 	if (topRoom) { CurrentRoom->RemoveWall(Side::Top); topRoom->RemoveWall(Side::Bottom); }
 }
-
-void Player::Fire() { RemovePlayerFacingWall();	}
-
-bool Player::PlayerHasPendingMoves() { return !moveQueue.empty(); }
 
 void Player::BaseProcessEvent(const shared_ptr<Event>& event, ListOfEvents& createdEvents, unsigned long deltaMs)
 {
