@@ -12,6 +12,7 @@
 #include <events/EventFactory.h>
 #include <events/StartNetworkLevelEvent.h>
 #include "LevelManager.h"
+#include <GameData.h>
 
 using namespace gamelib;
 using namespace std;
@@ -122,7 +123,7 @@ void GameCommands::Quit(bool _verbose)
 {	
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: Quitting", _verbose); }
 
-	SceneManager::Get()->GetGameWorld().IsGameDone = 1;
+	GameData::Get()->IsGameDone = 1;
 }
 
 void GameCommands::InvalidMove(bool _verbose)
@@ -138,13 +139,12 @@ void GameCommands::FetchedPickup(bool _verbose)
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: FetchedPickup", _verbose); }
 
 	AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "fetched_pickup")))->AsSoundEffect());
-	LevelManager::Get()->ReducePickupCount();
 }
 
 void GameCommands::StartNetworkLevel()
 {
 	// This only works on the Game server
-	if(!SceneManager::Get()->GetGameWorld().IsNetworkGame)
+	if(!GameData::Get()->IsNetworkGame)
 	{
 		return;
 	}

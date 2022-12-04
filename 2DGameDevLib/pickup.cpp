@@ -11,6 +11,7 @@
 #include <common/aliases.h>
 #include <events/UpdateAllGameObjectsEvent.h>
 #include "SDLCollisionDetection.h"
+#include "GameData.h"
 
 using namespace std;
 
@@ -32,14 +33,14 @@ namespace gamelib
 		{
 			case gamelib::EventType::PlayerMovedEventType:	
 			{
-				const auto player = dynamic_pointer_cast<Player>(SceneManager::Get()->GetGameWorld().player);
+				const auto player = GameData::Get()->GetPlayer();
 
 				if (player->GetCurrentRoom()->GetRoomNumber() == RoomNumber)
 				{
 					if (SDLCollisionDetection::IsColliding(&player->Bounds, &Bounds))
 					{
 						generated_events.push_back(make_shared<gamelib::Event>(gamelib::EventType::FetchedPickup));
-						generated_events.push_back(make_shared<gamelib::GameObjectEvent>(Id, this, gamelib::GameObjectEventContext::Remove));
+						generated_events.push_back(make_shared<gamelib::GameObjectEvent>(shared_from_this(), gamelib::GameObjectEventContext::Remove));
 					}
 				}
 			}

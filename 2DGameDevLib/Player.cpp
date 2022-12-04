@@ -19,17 +19,16 @@ using namespace std;
 using namespace gamelib;
 	
 Player::Player(gamelib::coordinate<int> position, const int width, const int height, const std::string inIdentifier) 
-	: DrawableGameObject(position, true), GameObjectsPtr(SceneManager::Get()->GetGameWorld().GetGameObjects()) 
+	: DrawableGameObject(position, true)
 {
 	commonInit(width, height, inIdentifier); 
 }
 
 Player::Player(std::shared_ptr<Room> room, int width, int height, std::string identifier) 
-	: DrawableGameObject(room->GetCenter(width, height), true), 
-	GameObjectsPtr(SceneManager::Get()->GetGameWorld().GetGameObjects())
+	: DrawableGameObject(room->GetCenter(width, height), true)
 {
 	commonInit(width, height, identifier);
-	SetPlayerRoom(room->GetRoomNumber());
+	SetPlayerRoom(room);
 	CenterPlayerInRoom(room);
 }
 
@@ -141,10 +140,10 @@ bool Player::IsWithinRoom(std::shared_ptr<Room> room)
 	return SDL_IntersectRectAndLine(&room->InnerBounds, &x1, &y1, &x1, &y1);
 }
 
-void Player::SetPlayerRoom(int roomIndex) 
+void Player::SetPlayerRoom(std::shared_ptr<Room> room) 
 { 
-	playerRoomIndex = roomIndex; 
-	CurrentRoom = dynamic_pointer_cast<Room>(SceneManager::Get()->GetGameWorld().GetGameObjects()[playerRoomIndex]);
+	playerRoomIndex = room->GetRoomNumber();
+	CurrentRoom = room;
 }
 
 void Player::RemovePlayerFacingWall()

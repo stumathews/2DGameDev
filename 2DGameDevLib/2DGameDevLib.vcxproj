@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GameDataManager.h" />
     <ClInclude Include="PlayerMoveStrategy.h" />
     <ClInclude Include="DrawableFrameRate.h" />
     <ClInclude Include="GameData.h" />
@@ -178,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DrawableFrameRate.cpp" />
+    <ClCompile Include="GameDataManager.cpp" />
     <ClCompile Include="PlayerMoveStrategy.cpp" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="Level.cpp" />

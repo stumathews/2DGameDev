@@ -4,13 +4,14 @@
 #include "objects/DrawableGameObject.h"
 #include <events/IEventSubscriber.h>
 #include <objects/AnimatedSprite.h>
+#include <objects/MultipleInheritableEnableSharedFromThis.h>
 
 namespace gamelib
 {
 	/// <summary>
 	/// Represents a Pickup in the game
 	/// </summary>
-	class Pickup final : public gamelib::DrawableGameObject
+	class Pickup final : public gamelib::DrawableGameObject, public inheritable_enable_shared_from_this<Pickup>
 	{
 	public:
 		

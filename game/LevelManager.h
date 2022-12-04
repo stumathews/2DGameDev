@@ -10,14 +10,16 @@
 #include "GameCommands.h"
 #include "Room.h"
 #include <events/EventFactory.h>
-#include <objects/StaticSprite.h>
 #include "DrawableFrameRate.h"
 #include <processes/ProcessManager.h>
-#
-typedef std::vector<std::shared_ptr<gamelib::GameObject>> ListOfGameObjects;
+#include <objects/StaticSprite.h>
+#include "Pickup.h"
+
+typedef std::vector<std::weak_ptr<gamelib::GameObject>> ListOfGameObjects;
 
 class gamelib::GameWorldData;
 class gamelib::EventManager;
+
 class Level;
 
 
@@ -43,18 +45,18 @@ public:
     void RemoveAllGameObjects();
     void OnLevelChanged(std::shared_ptr<gamelib::Event>& evt);
     void PlayLevelMusic(std::string levelMusicAssetName);
-    void InitializeHudItem(std::shared_ptr<StaticSprite> _hudItem);
-    void InitializePlayer(std::shared_ptr<Player> player, std::shared_ptr<gamelib::SpriteAsset> spriteAsset);
-    void InitializePickups(const ListOfGameObjects& pickups, ListOfGameObjects& gameObjectsPtr);
-    void InitializeRooms(std::vector<std::shared_ptr<Room>>& rooms, ListOfGameObjects& gameObjectsPtr);
-    void RegisterGameObject(std::shared_ptr<gamelib::GameObject> obj);
+    void InitializeHudItem(std::shared_ptr<gamelib::StaticSprite> _hudItem);
+    void InitializePlayer(std::shared_ptr<Player> player, std::shared_ptr<gamelib::SpriteAsset> spriteAsset) const;
+    void InitializePickups(std::vector<std::shared_ptr<gamelib::Pickup>>& pickups);
+    void InitializeRooms(std::vector<std::shared_ptr<Room>>& rooms);
     std::string GetSetting(std::string section, std::string settingName) const;
     std::string GetSubscriberName() override { return "level_manager"; }
-    ListOfGameObjects CreateAutoLevel();    
-    ListOfGameObjects CreateLevel(std::string filename);
+    ListOfGameObjects CreateAutoLevel();
+    std::vector<std::shared_ptr<Room>> CreateRooms(int screenWidth, int screenHeight, int rows, int cols, bool removeRandomSides);
+    void CreateLevel(std::string filename);
+    void CreateDrawableFrameRate();
+    void CreateHUD(std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Player>& player);
     const std::shared_ptr<gamelib::Asset> GetAsset(std::string name) const;    
-    int ReducePickupCount();
-    int IncreasePickupCount();
     int GetIntSetting(std::string section, std::string settingName) const;
     std::shared_ptr<Level> GetLevel();
     Mix_Chunk* GetSoundEffect(std::string name);
@@ -63,15 +65,14 @@ public:
 
 
 protected:
-
-    // Singleton Instance of LevelManager
     static LevelManager* Instance;
     
 private:
     void AddGameObjectToScene(const std::shared_ptr<gamelib::GameObject> gameObject);
     void RemoveGameObject(gamelib::GameObject& gameObject);
-    std::shared_ptr<Player> CreatePlayer(const std::vector<std::shared_ptr<Room>> rooms, std::shared_ptr<gamelib::SpriteAsset> playerSpriteAsset) const;
-    ListOfGameObjects CreatePickups(const std::vector<std::shared_ptr<Room>>& rooms, const int w, const int h);
+    void OnGameWon();
+    std::shared_ptr<Player> CreatePlayer(const std::vector<std::shared_ptr<Room>> rooms, std::shared_ptr<gamelib::SpriteAsset> playerSpriteAsset);
+    std::vector<std::shared_ptr<gamelib::Pickup>> CreatePickups(const std::vector<std::shared_ptr<Room>>& rooms, const int w, const int h);
     static size_t GetRandomIndex(const int min, const int max) { return rand() % (max - min + 1) + min; }   
 
     bool _verbose;
@@ -81,7 +82,7 @@ private:
     gamelib::ProcessManager processManager;
     gamelib::EventManager* _eventManager;
     gamelib::EventFactory* _eventFactory;
-    std::shared_ptr<StaticSprite> _hudItem;
+    std::shared_ptr<gamelib::StaticSprite> _hudItem;
     std::shared_ptr<Level> level = nullptr;
     std::shared_ptr<DrawableFrameRate> drawableFrameRate;
     std::shared_ptr<GameCommands> _gameCommands;

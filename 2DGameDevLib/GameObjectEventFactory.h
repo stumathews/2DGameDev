@@ -6,9 +6,9 @@
 class GameObjectEventFactory
 {
 	public:
-	static std::shared_ptr<gamelib::GameObjectEvent> MakeRemoveObjectEvent(gamelib::GameObject* target)
+	static std::shared_ptr<gamelib::GameObjectEvent> MakeRemoveObjectEvent(std::shared_ptr<gamelib::GameObject> target)
 	{
-		return std::shared_ptr<gamelib::GameObjectEvent>(new gamelib::GameObjectEvent(0, &(*target), gamelib::GameObjectEventContext::Remove));
+		return std::shared_ptr<gamelib::GameObjectEvent>(new gamelib::GameObjectEvent(target, gamelib::GameObjectEventContext::Remove));
 	}
 };
 

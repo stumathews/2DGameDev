@@ -7,6 +7,7 @@
 #include "Player.h"
 #include <sstream>
 #include "SideUtils.h"
+#include "GameData.h"
 
 using namespace std;
 using namespace gamelib;
@@ -102,11 +103,11 @@ gamelib::ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, unsi
 
 gamelib::ListOfEvents& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedEvents)
 {
-	const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);				
+	const auto player = dynamic_pointer_cast<Player>(GameData::Get()->player);
 	auto playerHotSpotBounds = player->Hotspot->GetBounds();
 	SDL_Rect result;
 	isPlayerWithinRoom = SDL_IntersectRect(&InnerBounds, &playerHotSpotBounds, &result);
-	if(isPlayerWithinRoom) { player->SetPlayerRoom(RoomNumber); }
+	if(isPlayerWithinRoom) { player->SetPlayerRoom(shared_from_this()); }
 
 	return generatedEvents;
 }
@@ -129,8 +130,7 @@ void Room::DrawDiagnostics(SDL_Renderer* renderer)
 		
 	if(printDebuggingText)
 	{
-		const auto player = dynamic_pointer_cast<Player>(gamelib::SceneManager::Get()->GetGameWorld().player);
-		
+		const auto player = GameData::Get()->GetPlayer();
 
 		if(printDebuggingTextNeighboursOnly)
 		{			

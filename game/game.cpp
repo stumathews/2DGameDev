@@ -5,6 +5,7 @@
 #include "GameStructure.h"
 #include "game.h"
 #include "Logging/ErrorLogManager.h"
+#include <GameDataManager.h>
 
 using namespace std;
 using namespace gamelib;
@@ -22,6 +23,7 @@ using namespace gamelib;
 
 int main(int argc, char *args[])
 {
+	GameDataManager::Get()->Initialize();
 	// Ready the game log
 	ErrorLogManager::GetErrorLogManager()->Create("GameErrors.txt");
 
@@ -42,7 +44,7 @@ int main(int argc, char *args[])
 		PrepareLevel();
 
 		// Start the game loop which will pump update/draw events onto the event system, which level objects subscribe to
-		return IsSuccess(infrastructure.DoGameLoop(), "Game loop failed") && 
+		return IsSuccess(infrastructure.DoGameLoop(GameData::Get()), "Game loop failed") &&
 			   // Then unload the game subsystems
 			   IsSuccess(infrastructure.UnloadGameSubsystems(), "Content unload failed");	
 	}
@@ -64,7 +66,7 @@ int main(int argc, char *args[])
 void PrepareLevel()
 {
 	// Single player mode
-	if (!SceneManager::Get()->GetGameWorld().IsNetworkGame)
+	if (!GameData::Get()->IsNetworkGame)
 	{
 		LevelManager::Get()->ChangeLevel(1);
 		
@@ -78,7 +80,7 @@ void PrepareLevel()
 		}
 	}
 
-	Logger::Get()->LogThis(SceneManager::Get()->GetGameWorld().IsNetworkGame
+	Logger::Get()->LogThis(GameData::Get()->IsNetworkGame
 		? NetworkManager::Get()->IsGameServer()
 			? "Waiting for network players. Press 'n' to start network game."
 			: "Waiting for the server to start the network game to begin." 

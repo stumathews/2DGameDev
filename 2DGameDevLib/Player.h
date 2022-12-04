@@ -16,7 +16,7 @@
 #include <Hotspot.h>
 
 typedef std::vector<std::shared_ptr<gamelib::Event>> ListOfEvents;
-typedef std::vector<std::shared_ptr<gamelib::GameObject>> ListOfGameObjects;
+typedef std::vector<std::weak_ptr<gamelib::GameObject>> ListOfGameObjects;
 
 namespace gamelib { enum class Direction; }
 
@@ -51,7 +51,7 @@ public:
 	void Draw(SDL_Renderer* renderer) override;
 	bool PlayerHasPendingMoves();
 	bool IsWithinRoom(std::shared_ptr<Room> room);
-	void SetPlayerRoom(int roomIndex);
+	void SetPlayerRoom(std::shared_ptr<Room> room);
 	void SetSprite(std::shared_ptr<gamelib::AnimatedSprite> inSprite) { sprite = inSprite; }
 	void SetMoveStrategy(std::shared_ptr<IPlayerMoveStrategy> inMoveStrategy) { moveStrategy = inMoveStrategy; }
 	int GetHotSpotLength() { return hotspotSize; }
@@ -60,8 +60,7 @@ public:
 	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::Player; }
 	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents, unsigned long deltaMs);
 
-	std::shared_ptr<Room> CurrentRoom;
-	ListOfGameObjects& GameObjectsPtr;	
+	std::shared_ptr<Room> CurrentRoom;	
 	std::string Identifier;
 	std::shared_ptr<gamelib::Hotspot> Hotspot;
 

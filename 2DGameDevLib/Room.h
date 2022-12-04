@@ -8,8 +8,9 @@
 #include <geometry/Line.h>
 #include <common/aliases.h>
 #include "Side.h"
+#include <objects/MultipleInheritableEnableSharedFromThis.h>
 
-class Room : public gamelib::DrawableGameObject
+class Room : public gamelib::DrawableGameObject, public inheritable_enable_shared_from_this<Room>
 {	
 public:		
 
