@@ -130,7 +130,7 @@ void GameCommands::InvalidMove(bool _verbose)
 {
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: Invalid move!", _verbose); }
 
-	AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "invalid_move")))->AsSoundEffect());
+	//AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "invalid_move")))->AsSoundEffect());
 
 }
 

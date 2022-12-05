@@ -15,9 +15,9 @@ GameData* GameData::Instance = nullptr;
 
 void GameData::AddRoom(std::shared_ptr<Room> room) { _rooms[room->GetRoomNumber()] = room; }
 void GameData::RemoveRoom(std::shared_ptr<Room> room) { _rooms.erase(room->GetRoomNumber()); }
-void GameData::RemoveExpiredReferences() { GameObjects.erase(remove_if(begin(GameObjects), end(GameObjects), [&](weak_ptr<GameObject> obj) { return obj.expired(); }), end(GameObjects)); }
 void GameData::RemovePickup(std::shared_ptr<Pickup> pickup) { _pickups.erase(remove_if(begin(_pickups), end(_pickups), [=](weak_ptr<GameObject> obj) { return IsSameId(obj, pickup); }), _pickups.end()); }
 void GameData::RemoveGameObject(std::shared_ptr<GameObject> gameObject) { GameObjects.erase(remove_if(begin(GameObjects), end(GameObjects), [=](weak_ptr<GameObject> obj) { return IsSameId(obj, gameObject); }), GameObjects.end()); }
+void GameData::RemoveExpiredReferences() { GameObjects.erase(remove_if(begin(GameObjects), end(GameObjects), [&](weak_ptr<GameObject> obj) { return obj.expired(); }), end(GameObjects)); }
 bool GameData::IsSameId(weak_ptr<GameObject> obj, std::shared_ptr<GameObject> other) { return !obj.expired() && obj.lock()->Id == other->Id; }
 
 std::shared_ptr<Room> GameData::GetRoomByIndex(int roomNumber) { return _rooms[roomNumber].lock(); }

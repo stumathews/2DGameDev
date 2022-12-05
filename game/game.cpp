@@ -24,6 +24,7 @@ using namespace gamelib;
 int main(int argc, char *args[])
 {
 	GameDataManager::Get()->Initialize();
+
 	// Ready the game log
 	ErrorLogManager::GetErrorLogManager()->Create("GameErrors.txt");
 
