@@ -37,11 +37,9 @@ public:
     bool ChangeLevel(int levelNumber);
     bool GetBoolSetting(std::string section, std::string settingName) const;
     void GetKeyboardInput();
-    void OnGameObjectEventReceived(std::shared_ptr<gamelib::Event>& event);
     void OnFetchedPickup();
     void OnStartNetworkLevel(std::shared_ptr<gamelib::Event> evt);
     void OnNetworkPlayerJoined(std::shared_ptr<gamelib::Event> evt);
-    void GenerateNewLevel();
     void RemoveAllGameObjects();
     void OnLevelChanged(std::shared_ptr<gamelib::Event>& evt);
     void PlayLevelMusic(std::string levelMusicAssetName);
@@ -51,8 +49,7 @@ public:
     void InitializeRooms(std::vector<std::shared_ptr<Room>>& rooms);
     std::string GetSetting(std::string section, std::string settingName) const;
     std::string GetSubscriberName() override { return "level_manager"; }
-    ListOfGameObjects CreateAutoLevel();
-    std::vector<std::shared_ptr<Room>> CreateRooms(int screenWidth, int screenHeight, int rows, int cols, bool removeRandomSides);
+    void CreateAutoLevel();
     void CreateLevel(std::string filename);
     void CreateDrawableFrameRate();
     void CreateHUD(std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Player>& player);
@@ -69,14 +66,14 @@ protected:
     
 private:
     void AddGameObjectToScene(const std::shared_ptr<gamelib::GameObject> gameObject);
-    void RemoveGameObject(gamelib::GameObject& gameObject);
     void OnGameWon();
-    std::shared_ptr<Player> CreatePlayer(const std::vector<std::shared_ptr<Room>> rooms, std::shared_ptr<gamelib::SpriteAsset> playerSpriteAsset);
-    std::vector<std::shared_ptr<gamelib::Pickup>> CreatePickups(const std::vector<std::shared_ptr<Room>>& rooms, const int w, const int h);
+    void CreatePlayer(const std::vector<std::shared_ptr<Room>>& rooms, std::shared_ptr<gamelib::SpriteAsset> playerSpriteAsset);
+    void CreateAutoPickups(const std::vector<std::shared_ptr<Room>>& rooms, const int w, const int h);
     static size_t GetRandomIndex(const int min, const int max) { return rand() % (max - min + 1) + min; }   
 
     bool _verbose;
     int numLevelPickups = 0;
+    unsigned int maxNumLevels = 5;
     unsigned long deltaMs;
     unsigned int currentLevel = 1;
     gamelib::ProcessManager processManager;
@@ -86,4 +83,6 @@ private:
     std::shared_ptr<Level> level = nullptr;
     std::shared_ptr<DrawableFrameRate> drawableFrameRate;
     std::shared_ptr<GameCommands> _gameCommands;
+    std::shared_ptr<Player> player;
+    std::vector<std::shared_ptr<gamelib::Pickup>> pickups;
 };

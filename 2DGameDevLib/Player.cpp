@@ -44,6 +44,7 @@ void Player::commonInit(const int inWidth, const int inHeight, const std::string
 	SubscribeToEvent(EventType::ControllerMoveEvent);
 	SubscribeToEvent(EventType::SettingsReloaded);
 	SubscribeToEvent(EventType::Fire);
+	SubscribeToEvent(EventType::GameWon);
 }
 
 ListOfEvents Player::HandleEvent(const shared_ptr<Event> event, unsigned long deltaMs)
@@ -57,13 +58,20 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event, unsigned long de
 		case EventType::Fire: { LogMessage("Fire!", _verbose); Fire(); } break;
 		case EventType::SettingsReloaded: { LogMessage("Reloading player settings", _verbose); 	LoadSettings(); } break;
 		case EventType::InvalidMove: { LogMessage("Invalid move", _verbose); } 	break;
+		case EventType::GameWon: { OnGameWon(); }; break;
 	}
 
 	return createdEvents;
 }
 
+void Player::OnGameWon()
+{
+	gameWon = true;
+}
+
 const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, ListOfEvents& createdEvents, unsigned long deltaMs)
 {
+	if (gameWon) { return createdEvents; }
 	auto moveEvent = dynamic_pointer_cast<ControllerMoveEvent>(event);	
 	
 	SetPlayerDirection(moveEvent->Direction);

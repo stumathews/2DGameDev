@@ -62,33 +62,16 @@ gamelib::ListOfEvents LevelManager::HandleEvent(std::shared_ptr<Event> event, un
 {
 	switch(event->type)
 	{
-		case EventType::GenerateNewLevel: {	GenerateNewLevel(); } break;
 		case EventType::LevelChangedEventType: { OnLevelChanged(event); } break;
 		case EventType::UpdateProcesses: { processManager.UpdateProcesses(deltaMs); } break;
 		case EventType::InvalidMove: { _gameCommands->InvalidMove(); } break;
 		case EventType::NetworkPlayerJoined: { 	OnNetworkPlayerJoined(event); }	break;
 		case EventType::StartNetworkLevel: { OnStartNetworkLevel(event); }	break;
-		case EventType::FetchedPickup: { OnFetchedPickup(); } break;		
-		case EventType::GameObject: { OnGameObjectEventReceived(event); } break;	
+		case EventType::FetchedPickup: { OnFetchedPickup(); } break;	
 		case EventType::GameWon: { OnGameWon(); }; break;
 	}
 
 	return gamelib::ListOfEvents();
-}
-
-void LevelManager::OnGameObjectEventReceived(std::shared_ptr<gamelib::Event>& event)
-{	
-	auto gameObjectEvent = dynamic_pointer_cast<GameObjectEvent>(event);
-	switch (gameObjectEvent->context)
-	{
-		case GameObjectEventContext::Remove: { RemoveGameObject(*gameObjectEvent->gameObject); } break;
-		default:
-		{
-			std::stringstream output;
-			output << "Unknown Game Object Event:" << ToString(gameObjectEvent->context);
-			gamelib::Logger::Get()->LogThis(output.str());
-		}
-	}
 }
 
 void LevelManager::OnFetchedPickup()
@@ -96,7 +79,6 @@ void LevelManager::OnFetchedPickup()
 	_gameCommands->FetchedPickup();
 	_hudItem->AdvanceFrame();	
 }
-
 
 void LevelManager::OnStartNetworkLevel(std::shared_ptr<gamelib::Event> evt)
 {
@@ -111,16 +93,6 @@ string LevelManager::GetSetting(std::string section, std::string settingName) co
 int LevelManager::GetIntSetting(std::string section, std::string settingName) const { return SettingsManager::Get()->GetInt(section, settingName); }
 bool LevelManager::GetBoolSetting(std::string section, std::string settingName) const { return SettingsManager::Get()->GetBool(section, settingName); }
 
-void LevelManager::OnNetworkPlayerJoined(std::shared_ptr<gamelib::Event> evt)
-{
-	// We know a player has joined the game server.
-	auto networkPlayerJoinedEvent = dynamic_pointer_cast<NetworkPlayerJoinedEvent>(evt);
-	auto player = networkPlayerJoinedEvent->player;
-	// Add the player to our level... find a suitable position for it
-}
-
-void LevelManager::GenerateNewLevel() { RemoveAllGameObjects(); CreateAutoLevel(); }
-
 void LevelManager::RemoveAllGameObjects()
 {
 	std::for_each(std::begin(GameData::Get()->GameObjects), std::end(GameData::Get()->GameObjects), [this](std::weak_ptr<gamelib::GameObject> gameObject)
@@ -130,6 +102,9 @@ void LevelManager::RemoveAllGameObjects()
 			_eventManager->RaiseEvent(GameObjectEventFactory::MakeRemoveObjectEvent(gameObject.lock()), this);
 		}
 	});
+
+	pickups.clear();
+	player = nullptr;
 }
 
 void LevelManager::OnLevelChanged(std::shared_ptr<gamelib::Event>& evt)
@@ -143,46 +118,21 @@ void LevelManager::OnLevelChanged(std::shared_ptr<gamelib::Event>& evt)
 		case 2: PlayLevelMusic("LevelMusic2"); break;
 		case 3: PlayLevelMusic("LevelMusic3"); break;
 		case 4: PlayLevelMusic("LevelMusic4"); break;
-		default:
-		{
-			std::stringstream message;
-			message << "Unexpected level " << level;
-			Logger::Get()->LogThis(message.str());
-		} break;
+		default: PlayLevelMusic("AutoLevelMusic"); break;
 	}
 }
 
 void LevelManager::PlayLevelMusic(std::string levelMusicAssetName)
 {
 	auto asset = ResourceManager::Get()->GetAssetInfo(levelMusicAssetName);
-	if (asset->isLoadedInMemory)
-	{
-		if (asset && asset->isLoadedInMemory) { AudioManager::Get()->Play(gamelib::AudioManager::ToAudioAsset(asset)->AsMusic()); }
-	}
-}
-
-void LevelManager::RemoveGameObject(gamelib::GameObject& gameObject)
-{
-	//auto& gameObjects = GameData::Get()->GameObjects;
-	//
-	//// Look for gameObject
-	//auto findResult = std::find_if(begin(gameObjects), end(gameObjects), [&](weak_ptr<gamelib::GameObject> target)
-	//{ 
-	//	if(auto underlyingGameObject = target.lock()) { return underlyingGameObject->Id == gameObject.Id; }
-	//	return false;
-	//});
-	//
-	//auto found = findResult != end(gameObjects);
-	//		
-	//if(found) { _eventManager->Unsubscribe((*findResult)->Id); gameObjects.erase(findResult); }
-
+	if (asset && asset->isLoadedInMemory) { AudioManager::Get()->Play(gamelib::AudioManager::ToAudioAsset(asset)->AsMusic()); }	
 }
 
 void LevelManager::OnGameWon()
 {	
 	auto a = std::shared_ptr<Process>(new Action([&]() { _gameCommands->ToggleMusic(_verbose); }));
 	auto b = std::shared_ptr<Process>(new Action([&]() { AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "win_music")))->AsSoundEffect()); }));
-	auto d = std::shared_ptr<Process>(new Action([&]() { currentLevel = currentLevel < 4 ? ++currentLevel : 1; _gameCommands->LoadNewLevel(currentLevel); }));
+	auto d = std::shared_ptr<Process>(new Action([&]() { _gameCommands->LoadNewLevel(++currentLevel); }));
 	auto c = std::shared_ptr<Process>(new DelayProcess(5000));
 
 	// Chain a set of subsequent processes
@@ -211,20 +161,10 @@ void LevelManager::GetKeyboardInput()
 			{						
 				case SDLK_q: 
 				case SDLK_ESCAPE: _gameCommands->Quit(_verbose); break;
-				case SDLK_h: _gameCommands->LoadNewLevel(1); currentLevel = 1; break;
-				case SDLK_j: _gameCommands->LoadNewLevel(2); currentLevel = 2; break;
-				case SDLK_k: _gameCommands->LoadNewLevel(3); currentLevel = 3; break;
-				case SDLK_l: _gameCommands->LoadNewLevel(4); currentLevel = 4; break;
-				case SDLK_1: _gameCommands->PlaySoundEffect(GetSoundEffect("high.wav")); break;
-				case SDLK_2: _gameCommands->PlaySoundEffect(GetSoundEffect("medium.wav")); break;
-				case SDLK_3: _gameCommands->PlaySoundEffect(GetSoundEffect("low.wav")); break;
-				case SDLK_4: _gameCommands->PlaySoundEffect(GetSoundEffect("scratch.wav")); break;
-				case SDLK_9: _gameCommands->ToggleMusic(_verbose); break;
 				case SDLK_r: _gameCommands->ReloadSettings(_verbose); break;
-				case SDLK_g: _gameCommands->GenerateNewLevel(_verbose); break;
 				case SDLK_p: _gameCommands->PingGameServer(); break;
 				case SDLK_n: _gameCommands->StartNetworkLevel(); break;
-				case SDLK_SPACE: _gameCommands->Fire(_verbose); 	break;
+				case SDLK_SPACE: _gameCommands->Fire(_verbose); break;
 			}
 		}
 		
@@ -232,10 +172,7 @@ void LevelManager::GetKeyboardInput()
 	}
 }
 
-Mix_Chunk* LevelManager::GetSoundEffect(std::string name) { return gamelib::AudioManager::ToAudioAsset(GetAsset(name))->AsSoundEffect(); }
-
-
-shared_ptr<Player> LevelManager::CreatePlayer(const vector<shared_ptr<Room>> rooms, shared_ptr<SpriteAsset> playerSpriteAsset) 
+void LevelManager::CreatePlayer(const vector<shared_ptr<Room>> &rooms, shared_ptr<SpriteAsset> playerSpriteAsset) 
 {		
 	const auto playerRoomIndex = GetRandomIndex(0, rooms.size()-1);	
 	const auto& playerRoom = rooms[playerRoomIndex];
@@ -243,17 +180,14 @@ shared_ptr<Player> LevelManager::CreatePlayer(const vector<shared_ptr<Room>> roo
 								?  GetSetting("networking", "nickname").c_str()
 								: "Player1";
 
-	auto player = shared_ptr<Player>(new Player(playerRoom, playerSpriteAsset->Dimensions.GetWidth(), playerSpriteAsset->Dimensions.GetHeight(), playerNickName));
+	player = shared_ptr<Player>(new Player(playerRoom, playerSpriteAsset->Dimensions.GetWidth(), playerSpriteAsset->Dimensions.GetHeight(), playerNickName));
 
 	InitializePlayer(player, playerSpriteAsset);
 	AddGameObjectToScene(player);
-
-	return player;
 }
 
-vector<shared_ptr<gamelib::Pickup>> LevelManager::CreatePickups(const vector<shared_ptr<Room>>& rooms, const int pickupWidth, const int pickupHeight)
+void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms, const int pickupWidth, const int pickupHeight)
 {
-	vector<shared_ptr<gamelib::Pickup>> pickups;
 	const auto numPickups = GetIntSetting("global", "numPickups");
 	auto part = numPickups / 3;
 
@@ -276,8 +210,6 @@ vector<shared_ptr<gamelib::Pickup>> LevelManager::CreatePickups(const vector<sha
 
 	// Setup the pickups
 	InitializePickups(pickups);
-
-	return pickups;
 }
 
 void LevelManager::CreateLevel(string filename)
@@ -296,10 +228,9 @@ void LevelManager::CreateLevel(string filename)
 	auto& rooms = level->Rooms;
 	InitializeRooms(rooms);	
 
-	const auto player = CreatePlayer(rooms, dynamic_pointer_cast<SpriteAsset>(GetAsset("edge_player")));
-	
+	CreatePlayer(rooms, dynamic_pointer_cast<SpriteAsset>(GetAsset("edge_player")));	
 	CreateHUD(rooms, player);
-	CreatePickups(rooms, pickupWidth, pickupHeight);	
+	CreateAutoPickups(rooms, pickupWidth, pickupHeight);	
 	CreateDrawableFrameRate();
 }
 
@@ -316,7 +247,7 @@ void LevelManager::CreateHUD(std::vector<std::shared_ptr<Room>>& rooms, const st
 	AddGameObjectToScene(_hudItem);
 }
 
-const std::shared_ptr<gamelib::Asset> LevelManager::GetAsset(std::string name) const { return ResourceManager::Get()->GetAssetInfo(name); }
+
 
 void LevelManager::InitializeHudItem(std::shared_ptr<StaticSprite> _hudItem)
 {
@@ -326,41 +257,21 @@ void LevelManager::InitializeHudItem(std::shared_ptr<StaticSprite> _hudItem)
 
 void LevelManager::AddGameObjectToScene(std::shared_ptr<gamelib::GameObject> object) { _eventManager->RaiseEvent(std::dynamic_pointer_cast<gamelib::Event>(_eventFactory->CreateAddToSceneEvent(object)), this); }
 
-ListOfGameObjects LevelManager::CreateAutoLevel()
+void LevelManager::CreateAutoLevel()
 {
-	// Make sure our resources are findable
-	ResourceManager::Get()->IndexResourceFile();
+	ResourceManager::Get()->IndexResourceFile(); 
+	RemoveAllGameObjects();
 
 	// Register change level event
 	LevelManager::Get()->ChangeLevel(1);
 
-	// Calculate room info
-	const auto rows = GetIntSetting("grid", "rows");
-	const auto cols = GetIntSetting("grid", "cols");
-	const auto screenWidth = GetIntSetting("global", "screen_width");
-	const auto screenHeight = GetIntSetting("global", "screen_height");
-	const auto removeRandomSides = GetBoolSetting("grid", "removeSidesRandomly");
-	const auto rowWidth = screenWidth / cols; 
-	const auto rowHeight = screenHeight / rows;
-	auto playerSpriteAsset = dynamic_pointer_cast<SpriteAsset>(GetAsset("edge_player"));
-	const auto pickupWidth = 32;
-	const auto pickupHeight = 32;
+	level = shared_ptr<Level>(new Level());
+	level->Load();
 
-	auto rooms = CreateRooms(screenWidth, screenHeight, rows, cols, removeRandomSides);
-	auto player = CreatePlayer(rooms, playerSpriteAsset);
-	const auto pickups = CreatePickups(rooms, pickupWidth, pickupHeight);
-	CreateHUD(rooms, player);
-
-	return GameData::Get()->GameObjects;
-}
-
-vector<shared_ptr<Room>> LevelManager::CreateRooms(int screenWidth, int screenHeight, int rows, int cols, bool removeRandomSides)
-{
-	// Generate new rooms automatically	
-	auto rooms = RoomGenerator(screenWidth, screenHeight, rows, cols, removeRandomSides).Generate();
-
-	InitializeRooms(rooms);
-	return rooms;
+	InitializeRooms(level->Rooms);
+	CreatePlayer(level->Rooms, dynamic_pointer_cast<SpriteAsset>(GetAsset("edge_player")));
+	CreateAutoPickups(level->Rooms, 32, 32);
+	CreateHUD(level->Rooms, player);
 }
 
 void LevelManager::InitializePlayer(std::shared_ptr<Player> player, std::shared_ptr<gamelib::SpriteAsset> spriteAsset) const
@@ -409,6 +320,17 @@ bool LevelManager::ChangeLevel(int level)
 	catch (...) { LogMessage("Could not start level for unknown reasons. level=" + std::to_string(level)); 	}
 	return isSuccess;
 }
+
+void LevelManager::OnNetworkPlayerJoined(std::shared_ptr<gamelib::Event> evt)
+{
+	// We know a player has joined the game server.
+	auto networkPlayerJoinedEvent = dynamic_pointer_cast<NetworkPlayerJoinedEvent>(evt);
+	auto player = networkPlayerJoinedEvent->player;
+	// Add the player to our level... find a suitable position for it
+}
+
+Mix_Chunk* LevelManager::GetSoundEffect(std::string name) { return gamelib::AudioManager::ToAudioAsset(GetAsset(name))->AsSoundEffect(); }
+const std::shared_ptr<gamelib::Asset> LevelManager::GetAsset(std::string name) const { return ResourceManager::Get()->GetAssetInfo(name); }
 
 shared_ptr<Level> LevelManager::GetLevel() { return level; }
 LevelManager* LevelManager::Get() { if (Instance == nullptr) { Instance = new LevelManager(); } return Instance; }

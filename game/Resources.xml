@@ -202,4 +202,5 @@
 		</sprite>
 	</Asset>
 	<Asset uid="23" scene="0" name="win.wav" type="fx" filename="Assets/win.wav"></Asset>
+	<Asset uid="24" scene="0" name="AutoLevelMusic" type="music" filename="Assets/Music/IntroLoop.wav"></Asset>
 </Assets>

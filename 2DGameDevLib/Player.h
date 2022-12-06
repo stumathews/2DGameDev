@@ -40,6 +40,7 @@ public:
 	std::string GetName() override { return Identifier; }
 	std::string GetSpriteAnimationFrameGroupForPlayer();
 	void Fire();
+	void OnGameWon();
 	void RemovePlayerFacingWall();
 	void RemoveRightWall();
 	void RemoveLeftWall();
@@ -80,5 +81,6 @@ private:
 	std::shared_ptr<IPlayerMoveStrategy> moveStrategy;
 	std::deque<std::shared_ptr<gamelib::IMovement>> moveQueue;
 	bool _verbose;
+	bool gameWon = false;
 };
 

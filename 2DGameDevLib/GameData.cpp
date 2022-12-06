@@ -21,7 +21,7 @@ void GameData::RemoveExpiredReferences() { GameObjects.erase(remove_if(begin(Gam
 bool GameData::IsSameId(weak_ptr<GameObject> obj, std::shared_ptr<GameObject> other) { return !obj.expired() && obj.lock()->Id == other->Id; }
 
 std::shared_ptr<Room> GameData::GetRoomByIndex(int roomNumber) { return _rooms[roomNumber].lock(); }
-std::shared_ptr<Player> GameData::GetPlayer() { return dynamic_pointer_cast<Player>(player); }
+std::shared_ptr<Player> GameData::GetPlayer() { return dynamic_pointer_cast<Player>(player.lock()); }
 
 GameData* GameData::Get() { if (Instance == nullptr) { Instance = new GameData(); } return Instance; }
 

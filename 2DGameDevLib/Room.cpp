@@ -103,7 +103,7 @@ gamelib::ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, unsi
 
 gamelib::ListOfEvents& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedEvents)
 {
-	const auto player = dynamic_pointer_cast<Player>(GameData::Get()->player);
+	const auto player = dynamic_pointer_cast<Player>(GameData::Get()->player.lock());
 	auto playerHotSpotBounds = player->Hotspot->GetBounds();
 	SDL_Rect result;
 	isPlayerWithinRoom = SDL_IntersectRect(&InnerBounds, &playerHotSpotBounds, &result);

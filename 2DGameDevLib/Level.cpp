@@ -4,32 +4,44 @@
 #include "Room.h"
 #include <util/SettingsManager.h>
 #include "Rooms.h"
+#include "RoomGenerator.h"
 
 using namespace tinyxml2;
 using namespace std;
 using namespace gamelib;
 
-Level::Level(std::string filename)
+Level::Level(std::string filename) { FileName = filename; }
+
+Level::Level()
 {
-	FileName = filename;
+	isAutoLevel = true;	
+	NumRows = SettingsManager::Get()->GetInt("grid", "rows");
+	NumCols = SettingsManager::Get()->GetInt("grid", "cols");
+	ScreenWidth = SettingsManager::Get()->GetInt("global", "screen_width");
+	ScreenHeight = SettingsManager::Get()->GetInt("global", "screen_height");
 }
 
 void Level::Load()
 {
+	if (IsAutoLevel()) 
+	{				
+		Rooms = RoomGenerator(ScreenWidth, ScreenHeight, NumRows, NumCols, SettingsManager::Get()->GetBool("grid", "removeSidesRandomly")).Generate();
+		return; 
+	}
+
 	tinyxml2::XMLDocument doc;
 
-	// Load file
 	doc.LoadFile(FileName.c_str());
+
 	if (doc.ErrorID() == 0)
-	{
+	{		
 		auto* scene = doc.FirstChildElement("level");
-		auto cols = static_cast<int>(std::atoi(scene->ToElement()->Attribute("cols")));			
-		auto rows = static_cast<int>(std::atoi(scene->ToElement()->Attribute("rows")));		
-		const auto screenWidth = SettingsManager::Get()->GetInt("global", "screen_width");
-		const auto screenHeight = SettingsManager::Get()->GetInt("global", "screen_height");
-		
-		NumCols = cols;
-		NumRows = rows;
+		NumCols = static_cast<int>(std::atoi(scene->ToElement()->Attribute("cols")));
+		NumRows = static_cast<int>(std::atoi(scene->ToElement()->Attribute("rows")));
+		ScreenWidth = SettingsManager::Get()->GetInt("global", "screen_width");
+		ScreenHeight = SettingsManager::Get()->GetInt("global", "screen_height");
+
+		isAutoLevel = false;
 
 		// List of Rooms generated
 		
@@ -42,12 +54,12 @@ void Level::Load()
 			auto bottom = string(roomElement->ToElement()->Attribute("bottom"));
 			auto left = string(roomElement->ToElement()->Attribute("left"));
 
-			auto row = number / cols; // row for this roomNumber
-			auto rowCol0 = row * cols;
+			auto row = number / NumCols; // row for this roomNumber
+			auto rowCol0 = row * NumCols;
 			auto col = number - rowCol0; // col for this roomNumber
 
-			const auto square_width = screenWidth / cols;
-			const auto square_height = screenHeight / rows;
+			const auto square_width = ScreenWidth / NumCols;
+			const auto square_height = ScreenHeight / NumRows;
 
 			auto room = std::shared_ptr<Room>(new Room(number, col * square_width, row * square_height, square_width, square_height, false));
 			
@@ -75,6 +87,6 @@ void Level::Load()
 			Rooms.push_back(room);
 		}
 
-		Rooms::ConfigureRooms(rows, cols, Rooms);
+		Rooms::ConfigureRooms(NumRows, NumCols, Rooms);
 	}
 }

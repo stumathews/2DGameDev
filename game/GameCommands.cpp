@@ -77,14 +77,6 @@ void GameCommands::ReloadSettings(bool _verbose)
 	EventManager::Get()->RaiseEvent(make_shared<gamelib::Event>(gamelib::EventType::SettingsReloaded), this);
 }
 
-void GameCommands::GenerateNewLevel(bool _verbose)
-{
-	if (logCommands) { Logger::Get()->LogThis("GameCommand: GenerateNewLevel", _verbose); }
-
-	RaiseChangedLevel(false, 1);
-	EventManager::Get()->RaiseEvent(make_shared<gamelib::Event>(gamelib::EventType::GenerateNewLevel), this);
-}
-
 void GameCommands::LoadNewLevel(int level)
 {
 	switch (level)
@@ -93,6 +85,7 @@ void GameCommands::LoadNewLevel(int level)
 		case 2: { LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level2FileName")); } break;
 		case 3: { LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level3FileName")); } break;
 		case 4: { LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level4FileName")); } break;
+		default: { LevelManager::Get()->CreateAutoLevel(); } break;
 	}
 
 	RaiseChangedLevel(_verbose, level);	

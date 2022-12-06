@@ -25,7 +25,6 @@ public:
 	void PlaySoundEffect(Mix_Chunk* effect);
 	void RaiseChangedLevel(bool _verbose, short newLevel);
 	void ReloadSettings(bool _verbose);
-	void GenerateNewLevel(bool _verbose);
 	void LoadNewLevel(int level);
 	void ToggleMusic(bool _verbose);
 	void Quit(bool _verbose);
