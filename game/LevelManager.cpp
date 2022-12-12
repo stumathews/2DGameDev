@@ -1,6 +1,5 @@
 #include "LevelManager.h"
 #include "common/Common.h"
-
 #include "common/constants.h"
 #include "events/AddGameObjectToCurrentSceneEvent.h"
 #include "RoomGenerator.h"
@@ -174,13 +173,11 @@ void LevelManager::GetKeyboardInput()
 
 void LevelManager::CreatePlayer(const vector<shared_ptr<Room>> &rooms, shared_ptr<SpriteAsset> playerSpriteAsset) 
 {		
-	const auto playerRoomIndex = GetRandomIndex(0, rooms.size()-1);	
-	const auto& playerRoom = rooms[playerRoomIndex];
 	const auto playerNickName = GameData::Get()->IsNetworkGame
 								?  GetSetting("networking", "nickname").c_str()
 								: "Player1";
 
-	player = shared_ptr<Player>(new Player(playerRoom, playerSpriteAsset->Dimensions.GetWidth(), playerSpriteAsset->Dimensions.GetHeight(), playerNickName));
+	player = shared_ptr<Player>(new Player(rooms[GetRandomIndex(0, rooms.size() - 1)], playerSpriteAsset->Dimensions.GetWidth(), playerSpriteAsset->Dimensions.GetHeight(), playerNickName));
 
 	InitializePlayer(player, playerSpriteAsset);
 	AddGameObjectToScene(player);
