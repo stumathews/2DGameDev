@@ -28,13 +28,14 @@
             <MenuItem Header="File" Name="fileMenuItem" >
                 <MenuItem Name="newMenuItem" Header="New" Click="newMenuItem_Click" ></MenuItem>
                 <MenuItem Name="openMenuItem" Header="Open" Click="openMenuItem_Click"></MenuItem>
+                <MenuItem Name="contentManagerMenuItem" Header="Content Manager..." Command="{Binding ShowContentManagerCommand}" />
                 <MenuItem Name="saveAsMenuItem" Header="Save as..." Click="saveAsMenuItem_Click"></MenuItem>
                 <MenuItem Name="closeMenuItem" Header="Close" Command="{Binding CloseCommand}"></MenuItem>
             </MenuItem>
             
             <!-- Edit Menu -->
             <MenuItem Header="Edit" Name="editMenuItem">
-                <MenuItem Header="Add object">
+                <MenuItem Header="Add object" Command="{Binding AddPickupCommand}">
                     <MenuItem.Icon>
                         <Image>
                             <Image.Source>
@@ -62,7 +63,7 @@
         <ToolBarTray  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <ToolBar Band="1" BandIndex="1">
                 <!-- Add Object -->
-                <Button>
+                <Button Command="{Binding AddPickupCommand}">
                     <Image>
                         <Image.Source>
                             <BitmapImage UriSource="pack://application:,,,/images/Add.png"/>

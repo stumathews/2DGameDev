@@ -1,0 +1,96 @@
+﻿<Window x:Class="GameEditor.Windows.GameObjectEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:utils="clr-namespace:GameEditor.Utils"
+        mc:Ignorable="d"
+        d:DataContext="{StaticResource ResourceKey=myMockGameObjectEditorViewModel}"
+        Title="Add New Game Object" Height="450" Width="800">
+    <Window.Resources>
+        <Style TargetType="TextBlock" x:Key="Header">
+            <Setter Property="Margin" Value="5 5 5 5"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="BoldHeader">
+            <Setter Property="Margin" Value="5 5 5 5"/>
+            <Setter Property="FontWeight" Value="Black"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="FieldValue">
+            <Setter Property="Margin" Value="5 5 5 5"/>
+        </Style>
+        <utils:FilenameConverter x:Key="FilenameConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+             <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource Header}">Add a new game object type</TextBlock>
+        <ListBox x:Name="gameObjectListView" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding GameObjectTypes}" SelectedItem="{Binding SelectedItem}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource BoldHeader}">Name</TextBlock>
+                        <TextBlock Text="{Binding Name}" Style="{StaticResource FieldValue}"></TextBlock>
+                        <TextBlock Style="{StaticResource BoldHeader}">Type</TextBlock>
+                        <TextBlock Text="{Binding Type}" Style="{StaticResource FieldValue}"></TextBlock>
+                        <TextBlock Style="{StaticResource BoldHeader}">Asset</TextBlock>
+                        <Image Source="{Binding Path=AssetPath, Converter={StaticResource FilenameConverter}}" Width="32" Height="32"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="0">                       
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                
+               
+                <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource Header}">Name:</TextBlock>
+                <TextBox x:Name="newName" Grid.Row="0" Grid.Column="1" Text="{Binding NewName}">
+                </TextBox>
+                <TextBlock Grid.Row="0" Grid.Column="2" Style="{StaticResource Header}">Type:</TextBlock>
+                <ComboBox x:Name="newType" Grid.Row="0" Grid.Column="3" SelectedValue="{Binding NewType}" SelectedValuePath="Content">
+                    <ComboBoxItem>Player</ComboBoxItem>
+                    <ComboBoxItem>Pickup</ComboBoxItem>
+                </ComboBox>
+                <TextBlock Grid.Row="0" Grid.Column="4" Style="{StaticResource Header}">Asset:</TextBlock>
+                <ComboBox x:Name="newAsset" Grid.Row="0" Grid.Column="5" ItemsSource="{Binding Assets}" SelectedItem="{Binding NewAsset}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Style="{StaticResource FieldValue}" Text="{Binding Name}"/>
+                                </StackPanel>
+                                <Image Source="{Binding Path=Path, Converter={StaticResource FilenameConverter}}" Width="32" Height="32"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button Grid.Row="0" Grid.Column="6" Command="{Binding AddGameObjectTypeCommand}">Add</Button>
+                <Button Grid.Row="0" Grid.Column="7" Command="{Binding RemoveGameObjectTypeCommand}">Remove</Button>
+            </Grid>
+            
+        </StackPanel>
+        <xctk:PropertyGrid Name="propertyGrid" Grid.Row="1" Grid.Column="1" SelectedObject="{Binding ElementName=gameObjectListView, Path=SelectedItem}">
+            
+        </xctk:PropertyGrid>
+    </Grid>
+</Window>

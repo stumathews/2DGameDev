@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GameEditor.ViewModels;
+using GameEditor.Views;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,16 +14,20 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace GameEditor
+namespace GameEditor.Windows
 {
     /// <summary>
-    /// Interaction logic for About.xaml
+    /// Interaction logic for AddPickupWindow.xaml
     /// </summary>
-    public partial class About : Window
+    public partial class GameObjectEditorWindow : Window
     {
-        public About()
+        public GameObjectEditorWindow(Window window)
         {
+            Owner = window;
+           
             InitializeComponent();
+
+            DataContext = new GameObjectEditorViewModel();
         }
     }
 }
