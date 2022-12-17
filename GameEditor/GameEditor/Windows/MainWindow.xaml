@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xcpg="http://schemas.xceed.com/wpf/xaml/propertygrid"
         xmlns:local="clr-namespace:GameEditor"
+        xmlns:viewsmodel="clr-namespace:GameEditor.ViewModels"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"

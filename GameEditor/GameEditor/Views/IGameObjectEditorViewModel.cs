@@ -15,5 +15,6 @@ namespace GameEditor.Views
         AssetModel NewAsset { get; set; }
         string NewType { get; set; }
         GameObjectType SelectedItem { get; set; }
+        ICommand SelectCommand { get; set; }
     }
 }

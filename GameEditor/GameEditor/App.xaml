@@ -8,5 +8,6 @@
          
         <views:MockAssetView x:Key="MyMockAssetView"/>
         <views:MockGameObjectEditorViewModel x:Key="myMockGameObjectEditorViewModel" />
+        <views:MockRoomViewModel x:Key="myMockRoomViewModel" />
     </Application.Resources>
 </Application>

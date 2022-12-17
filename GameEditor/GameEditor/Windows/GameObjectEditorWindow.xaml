@@ -92,5 +92,6 @@
         <xctk:PropertyGrid Name="propertyGrid" Grid.Row="1" Grid.Column="1" SelectedObject="{Binding ElementName=gameObjectListView, Path=SelectedItem}">
             
         </xctk:PropertyGrid>
+        <Button x:Name="okButton" Grid.Column="1" Grid.Row="2" Content="Select" Command="{Binding SelectCommand}" />
     </Grid>
 </Window>

@@ -30,23 +30,41 @@ namespace GameEditor.ViewModels
                     using (XmlWriter writer = XmlWriter.Create(saveFileDialog.FileName, xmlSettings))
                     {
                         writer.WriteStartDocument();
-                        writer.WriteStartElement("level");
+                        writer.WriteStartElement("level"); // <level ...
                         writer.WriteAttributeString("cols", level.NumCols.ToString());
                         writer.WriteAttributeString("rows", level.NumRows.ToString());
                         foreach(var roomViewModel in level.Rooms)
                         {
-
                             var topVisible = roomViewModel.TopWallVisibility == Visibility.Visible;
                             var rightVisible = roomViewModel.RightWallVisibility == Visibility.Visible;
                             var bottomVisible = roomViewModel.BottomWallVisibility == Visibility.Visible;
                             var leftVisible = roomViewModel.LeftWallVisibility == Visibility.Visible;
 
-                            writer.WriteStartElement("room");
+                            writer.WriteStartElement("room"); // <room ...
                             writer.WriteAttributeString("number", roomViewModel.RoomNumber.ToString());
                             writer.WriteAttributeString("top", topVisible.ToString() );
                             writer.WriteAttributeString("right", rightVisible.ToString() );
                             writer.WriteAttributeString("bottom", bottomVisible.ToString() );
                             writer.WriteAttributeString("left", leftVisible.ToString() );
+
+                            if(roomViewModel.ResidentGameObjectType != null)
+                            {
+                                var gameObjectType = roomViewModel.ResidentGameObjectType;
+                                writer.WriteStartElement("object"); //<object ...
+                                writer.WriteAttributeString("name", gameObjectType.Name);
+                                writer.WriteAttributeString("type", gameObjectType.Type);
+                                writer.WriteAttributeString("resourceId", gameObjectType.ResourceId.ToString());
+                                writer.WriteAttributeString("assetPath", gameObjectType.AssetPath);
+                                foreach(var property in gameObjectType.Properties)
+                                {
+                                    writer.WriteStartElement("property"); //<property ..
+                                    writer.WriteAttributeString("name", property.Key);
+                                    writer.WriteAttributeString("value", property.Value);
+                                    writer.WriteEndElement();
+                                }
+                                writer.WriteEndElement();
+                            }
+
                             writer.WriteEndElement();
                         }
                         writer.WriteEndElement();

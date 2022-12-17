@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace GameEditor.Windows
@@ -12,27 +13,30 @@ namespace GameEditor.Windows
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly MainWindowViewModel viewModel;
-        private NewLevelViewModel newLevelViewModel;
-        private LevelManager levelManager;
+        private readonly MainWindowViewModel viewModel;        
         private UniformGrid maze;
         public MainWindow()
         {
-            levelManager = new LevelManager();
-            newLevelViewModel = new NewLevelViewModel();
             viewModel = new MainWindowViewModel(this);
             DataContext = viewModel;
             InitializeComponent();
             InitializeEmptyMaze();
+
+            // Bind property grids selected item with viewMmodels selectedItem
+            //propertyGrid.SelectedObject
+            //viewModel.SelectedRoom
+
         }
 
         private void InitializeEmptyMaze()
         {
-            List<RoomViewModel> rooms = new List<RoomViewModel>();
-            for(var i = 0; i < newLevelViewModel.NumRows * newLevelViewModel.NumRows;i++)
+            var rooms = new List<RoomViewModel>();
+            for(var i = 0; i < viewModel.NewLevelViewModel.NumRows * viewModel.NewLevelViewModel.NumRows;i++)
             {
-                var room = new RoomViewModel();
-                room.RoomNumber = i;
+                var room = new RoomViewModel
+                {
+                    RoomNumber = i
+                };
                 rooms.Add(room);
             }
             SetMaze(rooms);
@@ -40,18 +44,17 @@ namespace GameEditor.Windows
 
         private void newMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var window = new CreateNewLevelWindow(newLevelViewModel);
+            var window = new CreateNewLevelWindow(viewModel.NewLevelViewModel);
             window.ShowDialog();
             InitializeEmptyMaze();
-
         }
 
         private void SetMaze(List<RoomViewModel> rooms)
         {
             // We can create the main content now, which is a uniform grid representing our maze of rooms
 
-            var numRows = newLevelViewModel.NumRows;
-            var numCols = newLevelViewModel.NumCols;
+            var numRows = viewModel.NewLevelViewModel.NumRows;
+            var numCols = viewModel.NewLevelViewModel.NumCols;
 
             if(grid.Children.Contains(maze))
             {
@@ -80,7 +83,6 @@ namespace GameEditor.Windows
                 
                 maze.Children.Add(roomView);
             }
-
         }
 
         private void grid_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -88,17 +90,18 @@ namespace GameEditor.Windows
             if (e.Source.GetType() == typeof(RoomView))
             {
                 var roomView = (RoomView)e.Source;
-                propertyGrid.SelectedObject = roomView.ViewModel;
+                viewModel.SelectedRoom = roomView.ViewModel;
+
+                propertyGrid.SelectedObject = viewModel.SelectedRoom;
                 propertyGrid.SelectedObjectName = $"Editing Room {roomView.ViewModel.RoomNumber}";
                 propertyGrid.SelectedObjectTypeName = "Room";
+                
             }
         }
 
         private void openMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var level = levelManager.LoadLevelFile();
-            newLevelViewModel.NumCols = level.NumCols;
-            newLevelViewModel.NumRows = level.NumRows;
+            var level = viewModel.LoadLevelFile();
             SetMaze(level.Rooms);
         }
 
@@ -112,7 +115,7 @@ namespace GameEditor.Windows
             }
 
             // Save these rooms;
-            levelManager.SaveLevelFile(new Level(newLevelViewModel.NumCols, newLevelViewModel.NumRows, rooms));
+            viewModel.SaveLevel(rooms);
         }
     }
 }

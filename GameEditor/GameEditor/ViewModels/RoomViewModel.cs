@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using GameEditor.Models;
+using System.ComponentModel;
 
 namespace GameEditor.ViewModels
 {
@@ -9,6 +10,7 @@ namespace GameEditor.ViewModels
         private System.Windows.Visibility rightWallVisibility;
         private System.Windows.Visibility bottomWallVisibility;
         private System.Windows.Visibility leftWallVisibility;
+        private GameObjectType residentGameObject;
 
         public int RoomNumber
         {
@@ -48,6 +50,15 @@ namespace GameEditor.ViewModels
             {
                 leftWallVisibility = value;
                 OnPropertyChanged(nameof(LeftWallVisibility));
+            }
+        }
+
+        public GameObjectType ResidentGameObjectType
+        {
+            get => residentGameObject; set
+            {
+                residentGameObject = value;
+                OnPropertyChanged(nameof(ResidentGameObjectType));
             }
         }
     }

@@ -5,18 +5,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:GameEditor"
+             xmlns:utils="clr-namespace:GameEditor.Utils"
              mc:Ignorable="d" 
+             d:DataContext="{StaticResource ResourceKey=myMockRoomViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <Style TargetType="Rectangle">
             <Setter Property="Fill" Value="Black"></Setter>
         </Style>
+        
+        <utils:FilenameConverter x:Key="FilenameConverter" />
     </UserControl.Resources>
     <DockPanel MouseDown="DockPanel_MouseDown">
         <Rectangle MouseEnter="leftWall_MouseEnter" Name="leftWall" Width="5" DockPanel.Dock="Left" Visibility="{Binding LeftWallVisibility, Mode=TwoWay}"></Rectangle>
         <Rectangle MouseEnter="rightWall_MouseEnter" Name="rightWall" Width="5" DockPanel.Dock="Right" Visibility="{Binding RightWallVisibility, Mode=TwoWay}"></Rectangle>
         <Rectangle MouseEnter="topWall_MouseEnter" Name="topWall" Height="5" DockPanel.Dock="Top" Visibility="{Binding TopWallVisibility, Mode=TwoWay}"></Rectangle>
         <Rectangle MouseEnter="bottomWall_MouseEnter" Name="bottomWall" Height="5" DockPanel.Dock="Bottom" Visibility="{Binding BottomWallVisibility, Mode=TwoWay}"></Rectangle>
-        <TextBlock Text="{Binding RoomNumber, Mode=OneTime}"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>                
+            </Grid.RowDefinitions>
+            <Image Visibility="Visible" Grid.Column="0" Grid.Row="0" DataContext="{Binding ResidentGameObjectType}" Source="{Binding Path=AssetPath, Converter={StaticResource FilenameConverter}}" />
+            <StackPanel Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock  Text="{Binding RoomNumber, Mode=OneTime}"/>
+            </StackPanel>
+        </Grid>
     </DockPanel>
 </UserControl>

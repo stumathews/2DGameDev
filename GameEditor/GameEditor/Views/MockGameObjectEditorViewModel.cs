@@ -16,6 +16,7 @@ namespace GameEditor.Views
         public AssetModel NewAsset { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public string NewType { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public GameObjectType SelectedItem{ get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public ICommand SelectCommand { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
         public MockGameObjectEditorViewModel()
         {
