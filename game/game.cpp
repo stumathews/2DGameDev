@@ -24,34 +24,25 @@ using namespace gamelib;
 int main(int argc, char *args[])
 {
 	GameDataManager::Get()->Initialize();
-
-	// Ready the game log
 	ErrorLogManager::GetErrorLogManager()->Create("GameErrors.txt");
 
 	try
 	{
 		// Create our game structure that uses the level manager's polling function for keyboard input
-		GameStructure infrastructure([&]() 
-			{
-				// We will inject our custom controller-input function into the game structure
-				LevelManager::Get()->GetKeyboardInput(); 
-			});
+		GameStructure infrastructure([&]() { LevelManager::Get()->GetKeyboardInput(); });
 				
-		// Initialize all the required game sub systems
-		if (InitializeGameSubSystems(infrastructure)) 
-			THROW(12, "There was a problem initializing the game subsystems","Initialize Subsystems");
+		InitializeGameSubSystems(infrastructure);
 
 		// Load level and create/add game objects
 		PrepareLevel();
 
 		// Start the game loop which will pump update/draw events onto the event system, which level objects subscribe to
-		return IsSuccess(infrastructure.DoGameLoop(GameData::Get()), "Game loop failed") &&
-			   // Then unload the game subsystems
-			   IsSuccess(infrastructure.UnloadGameSubsystems(), "Content unload failed");	
+		infrastructure.DoGameLoop(GameData::Get());
+
+		return IsSuccess(infrastructure.UnloadGameSubsystems(), "Unloading game subsystems failed");	
 	}
 	catch(EngineException& e)
 	{
-		// Something went wrong trying to start/setup the game!
 		MessageBoxA(nullptr, e.what(), "Game Error!", MB_OK);
 		
 		ErrorLogManager::GetErrorLogManager()->Buffer << "****ERROR****\n";
@@ -60,7 +51,6 @@ int main(int argc, char *args[])
 		ErrorLogManager::GetErrorLogManager()->Buffer << "*************\n";
 		ErrorLogManager::GetErrorLogManager()->Flush();
 	}
-
 	return 0;
 }
 
@@ -88,7 +78,7 @@ void PrepareLevel()
 		: "Creating Single player level...");
 }
 
-int InitializeGameSubSystems(gamelib::GameStructure& infrastructure)
+void InitializeGameSubSystems(gamelib::GameStructure& infrastructure)
 {
 	const auto screenWidth = 0; // 0 will mean it will get read from the settings file
 	const auto screenHeight = 0; // 0 will mean it will get read from the settings file	
@@ -98,7 +88,6 @@ int InitializeGameSubSystems(gamelib::GameStructure& infrastructure)
 		!IsSuccess(LevelManager::Get()->Initialize(), "Initializing Level Manager..."))
 	{
 		LogMessage("Game initialization failed.", SettingsManager::Get()->GetBool("global", "verbose"), true);
-		return -1;
+		THROW(12, "There was a problem initializing the game subsystems", "Initialize Subsystems");
 	}
-	return 0;
 }
