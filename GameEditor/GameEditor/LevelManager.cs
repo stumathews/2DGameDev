@@ -34,6 +34,7 @@ namespace GameEditor.ViewModels
                         writer.WriteStartElement("level"); // <level ...
                         writer.WriteAttributeString("cols", level.NumCols.ToString());
                         writer.WriteAttributeString("rows", level.NumRows.ToString());
+                        writer.WriteAttributeString("autoPopulatePickups", level.AutoPopulatePickups.ToString());
                         foreach(var roomViewModel in level.Rooms)
                         {
                             var topVisible = roomViewModel.TopWallVisibility == Visibility.Visible;
@@ -102,6 +103,7 @@ namespace GameEditor.ViewModels
                         {
                             level.NumCols = int.Parse(reader.GetAttribute("cols"));
                             level.NumRows = int.Parse(reader.GetAttribute("rows"));
+                            level.AutoPopulatePickups = bool.Parse(reader.GetAttribute("autoPopulatePickups"));
                         }
 
                         if(reader.Name.Equals("room"))

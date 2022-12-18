@@ -14,6 +14,7 @@ namespace GameEditor.ViewModels
         private GameObjectEditorWindow gameObjectEditorWindow;
 
         private NewLevelViewModel newLevelViewModel;
+
         private LevelManager levelManager;
         public ICommand ShowAboutCommand {get;set;}
         public ICommand CloseCommand {get;set;}
@@ -31,7 +32,17 @@ namespace GameEditor.ViewModels
             }
         }
 
+        public bool AutoPopulateLevelPickups
+        {
+            get => autoPopulateLevelPickups; set
+            {
+                autoPopulateLevelPickups = value;
+                OnPropertyChanged(nameof(AutoPopulateLevelPickups));
+            }
+        }
+
         private RoomViewModel selectedRoom;
+        private bool autoPopulateLevelPickups;
 
         public bool IsRoomSelected() => SelectedRoom != null;
 
@@ -41,6 +52,7 @@ namespace GameEditor.ViewModels
 
             newLevelViewModel.NumCols = level.NumCols;
             newLevelViewModel.NumRows = level.NumRows;
+            AutoPopulateLevelPickups = level.AutoPopulatePickups;
             return level;
         }
 
@@ -62,6 +74,7 @@ namespace GameEditor.ViewModels
                 }
             });
             window = parent;
+            AutoPopulateLevelPickups = true;
         }
 
         private void SelectGameObjectType()
@@ -90,7 +103,7 @@ namespace GameEditor.ViewModels
 
         internal void SaveLevel(List<RoomViewModel> rooms)
         {
-            levelManager.SaveLevelFile(new Level(newLevelViewModel.NumCols, newLevelViewModel.NumRows, rooms));
+            levelManager.SaveLevelFile(new Level(newLevelViewModel.NumCols, newLevelViewModel.NumRows, rooms, AutoPopulateLevelPickups));
         }
     }
 }

@@ -93,11 +93,19 @@
         
         <!-- Note: The main content will be dynamically populated -->
         
-        
-        <xctk:PropertyGrid Name="propertyGrid" Grid.Row="2" Grid.Column="1" SelectedObject="{Binding}">
+        <Grid Grid.Row="2" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <xctk:PropertyGrid Grid.Row="0" Name="propertyGrid"  SelectedObject="{Binding}"/>
+            <StackPanel Grid.Row="1">
+                <CheckBox x:Name="autoPopulatePickupsCheckBox" IsChecked="{Binding AutoPopulateLevelPickups}" >Allow game to populate Pickups automatically</CheckBox>
+            </StackPanel>
             
-        </xctk:PropertyGrid>
+        </Grid>
         
+
         <!-- Status Bar -->
          <StatusBar Grid.Row="3" Grid.ColumnSpan="2">
             <StatusBarItem>
