@@ -149,9 +149,9 @@ shared_ptr<GameObject> Level::ParseObject(tinyxml2::XMLNode* pObject, std::share
 	{
 		auto spriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(resourceId));
 		auto colourKey = spriteAsset->GetColourKey();
-		auto assetDimensions = spriteAsset->Dimensions;
-		auto animatedSprite = GameObjectFactory::Get().BuildSprite(name, type, spriteAsset, coordinate<int>(0, 0), true, colourKey);
+		auto assetDimensions = spriteAsset->Dimensions;		
 		const auto positionInRoom = room->GetCenter(assetDimensions.GetWidth(), assetDimensions.GetHeight());
+		auto animatedSprite = GameObjectFactory::Get().BuildSprite(name, type, spriteAsset, coordinate<int>(positionInRoom.GetX(), positionInRoom.GetY()), true);
 			
 		if (type == "Player")
 		{

@@ -8,9 +8,9 @@
         <objects>
 			
 			<!-- Objects in the layer -->
-            <object name="name0" type="graphic" resourceId="7" posx="100" posy="40"  visible="true" colourKey="true" r="0" g="0" b="0"/>
-            <object name="name1" type="graphic" resourceId="8" posx="500" posy="40"  visible="true" colourKey="true" r="0" g="0" b="0"/>
-					<object name="name2" type="graphic"  resourceId="10" posx="250" posy="40"  visible="true" colourKey="true" r="0" g="0" b="0"/>
+            <object name="name0" type="graphic" resourceId="7" posx="100" posy="40"  visible="true" />
+            <object name="name1" type="graphic" resourceId="8" posx="500" posy="40"  visible="true" />
+					<object name="name2" type="graphic"  resourceId="10" posx="250" posy="40"  visible="true" />
         </objects>
     </layer>
 </scene>
