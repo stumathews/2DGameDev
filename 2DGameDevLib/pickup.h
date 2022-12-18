@@ -5,6 +5,7 @@
 #include <events/IEventSubscriber.h>
 #include <objects/AnimatedSprite.h>
 #include <objects/MultipleInheritableEnableSharedFromThis.h>
+#include <util/Tuple.h>
 
 namespace gamelib
 {
@@ -18,7 +19,8 @@ namespace gamelib
 		/// <summary>
 		/// Create a new pickup at specific coordinates
 		/// </summary>
-		Pickup(int x, int y, int width, int height, bool visible, int inRoomNumber) : DrawableGameObject(x, y, IsVisible)
+		Pickup(std::string name, std::string type, int x, int y, int width, int height, bool visible, int inRoomNumber) 
+			: DrawableGameObject(name, type, gamelib::coordinate<int>(x, y), IsVisible)
 		{
 			this->width = width;
 			this->height = height;

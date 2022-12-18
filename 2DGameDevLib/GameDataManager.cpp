@@ -36,10 +36,20 @@ void GameDataManager::AddToGameData(std::shared_ptr<gamelib::Event> evt)
 {
 	auto object = dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(evt)->GetGameObject();
 
-	switch (object->GetGameObjectType())
+	if (object->GetGameObjectType() == GameObjectType::GameDefined)
 	{
-		case gamelib::GameObjectType::Room: GameData()->AddRoom(std::dynamic_pointer_cast<Room>(object)); break;
-		case gamelib::GameObjectType::Pickup: GameData()->AddPickup(std::dynamic_pointer_cast<Pickup>(object)); break;
+		if (object->Type == "Room")
+		{
+			GameData()->AddRoom(std::dynamic_pointer_cast<Room>(object));
+		}
+	}
+	else 
+	{
+
+		if (object->GetGameObjectType() == GameObjectType::Pickup)
+		{
+			GameData()->AddPickup(std::dynamic_pointer_cast<Pickup>(object));
+		}
 	}
 
 	GameData()->AddGameObject(object);
@@ -62,10 +72,14 @@ void GameDataManager::RemoveFromGameData(std::shared_ptr<gamelib::Event> evt)
 
 void GameDataManager::RemoveGameObject(std::shared_ptr<gamelib::GameObject> gameObject)
 {
-	switch (gameObject->GetGameObjectType())
+	if (gameObject->Type == "Room")
 	{
-		case GameObjectType::Room: GameData::Get()->RemoveRoom(dynamic_pointer_cast<Room>(gameObject)); break;
-		case GameObjectType::Pickup: GameData::Get()->RemovePickup(dynamic_pointer_cast<Pickup>(gameObject)); break;
+		GameData::Get()->RemoveRoom(dynamic_pointer_cast<Room>(gameObject));
+	}
+
+	if (gameObject->Type == "Pickup")
+	{
+		GameData::Get()->RemovePickup(dynamic_pointer_cast<Pickup>(gameObject));
 	}
 
 	GameData::Get()->RemoveGameObject(gameObject);

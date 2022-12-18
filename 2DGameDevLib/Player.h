@@ -58,7 +58,7 @@ public:
 	int GetHotSpotLength() { return hotspotSize; }
 	int GetWidth() { return width; }
 	int GetHeight() { return height; }
-	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::Player; }
+	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
 	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents, unsigned long deltaMs);
 
 	std::shared_ptr<Room> CurrentRoom;	

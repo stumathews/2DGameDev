@@ -14,7 +14,7 @@ class Room : public gamelib::DrawableGameObject, public inheritable_enable_share
 {	
 public:		
 
-	Room(int number, int x, int y, int width, int height, bool fill = false);
+	Room(std::string name, std::string type, int number, int x, int y, int width, int height, bool fill = false);
 
 	bool IsWalled(Side wall); // IsWalled (zero based). Does this room have a wall errected on specified side.
 	bool HasTopWall();
@@ -39,7 +39,7 @@ public:
 	void Draw(SDL_Renderer* renderer) override;
 	void Update(float deltaMs) override;
 
-	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::Room; }	
+	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
 	gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 	gamelib::ListOfEvents& OnPlayerMoved(std::vector<std::shared_ptr<gamelib::Event>>& generatedEvents);
 	const gamelib::coordinate<int> GetCenter(const int width, const int height);

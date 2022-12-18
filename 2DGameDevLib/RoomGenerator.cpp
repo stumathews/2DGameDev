@@ -45,9 +45,10 @@ vector<shared_ptr<Room>> RoomGenerator::Generate()
 		{			
 			// each room has a unique room number
 			auto number = count++;
+			auto roomName = string("Room") + std::to_string(number);
 							
 			// Create room
-			auto room = std::shared_ptr<Room>(new Room(number, col * square_width, row * square_height, square_width, square_height, false));				
+			auto room = std::shared_ptr<Room>(new Room(roomName, "Room", number, col * square_width, row * square_height, square_width, square_height, false));
 				
 			// Set room tag to room number
 			room->SetTag(std::to_string(number));

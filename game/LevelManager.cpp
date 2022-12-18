@@ -193,8 +193,9 @@ void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms, cons
 		const auto rand_index = GetRandomIndex(0, rooms.size()-1);
 		const auto& random_room = rooms[rand_index];
 		const auto positionInRoom = random_room->GetCenter(pickupWidth, pickupHeight);
+		const auto pickupName = string("RoomPickup") + std::to_string(random_room->GetRoomNumber());
 
-		auto pickup = std::shared_ptr<gamelib::Pickup>(new gamelib::Pickup(positionInRoom.GetX(), positionInRoom.GetY(), pickupWidth, pickupHeight, true, rand_index));
+		auto pickup = std::shared_ptr<gamelib::Pickup>(new gamelib::Pickup(pickupName, "Pickup", positionInRoom.GetX(), positionInRoom.GetY(), pickupWidth, pickupHeight, true, rand_index));
 		
 		// Place 3 sets evently of each type of pickup	
 		if(i < 1 * part)  {	pickup->stringProperties["assetName"] = GetSetting("pickup1", "assetName"); }

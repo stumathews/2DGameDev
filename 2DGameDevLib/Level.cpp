@@ -84,8 +84,9 @@ void Level::Load()
 
 			const auto square_width = ScreenWidth / NumCols;
 			const auto square_height = ScreenHeight / NumRows;
+			const auto roomName = string("Room") + std::to_string(number);
 
-			auto room = std::shared_ptr<Room>(new Room(number, col * square_width, row * square_height, square_width, square_height, false));
+			auto room = std::shared_ptr<Room>(new Room(roomName, "Room", number, col * square_width, row * square_height, square_width, square_height, false));
 			
 			auto SetWall = [&](std::string isSideVisible, Side side, std::shared_ptr<Room> room) -> void
 			{
@@ -115,11 +116,11 @@ void Level::Load()
 				{					
 					auto gameObject = ParseObject(pRoomChild, room);
 					
-					if (gameObject->Type == "Player" || gameObject->GetGameObjectType() == GameObjectType::Player)
+					if (gameObject->Type == "Player")
 					{
 						Player1 = dynamic_pointer_cast<Player>(gameObject);
 					}
-					if (gameObject->Type == "Pickup" || gameObject->GetGameObjectType() == GameObjectType::Pickup)
+					if (gameObject->Type == "Pickup")
 					{
 						shared_ptr<Pickup> pickup = dynamic_pointer_cast<Pickup>(gameObject);
 
@@ -139,8 +140,8 @@ void Level::Load()
 shared_ptr<GameObject> Level::ParseObject(tinyxml2::XMLNode* pObject, std::shared_ptr<Room> room)
 {
 	auto attributes = GetNodeAttributes(pObject);
-	auto name = attributes.at("name");
-	auto type = attributes.at("type");
+	string name = attributes.at("name");
+	string type = attributes.at("type");
 	auto resourceId = stoi(attributes.at("resourceId"));
 
 	shared_ptr<GameObject> gameObject;
@@ -163,7 +164,7 @@ shared_ptr<GameObject> Level::ParseObject(tinyxml2::XMLNode* pObject, std::share
 
 		if (type == "Pickup")
 		{
-			auto pickup = shared_ptr<Pickup>(new gamelib::Pickup(positionInRoom.GetX(), positionInRoom.GetY(), assetDimensions.GetWidth(), assetDimensions.GetHeight(), true, room->GetRoomNumber()));
+			auto pickup = shared_ptr<Pickup>(new gamelib::Pickup(name, type, positionInRoom.GetX(), positionInRoom.GetY(), assetDimensions.GetWidth(), assetDimensions.GetHeight(), true, room->GetRoomNumber()));
 			pickup->stringProperties["assetName"] = LevelManager::Get()->GetSetting("pickup1", "assetName");
 			pickup->Initialize();
 			LevelManager::Get()->InitializePickups(Pickups);

@@ -12,7 +12,8 @@
 using namespace std;
 using namespace gamelib;
 
-Room::Room(int number, int x, int y, int width, int height, bool fill) : DrawableGameObject(x, y, true)	
+Room::Room(string name, string type, int number, int x, int y, int width, int height, bool fill) 
+	: DrawableGameObject(name, type, coordinate<int>(x, y), true)
 {
 	this->Bounds = { x, y, width, height };	
 	this->Width = width;
@@ -28,7 +29,6 @@ Room::Room(int number, int x, int y, int width, int height, bool fill) : Drawabl
 	this->leftRoomIndex = 0;
 	this->innerBoundsOffset = 0;	 
 	this->abcd = ABCDRectangle(x, y, width, height);
-	
 	UpdateInnerBounds(); // We only need to update the bounds once, so do it in the constructor only
 	SetupWalls();
 }
