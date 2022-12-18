@@ -228,7 +228,10 @@ void LevelManager::CreateLevel(string filename)
 
 	CreatePlayer(rooms, dynamic_pointer_cast<SpriteAsset>(GetAsset("edge_player")));	
 	CreateHUD(rooms, player);
-	CreateAutoPickups(rooms, pickupWidth, pickupHeight);	
+	if (level->IsAutoPopulatePickups())
+	{
+		CreateAutoPickups(rooms, pickupWidth, pickupHeight);
+	}
 	CreateDrawableFrameRate();
 }
 
