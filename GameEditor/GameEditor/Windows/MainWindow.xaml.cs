@@ -21,11 +21,6 @@ namespace GameEditor.Windows
             DataContext = viewModel;
             InitializeComponent();
             InitializeEmptyMaze();
-
-            // Bind property grids selected item with viewMmodels selectedItem
-            //propertyGrid.SelectedObject
-            //viewModel.SelectedRoom
-
         }
 
         private void InitializeEmptyMaze()
@@ -94,8 +89,7 @@ namespace GameEditor.Windows
 
                 propertyGrid.SelectedObject = viewModel.SelectedRoom;
                 propertyGrid.SelectedObjectName = $"Editing Room {roomView.ViewModel.RoomNumber}";
-                propertyGrid.SelectedObjectTypeName = "Room";
-                
+                propertyGrid.SelectedObjectTypeName = "Room";                
             }
         }
 
@@ -114,7 +108,6 @@ namespace GameEditor.Windows
                 rooms.Add(roomView.ViewModel);
             }
 
-            // Save these rooms;
             viewModel.SaveLevel(rooms);
         }
     }

@@ -177,7 +177,7 @@ void LevelManager::CreatePlayer(const vector<shared_ptr<Room>> &rooms, shared_pt
 								?  GetSetting("networking", "nickname").c_str()
 								: "Player1";
 
-	player = shared_ptr<Player>(new Player("player1","playerType",rooms[GetRandomIndex(0, rooms.size() - 1)], playerSpriteAsset->Dimensions.GetWidth(), playerSpriteAsset->Dimensions.GetHeight(), playerNickName));
+	player = shared_ptr<Player>(new Player("player1","playerType", rooms[GetRandomIndex(0, rooms.size() - 1)], playerSpriteAsset->Dimensions.GetWidth(), playerSpriteAsset->Dimensions.GetHeight(), playerNickName));
 
 	InitializePlayer(player, playerSpriteAsset);
 	AddGameObjectToScene(player);
@@ -228,10 +228,12 @@ void LevelManager::CreateLevel(string filename)
 
 	CreatePlayer(rooms, dynamic_pointer_cast<SpriteAsset>(GetAsset("edge_player")));	
 	CreateHUD(rooms, player);
+
 	if (level->IsAutoPopulatePickups())
 	{
 		CreateAutoPickups(rooms, pickupWidth, pickupHeight);
 	}
+
 	CreateDrawableFrameRate();
 }
 

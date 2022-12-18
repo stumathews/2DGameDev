@@ -27,7 +27,7 @@ public:
 	/// Every game Object needs to identify what type of game object it is
 	/// </summary>
 	/// <returns></returns>
-	virtual gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::Undefined; }
+	virtual gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
 
 private:
 	float _accumultedUpdateTime = 0;

@@ -36,7 +36,6 @@ map<string, string> GetNodeAttributes(XMLNode* pAssetNode)
 	map<string, string> attributes;
 	if (pAssetNode)
 	{
-
 		// Nodes need to be converted to elements to access their attributes
 		for (auto attribute = pAssetNode->ToElement()->FirstAttribute(); attribute; attribute = attribute->Next())
 		{
@@ -134,14 +133,13 @@ void Level::Load()
 					{
 						if (!IsAutoPopulatePickups())
 						{
-							shared_ptr<Pickup> pickup = dynamic_pointer_cast<Pickup>(gameObject);
+							auto pickup = dynamic_pointer_cast<Pickup>(gameObject);
 							Pickups.push_back(pickup);
 						}
 					}
 				}
 			}
 
-			// Add to list of rooms in game
 			Rooms.push_back(room);
 		}
 
