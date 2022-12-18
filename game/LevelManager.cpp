@@ -177,7 +177,7 @@ void LevelManager::CreatePlayer(const vector<shared_ptr<Room>> &rooms, shared_pt
 								?  GetSetting("networking", "nickname").c_str()
 								: "Player1";
 
-	player = shared_ptr<Player>(new Player(rooms[GetRandomIndex(0, rooms.size() - 1)], playerSpriteAsset->Dimensions.GetWidth(), playerSpriteAsset->Dimensions.GetHeight(), playerNickName));
+	player = shared_ptr<Player>(new Player("player1","playerType",rooms[GetRandomIndex(0, rooms.size() - 1)], playerSpriteAsset->Dimensions.GetWidth(), playerSpriteAsset->Dimensions.GetHeight(), playerNickName));
 
 	InitializePlayer(player, playerSpriteAsset);
 	AddGameObjectToScene(player);
@@ -239,7 +239,7 @@ void LevelManager::CreateDrawableFrameRate()
 
 void LevelManager::CreateHUD(std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Player>& player)
 {
-	_hudItem = GameObjectFactory::Get().BuildStaticSprite(GetAsset("hudspritesheet"), rooms[rooms.size() - 1]->GetCenter(player->GetWidth(), player->GetHeight()));
+	_hudItem = GameObjectFactory::Get().BuildStaticSprite("","", GetAsset("hudspritesheet"), rooms[rooms.size() - 1]->GetCenter(player->GetWidth(), player->GetHeight()));
 	InitializeHudItem(_hudItem);
 	AddGameObjectToScene(_hudItem);
 }

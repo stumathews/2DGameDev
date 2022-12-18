@@ -24,8 +24,8 @@ class Player final : public gamelib::DrawableGameObject
 {		
 public:
 		
-	Player(gamelib::coordinate<int> position, const int w, const int h, const std::string identifier);
-	Player(std::shared_ptr<Room> playerRoom, int playerWidth, int playerHeight, std::string identifier);
+	Player(std::string name, std::string type, gamelib::coordinate<int> position, const int w, const int h, const std::string identifier);
+	Player(std::string name, std::string type, std::shared_ptr<Room> playerRoom, int playerWidth, int playerHeight, std::string identifier);
 	
 	void LoadSettings() override;
 	void CenterPlayerInRoom(std::shared_ptr<Room> target_room);

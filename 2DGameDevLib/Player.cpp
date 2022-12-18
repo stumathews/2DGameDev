@@ -18,14 +18,14 @@
 using namespace std;
 using namespace gamelib;
 	
-Player::Player(gamelib::coordinate<int> position, const int width, const int height, const std::string inIdentifier) 
-	: DrawableGameObject(position, true)
+Player::Player(std::string name, std::string type, gamelib::coordinate<int> position, const int width, const int height, const std::string inIdentifier)
+	: DrawableGameObject(name, type, position, true)
 {
 	commonInit(width, height, inIdentifier); 
 }
 
-Player::Player(std::shared_ptr<Room> room, int width, int height, std::string identifier) 
-	: DrawableGameObject(room->GetCenter(width, height), true)
+Player::Player(std::string name, std::string type, std::shared_ptr<Room> room, int width, int height, std::string identifier)
+	: DrawableGameObject(name, type, room->GetCenter(width, height), true)
 {
 	commonInit(width, height, identifier);
 	SetPlayerRoom(room);
