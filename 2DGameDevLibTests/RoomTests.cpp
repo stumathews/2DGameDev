@@ -9,7 +9,7 @@ TEST(RoomTests, Basic)
 	int width = 10;
 	int height = 10;
 	bool fill = false;
-	Room room(number, x, y, width, height, fill);
+	Room room("roomName", "Room", number, x, y, width, height, fill);
 
 	// Expect all walls of a room to be walled solid by default
 	EXPECT_TRUE(room.IsWalled(Side::Top));
@@ -23,7 +23,7 @@ TEST(RoomTests, Basic)
 	EXPECT_EQ(room.GetX(), x);
 	EXPECT_EQ(room.GetY(), y);
 	EXPECT_FALSE(room.HasGraphic());
-	EXPECT_EQ(room.GetGameObjectType(), gamelib::GameObjectType::Room);
+	EXPECT_EQ(room.GetGameObjectType(), gamelib::GameObjectType::GameDefined);
 	EXPECT_EQ(room.GetGraphic(), nullptr);
 	EXPECT_FALSE(room.HasColourKey());
 	EXPECT_EQ(room.GetColourKey().r, 0);
@@ -39,7 +39,7 @@ TEST(RoomTests, RemoveWalls)
 	int width = 10;
 	int height = 10;
 	bool fill = false;
-	Room room(number, x, y, width, height, fill);
+	Room room("NoName","Room", number, x, y, width, height, fill);
 
 	EXPECT_TRUE(room.IsWalled(Side::Bottom));
 	EXPECT_TRUE(room.IsWalled(Side::Top));	
@@ -71,7 +71,7 @@ TEST(RoomTests, AddWalls)
 	int width = 10;
 	int height = 10;
 	bool fill = false;
-	Room room(number, x, y, width, height, fill);
+	Room room("noName", "Room", number, x, y, width, height, fill);
 
 	EXPECT_TRUE(room.IsWalled(Side::Bottom));
 	EXPECT_TRUE(room.IsWalled(Side::Top));
