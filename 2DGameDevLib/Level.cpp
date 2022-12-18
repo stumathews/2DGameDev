@@ -12,16 +12,19 @@
 #include "Player.h"
 #include "pickup.h"
 #include "../game/LevelManager.h"
+#include <filesystem>
 
 using namespace tinyxml2;
 using namespace std;
 using namespace gamelib;
+namespace fs = std::filesystem;
 
-Level::Level(std::string filename) { FileName = filename; }
+Level::Level(std::string filename) { FileName = filename; isAutoPopulatePickups = true; }
 
 Level::Level()
 {
 	isAutoLevel = true;	
+	isAutoPopulatePickups = true;
 	NumRows = SettingsManager::Get()->GetInt("grid", "rows");
 	NumCols = SettingsManager::Get()->GetInt("grid", "cols");
 	ScreenWidth = SettingsManager::Get()->GetInt("global", "screen_width");
@@ -62,10 +65,17 @@ void Level::Load()
 		auto* scene = doc.FirstChildElement("level");
 		NumCols = static_cast<int>(std::atoi(scene->ToElement()->Attribute("cols")));
 		NumRows = static_cast<int>(std::atoi(scene->ToElement()->Attribute("rows")));
+
+		auto autoPopulatePickups = scene->ToElement()->Attribute("autoPopulatePickups");
+		if (autoPopulatePickups != nullptr) 
+		{
+			string strToTransform = string(autoPopulatePickups);
+			std::transform(strToTransform.begin(), strToTransform.end(), strToTransform.begin(), ::toupper);
+			isAutoPopulatePickups = strToTransform == "TRUE";
+		}
+		
 		ScreenWidth = SettingsManager::Get()->GetInt("global", "screen_width");
 		ScreenHeight = SettingsManager::Get()->GetInt("global", "screen_height");
-
-		isAutoLevel = false;
 
 		// List of Rooms generated
 		
@@ -122,9 +132,11 @@ void Level::Load()
 					}
 					if (gameObject->Type == "Pickup")
 					{
-						shared_ptr<Pickup> pickup = dynamic_pointer_cast<Pickup>(gameObject);
-
-						Pickups.push_back(pickup);						
+						if (!IsAutoPopulatePickups())
+						{
+							shared_ptr<Pickup> pickup = dynamic_pointer_cast<Pickup>(gameObject);
+							Pickups.push_back(pickup);
+						}
 					}
 				}
 			}
@@ -134,6 +146,8 @@ void Level::Load()
 		}
 
 		Rooms::ConfigureRooms(NumRows, NumCols, Rooms);
+
+		LevelManager::Get()->InitializePickups(Pickups);
 	}
 }
 
@@ -165,7 +179,8 @@ shared_ptr<GameObject> Level::ParseObject(tinyxml2::XMLNode* pObject, std::share
 		if (type == "Pickup")
 		{
 			auto pickup = shared_ptr<Pickup>(new gamelib::Pickup(name, type, positionInRoom.GetX(), positionInRoom.GetY(), assetDimensions.GetWidth(), assetDimensions.GetHeight(), true, room->GetRoomNumber()));
-			pickup->stringProperties["assetName"] = LevelManager::Get()->GetSetting("pickup1", "assetName");
+			ResourceManager::Get()->IndexResourceFile();
+			pickup->stringProperties["assetName"] = spriteAsset->name;
 			pickup->Initialize();
 			LevelManager::Get()->InitializePickups(Pickups);
 

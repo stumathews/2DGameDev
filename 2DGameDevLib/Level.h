@@ -36,8 +36,10 @@ public:
 	unsigned int ScreenWidth;
 	unsigned int ScreenHeight;
 	bool IsAutoLevel() { return isAutoLevel || FileName.empty(); }
+	bool IsAutoPopulatePickups() { return isAutoPopulatePickups; }
 private:
 	bool isAutoLevel;
+	bool isAutoPopulatePickups;
 };
 
 
