@@ -21,9 +21,6 @@
     <ClCompile Include="game\LevelManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game\GameWorld.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="game\GameCommands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

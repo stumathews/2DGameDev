@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game\GameCommands.cpp" />
-    <ClCompile Include="game\GameWorld.cpp" />
     <ClCompile Include="game\LevelManager.cpp" />
     <ClCompile Include="game\game.cpp" />
     <ClCompile Include="tinyxml2-master\tinyxml2.cpp" />
