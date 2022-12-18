@@ -8,6 +8,6 @@ namespace GameEditor.Models
         public string Type { get;set; }
         public int ResourceId { get;set; }
 
-        public Dictionary<string, string> Properties { get;set;} = new Dictionary<string, string>();
+        public List<KeyValuePair<string, string>> Properties { get;set;} = new List<KeyValuePair<string, string>>();
     }
 }

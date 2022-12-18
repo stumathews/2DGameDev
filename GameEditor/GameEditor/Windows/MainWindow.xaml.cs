@@ -80,7 +80,7 @@ namespace GameEditor.Windows
                 roomView.ViewModel.LeftWallVisibility = room.LeftWallVisibility;
                 roomView.ViewModel.TopWallVisibility = room.TopWallVisibility;
                 roomView.ViewModel.BottomWallVisibility = room.BottomWallVisibility;
-                
+                roomView.ViewModel.ResidentGameObjectType = room.ResidentGameObjectType;
                 maze.Children.Add(roomView);
             }
         }

@@ -19,6 +19,7 @@ namespace GameEditor.ViewModels
         public ICommand CloseCommand {get;set;}
         public ICommand ShowContentManagerCommand { get;set;}
         public ICommand AddPickupCommand { get;set; }
+        public ICommand RemovePickupCommand { get; set; }
         public NewLevelViewModel NewLevelViewModel { get => newLevelViewModel; }
         public LevelManager LevelManager { get => levelManager; }
         public RoomViewModel SelectedRoom
@@ -53,6 +54,13 @@ namespace GameEditor.ViewModels
             CloseCommand = new RelayCommand((o) => parent.Close());
             ShowContentManagerCommand = new RelayCommand((o) => ShowContentManagerWindow());
             AddPickupCommand = new RelayCommand((o) => SelectGameObjectType());
+            RemovePickupCommand = new RelayCommand((o) => 
+            {                
+                if (IsRoomSelected())
+                {
+                    SelectedRoom.ResidentGameObjectType = null;
+                }
+            });
             window = parent;
         }
 

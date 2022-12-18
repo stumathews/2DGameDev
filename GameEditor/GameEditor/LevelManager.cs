@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using GameEditor.Models;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -87,28 +88,58 @@ namespace GameEditor.ViewModels
 
             if(openFileDialog.ShowDialog() is true)
             {
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.DtdProcessing = DtdProcessing.Ignore;
-                XmlReader reader = XmlReader.Create(openFileDialog.FileName, settings);
-                while(reader.Read())
+                XmlReaderSettings settings = new XmlReaderSettings
                 {
-                    if(reader.NodeType == XmlNodeType.Element)
+                    DtdProcessing = DtdProcessing.Ignore
+                };
+                XmlReader reader = XmlReader.Create(openFileDialog.FileName, settings);
+                RoomViewModel roomViewModel = null;
+                while (reader.Read())
+                {                    
+                    if (reader.NodeType == XmlNodeType.Element)
                     {
                         if(reader.Name.Equals("level"))
                         {
                             level.NumCols = int.Parse(reader.GetAttribute("cols"));
                             level.NumRows = int.Parse(reader.GetAttribute("rows"));
                         }
+
                         if(reader.Name.Equals("room"))
                         {
-                            var roomViewModel = new RoomViewModel();
-                            roomViewModel.RoomNumber = int.Parse(reader.GetAttribute("number"));
-                            roomViewModel.TopWallVisibility = bool.Parse(reader.GetAttribute("top")) ? Visibility.Visible : Visibility.Hidden;
-                            roomViewModel.RightWallVisibility = bool.Parse(reader.GetAttribute("right")) ? Visibility.Visible : Visibility.Hidden;
-                            roomViewModel.BottomWallVisibility = bool.Parse(reader.GetAttribute("bottom")) ? Visibility.Visible : Visibility.Hidden;
-                            roomViewModel.LeftWallVisibility = bool.Parse(reader.GetAttribute("left")) ? Visibility.Visible : Visibility.Hidden;
-                            level.Rooms.Add(roomViewModel);
+                            roomViewModel = new RoomViewModel
+                            {
+                                RoomNumber = int.Parse(reader.GetAttribute("number")),
+                                TopWallVisibility = bool.Parse(reader.GetAttribute("top")) ? Visibility.Visible : Visibility.Hidden,
+                                RightWallVisibility = bool.Parse(reader.GetAttribute("right")) ? Visibility.Visible : Visibility.Hidden,
+                                BottomWallVisibility = bool.Parse(reader.GetAttribute("bottom")) ? Visibility.Visible : Visibility.Hidden,
+                                LeftWallVisibility = bool.Parse(reader.GetAttribute("left")) ? Visibility.Visible : Visibility.Hidden
+                            };
                         }
+                        if (reader.Name.Equals("object"))
+                        {
+                            roomViewModel.ResidentGameObjectType = new GameObjectType
+                            {
+                                AssetPath = reader.GetAttribute("assetPath"),
+                                Name = reader.GetAttribute("name"),
+                                ResourceId = int.Parse(reader.GetAttribute("resourceId")),
+                                Type = reader.GetAttribute("type"),
+                                Properties = new List<KeyValuePair<string, string>>()
+                            };
+                        }
+
+                        if (reader.Name.Equals("property"))
+                        {
+                            for (var i = 0; i < reader.AttributeCount; i++)
+                            {
+                                reader.MoveToAttribute(i);
+                                roomViewModel.ResidentGameObjectType.Properties.Add(new KeyValuePair<string, string>(reader.Name, reader.Value));
+                            }
+                        }
+                    }
+
+                    if ((reader.NodeType == XmlNodeType.EndElement || reader.IsEmptyElement) && reader.Name.Equals("room"))
+                    {
+                        level.Rooms.Add(roomViewModel);
                     }
                 }
             }

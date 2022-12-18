@@ -100,6 +100,7 @@
     <Compile Include="Utils\RoomCreationParameters.cs" />
     <Compile Include="Utils\FilenameConverter.cs" />
     <Compile Include="ViewModels\GameObjectEditorViewModel.cs" />
+    <Compile Include="ViewModels\GameObjectTypeManager.cs" />
     <Compile Include="ViewModels\Level.cs" />
     <Compile Include="LevelManager.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />

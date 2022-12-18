@@ -12,7 +12,7 @@ namespace GameEditor.Views
             {
                 Name = "dude",
                 Type = "Player",
-                Properties = new System.Collections.Generic.Dictionary<string, string>(),
+                Properties = new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<string, string>>(),
                 AssetPath = "Assets/Platformer/Base pack/Player/p1_front.png"
             };
             RoomNumber = 100;

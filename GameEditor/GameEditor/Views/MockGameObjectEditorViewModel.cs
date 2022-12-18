@@ -1,5 +1,5 @@
 ﻿using GameEditor.Models;
-
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -20,8 +20,8 @@ namespace GameEditor.Views
 
         public MockGameObjectEditorViewModel()
         {
-            var gameObjectType1 = new GameObjectType() { Name = "bluePickup", Type = "Pickup", AssetPath = "Assets/Platformer/Base pack/Player/p3_walk/p3_walk.png", Properties = { { "points", "10" } } };
-            var gameObjectType2 = new GameObjectType() { Name = "redPickup", Type = "Pickup", AssetPath = "game/assets/coin_silver.png", Properties = { { "points", "20" } } };
+            var gameObjectType1 = new GameObjectType() { Name = "bluePickup", Type = "Pickup", AssetPath = "Assets/Platformer/Base pack/Player/p3_walk/p3_walk.png", Properties = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("points", "10") } };
+            var gameObjectType2 = new GameObjectType() { Name = "redPickup", Type = "Pickup", AssetPath = "game/assets/coin_silver.png", Properties = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("points","20") } };
             var asset1 = new AssetModel() { Uid = 2, Name = "p3.png", Type = "graphic", Path = "Assets/Platformer/Base pack/Player/p3_walk/p3_walk.png" };
             var asset2 = new AssetModel() { Uid = 3, Name = "arial.ttf", Type = "font", Path = "game/assets/coin_silver.png" };
 
