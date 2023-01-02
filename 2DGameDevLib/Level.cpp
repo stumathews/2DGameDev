@@ -1,4 +1,3 @@
-#include "Level.h"
 #include "pch.h"
 #include "Level.h"
 #include "tinyxml2.h"
@@ -17,9 +16,12 @@
 using namespace tinyxml2;
 using namespace std;
 using namespace gamelib;
-namespace fs = std::filesystem;
 
-Level::Level(std::string filename) { FileName = filename; isAutoPopulatePickups = true; }
+Level::Level(const std::string& filename): NumCols(0), NumRows(0), ScreenWidth(0), ScreenHeight(0), isAutoLevel(false)
+{
+	FileName = filename;
+	isAutoPopulatePickups = true;
+}
 
 Level::Level()
 {
@@ -51,7 +53,8 @@ void Level::Load()
 {
 	if (IsAutoLevel()) 
 	{				
-		Rooms = RoomGenerator(ScreenWidth, ScreenHeight, NumRows, NumCols, SettingsManager::Get()->GetBool("grid", "removeSidesRandomly")).Generate();
+		Rooms = RoomGenerator(static_cast<int>(ScreenWidth), static_cast<int>(ScreenHeight), NumRows, NumCols,
+		                      SettingsManager::Get()->GetBool("grid", "removeSidesRandomly")).Generate();
 		return; 
 	}
 
@@ -62,8 +65,8 @@ void Level::Load()
 	if (doc.ErrorID() == 0)
 	{		
 		auto* scene = doc.FirstChildElement("level");
-		NumCols = static_cast<int>(std::atoi(scene->ToElement()->Attribute("cols")));
-		NumRows = static_cast<int>(std::atoi(scene->ToElement()->Attribute("rows")));
+		NumCols = std::atoi(scene->ToElement()->Attribute("cols"));
+		NumRows = std::atoi(scene->ToElement()->Attribute("rows"));
 
 		auto autoPopulatePickups = scene->ToElement()->Attribute("autoPopulatePickups");
 		if (autoPopulatePickups != nullptr) 
@@ -81,7 +84,7 @@ void Level::Load()
 		for (auto roomNode = scene->FirstChild(); roomNode; roomNode = roomNode->NextSibling()) //  <room ...>
 		{
 			auto roomElement = roomNode->ToElement();
-			auto number = static_cast<int>(std::atoi(roomElement->ToElement()->Attribute("number")));
+			auto number = std::atoi(roomElement->ToElement()->Attribute("number"));
 			auto top = string(roomElement->ToElement()->Attribute("top"));
 			auto right = string(roomElement->ToElement()->Attribute("right"));
 			auto bottom = string(roomElement->ToElement()->Attribute("bottom"));
@@ -95,17 +98,18 @@ void Level::Load()
 			const auto square_height = ScreenHeight / NumRows;
 			const auto roomName = string("Room") + std::to_string(number);
 
-			auto room = std::shared_ptr<Room>(new Room(roomName, "Room", number, col * square_width, row * square_height, square_width, square_height, false));
+			auto room = std::make_shared<Room>(roomName, "Room", number, col * square_width, row * square_height,
+			                                   square_width, square_height, false);
 			
-			auto SetWall = [&](std::string isSideVisible, Side side, std::shared_ptr<Room> room) -> void
+			auto SetWall = [&](const std::string& isSideVisible, Side side, const std::shared_ptr<Room>& inRoom) -> void
 			{
 				if (isSideVisible == "True")
 				{
-					room->AddWall(side);
+					inRoom->AddWall(side);
 				}
 				else
 				{
-					room->RemoveWall(side);
+					inRoom->RemoveWall(side);
 				}
 			};
 
@@ -149,26 +153,26 @@ void Level::Load()
 	}
 }
 
-shared_ptr<GameObject> Level::ParseObject(tinyxml2::XMLNode* pObject, std::shared_ptr<Room> room)
+shared_ptr<GameObject> Level::ParseObject(tinyxml2::XMLNode* pObject, const std::shared_ptr<Room>& room)
 {
-	auto attributes = GetNodeAttributes(pObject);
+	const auto attributes = GetNodeAttributes(pObject);
 	string name = attributes.at("name");
 	string type = attributes.at("type");
-	auto resourceId = stoi(attributes.at("resourceId"));
+	const auto resourceId = stoi(attributes.at("resourceId"));
 
 	shared_ptr<GameObject> gameObject;
 		
 	if (type == "Player" || type == "Pickup")
 	{
-		auto spriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(resourceId));
-		auto colourKey = spriteAsset->GetColourKey();
-		auto assetDimensions = spriteAsset->Dimensions;		
+		const auto spriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(resourceId));
+		const auto assetDimensions = spriteAsset->Dimensions;		
 		const auto positionInRoom = room->GetCenter(assetDimensions.GetWidth(), assetDimensions.GetHeight());
 		auto animatedSprite = GameObjectFactory::Get().BuildSprite(name, type, spriteAsset, coordinate<int>(positionInRoom.GetX(), positionInRoom.GetY()), true);
 			
 		if (type == "Player")
 		{
-			auto player = shared_ptr<Player>(new Player(name, type, room, assetDimensions.GetWidth(), assetDimensions.GetHeight(), "playerNickName"));
+			const auto player = std::make_shared<Player>(name, type, room, assetDimensions.GetWidth(),
+			                                             assetDimensions.GetHeight(), "playerNickName");
 			LevelManager::Get()->InitializePlayer(player, spriteAsset);
 
 			gameObject = player;
@@ -176,7 +180,9 @@ shared_ptr<GameObject> Level::ParseObject(tinyxml2::XMLNode* pObject, std::share
 
 		if (type == "Pickup")
 		{
-			auto pickup = shared_ptr<Pickup>(new gamelib::Pickup(name, type, positionInRoom.GetX(), positionInRoom.GetY(), assetDimensions.GetWidth(), assetDimensions.GetHeight(), true, room->GetRoomNumber()));
+			const auto pickup = std::make_shared<gamelib::Pickup>(name, type, positionInRoom.GetX(), positionInRoom.GetY(),
+			                                                      assetDimensions.GetWidth(), assetDimensions.GetHeight(),
+			                                                      true, room->GetRoomNumber());
 			ResourceManager::Get()->IndexResourceFile();
 			pickup->stringProperties["assetName"] = spriteAsset->name;
 			pickup->Initialize();
@@ -199,7 +205,7 @@ shared_ptr<GameObject> Level::ParseObject(tinyxml2::XMLNode* pObject, std::share
 	return gameObject;
 }
 
-void Level::ParseProperty(tinyxml2::XMLNode* pObjectChild, shared_ptr<GameObject> go)
+void Level::ParseProperty(tinyxml2::XMLNode* pObjectChild, const shared_ptr<GameObject>& go)
 {
 	auto attributes = GetNodeAttributes(pObjectChild);
 	auto name = attributes.at("name");

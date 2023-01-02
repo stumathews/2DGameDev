@@ -16,14 +16,14 @@ void GameDataManager::Initialize()
 	_eventManager->SubscribeToEvent(EventType::GameObject, this);
 }
 
-std::vector<std::shared_ptr<Event>> GameDataManager::HandleEvent(std::shared_ptr<Event> evt, unsigned long deltaMs)
+std::vector<std::shared_ptr<Event>> GameDataManager::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
 {
 	switch (evt->type)
 	{
 		case EventType::AddGameObjectToCurrentScene: AddToGameData(evt); break;
 		case EventType::GameObject: RemoveFromGameData(evt); break;
 	}
-    return std::vector<std::shared_ptr<Event>>();
+    return {};
 }
 
 GameDataManager::GameDataManager()
@@ -32,9 +32,9 @@ GameDataManager::GameDataManager()
 	_eventFactory = EventFactory::Get();	
 }
 
-void GameDataManager::AddToGameData(std::shared_ptr<gamelib::Event> evt)
+void GameDataManager::AddToGameData(const std::shared_ptr<gamelib::Event>& evt)
 {
-	auto object = dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(evt)->GetGameObject();
+	const auto object = dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(evt)->GetGameObject();
 
 	if (object->GetGameObjectType() == GameObjectType::GameDefined)
 	{
@@ -55,9 +55,9 @@ void GameDataManager::AddToGameData(std::shared_ptr<gamelib::Event> evt)
 	GameData()->AddGameObject(object);
 }
 
-void GameDataManager::RemoveFromGameData(std::shared_ptr<gamelib::Event> evt)
+void GameDataManager::RemoveFromGameData(const std::shared_ptr<gamelib::Event> evt)
 {
-	auto gameObjectEvent = dynamic_pointer_cast<GameObjectEvent>(evt);
+	const auto gameObjectEvent = dynamic_pointer_cast<GameObjectEvent>(evt);
 	switch (gameObjectEvent->context)
 	{
 		case GameObjectEventContext::Remove: RemoveGameObject(gameObjectEvent->gameObject); break;
@@ -66,11 +66,11 @@ void GameDataManager::RemoveFromGameData(std::shared_ptr<gamelib::Event> evt)
 	if (GameData::Get()->CountPickups() == 0 && !GameData::Get()->IsGameWon())
 	{
 		GameData::Get()->SetGameWon(true);
-		_eventManager->RaiseEvent(shared_ptr<Event>(new Event(EventType::GameWon)), this);
+		_eventManager->RaiseEvent(std::make_shared<Event>(EventType::GameWon), this);
 	}
 }
 
-void GameDataManager::RemoveGameObject(std::shared_ptr<gamelib::GameObject> gameObject)
+void GameDataManager::RemoveGameObject(const std::shared_ptr<gamelib::GameObject>& gameObject) const
 {
 	if (gameObject->Type == "Room")
 	{

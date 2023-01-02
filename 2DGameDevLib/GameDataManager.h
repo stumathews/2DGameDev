@@ -16,9 +16,9 @@ protected:
 	static GameDataManager* Instance;
 private:
 	GameDataManager();
-	void AddToGameData(std::shared_ptr<gamelib::Event> evt);
+	void AddToGameData(const std::shared_ptr<gamelib::Event>& evt);
 	void RemoveFromGameData(std::shared_ptr<gamelib::Event> evt);
-	void RemoveGameObject(std::shared_ptr<gamelib::GameObject> gameObject);
+	void RemoveGameObject(const std::shared_ptr<gamelib::GameObject>& gameObject) const;
 
 	gamelib::EventManager* _eventManager;
 	gamelib::EventFactory* _eventFactory;

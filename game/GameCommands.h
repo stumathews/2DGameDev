@@ -17,21 +17,21 @@ public:
 
 	std::string GetSubscriberName() override { return "GameCommands"; }
 
-	void Fire(bool _verbose);
-	void MoveUp(bool _verbose);
-	void MoveDown(bool _verbose);
-	void MoveLeft(bool _verbose);
-	void MoveRight(bool _verbose);
-	void PlaySoundEffect(Mix_Chunk* effect);
-	void RaiseChangedLevel(bool _verbose, short newLevel);
-	void ReloadSettings(bool _verbose);
+	void Fire(bool verbose);
+	void MoveUp(bool verbose);
+	void MoveDown(bool verbose);
+	void MoveLeft(bool verbose);
+	void MoveRight(bool verbose);
+	void PlaySoundEffect(Mix_Chunk* effect) const;
+	void RaiseChangedLevel(bool verbose, short newLevel);
+	void ReloadSettings(bool verbose);
 	void LoadNewLevel(int level);
-	void ToggleMusic(bool _verbose);
-	void Quit(bool _verbose);
-	void InvalidMove(bool _verbose = false);
-	void FetchedPickup(bool _verbose = false);
+	void ToggleMusic(bool verbose) const;
+	void Quit(bool verbose) const;
+	void InvalidMove(bool verbose = false) const;
+	void FetchedPickup(bool verbose = false) const;
 	void StartNetworkLevel();
-	void PingGameServer();
+	static void PingGameServer();
 private:
 	bool _verbose;
 	bool logCommands;

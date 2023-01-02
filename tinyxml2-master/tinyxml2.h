@@ -348,7 +348,7 @@ class MemPoolT : public MemPool
 public:
     MemPoolT() : _blockPtrs(), _root(0), _currentAllocs(0), _nAllocs(0), _maxAllocs(0), _nUntracked(0)	{}
     ~MemPoolT() {
-        MemPoolT< ITEM_SIZE >::Clear();
+	    Clear();
     }
 
     void Clear() {

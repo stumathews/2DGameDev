@@ -55,6 +55,10 @@
     <Xml Include="game\Resources.xml" />
     <Xml Include="game\scene4.xml" />
     <Xml Include="game\settings.xml" />
+    <Xml Include="game\Level1.xml" />
+    <Xml Include="game\Level2.xml" />
+    <Xml Include="game\Level3.xml" />
+    <Xml Include="game\Level4.xml" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="2DGameDev.rc">

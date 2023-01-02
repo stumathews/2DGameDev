@@ -59,6 +59,7 @@ void PrepareLevel()
 	// Single player mode
 	if (!GameData::Get()->IsNetworkGame)
 	{
+		// ReSharper disable once CppExpressionWithoutSideEffects
 		LevelManager::Get()->ChangeLevel(1);
 		
 		if (SettingsManager::Get()->GetBool("global", "createAutoLevel")) 
@@ -78,16 +79,18 @@ void PrepareLevel()
 		: "Creating Single player level...");
 }
 
-void InitializeGameSubSystems(gamelib::GameStructure& infrastructure)
+void InitializeGameSubSystems(GameStructure& infrastructure)
 {
-	const auto screenWidth = 0; // 0 will mean it will get read from the settings file
-	const auto screenHeight = 0; // 0 will mean it will get read from the settings file	
+	// ReSharper disable once CppTooWideScopeInitStatement
+	constexpr auto screenWidth = 0; // 0 will mean it will get read from the settings file
+	// ReSharper disable once CppTooWideScopeInitStatement
+	constexpr auto screenHeight = 0; // 0 will mean it will get read from the settings file	
 
 	if (!IsSuccess(infrastructure.InitializeGameSubSystems(screenWidth, screenHeight, "Initialize Game subsystems...", 
 		"game\\Resources.xml"), "InitializeGameSubSystems...") ||
 		!IsSuccess(LevelManager::Get()->Initialize(), "Initializing Level Manager..."))
 	{
 		LogMessage("Game initialization failed.", SettingsManager::Get()->GetBool("global", "verbose"), true);
-		THROW(12, "There was a problem initializing the game subsystems", "Initialize Subsystems");
+		THROW(12, "There was a problem initializing the game subsystems", "Initialize Subsystems")
 	}
 }
