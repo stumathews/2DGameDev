@@ -2,7 +2,6 @@
 
 #include "Room.h"
 #include "objects/DrawableGameObject.h"
-#include <events/IEventSubscriber.h>
 #include <objects/AnimatedSprite.h>
 #include <objects/MultipleInheritableEnableSharedFromThis.h>
 #include <util/Tuple.h>
@@ -12,14 +11,14 @@ namespace gamelib
 	/// <summary>
 	/// Represents a Pickup in the game
 	/// </summary>
-	class Pickup final : public gamelib::DrawableGameObject, public inheritable_enable_shared_from_this<Pickup>
+	class Pickup final : public DrawableGameObject, public inheritable_enable_shared_from_this<Pickup>
 	{
 	public:
 		
 		/// <summary>
 		/// Create a new pickup at specific coordinates
 		/// </summary>
-		Pickup(std::string name, std::string type, int x, int y, int width, int height, bool visible, int inRoomNumber) 
+		Pickup(const std::string name, const std::string type, const int x, const int y, const int width, const int height, bool visible, const int inRoomNumber) 
 			: DrawableGameObject(name, type, gamelib::coordinate<int>(x, y), IsVisible)
 		{
 			this->width = width;
@@ -31,9 +30,7 @@ namespace gamelib
 		/// Create a new pickup with undefined coordinates
 		/// </summary>
 		/// <param name="visible">initial visible state</param>
-		/// <param name="settingsManager">settingsManager</param>
-		/// <param name="eventManager">eventManager</param>
-		Pickup(bool visible) : DrawableGameObject(0, 0, visible)
+		Pickup(const bool visible) : DrawableGameObject(0, 0, visible)
 		{
 			this->width = 0;
 			this->height = 0;
@@ -60,7 +57,7 @@ namespace gamelib
 		/// Provide Pickup game type
 		/// </summary>
 		/// <returns>Pickup</returns>
-		gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::Pickup; }
+		GameObjectType GetGameObjectType() override { return GameObjectType::Pickup; }
 
 		/// <summary>
 		/// Provide name
@@ -72,13 +69,13 @@ namespace gamelib
 		/// Handle pickup events
 		/// </summary>
 		/// <param name="event">incoming event</param>
+		/// <param name="deltaMs">Delta time in milliseconds</param>
 		/// <returns>generated events</returns>
-		std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
+		std::vector<std::shared_ptr<Event>> HandleEvent(std::shared_ptr<Event> event, unsigned long deltaMs) override;
 
 		/// <summary>
 		/// Load pickup settings
 		/// </summary>
-		/// <param name="settingsManager">settingsManager</param>
 		void LoadSettings() override { }
 
 		/// <summary>
@@ -113,6 +110,6 @@ namespace gamelib
 		/// <summary>
 		/// Animated sprite
 		/// </summary>
-		std::shared_ptr<gamelib::AnimatedSprite> _sprite;
+		std::shared_ptr<AnimatedSprite> _sprite;
 	};
 }

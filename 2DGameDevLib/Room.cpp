@@ -1,8 +1,5 @@
-#include "Room.h"
 #include "pch.h"
-#include "Room.h"
 #include "util/RectDebugging.h"
-#include <events/PlayerMovedEvent.h>
 #include <scene/SceneManager.h>
 #include "Player.h"
 #include <sstream>
@@ -12,7 +9,7 @@
 using namespace std;
 using namespace gamelib;
 
-Room::Room(string name, string type, int number, int x, int y, int width, int height, bool fill) 
+Room::Room(const string& name, const string& type, const int number, const int x, const int y, const int width, const int height, const bool fill) 
 	: DrawableGameObject(name, type, coordinate<int>(x, y), true)
 {
 	this->Bounds = { x, y, width, height };	
@@ -54,7 +51,7 @@ void Room::SetupWalls()
 	*/
 
 	// Calculate the geometry of the walls
-	auto& rect = this->abcd;
+	const auto& rect = this->abcd;
 	const auto ax = rect.GetAx(); const auto ay = rect.GetAy();
 	const auto bx = rect.GetBx(); const auto by = rect.GetBy();
 	const auto cx = rect.GetCx(); const auto cy = rect.GetCy();
@@ -80,11 +77,11 @@ void Room::SetupWalls()
 	walls[0] = walls[1] = walls[2] = walls[3] = IsLeftWalled = IsTopWalled = IsRightWalled = IsBottomWalled = true;
 }
 
-gamelib::ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, unsigned long deltaMs)
+ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, const unsigned long deltaMs)
 {	
 	auto generatedEvents(GameObject::HandleEvent(event, deltaMs));
 
-	switch(event->type)
+	switch(event->type)  // NOLINT(clang-diagnostic-switch-enum)
 	{
 		case EventType::PlayerMovedEventType: { OnPlayerMoved(generatedEvents); }
 		break;
@@ -94,17 +91,17 @@ gamelib::ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, unsi
 		{
 			std::stringstream message("Unhandled subscribed event in Room class:");
 			message << event->ToString();
-			gamelib::Logger::Get()->LogThis(message.str());
+			Logger::Get()->LogThis(message.str());
 		}
 	}
 			
 	return generatedEvents;
 }
 
-gamelib::ListOfEvents& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedEvents)
+ListOfEvents& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedEvents)
 {
 	const auto player = dynamic_pointer_cast<Player>(GameData::Get()->player.lock());
-	auto playerHotSpotBounds = player->Hotspot->GetBounds();
+	const auto playerHotSpotBounds = player->Hotspot->GetBounds();
 	SDL_Rect result;
 	isPlayerWithinRoom = SDL_IntersectRect(&InnerBounds, &playerHotSpotBounds, &result);
 	if(isPlayerWithinRoom) { player->SetPlayerRoom(shared_from_this()); }
@@ -120,7 +117,7 @@ void Room::DrawWalls(SDL_Renderer* renderer)
 	if (HasLeftWall()) { DrawLine(renderer, LeftLine); }
 }
 
-void Room::DrawLine(SDL_Renderer* renderer, gamelib::Line& line) { SDL_RenderDrawLine(renderer, line.x1, line.y1, line.x2, line.y2); }
+void Room::DrawLine(SDL_Renderer* renderer, const Line& line) { SDL_RenderDrawLine(renderer, line.x1, line.y1, line.x2, line.y2); }
 
 void Room::DrawDiagnostics(SDL_Renderer* renderer)
 {
@@ -133,8 +130,8 @@ void Room::DrawDiagnostics(SDL_Renderer* renderer)
 		const auto player = GameData::Get()->GetPlayer();
 
 		if(printDebuggingTextNeighboursOnly)
-		{			
-			auto playerRoom = player->GetCurrentRoom();
+		{
+			const auto playerRoom = player->GetCurrentRoom();
 			if(RoomNumber == playerRoom->topRoomIndex || RoomNumber == playerRoom->rightRoomIndex || 
 			   RoomNumber == playerRoom->bottomRoomIndex || RoomNumber == playerRoom->leftRoomIndex)
 			{
@@ -148,9 +145,9 @@ void Room::DrawDiagnostics(SDL_Renderer* renderer)
 	
 	if(drawHotSpot)
 	{
-		SDL_Rect point_bounds = { GetPosition().GetX() - Width/2, GetPosition().GetY() +Height/2 };
-		SDL_Color Cyan = { 0, 255, 255, 0 };
-		DrawFilledRect(renderer, &point_bounds , Cyan);
+		SDL_Rect point_bounds = { GetPosition().GetX() - Width/2, GetPosition().GetY() +Height/2 , 0, 0};
+		constexpr SDL_Color cyan = { 0, 255, 255, 0 };
+		DrawFilledRect(renderer, &point_bounds , cyan);
 	}
 
 	if(drawInnerBounds)
@@ -190,29 +187,29 @@ int Room::GetY() const { return this->Position.GetY(); }
 int Room::GetWidth() const { return Width; }
 int Room::GetHeight() const { return Height; }
 
-bool Room::IsWalled(Side wall) { return walls[(int)wall]; }
+bool Room::IsWalled(Side wall) const { return walls[(int)wall]; }
 
-bool Room::HasTopWall() { return IsWalled(Side::Top); }
-bool Room::HasBottomWall() { return IsWalled(Side::Bottom); }
-bool Room::HasLeftWall() { return IsWalled(Side::Left); }
-bool Room::HasRightWall() { return IsWalled(Side::Right); }
+bool Room::HasTopWall() const { return IsWalled(Side::Top); }
+bool Room::HasBottomWall() const { return IsWalled(Side::Bottom); }
+bool Room::HasLeftWall() const { return IsWalled(Side::Left); }
+bool Room::HasRightWall() const { return IsWalled(Side::Right); }
 
 void Room::Update(float deltaMs) { }
 
 ABCDRectangle& Room::GetABCDRectangle() { return abcd; }
-gamelib::coordinate<int> Room::GetPosition() { return GetABCDRectangle().GetCenter(); }
-int Room::GetRoomNumber() { return RoomNumber; }
-int Room::GetRowNumber(int MaxCols) { return GetRoomNumber() / MaxCols; }
+coordinate<int> Room::GetPosition() { return GetABCDRectangle().GetCenter(); }
+int Room::GetRoomNumber() const { return RoomNumber; }
+int Room::GetRowNumber(const int MaxCols) const { return GetRoomNumber() / MaxCols; }
 
 void Room::AddWall(Side wall) { this->walls[(int)wall] = true; 	SetWalled(wall); }
 void Room::RemoveWallZeroBased(Side wall) { this->walls[(int)wall] = false; SetNotWalled(wall); }
-void Room::ShouldRoomFill(bool fill_me) { fill = fill_me; }
+void Room::ShouldRoomFill(const bool fill_me) { fill = fill_me; }
 
-int Room::GetColumnNumber(int MaxCols)
+int Room::GetColumnNumber(const int MaxCols) const
 {
-	auto row = GetRowNumber(MaxCols); // row for this roomNumber
-	auto rowCol0 = row * MaxCols; // column 0 in this row
-	auto col = GetRoomNumber() - rowCol0; // col for this roomNumber
+	const auto row = GetRowNumber(MaxCols); // row for this roomNumber
+	const auto rowCol0 = row * MaxCols; // column 0 in this row
+	const auto col = GetRoomNumber() - rowCol0; // col for this roomNumber
 	return col;
 }
 
@@ -224,7 +221,7 @@ void Room::SetSorroundingRooms(const int top_index, const int right_index, const
 	this->leftRoomIndex = left_index;
 }
 
-const coordinate<int> Room::GetCenter(const int w, const int h)
+const coordinate<int> Room::GetCenter(const int w, const int h) const
 {
 	auto const room_x_mid = GetX() + (GetWidth() / 2);
 	auto const room_y_mid = GetY() + (GetHeight() / 2);
@@ -233,73 +230,54 @@ const coordinate<int> Room::GetCenter(const int w, const int h)
 	return coordinate<int>(x, y);
 }
 
-int Room::GetNeighbourIndex(Side side) const
+int Room::GetNeighbourIndex(const Side index) const
 {
-	switch (side)
+	switch (index)
 	{
-	case Side::Top:
-		return topRoomIndex;
-		break;
-	case Side::Right:
-		return rightRoomIndex;
-		break;
-	case Side::Bottom:
-		return bottomRoomIndex;
-		break;
-		case Side::Left:
-		return leftRoomIndex;
-		break;
-	default:
-		return -1;
+		case Side::Top: return topRoomIndex;
+		case Side::Right: return rightRoomIndex;
+		case Side::Bottom: return bottomRoomIndex;
+		case Side::Left: return leftRoomIndex;
 	}
+	return 0;
 }
 
 void Room::RemoveWall(Side wall)
 {	
-	if (walls)
-	{
-		walls[(int)wall] = false;
-		SetNotWalled(wall);
-		LogWallRemoval(wall);
-	}
+	walls[static_cast<int>(wall)] = false;
+	SetNotWalled(wall);
+	LogWallRemoval(wall);
+	
 }
 
-void Room::LogWallRemoval(Side wall)
+void Room::LogWallRemoval(const Side wall) const
 {
 	if (logWallRemovals)
 	{
 		std::stringstream message;
 		message << "Removed " << SideUtils::SideToString(wall) << " wall in room number " << GetRoomNumber();
-		gamelib::Logger::Get()->LogThis(message.str());
+		Logger::Get()->LogThis(message.str());
 	}
 }
 
-void Room::SetNotWalled(Side wall)
+void Room::SetNotWalled(const Side wall)
 {
 	switch (wall)
 	{
-	case Side::Top:
-		IsTopWalled = false;
-		break;
-	case Side::Bottom:
-		IsBottomWalled = false;
-		break;
-	case Side::Left:
-		IsBottomWalled = false;
-		break;
-	case Side::Right:
-		IsRightWalled = false;
-		break;
+		case Side::Top: IsTopWalled = false; break;
+		case Side::Bottom: IsBottomWalled = false; break;
+		case Side::Left: IsLeftWalled = false; break;
+		case Side::Right: IsRightWalled = false; break;
 	}
 }
 
-void Room::SetWalled(Side wall)
+void Room::SetWalled(const Side wall)
 {
 	switch (wall)
 	{
 		case Side::Top: {IsTopWalled = true; } 	break;
 		case Side::Bottom: {IsBottomWalled = true; } break;
-		case Side::Left: {IsBottomWalled = true; } break;
+		case Side::Left: {IsLeftWalled = true; } break;
 		case Side::Right: {IsRightWalled = true; } break;
 	}
 }

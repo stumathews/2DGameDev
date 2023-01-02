@@ -20,20 +20,18 @@ public:
 	static GameData* Get();
 	
 	~GameData() { Instance = nullptr; }
-	void AddRoom(std::shared_ptr<Room> room);
-	void RemoveRoom(std::shared_ptr<Room> room);
+	void AddRoom(const std::shared_ptr<Room>& room);
+	void RemoveRoom(const std::shared_ptr<Room>& room);
 	void AddPickup(std::shared_ptr<gamelib::Pickup> pickup);
-	void RemovePickup(std::shared_ptr<gamelib::Pickup> pickup);
+	void RemovePickup(const std::shared_ptr<gamelib::Pickup>& pickup);
 	
 	std::shared_ptr<Room> GetRoomByIndex(int roomNumber);
-	std::shared_ptr<Player> GetPlayer();
-	unsigned int CountPickups() { 
-		return _pickups.size();
-	}
-	void SetGameWon(bool yesno) { isGameWon = yesno; }
-	bool IsGameWon() { return isGameWon; }
-	void AddGameObject(std::shared_ptr<gamelib::GameObject> gameObject);
-	void RemoveGameObject(std::shared_ptr<gamelib::GameObject> gameObject);
+	[[nodiscard]] std::shared_ptr<Player> GetPlayer() const;
+	[[nodiscard]] unsigned int CountPickups() const {	return _pickups.size(); }
+	void SetGameWon(const bool yesNo) { isGameWon = yesNo; }
+	[[nodiscard]] bool IsGameWon() const { return isGameWon; }
+	void AddGameObject(const std::shared_ptr<gamelib::GameObject>& gameObject);
+	void RemoveGameObject(const std::shared_ptr<gamelib::GameObject>& gameObject);
 
 	void RemoveExpiredReferences();
 
@@ -42,7 +40,8 @@ protected:
 	GameData();
 	static GameData* Instance;
 private:
-	bool IsSameId(std::weak_ptr<gamelib::GameObject> obj, std::shared_ptr<gamelib::GameObject> other);
+	static bool IsSameId(const std::weak_ptr<gamelib::GameObject>& obj, const std::shared_ptr<gamelib::GameObject>&
+	                     other);
 	bool isGameWon;
 	std::map<int, std::weak_ptr<Room>> _rooms;
 	std::vector<std::weak_ptr<gamelib::Pickup>> _pickups;

@@ -14,26 +14,26 @@ class Room : public gamelib::DrawableGameObject, public inheritable_enable_share
 {	
 public:		
 
-	Room(std::string name, std::string type, int number, int x, int y, int width, int height, bool fill = false);
+	Room(const std::string& name, const std::string& type, int number, int x, int y, int width, int height, bool fill = false);
 
-	bool IsWalled(Side wall); // IsWalled (zero based). Does this room have a wall errected on specified side.
-	bool HasTopWall();
-	bool HasBottomWall();
-	bool HasLeftWall();
-	bool HasRightWall();
+	bool IsWalled(Side wall) const; // IsWalled (zero based). Does this room have a wall errected on specified side.
+	bool HasTopWall() const;
+	bool HasBottomWall() const;
+	bool HasLeftWall() const;
+	bool HasRightWall() const;
 
 	void UpdateInnerBounds();
 	void SetupWalls();
-	void SetSorroundingRooms(const int topIndex, const int rightIndex, const int bottomIndex, const int leftIndex);
+	void SetSorroundingRooms(int topIndex, int rightIndex, int bottomIndex, int leftIndex);
 	void RemoveWall(Side wall);
-	void LogWallRemoval(Side wall);
+	void LogWallRemoval(Side wall) const;
 	void SetNotWalled(Side wall);
 	void SetWalled(Side wall);
 	void AddWall(Side wall);
 	void RemoveWallZeroBased(Side wall);
 	void ShouldRoomFill(bool fill_me = false);
 	void DrawWalls(SDL_Renderer* renderer);
-	void DrawLine(SDL_Renderer* renderer, gamelib::Line& line);
+	void DrawLine(SDL_Renderer* renderer, const gamelib::Line& line);
 	void DrawDiagnostics(SDL_Renderer* renderer);
 	void LoadSettings() override;
 	void Draw(SDL_Renderer* renderer) override;
@@ -42,7 +42,7 @@ public:
 	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
 	gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 	gamelib::ListOfEvents& OnPlayerMoved(std::vector<std::shared_ptr<gamelib::Event>>& generatedEvents);
-	const gamelib::coordinate<int> GetCenter(const int width, const int height);
+	const gamelib::coordinate<int> GetCenter(int width, int height) const;
 	
 	gamelib::coordinate<int> GetPosition();
 	int GetNeighbourIndex(Side index) const;
@@ -50,18 +50,18 @@ public:
 	int GetY() const;
 	int GetWidth() const;
 	int GetHeight() const;
-	int GetRoomNumber();
-	int GetRowNumber(int MaxCols);
-	int GetColumnNumber(int MaxCols);
+	int GetRoomNumber() const;
+	int GetRowNumber(int MaxCols) const;
+	int GetColumnNumber(int MaxCols) const;
 
 	std::string GetName() override { return "Room"; }
 
-	SDL_Rect InnerBounds;
+	SDL_Rect InnerBounds{};
 	
-	bool IsTopWalled;
-	bool IsBottomWalled;
-	bool IsRightWalled;
-	bool IsLeftWalled;
+	bool IsTopWalled{};
+	bool IsBottomWalled{};
+	bool IsRightWalled{};
+	bool IsLeftWalled{};
 	
 	gamelib::Line TopLine;
 	gamelib::Line RightLine;
@@ -72,8 +72,8 @@ public:
 
 protected:
 	int RoomNumber;
-	bool walls[4];
-	gamelib::ABCDRectangle abcd;
+	bool walls[4]{};
+	gamelib::ABCDRectangle abcd{};
 	gamelib::ABCDRectangle& GetABCDRectangle();
 	int topRoomIndex;
 	int rightRoomIndex;
@@ -87,10 +87,10 @@ private:
 	bool fill = false;
 	int innerBoundsOffset;
 	bool logWallRemovals;
-	bool drawInnerBounds;
-	bool drawHotSpot;
-	bool printDebuggingTextNeighboursOnly;
-	bool printDebuggingText;	
+	bool drawInnerBounds{};
+	bool drawHotSpot{};
+	bool printDebuggingTextNeighboursOnly{};
+	bool printDebuggingText{};	
 };
 
 

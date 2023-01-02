@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL.h>
 
-class SDLCollisionDetection
+class SdlCollisionDetection
 {
 public:
 	static bool IsColliding(const SDL_Rect* bounds1, const SDL_Rect* bounds2)

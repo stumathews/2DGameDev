@@ -3,15 +3,13 @@
 #include "Player.h"
 #include "Room.h"
 
-using namespace gamelib;
-
-class PlayerComponent : public Component
+class PlayerComponent : public gamelib::Component
 {
 public:
-	PlayerComponent(std::string component_name, Player* player);
+	PlayerComponent(const std::string& component_name, Player* player);
 
-	Player* the_player;
+	Player* ThePlayer;
 		
-	int room;
+	int Room;
 };
 

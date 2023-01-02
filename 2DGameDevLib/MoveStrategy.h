@@ -10,6 +10,7 @@ class Movement;
 class IPlayerMoveStrategy
 {
 public:
+	virtual ~IPlayerMoveStrategy() = default;
 	/// <summary>
 	/// Move the player according to the calculated movement
 	/// </summary>

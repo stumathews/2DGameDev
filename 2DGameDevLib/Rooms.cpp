@@ -5,7 +5,7 @@
 
 using namespace gamelib;
 
-void Rooms::ConfigureRooms(int rows, int columns, std::vector<std::shared_ptr<Room>>& rooms)
+void Rooms::ConfigureRooms(const int rows, const int columns, std::vector<std::shared_ptr<Room>>& rooms)
 {
 	const auto totalRooms = static_cast<int>(rooms.size());
 
@@ -14,7 +14,7 @@ void Rooms::ConfigureRooms(int rows, int columns, std::vector<std::shared_ptr<Ro
 	{
 		const auto nextIndex = i + 1;
 		const auto prevIndex = i - 1;
-		const auto roomRow = (int)ceil(i / columns);
+		const auto roomRow = static_cast<int>(ceil(i / columns));
 		const auto roomCol = i % columns;
 
 		// Prevent removing outer walls 
@@ -24,10 +24,10 @@ void Rooms::ConfigureRooms(int rows, int columns, std::vector<std::shared_ptr<Ro
 		auto canRemoveRightWall = roomCol >= 0 && roomCol < (columns - 1);
 
 		// Calculate indexes of sorrounding/adjacent rooms
-		auto roomIndexAbove = canRemoveTopWall ? (i - columns) : -1;
-		auto roomIndexBelow = canRemoveBottomWall ? (i + columns) : -1;
-		auto roomIndexLeft = canRemoveLeftWall ? prevIndex : -1;
-		auto roomIndexRight = canRemoveRightWall ? nextIndex : -1;
+		const auto roomIndexAbove = canRemoveTopWall ? (i - columns) : -1;
+		const auto roomIndexBelow = canRemoveBottomWall ? (i + columns) : -1;
+		const auto roomIndexLeft = canRemoveLeftWall ? prevIndex : -1;
+		const auto roomIndexRight = canRemoveRightWall ? nextIndex : -1;
 		auto thisRoom = rooms[i];
 		auto nextRoom = nextIndex == totalRooms ? nullptr : rooms[nextIndex];
 
@@ -37,22 +37,22 @@ void Rooms::ConfigureRooms(int rows, int columns, std::vector<std::shared_ptr<Ro
 	}
 }
 
-gamelib::coordinate<int> Rooms::CenterOfRoom(std::shared_ptr<Room> room, int yourWidth, int yourheight)
+coordinate<int> Rooms::CenterOfRoom(const std::shared_ptr<Room>& room, const int yourWidth, const int yourHeight)
 {
 	// local func to the center the player in the given room
-	const std::function<coordinate<int>(Room, int, int)> centerPlayerFunc = [](const Room& room, int w, int h)
+	const std::function<coordinate<int>(Room, int, int)> centerPlayerFunc = [](const Room& inRoom, const int w, const int h)
 	{
-		auto const room_x_mid = room.GetX() + (room.GetWidth() / 2);
-		auto const room_y_mid = room.GetY() + (room.GetHeight() / 2);
+		auto const room_x_mid = inRoom.GetX() + (inRoom.GetWidth() / 2);
+		auto const room_y_mid = inRoom.GetY() + (inRoom.GetHeight() / 2);
 		auto const x = room_x_mid - w / 2;
 		auto const y = room_y_mid - h / 2;
 		return coordinate<int>(x, y);
 	};
 
-	return centerPlayerFunc(*room, yourWidth, yourheight);
+	return centerPlayerFunc(*room, yourWidth, yourHeight);
 }
 
-void Rooms::ConfigureWalls(std::shared_ptr<Room>&thisRoom, bool& canRemoveWallAbove, std::vector<std::shared_ptr<Room>>&rooms, std::shared_ptr<Room>&nextRoom, bool& canRemoveWallRight, bool& canRemoveWallBelow, bool& canRemoveWallLeft, const int& prevIndex)
+void Rooms::ConfigureWalls(const std::shared_ptr<Room>& thisRoom, bool& canRemoveWallAbove, std::vector<std::shared_ptr<Room>>&rooms, std::shared_ptr<Room>&nextRoom, bool& canRemoveWallRight, bool& canRemoveWallBelow, bool& canRemoveWallLeft, const int& prevIndex)
 {
 	if (SettingsManager::Get()->GetBool("grid", "nowalls"))
 	{
@@ -60,7 +60,7 @@ void Rooms::ConfigureWalls(std::shared_ptr<Room>&thisRoom, bool& canRemoveWallAb
 	}
 }
 
-void Rooms::RemoveAllWalls(std::shared_ptr<Room>&thisRoom)
+void Rooms::RemoveAllWalls(const std::shared_ptr<Room>&thisRoom)
 {
 	thisRoom->RemoveWall(Side::Top); thisRoom->RemoveWall(Side::Right);
 	thisRoom->RemoveWall(Side::Bottom); thisRoom->RemoveWall(Side::Left);

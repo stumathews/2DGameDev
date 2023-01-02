@@ -1,18 +1,15 @@
-#include "RoomGenerator.h"
 #include "pch.h"
 #include "RoomGenerator.h"
 #include <algorithm>
-#include <iostream>
 #include <random>
 #include <vector>
 #include <util/SettingsManager.h>
-#include <stack>
 #include "Rooms.h"
 
 using namespace std;
 using namespace gamelib;
 
-RoomGenerator::RoomGenerator(int screenWidth, int screenHeight, int rows, int columns, bool removeRandomSides)
+RoomGenerator::RoomGenerator(const int screenWidth, const int screenHeight, const int rows, const int columns, const bool removeRandomSides)
 {
 	this->screenWidth = screenWidth;
 	this->screenHeight = screenHeight;
@@ -27,9 +24,9 @@ RoomGenerator::RoomGenerator(int screenWidth, int screenHeight, int rows, int co
 vector<shared_ptr<Room>> RoomGenerator::Generate()
 {
 	
-	// caclulate the dimensions of a room (a square with 4 sides/walls)
-	const auto square_width = screenWidth / columns; 
-	const auto square_height = screenHeight / rows;
+	// calculate the dimensions of a room (a square with 4 sides/walls)
+	const auto squareWidth = screenWidth / columns; 
+	const auto squareHeight = screenHeight / rows;
 		
 	// List of Rooms generated
 	vector<shared_ptr<Room>> rooms;
@@ -44,11 +41,12 @@ vector<shared_ptr<Room>> RoomGenerator::Generate()
 		for(auto col = 0; col < columns; col++)
 		{			
 			// each room has a unique room number
-			auto number = count++;
+			const auto number = count++;
 			auto roomName = string("Room") + std::to_string(number);
 							
 			// Create room
-			auto room = std::shared_ptr<Room>(new Room(roomName, "Room", number, col * square_width, row * square_height, square_width, square_height, false));
+			auto room = std::make_shared<Room>(roomName, "Room", number, col * squareWidth, row * squareHeight,
+			                                   squareWidth, squareHeight, false);
 				
 			// Set room tag to room number
 			room->SetTag(std::to_string(number));
@@ -63,7 +61,7 @@ vector<shared_ptr<Room>> RoomGenerator::Generate()
 	return rooms;
 }
 
-void RoomGenerator::ConfigureRooms(std::vector<std::shared_ptr<Room>>& rooms)
+void RoomGenerator::ConfigureRooms(std::vector<std::shared_ptr<Room>>& rooms) const
 {
 	const auto totalRooms = static_cast<int>(rooms.size());
 
@@ -72,7 +70,7 @@ void RoomGenerator::ConfigureRooms(std::vector<std::shared_ptr<Room>>& rooms)
 	{
 		const auto nextIndex = i + 1;
 		const auto prevIndex = i - 1;
-		const auto roomRow = (int)ceil(i / columns);
+		const auto roomRow = static_cast<int>(ceil(i / columns));
 		const auto roomCol = i % columns;
 
 		// Prevent removing outer walls 
@@ -82,10 +80,10 @@ void RoomGenerator::ConfigureRooms(std::vector<std::shared_ptr<Room>>& rooms)
 		auto canRemoveRightWall = roomCol >= 0 && roomCol < (columns - 1);
 
 		// Calculate indexes of sorrounding/adjacent rooms
-		auto roomIndexAbove = canRemoveTopWall ? (i - columns) : i;
-		auto roomIndexBelow = canRemoveBottomWall ? (i + columns) : i;
-		auto roomIndexLeft = canRemoveLeftWall ? prevIndex : i;
-		auto roomIndexRight = canRemoveRightWall ? nextIndex : i;
+		const auto roomIndexAbove = canRemoveTopWall ? (i - columns) : i;
+		const auto roomIndexBelow = canRemoveBottomWall ? (i + columns) : i;
+		const auto roomIndexLeft = canRemoveLeftWall ? prevIndex : i;
+		const auto roomIndexRight = canRemoveRightWall ? nextIndex : i;
 		auto& thisRoom = rooms[i];
 		auto& nextRoom = nextIndex == totalRooms ? rooms[i] : rooms[nextIndex];
 
@@ -95,7 +93,7 @@ void RoomGenerator::ConfigureRooms(std::vector<std::shared_ptr<Room>>& rooms)
 	}
 }
 
-void RoomGenerator::ConfigureWalls(std::shared_ptr<Room>& thisRoom, bool& canRemoveWallAbove, std::vector<std::shared_ptr<Room>>& rooms, std::shared_ptr<Room>& nextRoom, bool& canRemoveWallRight, bool& canRemoveWallBelow, bool& canRemoveWallLeft, const int& prevIndex)
+void RoomGenerator::ConfigureWalls(const std::shared_ptr<Room>& thisRoom, const bool& canRemoveWallAbove, const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Room>& nextRoom, const bool& canRemoveWallRight, const bool& canRemoveWallBelow, const bool& canRemoveWallLeft, const int& prevIndex) const
 {
 	if (SettingsManager::Get()->GetBool("grid", "nowalls"))
 	{
@@ -109,7 +107,10 @@ void RoomGenerator::ConfigureWalls(std::shared_ptr<Room>& thisRoom, bool& canRem
 }
 
 
-void RoomGenerator::RemoveSidesRandomly(const bool& canRemoveTopWall, std::shared_ptr<Room>& current_room, std::vector<std::shared_ptr<Room>>& rooms, std::shared_ptr<Room>& next_room, const bool& canRemoveRightWall, const bool& canRemoveBottomWall, const bool& canRemoveLeftWall, const int& prevIndex)
+void RoomGenerator::RemoveSidesRandomly(const bool& canRemoveTopWall, const std::shared_ptr<Room>& currentRoom,
+                                        const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Room>& nextRoom,
+                                        const bool& canRemoveRightWall, const bool& canRemoveBottomWall,
+                                        const bool& canRemoveLeftWall, const int& prevIndex) const
 {
 	// List of sides that are removable (some cannot be removed if they are on the bounds of the board/game)
 	vector<Side> removableSides;
@@ -139,62 +140,62 @@ void RoomGenerator::RemoveSidesRandomly(const bool& canRemoveTopWall, std::share
 	}
 
 	// Choose a 1 random element wall to remove from possible sides 
-	vector<Side> random_sides;
-	uint n_sample = 1;
-	std::sample(begin(removableSides), end(removableSides), std::back_inserter(random_sides), n_sample, std::mt19937{ std::random_device{}() });
+	vector<Side> randomSides;
+	constexpr uint nSample = 1;
+	std::sample(begin(removableSides), end(removableSides), std::back_inserter(randomSides), nSample, std::mt19937{ std::random_device{}() });
 
-	const auto remove_sides_randomly = removeRandomSides;
+	const auto removeSidesRandomly = removeRandomSides;
 
 	// Removes one side randonly
-	if (remove_sides_randomly)
+	if (removeSidesRandomly)
 	{
-		auto aSide = random_sides.front();
+		const auto aSide = randomSides.front();
 
 		if (aSide == Side::Top && canRemoveTopWall)
 		{
 			// remove the top side of this room
-			current_room->RemoveWallZeroBased(Side::Top);
+			currentRoom->RemoveWallZeroBased(Side::Top);
 
-			auto roomAbove = rooms[current_room->GetNeighbourIndex(Side::Top)];
+			const auto& roomAbove = rooms[currentRoom->GetNeighbourIndex(Side::Top)];
 
 			// remove the bottom of the room above 
 			roomAbove->RemoveWallZeroBased(Side::Bottom);
 
-			next_room->RemoveWallZeroBased(Side::Bottom);
+			nextRoom->RemoveWallZeroBased(Side::Bottom);
 		}
 
 		if (aSide == Side::Right && canRemoveRightWall)
 		{
 			// Remove the right side of this room
-			current_room->RemoveWallZeroBased(Side::Right);
-			auto roomToLeft = rooms[current_room->GetNeighbourIndex(Side::Right)];
+			currentRoom->RemoveWallZeroBased(Side::Right);
+			const auto& roomToLeft = rooms[currentRoom->GetNeighbourIndex(Side::Right)];
 
 			// Remove room on right's left wall
 			roomToLeft->RemoveWallZeroBased(Side::Left);
 
-			next_room->RemoveWallZeroBased(Side::Left);
+			nextRoom->RemoveWallZeroBased(Side::Left);
 		}
 
 		if (aSide == Side::Bottom && canRemoveBottomWall)
 		{
 			// Remove the bottom side of this room
-			current_room->RemoveWallZeroBased(Side::Bottom);
+			currentRoom->RemoveWallZeroBased(Side::Bottom);
 
-			// Remove the room belows top wall
-			auto roomBelow = rooms[current_room->GetNeighbourIndex(Side::Bottom)];
+			// Remove the room below top wall
+			const auto& roomBelow = rooms[currentRoom->GetNeighbourIndex(Side::Bottom)];
 			roomBelow->RemoveWallZeroBased(Side::Top);
 
-			next_room->RemoveWallZeroBased(Side::Top);
+			nextRoom->RemoveWallZeroBased(Side::Top);
 		}
 
 		if (aSide == Side::Left && canRemoveLeftWall)
 		{
 			// Remove the left wall on this room
-			current_room->RemoveWallZeroBased(Side::Left);
-			auto& prev = rooms[prevIndex];
+			currentRoom->RemoveWallZeroBased(Side::Left);
+			const auto& prev = rooms[prevIndex];
 
 			// Remove the room on left side's right wall
-			auto roomOnLeft = rooms[current_room->GetNeighbourIndex(Side::Left)];
+			const auto& roomOnLeft = rooms[currentRoom->GetNeighbourIndex(Side::Left)];
 			roomOnLeft->RemoveWallZeroBased(Side::Right);
 
 			prev->RemoveWallZeroBased(Side::Right);

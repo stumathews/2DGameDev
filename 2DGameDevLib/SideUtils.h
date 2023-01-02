@@ -4,7 +4,7 @@ class SideUtils
 {
 public:
 	// Turns a side enum into a loggable string
-	static const char* SideToString(Side side)
+	static const char* SideToString(const Side side)
 	{
 		switch (side)
 		{
@@ -12,7 +12,7 @@ public:
 			case Side::Right: return "Right";
 			case Side::Bottom: return "Bottom";
 			case Side::Left: return "Left";
-			default: return "[Unknown Side]";
 		}
+		return nullptr;
 	}
 };

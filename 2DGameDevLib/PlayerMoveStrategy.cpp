@@ -1,25 +1,21 @@
 #include "pch.h"
 #include "Player.h"
 #include "Room.h"
-#include "scene/SceneManager.h"
 #include "PlayerMoveStrategy.h"
 #include <Direction.h>
 #include <common/Logger.h>
-#include <sstream>
 #include <exceptions/EngineException.h>
 #include <util/SettingsManager.h>
 #include "../game/LevelManager.h"
-#include "Level.h"
-#include "GameData.h"
 
-PlayerMoveStrategy::PlayerMoveStrategy(std::shared_ptr<Player> inPlayer, int edgeIncrement)
+PlayerMoveStrategy::PlayerMoveStrategy(const std::shared_ptr<Player>& inPlayer, int)
 {
 	player = inPlayer;
 	debug = gamelib::SettingsManager::Get()->GetBool("player", "debugMovement");
 	ignoreRestrictions = gamelib::SettingsManager::Get()->GetBool("player", "ignoreRestrictions");
 }
 
-bool PlayerMoveStrategy::MovePlayer(std::shared_ptr<gamelib::IMovement> movement)
+bool PlayerMoveStrategy::MovePlayer(const std::shared_ptr<gamelib::IMovement> movement)
 {
 	auto isMoveValid = false;
 	if (IsValidMove(movement)) 
@@ -30,32 +26,30 @@ bool PlayerMoveStrategy::MovePlayer(std::shared_ptr<gamelib::IMovement> movement
 	return isMoveValid;
 }
 
-gamelib::coordinate<int> PlayerMoveStrategy::CalculatePlayerMove(std::shared_ptr<gamelib::IMovement> movement, int pixelsToMove)
-{		
-	int resulting_x;	
-	int resulting_y; 
-	
-	resulting_y = player->Position.GetY();
-	resulting_x = player->Position.GetX();
+gamelib::coordinate<int> PlayerMoveStrategy::CalculatePlayerMove(const std::shared_ptr<gamelib::IMovement>& movement, const int pixelsToMove) const
+{
+	int resultingY = player->Position.GetY();
+	int resultingX = player->Position.GetX();
 
 	switch(movement->GetDirection())
 	{
-		case gamelib::Direction::Down:  resulting_y += pixelsToMove; break;	
-		case gamelib::Direction::Up:    resulting_y -= pixelsToMove; break;
-		case gamelib::Direction::Left:  resulting_x -= pixelsToMove; break;
-		case gamelib::Direction::Right: resulting_x += pixelsToMove; break;
+		case gamelib::Direction::Down:  resultingY += pixelsToMove; break;	
+		case gamelib::Direction::Up:    resultingY -= pixelsToMove; break;
+		case gamelib::Direction::Left:  resultingX -= pixelsToMove; break;
+		case gamelib::Direction::Right: resultingX += pixelsToMove; break;
+		case gamelib::Direction::None: THROW(0, "Direction is NOne", "PlayerMoveStrategy")
 	}
 	
-	return gamelib::coordinate<int>(resulting_x, resulting_y);
+	return {resultingX, resultingY};
 }
 
-void PlayerMoveStrategy::SetPlayerPosition(gamelib::coordinate<int> resultingMove)
+void PlayerMoveStrategy::SetPlayerPosition(const gamelib::coordinate<int> resultingMove) const
 {
 	player->Position.SetX(resultingMove.GetX());
 	player->Position.SetY(resultingMove.GetY());
 }
 
-bool PlayerMoveStrategy::IsValidMove(std::shared_ptr<gamelib::IMovement> movement)
+bool PlayerMoveStrategy::IsValidMove(const std::shared_ptr<gamelib::IMovement>& movement) const
 {
 	if (ignoreRestrictions) { return true;}
 
@@ -65,17 +59,19 @@ bool PlayerMoveStrategy::IsValidMove(std::shared_ptr<gamelib::IMovement> movemen
 		case gamelib::Direction::Left: return CanPlayerMove(gamelib::Direction::Left, movement);
 		case gamelib::Direction::Right: return CanPlayerMove(gamelib::Direction::Right, movement);
 		case gamelib::Direction::Up: return CanPlayerMove(gamelib::Direction::Up, movement);
-		default: return false;
+		case gamelib::Direction::None: THROW(0, "Direction is NOne", "PlayerMoveStrategy")
 	}
+	return false;
 }
 
-bool PlayerMoveStrategy::CanPlayerMove(gamelib::Direction direction, std::shared_ptr<gamelib::IMovement> movement)
+bool PlayerMoveStrategy::CanPlayerMove(const gamelib::Direction direction, const std::shared_ptr<gamelib::IMovement>&
+                                       movement) const
 {
-	std::shared_ptr<Room> targetRoom = nullptr;
-	bool touchingBlockingWalls = false, hasValidTargetRoom = false;
-	auto currentRoom = player->GetCurrentRoom();
+	std::shared_ptr<Room> targetRoom;
+	bool touchingBlockingWalls = false, hasValidTargetRoom;
+	const auto currentRoom = player->GetCurrentRoom();
 	
-	auto IntersectsRectAndLine = [=](SDL_Rect bounds, gamelib::Line line) -> bool 
+	auto IntersectsRectAndLine = [=](const SDL_Rect bounds, gamelib::Line line) -> bool 
 	{
 		return SDL_IntersectRectAndLine(&bounds, &line.x1, &line.y1, &line.x2, &line.y2);
 	};
