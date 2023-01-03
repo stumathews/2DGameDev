@@ -18,7 +18,7 @@ typedef std::vector<std::weak_ptr<gamelib::GameObject>> ListOfGameObjects;
 
 namespace gamelib { enum class Direction; }
 
-class Player final : public gamelib::DrawableGameObject
+class Player : public gamelib::DrawableGameObject
 {		
 public:
 		

@@ -13,7 +13,9 @@ namespace gamelib
 class Room;
 class Player;
 
-
+/**
+ * \brief Holds Game Data that is updated periodically by the Game Data Manager
+ */
 class GameData : public gamelib::GameWorldData
 {
 public:
@@ -21,9 +23,9 @@ public:
 	GameData(const GameData&) = delete; // copy constructor 
 	GameData(const GameData&&) = delete; // move constructor
 	GameData& operator=(const GameData&) = delete; // assignment
-	GameData& operator=(const GameData&&) = delete; // move assignment
-	
-	~GameData() { Instance = nullptr; }
+	GameData& operator=(const GameData&&) = delete; // move assignment	
+	~GameData() { instance = nullptr; }
+
 	void AddRoom(const std::shared_ptr<Room>& room);
 	void RemoveRoom(const std::shared_ptr<Room>& room);
 	void AddPickup(std::shared_ptr<gamelib::Pickup> pickup);
@@ -31,24 +33,22 @@ public:
 	
 	std::shared_ptr<Room> GetRoomByIndex(int roomNumber);
 	[[nodiscard]] std::shared_ptr<Player> GetPlayer() const;
-	[[nodiscard]] unsigned int CountPickups() const {	return _pickups.size(); }
-	void SetGameWon(const bool yesNo) { isGameWon = yesNo; }
+	[[nodiscard]] unsigned int CountPickups() const { return pickups.size(); }	
 	[[nodiscard]] bool IsGameWon() const { return isGameWon; }
+	void SetGameWon(const bool yesNo) { isGameWon = yesNo; }
 	void AddGameObject(const std::shared_ptr<gamelib::GameObject>& gameObject);
 	void RemoveGameObject(const std::shared_ptr<gamelib::GameObject>& gameObject);
-
 	void RemoveExpiredReferences();
 
 	std::vector<std::weak_ptr<gamelib::GameObject>> GameObjects;
 protected:
 	GameData();
-	static GameData* Instance;
+	static GameData* instance;
 private:
-	static bool IsSameId(const std::weak_ptr<gamelib::GameObject>& obj, const std::shared_ptr<gamelib::GameObject>&
-	                     other);
+	static bool IsSameId(const std::weak_ptr<gamelib::GameObject>& obj, const std::shared_ptr<gamelib::GameObject>& other);
 	bool isGameWon;
-	std::map<int, std::weak_ptr<Room>> _rooms;
-	std::vector<std::weak_ptr<gamelib::Pickup>> _pickups;
+	std::map<int, std::weak_ptr<Room>> rooms;
+	std::vector<std::weak_ptr<gamelib::Pickup>> pickups;
 	
 };
 

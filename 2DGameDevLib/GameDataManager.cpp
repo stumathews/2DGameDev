@@ -46,7 +46,6 @@ void GameDataManager::AddToGameData(const std::shared_ptr<Event>& evt) const
 	}
 	else 
 	{
-
 		if (object->GetGameObjectType() == GameObjectType::Pickup)
 		{
 			GameData()->AddPickup(std::dynamic_pointer_cast<Pickup>(object));
