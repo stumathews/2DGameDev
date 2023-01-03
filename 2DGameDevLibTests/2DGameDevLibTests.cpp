@@ -68,21 +68,30 @@ private:
 
 TEST_F(GameDataManagerTests, Adds_GameObject)
 {
+	// Put expectations in place that dependencies will be called...
+	EXPECT_CALL(*Player, GetGameObjectType())
+	.Times(testing::AtLeast(1))
+	.WillRepeatedly(testing::Return(gamelib::GameObjectType::GameDefined));
+
 	// When receiving an event to add game object to scene
 	Subject->HandleEvent(std::dynamic_pointer_cast<gamelib::Event>(gamelib::EventFactory::CreateAddToSceneEvent(Player)), 0);
-
-	const auto gameObjects = Subject->GameData()->GameObjects;  // NOLINT(readability-static-accessed-through-instance)
+	const auto gameObjects = Subject->GameData()->GameObjects;
 	const auto gameObject = gameObjects[0].lock();
+
 	// Ensure its added to the game data
 	EXPECT_EQ(gameObjects.size(), 1) << "Expected 1 game object";
 
 	// Ensure that is the expected game object added.
 	EXPECT_EQ(gameObject->Name, MockPlayerName);
 	EXPECT_EQ(gameObject->Type, type);
+
+	
 }
 
 TEST_F(GameDataManagerTests, Deletes_GameObject)
 {
+	// Put expectations in place that dependencies will be called...
+	EXPECT_CALL(*Player, GetGameObjectType()).Times(testing::AtLeast(1));
 
 	// When receiving an event to add game object to scene
 	Subject->HandleEvent(std::dynamic_pointer_cast<gamelib::Event>(gamelib::EventFactory::CreateAddToSceneEvent(Player)), 0);
