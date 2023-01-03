@@ -10,8 +10,13 @@
 #include <resource/ResourceManager.h>
 #include "Player.h"
 #include "pickup.h"
-#include "../game/LevelManager.h"
 #include <filesystem>
+
+#include "GameData.h"
+#include "PlayerMoveStrategy.h"
+#include "common/constants.h"
+#include "events/AddGameObjectToCurrentSceneEvent.h"
+#include "events/EventFactory.h"
 
 using namespace tinyxml2;
 using namespace std;
@@ -148,11 +153,33 @@ void Level::Load()
 
 		Rooms::ConfigureRooms(NumRows, NumCols, Rooms);
 
-		LevelManager::Get()->InitializePickups(Pickups);
+		InitializePickups(Pickups);
 	}
 }
 
-shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_ptr<Room>& room) const
+std::vector<std::shared_ptr<gamelib::Event>> Level::HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long deltaMs)
+{
+	return std::vector<std::shared_ptr<gamelib::Event>>();
+}
+
+void Level::InitializePickups(const std::vector<std::shared_ptr<Pickup>>& inPickups)
+{
+	for (const auto& pickup : inPickups)
+	{
+		pickup->LoadSettings();
+		pickup->SubscribeToEvent(EventType::PlayerMovedEventType);
+
+		AddGameObjectToScene(pickup);
+	}
+}
+
+void Level::AddGameObjectToScene(const std::shared_ptr<GameObject>& object)
+{
+	EventManager::Get()->RaiseEvent(std::dynamic_pointer_cast<Event>(EventFactory::Get()->CreateAddToSceneEvent(object)), this);
+}
+
+
+shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_ptr<Room>& room)
 {
 	const auto attributes = GetNodeAttributes(pObject);
 	string name = attributes.at("name");
@@ -172,7 +199,7 @@ shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_pt
 		{
 			const auto player = std::make_shared<Player>(name, type, room, assetDimensions.GetWidth(),
 			                                             assetDimensions.GetHeight(), "playerNickName");
-			LevelManager::Get()->InitializePlayer(player, spriteAsset);
+			InitializePlayer(player, spriteAsset);
 
 			gameObject = player;
 		}
@@ -185,7 +212,7 @@ shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_pt
 			ResourceManager::Get()->IndexResourceFile();
 			pickup->stringProperties["assetName"] = spriteAsset->name;
 			pickup->Initialize();
-			LevelManager::Get()->InitializePickups(Pickups);
+			InitializePickups(Pickups);
 
 			gameObject = pickup;
 		}
@@ -202,6 +229,17 @@ shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_pt
 		}
 	}
 	return gameObject;
+}
+
+void Level::InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<SpriteAsset>& spriteAsset) const
+{
+	inPlayer->SetMoveStrategy(std::make_shared<PlayerMoveStrategy>(inPlayer, 2));
+	inPlayer->SetTag(constants::PlayerTag);
+	inPlayer->LoadSettings();
+	inPlayer->SetSprite(AnimatedSprite::Create(inPlayer->Position, spriteAsset));
+
+	// We keep a reference to track of the player globally
+	GameData::Get()->player = inPlayer;
 }
 
 void Level::ParseProperty(XMLNode* pObjectChild, const shared_ptr<GameObject>& go)

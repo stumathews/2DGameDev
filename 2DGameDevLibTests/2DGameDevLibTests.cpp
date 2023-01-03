@@ -55,26 +55,26 @@ public:
 	GameDataManager* Subject = nullptr;
 
 	const std::string MockPlayerName {"MockPlayer"};
-	const std::string type {"Player"};
+	const std::string PlayerType {"Player"};
 	std::shared_ptr<MockPlayer> Player;
 
 private:
 	std::shared_ptr<MockPlayer> CreateMockPlayer() const
 	{		
 		auto room = std::make_shared<Room>(MockPlayerName,"Room",0,0,0,0,0, false);
-		return make_shared<MockPlayer>(MockPlayerName, type, room, 0, 0, MockPlayerName);
+		return make_shared<MockPlayer>(MockPlayerName, PlayerType, room, 0, 0, MockPlayerName);
 	}
 };
 
 TEST_F(GameDataManagerTests, Adds_GameObject)
 {
 	// Put expectations in place that dependencies will be called...
-	EXPECT_CALL(*Player, GetGameObjectType())
-	.Times(testing::AtLeast(1))
-	.WillRepeatedly(testing::Return(gamelib::GameObjectType::GameDefined));
+	EXPECT_CALL(*Player, GetGameObjectType()).Times(testing::AtLeast(1)).WillRepeatedly(
+		testing::Return(gamelib::GameObjectType::GameDefined));
 
 	// When receiving an event to add game object to scene
 	Subject->HandleEvent(std::dynamic_pointer_cast<gamelib::Event>(gamelib::EventFactory::CreateAddToSceneEvent(Player)), 0);
+
 	const auto gameObjects = Subject->GameData()->GameObjects;
 	const auto gameObject = gameObjects[0].lock();
 
@@ -83,9 +83,7 @@ TEST_F(GameDataManagerTests, Adds_GameObject)
 
 	// Ensure that is the expected game object added.
 	EXPECT_EQ(gameObject->Name, MockPlayerName);
-	EXPECT_EQ(gameObject->Type, type);
-
-	
+	EXPECT_EQ(gameObject->Type, PlayerType);	
 }
 
 TEST_F(GameDataManagerTests, Deletes_GameObject)
@@ -93,15 +91,12 @@ TEST_F(GameDataManagerTests, Deletes_GameObject)
 	// Put expectations in place that dependencies will be called...
 	EXPECT_CALL(*Player, GetGameObjectType()).Times(testing::AtLeast(1));
 
-	// When receiving an event to add game object to scene
-	Subject->HandleEvent(std::dynamic_pointer_cast<gamelib::Event>(gamelib::EventFactory::CreateAddToSceneEvent(Player)), 0);
-
-	// When receiving an event to remove game object to scene
+	// When receiving an event to add game object to scene, and then getting event to remove it...
+	Subject->HandleEvent(std::dynamic_pointer_cast<gamelib::Event>(GameObjectEventFactory::MakeAddGameObjectToSceneEvent(Player)), 0);
 	Subject->HandleEvent(std::dynamic_pointer_cast<gamelib::Event>(GameObjectEventFactory::MakeRemoveObjectEvent(Player)), 0);
-
-	const auto gameObjects = Subject->GameData()->GameObjects;  // NOLINT(readability-static-accessed-through-instance)
+	
 	// Ensure its removed from the game data
-	EXPECT_EQ(gameObjects.size(), 0) << "Expected 0 game object";
+	EXPECT_EQ(Subject->GameData()->GameObjects.size(), 0) << "Expected 0 game object";
 }
 
 TEST_F(GameDataManagerTests, Subscriber_Name_Is_Correct)
