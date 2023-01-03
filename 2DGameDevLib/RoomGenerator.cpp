@@ -21,7 +21,7 @@ RoomGenerator::RoomGenerator(const int screenWidth, const int screenHeight, cons
 /// <summary>
 /// Generates the Rooms in the Level
 /// </summary>
-vector<shared_ptr<Room>> RoomGenerator::Generate()
+vector<shared_ptr<Room>> RoomGenerator::Generate() const
 {
 	
 	// calculate the dimensions of a room (a square with 4 sides/walls)
@@ -61,7 +61,7 @@ vector<shared_ptr<Room>> RoomGenerator::Generate()
 	return rooms;
 }
 
-void RoomGenerator::ConfigureRooms(std::vector<std::shared_ptr<Room>>& rooms) const
+void RoomGenerator::ConfigureRooms(const std::vector<std::shared_ptr<Room>>& rooms) const
 {
 	const auto totalRooms = static_cast<int>(rooms.size());
 
@@ -144,10 +144,8 @@ void RoomGenerator::RemoveSidesRandomly(const bool& canRemoveTopWall, const std:
 	constexpr uint nSample = 1;
 	std::sample(begin(removableSides), end(removableSides), std::back_inserter(randomSides), nSample, std::mt19937{ std::random_device{}() });
 
-	const auto removeSidesRandomly = removeRandomSides;
-
-	// Removes one side randonly
-	if (removeSidesRandomly)
+	// Removes one side randomly
+	if (removeRandomSides)
 	{
 		const auto aSide = randomSides.front();
 

@@ -18,6 +18,10 @@ class GameData : public gamelib::GameWorldData
 {
 public:
 	static GameData* Get();
+	GameData(const GameData&) = delete; // copy constructor 
+	GameData(const GameData&&) = delete; // move constructor
+	GameData& operator=(const GameData&) = delete; // assignment
+	GameData& operator=(const GameData&&) = delete; // move assignment
 	
 	~GameData() { Instance = nullptr; }
 	void AddRoom(const std::shared_ptr<Room>& room);

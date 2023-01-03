@@ -32,8 +32,8 @@ public:
 	void AddWall(Side wall);
 	void RemoveWallZeroBased(Side wall);
 	void ShouldRoomFill(bool fill_me = false);
-	void DrawWalls(SDL_Renderer* renderer);
-	void DrawLine(SDL_Renderer* renderer, const gamelib::Line& line);
+	void DrawWalls(SDL_Renderer* renderer) const;
+	static void DrawLine(SDL_Renderer* renderer, const gamelib::Line& line);
 	void DrawDiagnostics(SDL_Renderer* renderer);
 	void LoadSettings() override;
 	void Draw(SDL_Renderer* renderer) override;
@@ -42,7 +42,7 @@ public:
 	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
 	gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 	gamelib::ListOfEvents& OnPlayerMoved(std::vector<std::shared_ptr<gamelib::Event>>& generatedEvents);
-	const gamelib::Coordinate<int> GetCenter(int width, int height) const;
+	gamelib::Coordinate<int> GetCenter(int width, int height) const;
 	
 	gamelib::Coordinate<int> GetPosition();
 	int GetNeighbourIndex(Side index) const;
