@@ -26,7 +26,7 @@ bool PlayerMoveStrategy::MovePlayer(const std::shared_ptr<gamelib::IMovement> mo
 	return isMoveValid;
 }
 
-gamelib::coordinate<int> PlayerMoveStrategy::CalculatePlayerMove(const std::shared_ptr<gamelib::IMovement>& movement, const int pixelsToMove) const
+gamelib::Coordinate<int> PlayerMoveStrategy::CalculatePlayerMove(const std::shared_ptr<gamelib::IMovement>& movement, const int pixelsToMove) const
 {
 	int resultingY = player->Position.GetY();
 	int resultingX = player->Position.GetX();
@@ -43,7 +43,7 @@ gamelib::coordinate<int> PlayerMoveStrategy::CalculatePlayerMove(const std::shar
 	return {resultingX, resultingY};
 }
 
-void PlayerMoveStrategy::SetPlayerPosition(const gamelib::coordinate<int> resultingMove) const
+void PlayerMoveStrategy::SetPlayerPosition(const gamelib::Coordinate<int> resultingMove) const
 {
 	player->Position.SetX(resultingMove.GetX());
 	player->Position.SetY(resultingMove.GetY());
@@ -73,7 +73,7 @@ bool PlayerMoveStrategy::CanPlayerMove(const gamelib::Direction direction, const
 	
 	auto IntersectsRectAndLine = [=](const SDL_Rect bounds, gamelib::Line line) -> bool 
 	{
-		return SDL_IntersectRectAndLine(&bounds, &line.x1, &line.y1, &line.x2, &line.y2);
+		return SDL_IntersectRectAndLine(&bounds, &line.X1, &line.Y1, &line.X2, &line.Y2);
 	};
 	
 	if (direction == gamelib::Direction::Right)

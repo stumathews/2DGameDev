@@ -10,10 +10,12 @@
 #include "GameData.h"
 #include <events/EventFactory.h>
 
+#include "util/SettingsManager.h"
+
 using namespace std;
 using namespace gamelib;
 
-Player::Player(const std::string& name, const std::string& type, const coordinate<int> position, const int width,  // NOLINT(cppcoreguidelines-pro-type-member-init)
+Player::Player(const std::string& name, const std::string& type, const Coordinate<int> position, const int width,  // NOLINT(cppcoreguidelines-pro-type-member-init)
                const int height, const std::string
                & identifier)
 	: DrawableGameObject(name, type, position, true)
@@ -53,7 +55,7 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event, const unsigned l
 	ListOfEvents createdEvents;
 	BaseProcessEvent(event, createdEvents, deltaMs);
 	
-	switch (event->type)  // NOLINT(clang-diagnostic-switch-enum)
+	switch (event->Type)  // NOLINT(clang-diagnostic-switch-enum)
 	{		
 		case EventType::ControllerMoveEvent: { return OnControllerMove(event, createdEvents, deltaMs); }
 	case EventType::Fire: { LogMessage("Fire!", verbose); Fire(); } break;
@@ -207,13 +209,13 @@ void Player::BaseProcessEvent(const shared_ptr<Event>& event, ListOfEvents& crea
 void Player::CenterPlayerInRoom(const shared_ptr<Room>& targetRoom)
 {
 	// local func
-	const function<coordinate<int>(Room, Player)> centerPlayerFunc = [](const Room& room, const Player& p)
+	const function<Coordinate<int>(Room, Player)> centerPlayerFunc = [](const Room& room, const Player& p)
 	{
 		auto const room_x_mid = room.GetX() + (room.GetWidth() / 2);
 		auto const room_y_mid = room.GetY() + (room.GetHeight() / 2);
 		auto const x = room_x_mid - p.width / 2;
 		auto const y = room_y_mid - p.height / 2;
-		return coordinate<int>(x, y);
+		return Coordinate<int>(x, y);
 	};
 
 	const auto coords = centerPlayerFunc(*targetRoom, *this);

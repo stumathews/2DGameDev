@@ -42,9 +42,9 @@ public:
 	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
 	gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 	gamelib::ListOfEvents& OnPlayerMoved(std::vector<std::shared_ptr<gamelib::Event>>& generatedEvents);
-	const gamelib::coordinate<int> GetCenter(int width, int height) const;
+	const gamelib::Coordinate<int> GetCenter(int width, int height) const;
 	
-	gamelib::coordinate<int> GetPosition();
+	gamelib::Coordinate<int> GetPosition();
 	int GetNeighbourIndex(Side index) const;
 	int GetX() const;
 	int GetY() const;

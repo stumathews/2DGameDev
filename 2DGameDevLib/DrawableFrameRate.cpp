@@ -26,6 +26,6 @@ void DrawableFrameRate::Update(const float deltaMs)
 
 void DrawableFrameRate::Draw(SDL_Renderer* renderer) 
 {
-	RectDebugging::printInRect(renderer, std::to_string(framesPerSecond) + " FPS", drawBounds, {0,0,0, 0});	
+	RectDebugging::PrintInRect(renderer, std::to_string(framesPerSecond) + " FPS", drawBounds, {0,0,0, 0});	
 }
 

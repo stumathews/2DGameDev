@@ -27,7 +27,7 @@ namespace gamelib
 	{
 		ListOfEvents generated_events;
 
-		switch(event->type)  // NOLINT(clang-diagnostic-switch-enum)
+		switch(event->Type)  // NOLINT(clang-diagnostic-switch-enum)
 		{
 			case EventType::PlayerMovedEventType:	
 			{

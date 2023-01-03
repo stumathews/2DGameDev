@@ -68,10 +68,9 @@ void Level::Load()
 		NumCols = std::strtol(scene->ToElement()->Attribute("cols"), nullptr, 0);
 		NumRows = std::strtol(scene->ToElement()->Attribute("rows"), nullptr, 0);
 
-		auto autoPopulatePickups = scene->ToElement()->Attribute("autoPopulatePickups");
-		if (autoPopulatePickups != nullptr) 
+		if (auto autoPopulatePickups = scene->ToElement()->Attribute("autoPopulatePickups"); autoPopulatePickups != nullptr) 
 		{
-			string strToTransform = string(autoPopulatePickups);
+			auto strToTransform = string(autoPopulatePickups);
 			std::transform(strToTransform.begin(), strToTransform.end(), strToTransform.begin(), ::toupper);
 			isAutoPopulatePickups = strToTransform == "TRUE";
 		}
@@ -167,7 +166,7 @@ shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_pt
 		const auto spriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(resourceId));
 		const auto assetDimensions = spriteAsset->Dimensions;		
 		const auto positionInRoom = room->GetCenter(assetDimensions.GetWidth(), assetDimensions.GetHeight());
-		auto animatedSprite = GameObjectFactory::Get().BuildSprite(name, type, spriteAsset, coordinate<int>(positionInRoom.GetX(), positionInRoom.GetY()), true);
+		auto animatedSprite = GameObjectFactory::Get().BuildSprite(name, type, spriteAsset, Coordinate<int>(positionInRoom.GetX(), positionInRoom.GetY()), true);
 			
 		if (type == "Player")
 		{

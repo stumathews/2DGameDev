@@ -37,16 +37,16 @@ void Rooms::ConfigureRooms(const int rows, const int columns, std::vector<std::s
 	}
 }
 
-coordinate<int> Rooms::CenterOfRoom(const std::shared_ptr<Room>& room, const int yourWidth, const int yourHeight)
+Coordinate<int> Rooms::CenterOfRoom(const std::shared_ptr<Room>& room, const int yourWidth, const int yourHeight)
 {
 	// local func to the center the player in the given room
-	const std::function<coordinate<int>(Room, int, int)> centerPlayerFunc = [](const Room& inRoom, const int w, const int h)
+	const std::function<Coordinate<int>(Room, int, int)> centerPlayerFunc = [](const Room& inRoom, const int w, const int h)
 	{
 		auto const room_x_mid = inRoom.GetX() + (inRoom.GetWidth() / 2);
 		auto const room_y_mid = inRoom.GetY() + (inRoom.GetHeight() / 2);
 		auto const x = room_x_mid - w / 2;
 		auto const y = room_y_mid - h / 2;
-		return coordinate<int>(x, y);
+		return Coordinate<int>(x, y);
 	};
 
 	return centerPlayerFunc(*room, yourWidth, yourHeight);

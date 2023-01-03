@@ -5,12 +5,13 @@
 #include <sstream>
 #include "SideUtils.h"
 #include "GameData.h"
+#include "util/SettingsManager.h"
 
 using namespace std;
 using namespace gamelib;
 
 Room::Room(const string& name, const string& type, const int number, const int x, const int y, const int width, const int height, const bool fill) 
-	: DrawableGameObject(name, type, coordinate<int>(x, y), true)
+	: DrawableGameObject(name, type, Coordinate<int>(x, y), true)
 {
 	this->Bounds = { x, y, width, height };	
 	this->Width = width;
@@ -58,20 +59,20 @@ void Room::SetupWalls()
 	const auto dx = rect.GetDx(); const auto dy = rect.GetDy();
 
 	// Top wall line geometry
-	TopLine.x1 = ax; TopLine.y1 = ay;
-	TopLine.x2 = bx; TopLine.y2 = by;
+	TopLine.X1 = ax; TopLine.Y1 = ay;
+	TopLine.X2 = bx; TopLine.Y2 = by;
 
 	// Right wall line geometry
-	RightLine.x1 = bx; RightLine.y1 = by;
-	RightLine.x2 = cx; RightLine.y2 = cy;
+	RightLine.X1 = bx; RightLine.Y1 = by;
+	RightLine.X2 = cx; RightLine.Y2 = cy;
 
 	// Bottom wall line geometry
-	BottomLine.x1 = cx; BottomLine.y1 = cy;
-	BottomLine.x2 = dx; BottomLine.y2 = dy;
+	BottomLine.X1 = cx; BottomLine.Y1 = cy;
+	BottomLine.X2 = dx; BottomLine.Y2 = dy;
 
 	// Left wall line geometry
-	LeftLine.x1 = dx; LeftLine.y1 = dy;
-	LeftLine.x2 = ax; LeftLine.y2 = ay;
+	LeftLine.X1 = dx; LeftLine.Y1 = dy;
+	LeftLine.X2 = ax; LeftLine.Y2 = ay;
 
 	// All walls are present by default
 	walls[0] = walls[1] = walls[2] = walls[3] = IsLeftWalled = IsTopWalled = IsRightWalled = IsBottomWalled = true;
@@ -81,7 +82,7 @@ ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, const unsigne
 {	
 	auto generatedEvents(GameObject::HandleEvent(event, deltaMs));
 
-	switch(event->type)  // NOLINT(clang-diagnostic-switch-enum)
+	switch(event->Type)  // NOLINT(clang-diagnostic-switch-enum)
 	{
 		case EventType::PlayerMovedEventType: { OnPlayerMoved(generatedEvents); }
 		break;
@@ -117,7 +118,7 @@ void Room::DrawWalls(SDL_Renderer* renderer)
 	if (HasLeftWall()) { DrawLine(renderer, LeftLine); }
 }
 
-void Room::DrawLine(SDL_Renderer* renderer, const Line& line) { SDL_RenderDrawLine(renderer, line.x1, line.y1, line.x2, line.y2); }
+void Room::DrawLine(SDL_Renderer* renderer, const Line& line) { SDL_RenderDrawLine(renderer, line.X1, line.Y1, line.X2, line.Y2); }
 
 void Room::DrawDiagnostics(SDL_Renderer* renderer)
 {
@@ -135,12 +136,12 @@ void Room::DrawDiagnostics(SDL_Renderer* renderer)
 			if(RoomNumber == playerRoom->topRoomIndex || RoomNumber == playerRoom->rightRoomIndex || 
 			   RoomNumber == playerRoom->bottomRoomIndex || RoomNumber == playerRoom->leftRoomIndex)
 			{
-				RectDebugging::printInRect(renderer, GetTag(), &Bounds, Yellow);
+				RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, Yellow);
 			}
 
-			if(RoomNumber == player->CurrentRoom->RoomNumber) { RectDebugging::printInRect(renderer, GetTag(), &Bounds, Red); }			
+			if(RoomNumber == player->CurrentRoom->RoomNumber) { RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, Red); }			
 		}
-		else { RectDebugging::printInRect(renderer, GetTag(), &Bounds, Yellow); }
+		else { RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, Yellow); }
 	}
 	
 	if(drawHotSpot)
@@ -197,7 +198,7 @@ bool Room::HasRightWall() const { return IsWalled(Side::Right); }
 void Room::Update(float deltaMs) { }
 
 ABCDRectangle& Room::GetABCDRectangle() { return abcd; }
-coordinate<int> Room::GetPosition() { return GetABCDRectangle().GetCenter(); }
+Coordinate<int> Room::GetPosition() { return GetABCDRectangle().GetCenter(); }
 int Room::GetRoomNumber() const { return RoomNumber; }
 int Room::GetRowNumber(const int MaxCols) const { return GetRoomNumber() / MaxCols; }
 
@@ -221,13 +222,13 @@ void Room::SetSorroundingRooms(const int top_index, const int right_index, const
 	this->leftRoomIndex = left_index;
 }
 
-const coordinate<int> Room::GetCenter(const int w, const int h) const
+const Coordinate<int> Room::GetCenter(const int w, const int h) const
 {
 	auto const room_x_mid = GetX() + (GetWidth() / 2);
 	auto const room_y_mid = GetY() + (GetHeight() / 2);
 	auto const x = room_x_mid - w /2;
 	auto const y = room_y_mid - h /2;			
-	return coordinate<int>(x, y);
+	return Coordinate<int>(x, y);
 }
 
 int Room::GetNeighbourIndex(const Side index) const

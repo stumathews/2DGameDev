@@ -19,7 +19,7 @@ namespace gamelib
 		/// Create a new pickup at specific coordinates
 		/// </summary>
 		Pickup(const std::string name, const std::string type, const int x, const int y, const int width, const int height, bool visible, const int inRoomNumber) 
-			: DrawableGameObject(name, type, gamelib::coordinate<int>(x, y), IsVisible)
+			: DrawableGameObject(name, type, gamelib::Coordinate<int>(x, y), IsVisible)
 		{
 			this->width = width;
 			this->height = height;

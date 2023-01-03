@@ -53,7 +53,7 @@ bool LevelManager::Initialize()
 
 ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event> evt, const unsigned long inDeltaMs)
 {
-	switch(evt->type)  // NOLINT(clang-diagnostic-switch-enum)
+	switch(evt->Type)  // NOLINT(clang-diagnostic-switch-enum)
 	{
 		case EventType::LevelChangedEventType: { OnLevelChanged(evt); } break;
 		case EventType::UpdateProcesses: { processManager.UpdateProcesses(inDeltaMs); } break;
@@ -106,7 +106,7 @@ void LevelManager::RemoveAllGameObjects()
 
 void LevelManager::OnLevelChanged(const std::shared_ptr<Event>& evt) const
 {
-	switch(dynamic_pointer_cast<SceneChangedEvent>(evt)->scene_id)
+	switch(dynamic_pointer_cast<SceneChangedEvent>(evt)->SceneId)
 	{
 		case 1: PlayLevelMusic("LevelMusic1"); break;
 		case 2: PlayLevelMusic("LevelMusic2"); break;
@@ -298,7 +298,7 @@ void LevelManager::InitializePlayer(const std::shared_ptr<Player>& inPlayer, con
                                     spriteAsset) const
 {
 	inPlayer->SetMoveStrategy(std::make_shared<PlayerMoveStrategy>(inPlayer, 2));
-	inPlayer->SetTag(constants::playerTag);
+	inPlayer->SetTag(constants::PlayerTag);
 	inPlayer->LoadSettings();
 	inPlayer->SetSprite(AnimatedSprite::Create(inPlayer->Position, spriteAsset));
 

@@ -18,7 +18,7 @@ void GameDataManager::Initialize()
 
 std::vector<std::shared_ptr<Event>> GameDataManager::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
 {
-	switch (evt->type)  // NOLINT(clang-diagnostic-switch-enum)
+	switch (evt->Type)  // NOLINT(clang-diagnostic-switch-enum)
 	{
 		case EventType::AddGameObjectToCurrentScene: AddToGameData(evt); break;
 		case EventType::GameObject: RemoveFromGameData(evt); break;
@@ -59,9 +59,9 @@ void GameDataManager::AddToGameData(const std::shared_ptr<Event>& evt) const
 void GameDataManager::RemoveFromGameData(const std::shared_ptr<Event>& evt)
 {
 	const auto gameObjectEvent = dynamic_pointer_cast<GameObjectEvent>(evt);
-	switch (gameObjectEvent->context)  // NOLINT(clang-diagnostic-switch-enum)
+	switch (gameObjectEvent->Context)  // NOLINT(clang-diagnostic-switch-enum)
 	{
-		case GameObjectEventContext::Remove: RemoveGameObject(gameObjectEvent->gameObject); break;
+		case GameObjectEventContext::Remove: RemoveGameObject(gameObjectEvent->GameObject); break;
 		default: /* Do Nothing */;
 	}
 

@@ -22,7 +22,7 @@ class Player final : public gamelib::DrawableGameObject
 {		
 public:
 		
-	Player(const std::string& name, const std::string& type, gamelib::coordinate<int> position, int width,
+	Player(const std::string& name, const std::string& type, gamelib::Coordinate<int> position, int width,
 	       int height, const std::string
 	       & identifier);
 	Player(const std::string& name, const std::string& type, const std::shared_ptr<Room>& playerRoom, int playerWidth, int playerHeight,

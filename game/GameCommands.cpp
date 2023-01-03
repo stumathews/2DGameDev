@@ -4,7 +4,7 @@
 #include "events/ControllerMoveEvent.h"
 #include "events/SceneChangedEvent.h"
 #include "scene/SceneManager.h"
-#include <events/NetworkTrafficRecievedEvent.h>
+#include <events/NetworkTrafficReceivedEvent.h>
 #include <sstream>
 #include <net/NetworkManager.h>
 #include <events/StartNetworkLevelEvent.h>
@@ -148,16 +148,16 @@ void GameCommands::PingGameServer() { NetworkManager::Get()->PingGameServer(); }
 
 std::vector<std::shared_ptr<Event>> GameCommands::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
 {
-	switch (evt->type)
+	switch (evt->Type)
 	{
 	case EventType::NetworkPlayerJoined: { Logger::Get()->LogThis("--------------------------- Network Player joined"); } break;
 	case EventType::NetworkTrafficReceived: 
 	{ 
-		auto networkPlayerTrafficReceivedEvent = dynamic_pointer_cast<NetworkTrafficRecievedEvent>(evt);
+		auto networkPlayerTrafficReceivedEvent = dynamic_pointer_cast<NetworkTrafficReceivedEvent>(evt);
 		std::stringstream message;
 		message << "--------------------------- Network traffic received: " 
 			    << networkPlayerTrafficReceivedEvent->Identifier << " Bytes received: "
-			    << networkPlayerTrafficReceivedEvent->bytesReceived << " Message: " << networkPlayerTrafficReceivedEvent->Message;
+			    << networkPlayerTrafficReceivedEvent->BytesReceived << " Message: " << networkPlayerTrafficReceivedEvent->Message;
 		    
 		Logger::Get()->LogThis(message.str());
 	}
