@@ -4,6 +4,8 @@
 #include <vector>
 #include <objects/GameWorldData.h>
 
+#include "Npc.h"
+
 namespace gamelib 
 {
 	class GameObject;
@@ -30,6 +32,8 @@ public:
 	void RemoveRoom(const std::shared_ptr<Room>& room);
 	void AddPickup(std::shared_ptr<gamelib::Pickup> pickup);
 	void RemovePickup(const std::shared_ptr<gamelib::Pickup>& pickup);
+	void AddNpc(std::shared_ptr<Npc> npc);
+	void RemoveNpc(const std::shared_ptr<Npc>& npc);
 	
 	std::shared_ptr<Room> GetRoomByIndex(int roomNumber);
 	[[nodiscard]] std::shared_ptr<Player> GetPlayer() const;
@@ -49,6 +53,7 @@ private:
 	bool isGameWon;
 	std::map<int, std::weak_ptr<Room>> rooms;
 	std::vector<std::weak_ptr<gamelib::Pickup>> pickups;
+	std::vector<std::weak_ptr<Npc>> npcs;
 	
 };
 

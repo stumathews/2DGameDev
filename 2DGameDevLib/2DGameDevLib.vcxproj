@@ -159,7 +159,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CharacterBuilder.h" />
     <ClInclude Include="GameDataManager.h" />
+    <ClInclude Include="Npc.h" />
     <ClInclude Include="PlayerMoveStrategy.h" />
     <ClInclude Include="DrawableFrameRate.h" />
     <ClInclude Include="GameData.h" />
@@ -178,8 +180,10 @@
     <ClInclude Include="SideUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CharacterBuilder.cpp" />
     <ClCompile Include="DrawableFrameRate.cpp" />
     <ClCompile Include="GameDataManager.cpp" />
+    <ClCompile Include="Npc.cpp" />
     <ClCompile Include="PlayerMoveStrategy.cpp" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="Level.cpp" />

@@ -27,9 +27,10 @@ public:
 	       & identifier);
 	Player(const std::string& name, const std::string& type, const std::shared_ptr<Room>& playerRoom, int playerWidth, int playerHeight,
 	       const std::string& identifier);
+
+	Player(const std::string& name, const std::string& type, const std::shared_ptr<Room>& playerRoom, const std::string& identifier);
 	
 	void LoadSettings() override;
-	void CenterPlayerInRoom(const std::shared_ptr<Room>& targetRoom);
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 	[[nodiscard]] std::shared_ptr<Room> GetTopRoom() const { return GetAdjacentRoomTo(GetCurrentRoom(), Side::Top); }
 	[[nodiscard]] std::shared_ptr<Room> GetBottomRoom() const { return GetAdjacentRoomTo(GetCurrentRoom(), Side::Bottom); }
@@ -38,7 +39,7 @@ public:
 	[[nodiscard]] std::shared_ptr<Room> GetCurrentRoom() const;
 	static std::shared_ptr<Room> GetRoomByIndex(int index);
 	static std::shared_ptr<Room> GetAdjacentRoomTo(const std::shared_ptr<Room>& currentRoom, Side side);	
-	std::string GetName() override { return Identifier; }
+	std::string GetName() override { return Name; }
 	[[nodiscard]] std::string GetSpriteAnimationFrameGroupForPlayer() const;
 	void Fire();
 	void OnGameWon();
@@ -46,28 +47,31 @@ public:
 	void RemoveRightWall() const;
 	void RemoveLeftWall() const;
 	void RemoveBottomWall() const;
-	void RemoveTopWall() const;
-	void BaseProcessEvent(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents, unsigned long deltaMs);
+	void RemoveTopWall() const;	
 	void SetPlayerDirection(gamelib::Direction direction);	
 	void Update(float deltaMs) override;
 	void Draw(SDL_Renderer* renderer) override;
-	[[nodiscard]] bool PlayerHasPendingMoves() const;
+
 	[[nodiscard]] bool IsWithinRoom(const std::shared_ptr<Room>& room) const;
 	void SetPlayerRoom(const std::shared_ptr<Room>& room);
-	void SetSprite(const std::shared_ptr<gamelib::AnimatedSprite>& inSprite) { sprite = inSprite; }
+	void SetSprite(const std::shared_ptr<gamelib::AnimatedSprite>& inSprite);
 	void SetMoveStrategy(const std::shared_ptr<IPlayerMoveStrategy>& inMoveStrategy) { moveStrategy = inMoveStrategy; }
 	[[nodiscard]] int GetHotSpotLength() const { return hotspotSize; }
 	[[nodiscard]] int GetWidth() const { return width; }
 	[[nodiscard]] int GetHeight() const { return height; }
 	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
-	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents, unsigned long deltaMs);
-
+	
 	std::shared_ptr<Room> CurrentRoom;	
 	std::string Identifier;
 	std::shared_ptr<gamelib::Hotspot> Hotspot;
 
 private:
-	void commonInit(int playerWidth, int playerHeight, const std::string& inIdentifier);
+	void CommonInit(int playerWidth, int playerHeight, const std::string& inIdentifier);
+	void CenterPlayerInRoom(const std::shared_ptr<Room>& targetRoom);
+	void BaseProcessEvent(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents, unsigned long deltaMs);
+	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents, unsigned long deltaMs);
+	[[nodiscard]] bool PlayerHasPendingMoves() const;
+
 	int pixelsToMove = 0;
 	std::shared_ptr<gamelib::AnimatedSprite> sprite;
 	int width{};

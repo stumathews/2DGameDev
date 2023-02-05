@@ -13,6 +13,8 @@
 #include "DrawableFrameRate.h"
 #include <processes/ProcessManager.h>
 #include <objects/StaticSprite.h>
+
+#include "Npc.h"
 #include "Pickup.h"
 
 typedef std::vector<std::weak_ptr<gamelib::GameObject>> ListOfGameObjects;
@@ -51,6 +53,7 @@ public:
     static std::string GetSetting(const std::string& section, const std::string& settingName);
     std::string GetSubscriberName() override { return "level_manager"; }
     void CreateAutoLevel();
+    void CreateNpc(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId);
     void CreateLevel(const std::string& filename);
     void CreateDrawableFrameRate();
     void CreateHUD(const std::vector<std::shared_ptr<Room>>& inRooms, const std::shared_ptr<Player>& inPlayer);
@@ -68,9 +71,8 @@ protected:
 private:
     void AddGameObjectToScene(const std::shared_ptr<gamelib::GameObject>& gameObject);
     void OnGameWon();
-    void CreatePlayer(const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<gamelib::SpriteAsset>&
-                      playerSpriteAsset);
-    void CreateAutoPickups(const std::vector<std::shared_ptr<Room>>& rooms, const int w, const int h);
+    void CreatePlayer(const std::vector<std::shared_ptr<Room>>& rooms, const int resourceId);
+    void CreateAutoPickups(const std::vector<std::shared_ptr<Room>>& rooms);
     static size_t GetRandomIndex(const int min, const int max) { return rand() % (max - min + 1) + min; }   
 
     bool _verbose;
@@ -86,5 +88,6 @@ private:
     std::shared_ptr<DrawableFrameRate> drawableFrameRate;
     std::shared_ptr<GameCommands> _gameCommands;
     std::shared_ptr<Player> player;
+    std::shared_ptr<Npc> npc;
     std::vector<std::shared_ptr<gamelib::Pickup>> pickups;
 };

@@ -6,6 +6,8 @@
 #include <objects/MultipleInheritableEnableSharedFromThis.h>
 #include <util/Tuple.h>
 
+#include "SpriteAsset.h"
+
 namespace gamelib
 {
 	/// <summary>
@@ -19,10 +21,21 @@ namespace gamelib
 		/// Create a new pickup at specific coordinates
 		/// </summary>
 		Pickup(const std::string name, const std::string type, const int x, const int y, const int width, const int height, bool visible, const int inRoomNumber) 
-			: DrawableGameObject(name, type, gamelib::Coordinate<int>(x, y), IsVisible)
-		{
+			: DrawableGameObject(name, type, gamelib::Coordinate<int>(x, y), visible)
+		{			
+			this->IsVisible = visible;
 			this->width = width;
 			this->height = height;
+			this->RoomNumber = inRoomNumber;
+		}
+
+		Pickup(const std::string name, const std::string type, const int x, const int y, bool visible, const int inRoomNumber, const std::shared_ptr<SpriteAsset> asset) 
+			: DrawableGameObject(name, type, gamelib::Coordinate<int>(x, y), visible)
+		{
+			this->IsVisible = visible;
+			this->Asset = asset;
+			this->width = asset->Dimensions.GetWidth();
+			this->height = asset->Dimensions.GetHeight();
 			this->RoomNumber = inRoomNumber;
 		}
 		
@@ -31,7 +44,8 @@ namespace gamelib
 		/// </summary>
 		/// <param name="visible">initial visible state</param>
 		Pickup(const bool visible) : DrawableGameObject(0, 0, visible)
-		{
+		{			
+			this->IsVisible = visible;
 			this->width = 0;
 			this->height = 0;
 			this->RoomNumber = 0;
@@ -88,6 +102,8 @@ namespace gamelib
 		///  Update Pickup
 		/// </summary>
 		void Update(float deltaMs) override;
+
+		std::shared_ptr<Asset> Asset;
 
 	protected:
 		

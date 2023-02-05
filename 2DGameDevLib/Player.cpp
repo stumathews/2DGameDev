@@ -20,7 +20,7 @@ Player::Player(const std::string& name, const std::string& type, const Coordinat
                & identifier)
 	: DrawableGameObject(name, type, position, true)
 {
-	commonInit(width, height, identifier); 
+	CommonInit(width, height, identifier); 
 }
 
 Player::Player(const std::string& name, const std::string& type, const std::shared_ptr<Room>& playerRoom,  // NOLINT(cppcoreguidelines-pro-type-member-init)
@@ -29,12 +29,21 @@ Player::Player(const std::string& name, const std::string& type, const std::shar
                & identifier)
 	: DrawableGameObject(name, type, playerRoom->GetCenter(playerWidth, playerHeight), true)
 {
-	commonInit(playerWidth, playerHeight, identifier);
+	CommonInit(playerWidth, playerHeight, identifier);
 	SetPlayerRoom(playerRoom);
 	CenterPlayerInRoom(playerRoom);
 }
 
-void Player::commonInit(const int inWidth, const int inHeight, const std::string& inIdentifier)
+Player::Player(const std::string& name, const std::string& type, const std::shared_ptr<Room>& playerRoom,
+	const std::string& identifier)
+: DrawableGameObject(name, type, playerRoom->GetCenter(0, 0), true)
+{
+	CommonInit(0, 0, identifier); // Height / Width set by setting the asset
+	SetPlayerRoom(playerRoom);
+	CenterPlayerInRoom(playerRoom);
+}
+
+void Player::CommonInit(const int inWidth, const int inHeight, const std::string& inIdentifier)
 {
 	width = inWidth;
 	height = inHeight;
@@ -43,7 +52,7 @@ void Player::commonInit(const int inWidth, const int inHeight, const std::string
 	currentFacingDirection = this->currentMovingDirection;
 	Identifier = inIdentifier;
 	Hotspot = std::make_shared<gamelib::Hotspot>(Position, width, height, width / 2);
-
+	UpdateBounds(width, height);
 	SubscribeToEvent(EventType::ControllerMoveEvent);
 	SubscribeToEvent(EventType::SettingsReloaded);
 	SubscribeToEvent(EventType::Fire);
@@ -80,7 +89,7 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 	
 	SetPlayerDirection(moveEvent->Direction);
 
-	const auto isValidMove = moveStrategy->MovePlayer(std::shared_ptr<Movement>(new Movement(moveEvent->Direction, pixelsToMove)));
+	const auto isValidMove = moveStrategy->MovePlayer(std::make_shared<Movement>(moveEvent->Direction, pixelsToMove));
 
 	if (!isValidMove) { EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(EventType::InvalidMove), this); }
 
@@ -159,6 +168,14 @@ void Player::SetPlayerRoom(const std::shared_ptr<Room>& room)
 { 
 	playerRoomIndex = room->GetRoomNumber();
 	CurrentRoom = room;
+}
+
+void Player::SetSprite(const std::shared_ptr<gamelib::AnimatedSprite>& inSprite)
+{
+	sprite = inSprite;
+	width = inSprite->Dimensions.GetWidth();
+	height = inSprite->Dimensions.GetHeight();
+	CalculateBounds(Position, width, height);
 }
 
 void Player::RemovePlayerFacingWall()

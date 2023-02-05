@@ -19,13 +19,15 @@ namespace gamelib
 	{		
 		SetBounds();
 
-		_sprite = AnimatedSprite::Create(Position, 
-			dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(stringProperties["assetName"])));
+		_sprite = AnimatedSprite::Create(Position, dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(Asset->name)));
+		width = _sprite->Dimensions.GetWidth();
+		height = _sprite->Dimensions.GetHeight();
+		CalculateBounds(Position, width, height);
 	}
 
 	ListOfEvents Pickup::HandleEvent(const shared_ptr<Event> event, unsigned long deltaMs)
 	{
-		ListOfEvents generated_events;
+		ListOfEvents generatedEvents;
 
 		switch(event->Type)  // NOLINT(clang-diagnostic-switch-enum)
 		{
@@ -37,8 +39,8 @@ namespace gamelib
 				{
 					if (SdlCollisionDetection::IsColliding(&player->Bounds, &Bounds))
 					{
-						generated_events.push_back(make_shared<Event>(EventType::FetchedPickup));
-						generated_events.push_back(make_shared<GameObjectEvent>(shared_from_this(),
+						generatedEvents.push_back(make_shared<Event>(EventType::FetchedPickup));
+						generatedEvents.push_back(make_shared<GameObjectEvent>(shared_from_this(),
 							GameObjectEventContext::Remove));
 					}
 				}
@@ -46,7 +48,7 @@ namespace gamelib
 			break;
 			default: /* Do Nothing */;
 		}
-		return generated_events;
+		return generatedEvents;
 	}
 
 	void Pickup::Draw(SDL_Renderer* renderer)
@@ -63,7 +65,5 @@ namespace gamelib
 
 		// Progress sprite frame time
 		_sprite->Update(deltaMs);
-	}
-
-	
+	}	
 }

@@ -11,10 +11,11 @@
 #include "Player.h"
 #include "pickup.h"
 #include <filesystem>
-
 #include "GameData.h"
 #include "PlayerMoveStrategy.h"
 #include "common/constants.h"
+// ReSharper disable once CppUnusedIncludeDirective
+#include "CharacterBuilder.h"
 #include "events/AddGameObjectToCurrentSceneEvent.h"
 #include "events/EventFactory.h"
 
@@ -147,7 +148,6 @@ void Level::Load()
 					}
 				}
 			}
-
 			Rooms.push_back(room);
 		}
 
@@ -179,42 +179,25 @@ void Level::AddGameObjectToScene(const std::shared_ptr<GameObject>& object)
 }
 
 
-shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_ptr<Room>& room)
+shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_ptr<Room>& room) const
 {
 	const auto attributes = GetNodeAttributes(pObject);
-	string name = attributes.at("name");
-	string type = attributes.at("type");
+	const string name = attributes.at("name");
+	const string type = attributes.at("type");
 	const auto resourceId = stoi(attributes.at("resourceId"));
 
 	shared_ptr<GameObject> gameObject;
 		
 	if (type == "Player" || type == "Pickup")
-	{
-		const auto spriteAsset = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(resourceId));
-		const auto assetDimensions = spriteAsset->Dimensions;		
-		const auto positionInRoom = room->GetCenter(assetDimensions.GetWidth(), assetDimensions.GetHeight());
-		auto animatedSprite = GameObjectFactory::Get().BuildSprite(name, type, spriteAsset, Coordinate<int>(positionInRoom.GetX(), positionInRoom.GetY()), true);
-			
+	{		
 		if (type == "Player")
 		{
-			const auto player = std::make_shared<Player>(name, type, room, assetDimensions.GetWidth(),
-			                                             assetDimensions.GetHeight(), "playerNickName");
-			InitializePlayer(player, spriteAsset);
-
-			gameObject = player;
+			gameObject = CharacterBuilder::BuildPlayer(name, room, resourceId, "playerNickName");
 		}
 
 		if (type == "Pickup")
 		{
-			const auto pickup = std::make_shared<Pickup>(name, type, positionInRoom.GetX(), positionInRoom.GetY(),
-			                                             assetDimensions.GetWidth(), assetDimensions.GetHeight(),
-			                                             true, room->GetRoomNumber());
-			ResourceManager::Get()->IndexResourceFile();
-			pickup->stringProperties["assetName"] = spriteAsset->name;
-			pickup->Initialize();
-			InitializePickups(Pickups);
-
-			gameObject = pickup;
+			gameObject = CharacterBuilder::BuildPickup(name, room, resourceId);
 		}
 	}
 	
@@ -244,8 +227,8 @@ void Level::InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std:
 
 void Level::ParseProperty(XMLNode* pObjectChild, const shared_ptr<GameObject>& go)
 {
-	const auto attributes = GetNodeAttributes(pObjectChild);
-	const auto name = attributes.at("name");
-	const auto value = attributes.at("value");
+	const auto& attributes = GetNodeAttributes(pObjectChild);
+	const auto& name = attributes.at("name");
+	const auto& value = attributes.at("value");
 	go->stringProperties[name] = value;
 }

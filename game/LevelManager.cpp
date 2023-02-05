@@ -19,7 +19,7 @@
 #include <events/Event.h>
 
 // ReSharper disable once CppUnusedIncludeDirective
-#include "events/AddGameObjectToCurrentSceneEvent.h"
+#include "CharacterBuilder.h"
 
 using namespace gamelib;
 using namespace std;
@@ -182,42 +182,51 @@ void LevelManager::GetKeyboardInput() const
 	}
 }
 
-void LevelManager::CreatePlayer(const vector<shared_ptr<Room>> &rooms, const shared_ptr<SpriteAsset>& playerSpriteAsset) 
+void LevelManager::CreatePlayer(const vector<shared_ptr<Room>> &rooms, const int resourceId) 
 {
 	const auto playerNickName = GameData::Get()->IsNetworkGame
-								?  GetSetting("networking", "nickname")
-								: "Player1";
+	?  GetSetting("networking", "nickname")
+	    : "Player1";
 
-	player = std::make_shared<Player>("player1", "playerType", rooms[GetRandomIndex(0, static_cast<int>(rooms.size()) - 1)],
-	                                  playerSpriteAsset->Dimensions.GetWidth(),
-	                                  playerSpriteAsset->Dimensions.GetHeight(), playerNickName);
+	player = CharacterBuilder::BuildPlayer("Player1", rooms[GetRandomIndex(0, static_cast<int>(rooms.size()) - 1)], resourceId, playerNickName);
 
-	InitializePlayer(player, playerSpriteAsset);
 	AddGameObjectToScene(player);
 }
 
-void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms, const int pickupWidth, const int pickupHeight)
+void LevelManager::CreateNpc(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId)
+{
+	npc = CharacterBuilder::BuildNpc("Npc", rooms[GetRandomIndex(0, static_cast<int>(rooms.size()) - 1)], resourceId, "niky");
+	AddGameObjectToScene(npc);
+}
+
+void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms)
 {
 	const auto numPickups = GetIntSetting("global", "numPickups");
 	const auto part = numPickups / 3;
 
 	for(auto i = 0; i < numPickups; i++)
 	{
-		const auto rand_index = GetRandomIndex(0, static_cast<int>(rooms.size())-1);
-		const auto& random_room = rooms[rand_index];
-		const auto positionInRoom = random_room->GetCenter(pickupWidth, pickupHeight);
-		const auto pickupName = string("RoomPickup") + std::to_string(random_room->GetRoomNumber());
-
-		auto pickup = std::make_shared<Pickup>(pickupName, "Pickup", positionInRoom.GetX(),
-		                                       positionInRoom.GetY(), pickupWidth, pickupHeight, true,
-		                                       rand_index);
+		const auto& randomRoom = rooms[GetRandomIndex(0, static_cast<int>(rooms.size())-1)];
+		const auto pickupName = string("RoomPickup") + std::to_string(randomRoom->GetRoomNumber());
 		
-		// Place 3 sets evenly of each type of pickup	
-		if(i < 1 * part)  {	pickup->stringProperties["assetName"] = GetSetting("pickup1", "assetName"); }
-		else if(i >= 1 * part && i < 2 * part) { pickup->stringProperties["assetName"] = GetSetting("pickup2", "assetName"); }
-		else if(i >= 2 * part) { pickup->stringProperties["assetName"] = GetSetting("pickup3", "assetName"); }
+		std::shared_ptr<SpriteAsset> spriteAssert;
 
-		pickup->Initialize();
+		// Place 3 sets evenly of each type of pickup	
+		if(i < 1 * part)
+		{
+			spriteAssert = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(GetSetting("pickup1", "assetName")));
+		}
+		else if(i >= 1 * part && i < 2 * part)
+		{
+			spriteAssert = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(GetSetting("pickup2", "assetName")));
+		}
+		else if(i >= 2 * part)
+		{
+			spriteAssert = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(GetSetting("pickup3", "assetName")));
+		}
+
+		auto pickup = CharacterBuilder::BuildPickup(pickupName, randomRoom, spriteAssert->uid);
+		
 		pickups.push_back(pickup);
 	}
 
@@ -241,12 +250,13 @@ void LevelManager::CreateLevel(const string& filename)
 	const auto& rooms = level->Rooms;
 	InitializeRooms(rooms);	
 
-	CreatePlayer(rooms, dynamic_pointer_cast<SpriteAsset>(GetAsset("edge_player")));	
+	CreatePlayer(rooms, GetAsset("edge_player")->uid);
+	CreateNpc(rooms, GetAsset("snap_player")->uid);
 	CreateHUD(rooms, player);
 
 	if (level->IsAutoPopulatePickups())
 	{
-		CreateAutoPickups(rooms, pickupWidth, pickupHeight);
+		CreateAutoPickups(rooms);
 	}
 
 	CreateDrawableFrameRate();
@@ -274,7 +284,7 @@ void LevelManager::InitializeHudItem(const std::shared_ptr<StaticSprite>& hudIte
 	hudItem->SubscribeToEvent(EventType::PlayerMovedEventType);
 }
 
-void LevelManager::AddGameObjectToScene(const std::shared_ptr<GameObject>& object) { _eventManager->RaiseEvent(std::dynamic_pointer_cast<Event>(_eventFactory->CreateAddToSceneEvent(object)), this); }
+void LevelManager::AddGameObjectToScene(const std::shared_ptr<GameObject>& gameObject) { _eventManager->RaiseEvent(std::dynamic_pointer_cast<Event>(_eventFactory->CreateAddToSceneEvent(gameObject)), this); }
 
 void LevelManager::CreateAutoLevel()
 {
@@ -289,10 +299,12 @@ void LevelManager::CreateAutoLevel()
 	level->Load();
 
 	InitializeRooms(level->Rooms);
-	CreatePlayer(level->Rooms, dynamic_pointer_cast<SpriteAsset>(GetAsset("edge_player")));
-	CreateAutoPickups(level->Rooms, 32, 32);
+	CreatePlayer(level->Rooms, GetAsset("edge_player")->uid);
+	CreateAutoPickups(level->Rooms);
 	CreateHUD(level->Rooms, player);
 }
+
+
 
 void LevelManager::InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<SpriteAsset>&
                                     spriteAsset) const

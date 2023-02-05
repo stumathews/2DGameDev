@@ -43,6 +43,10 @@ void GameDataManager::AddToGameData(const std::shared_ptr<Event>& evt) const
 		{
 			GameData()->AddRoom(std::dynamic_pointer_cast<Room>(object));
 		}
+		if (object->Type == "Npc")
+		{
+			GameData()->AddNpc(std::dynamic_pointer_cast<Npc>(object));
+		}
 	}
 	else 
 	{
@@ -81,6 +85,11 @@ void GameDataManager::RemoveGameObject(const std::shared_ptr<GameObject>& gameOb
 	if (gameObject->Type == "Pickup")
 	{
 		GameData::Get()->RemovePickup(dynamic_pointer_cast<Pickup>(gameObject));
+	}
+	
+	if (gameObject->Type == "Npc")
+	{
+		GameData::Get()->RemoveNpc(dynamic_pointer_cast<Npc>(gameObject));
 	}
 
 	GameData::Get()->RemoveGameObject(gameObject);

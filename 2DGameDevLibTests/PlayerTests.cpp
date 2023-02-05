@@ -1,5 +1,50 @@
 #include "pch.h"
 #include <Player.h>
+#include <memory>
+#include <util/Tuple.h>
+
+using namespace std;
+
+class PlayerTests : public testing::Test 
+{
+public:
+
+	void SetUp() override
+	{
+		
+		
+		Subject = std::make_shared<Player>(playerName, playerType, gamelib::Coordinate<int>{1,2}, 3, 4, identifier);
+		
+	}
+
+	void TearDown() override
+	{
+		
+	}
+	
+	std::shared_ptr<Player> Subject = nullptr;
+	
+protected:
+	string identifier { "identifier" };
+	string playerName { "playerName" };
+	string playerType { "Player" };
+};
+
+TEST_F(PlayerTests, BasicsSetCorrectly)
+{
+	EXPECT_EQ(Subject->GetName(), playerName);
+	EXPECT_EQ(Subject->Identifier, identifier);
+	EXPECT_EQ(Subject->Type, playerType);
+	EXPECT_EQ(Subject->Position.GetX(), 1);
+	EXPECT_EQ(Subject->Position.GetY(), 2);
+	EXPECT_EQ(Subject->Bounds.w, 3);
+	EXPECT_EQ(Subject->Bounds.h, 4);
+	EXPECT_EQ(Subject->Bounds.x, 1);
+	EXPECT_EQ(Subject->Bounds.y, 2);
+	EXPECT_EQ(Subject->GetHeight(), 4);
+	EXPECT_EQ(Subject->GetWidth(), 3);
+	
+}
 
 TEST(PlayerTests, Basic)
 {

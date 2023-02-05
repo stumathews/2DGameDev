@@ -83,20 +83,20 @@
      <colorkey red="255" blue="255" green="255"/>
      <sprite>
       <animation>
-        <keyframes duration="0"> <!-- Wait 0 ms before switching to next frame -->
-          <keyframe x="0" y="0" w="32" h="32" group="up"/>
-          <!--<keyframe x="32" y="0" w="32" h="32" group="up"/>-->
-          <keyframe x="64" y="0" w="32" h="32" group="right"/>
-          <!--<keyframe x="96" y="0" w="32" h="32" group="right"/>-->
-          <keyframe x="128" y="0" w="32" h="32" group="down"/>
-          <!--<keyframe x="160" y="0" w="32" h="32" group="down"/>-->
-          <keyframe x="192" y="0" w="32" h="32" group="left"/>
-          <!--<keyframe x="224" y="0" w="32" h="32" group="left"/>-->
+        <keyframes duration="150"> <!-- Wait 0 ms before switching to next frame -->
+	        <keyframe x="0" y="0" w="32" h="32" group="up"/>
+	        <keyframe x="32" y="0" w="32" h="32" group="up"/>
+	        <keyframe x="64" y="0" w="32" h="32" group="right"/>
+	        <keyframe x="96" y="0" w="32" h="32" group="right"/>
+	        <keyframe x="128" y="0" w="32" h="32" group="down"/>
+	        <keyframe x="160" y="0" w="32" h="32" group="down"/>
+	        <keyframe x="192" y="0" w="32" h="32" group="left"/>
+	        <keyframe x="224" y="0" w="32" h="32" group="left"/>
         </keyframes>
       </animation> 
     </sprite>  
   </Asset>
-	<Asset uid="18" scene="0" name="edge_player" type="graphic" filename="game/assets/character1.png" width="32" height="32">
+	<Asset uid="188" scene="0" name="edge_player" type="graphic" filename="game/assets/character1.png" width="32" height="32">
      <colorkey red="255" blue="255" green="255"/>
      <sprite>
       <animation>
