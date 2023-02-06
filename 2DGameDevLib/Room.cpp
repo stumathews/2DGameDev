@@ -105,7 +105,7 @@ ListOfEvents& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedEvents)
 	const auto playerHotSpotBounds = player->Hotspot->GetBounds();
 	SDL_Rect result;
 	isPlayerWithinRoom = SDL_IntersectRect(&InnerBounds, &playerHotSpotBounds, &result);
-	if(isPlayerWithinRoom) { player->SetPlayerRoom(shared_from_this()); }
+	if(isPlayerWithinRoom) { player->CurrentRoom->SetCurrentRoom(shared_from_this()); }
 
 	return generatedEvents;
 }
@@ -132,14 +132,14 @@ void Room::DrawDiagnostics(SDL_Renderer* renderer)
 
 		if(printDebuggingTextNeighboursOnly)
 		{
-			const auto playerRoom = player->GetCurrentRoom();
+			const auto playerRoom = player->CurrentRoom->GetCurrentRoom();
 			if(RoomNumber == playerRoom->topRoomIndex || RoomNumber == playerRoom->rightRoomIndex || 
 			   RoomNumber == playerRoom->bottomRoomIndex || RoomNumber == playerRoom->leftRoomIndex)
 			{
 				RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, Yellow);
 			}
 
-			if(RoomNumber == player->CurrentRoom->RoomNumber) { RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, red); }			
+			if(RoomNumber == player->CurrentRoom->CurrentRoom->RoomNumber) { RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, red); }			
 		}
 		else { RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, Yellow); }
 	}

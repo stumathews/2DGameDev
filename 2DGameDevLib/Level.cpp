@@ -12,7 +12,6 @@
 #include "pickup.h"
 #include <filesystem>
 #include "GameData.h"
-#include "PlayerMoveStrategy.h"
 #include "common/constants.h"
 // ReSharper disable once CppUnusedIncludeDirective
 #include "CharacterBuilder.h"
@@ -216,7 +215,7 @@ shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_pt
 
 void Level::InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<SpriteAsset>& spriteAsset) const
 {
-	inPlayer->SetMoveStrategy(std::make_shared<PlayerMoveStrategy>(inPlayer, 2));
+	inPlayer->SetMoveStrategy(std::make_shared<GameObjectMoveStrategy>(inPlayer, inPlayer->CurrentRoom));
 	inPlayer->SetTag(constants::PlayerTag);
 	inPlayer->LoadSettings();
 	inPlayer->SetSprite(AnimatedSprite::Create(inPlayer->Position, spriteAsset));

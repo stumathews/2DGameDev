@@ -6,7 +6,6 @@
 #include <memory>
 #include <events/SceneChangedEvent.h>
 #include <objects/GameObjectFactory.h>
-#include "PlayerMoveStrategy.h"
 #include "GameObjectEventFactory.h"
 #include <GameData.h>
 #include <events/NetworkPlayerJoinedEvent.h>
@@ -196,6 +195,7 @@ void LevelManager::CreatePlayer(const vector<shared_ptr<Room>> &rooms, const int
 void LevelManager::CreateNpc(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId)
 {
 	npc = CharacterBuilder::BuildNpc("Npc", rooms[GetRandomIndex(0, static_cast<int>(rooms.size()) - 1)], resourceId, "niky");
+	npc->SetMoveStrategy(std::make_shared<GameObjectMoveStrategy>(npc, npc->CurrentRoom));
 	AddGameObjectToScene(npc);
 }
 
@@ -309,7 +309,7 @@ void LevelManager::CreateAutoLevel()
 void LevelManager::InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<SpriteAsset>&
                                     spriteAsset) const
 {
-	inPlayer->SetMoveStrategy(std::make_shared<PlayerMoveStrategy>(inPlayer, 2));
+	inPlayer->SetMoveStrategy(std::make_shared<GameObjectMoveStrategy>(inPlayer, inPlayer->CurrentRoom));
 	inPlayer->SetTag(constants::PlayerTag);
 	inPlayer->LoadSettings();
 	inPlayer->SetSprite(AnimatedSprite::Create(inPlayer->Position, spriteAsset));

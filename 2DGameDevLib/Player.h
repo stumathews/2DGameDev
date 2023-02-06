@@ -7,11 +7,11 @@
 #include "Room.h"
 #include <ai/FSM.h>
 #include <objects/AnimatedSprite.h>
-#include "MoveStrategy.h"
 #include "util/Tuple.h"
-#include <Movement/Movement.h>
 #include <deque>
 #include <Hotspot.h>
+#include "IGameObjectMoveStrategy.h"
+#include "RoomInfo.h"
 
 typedef std::vector<std::shared_ptr<gamelib::Event>> ListOfEvents;
 typedef std::vector<std::weak_ptr<gamelib::GameObject>> ListOfGameObjects;
@@ -32,18 +32,12 @@ public:
 	
 	void LoadSettings() override;
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
-	[[nodiscard]] std::shared_ptr<Room> GetTopRoom() const { return GetAdjacentRoomTo(GetCurrentRoom(), Side::Top); }
-	[[nodiscard]] std::shared_ptr<Room> GetBottomRoom() const { return GetAdjacentRoomTo(GetCurrentRoom(), Side::Bottom); }
-	[[nodiscard]] std::shared_ptr<Room> GetRightRoom() const { return GetAdjacentRoomTo(GetCurrentRoom(), Side::Right); }
-	[[nodiscard]] std::shared_ptr<Room> GetLeftRoom() const { return GetAdjacentRoomTo(GetCurrentRoom(), Side::Left); }
-	[[nodiscard]] std::shared_ptr<Room> GetCurrentRoom() const;
-	static std::shared_ptr<Room> GetRoomByIndex(int index);
-	static std::shared_ptr<Room> GetAdjacentRoomTo(const std::shared_ptr<Room>& currentRoom, Side side);	
+	
 	std::string GetName() override { return Name; }
 	[[nodiscard]] std::string GetSpriteAnimationFrameGroupForPlayer() const;
-	void Fire();
+	void Fire() const;
 	void OnGameWon();
-	void RemovePlayerFacingWall();
+	void RemovePlayerFacingWall() const;
 	void RemoveRightWall() const;
 	void RemoveLeftWall() const;
 	void RemoveBottomWall() const;
@@ -53,18 +47,16 @@ public:
 	void Draw(SDL_Renderer* renderer) override;
 
 	[[nodiscard]] bool IsWithinRoom(const std::shared_ptr<Room>& room) const;
-	void SetPlayerRoom(const std::shared_ptr<Room>& room);
+
 	void SetSprite(const std::shared_ptr<gamelib::AnimatedSprite>& inSprite);
-	void SetMoveStrategy(const std::shared_ptr<IPlayerMoveStrategy>& inMoveStrategy) { moveStrategy = inMoveStrategy; }
+	void SetMoveStrategy(const std::shared_ptr<IGameObjectMoveStrategy>& inMoveStrategy) { moveStrategy = inMoveStrategy; }
 	[[nodiscard]] int GetHotSpotLength() const { return hotspotSize; }
 	[[nodiscard]] int GetWidth() const { return width; }
 	[[nodiscard]] int GetHeight() const { return height; }
 	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
-	
-	std::shared_ptr<Room> CurrentRoom;	
+	std::shared_ptr<RoomInfo> CurrentRoom;
 	std::string Identifier;
 	std::shared_ptr<gamelib::Hotspot> Hotspot;
-
 private:
 	void CommonInit(int playerWidth, int playerHeight, const std::string& inIdentifier);
 	void CenterPlayerInRoom(const std::shared_ptr<Room>& targetRoom);
@@ -76,14 +68,13 @@ private:
 	std::shared_ptr<gamelib::AnimatedSprite> sprite;
 	int width{};
 	int height{};
-	int playerRoomIndex = 0;
 	bool drawBounds = false;
 	bool hideSprite = false;
 	bool drawHotSpot = false;
 	int hotspotSize = 0;
 	gamelib::Direction currentMovingDirection;
 	gamelib::Direction currentFacingDirection;
-	std::shared_ptr<IPlayerMoveStrategy> moveStrategy;
+	std::shared_ptr<IGameObjectMoveStrategy> moveStrategy;
 	std::deque<std::shared_ptr<gamelib::IMovement>> moveQueue;
 	bool verbose{};
 	bool gameWon = false;

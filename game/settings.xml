@@ -70,7 +70,7 @@
   <audio>
     <setting name="invalid_move" type="string">low.wav</setting>
     <setting name="fetched_pickup" type="string">boop.wav</setting>
-	<setting name="win_music" type="string">win.wav</setting>
+		<setting name="win_music" type="string">win.wav</setting>
   </audio>
   
   <!-- Player settings -->

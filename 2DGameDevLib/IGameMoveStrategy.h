@@ -7,13 +7,13 @@
 class Room;
 class Movement;
 
-class IPlayerMoveStrategy
+class IGameObjectMoveStrategy
 {
 public:
-	virtual ~IPlayerMoveStrategy() = default;
+	virtual ~IGameObjectMoveStrategy() = default;
 	/// <summary>
 	/// Move the player according to the calculated movement
 	/// </summary>
 	/// <returns>true if movement could be performed, false otherwise</returns>
-	virtual bool MovePlayer(std::shared_ptr<gamelib::IMovement> movement) = 0;
+	virtual bool MoveGameObject(std::shared_ptr<gamelib::IMovement> movement) = 0;
 };

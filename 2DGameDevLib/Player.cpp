@@ -10,6 +10,7 @@
 #include "GameData.h"
 #include <events/EventFactory.h>
 
+#include "Movement/Movement.h"
 #include "util/SettingsManager.h"
 
 using namespace std;
@@ -30,16 +31,15 @@ Player::Player(const std::string& name, const std::string& type, const std::shar
 	: DrawableGameObject(name, type, playerRoom->GetCenter(playerWidth, playerHeight), true)
 {
 	CommonInit(playerWidth, playerHeight, identifier);
-	SetPlayerRoom(playerRoom);
+	CurrentRoom->SetCurrentRoom(playerRoom);
 	CenterPlayerInRoom(playerRoom);
 }
 
-Player::Player(const std::string& name, const std::string& type, const std::shared_ptr<Room>& playerRoom,
-	const std::string& identifier)
-: DrawableGameObject(name, type, playerRoom->GetCenter(0, 0), true)
+Player::Player(const std::string& name, const std::string& type, const std::shared_ptr<Room>& playerRoom, const std::string& identifier)
+	: DrawableGameObject(name, type, playerRoom->GetCenter(0, 0), true)
 {
 	CommonInit(0, 0, identifier); // Height / Width set by setting the asset
-	SetPlayerRoom(playerRoom);
+	CurrentRoom->SetCurrentRoom(playerRoom);
 	CenterPlayerInRoom(playerRoom);
 }
 
@@ -52,6 +52,7 @@ void Player::CommonInit(const int inWidth, const int inHeight, const std::string
 	currentFacingDirection = this->currentMovingDirection;
 	Identifier = inIdentifier;
 	Hotspot = std::make_shared<gamelib::Hotspot>(Position, width, height, width / 2);
+	CurrentRoom = make_shared<RoomInfo>();
 	UpdateBounds(width, height);
 	SubscribeToEvent(EventType::ControllerMoveEvent);
 	SubscribeToEvent(EventType::SettingsReloaded);
@@ -89,7 +90,8 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 	
 	SetPlayerDirection(moveEvent->Direction);
 
-	const auto isValidMove = moveStrategy->MovePlayer(std::make_shared<Movement>(moveEvent->Direction, pixelsToMove));
+	// This line actually moves the player by a 'movement'
+	const auto isValidMove = moveStrategy->MoveGameObject(std::make_shared<Movement>(moveEvent->Direction, pixelsToMove));
 
 	if (!isValidMove) { EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(EventType::InvalidMove), this); }
 
@@ -151,10 +153,8 @@ void Player::LoadSettings()
 }
 
 void Player::SetPlayerDirection(const Direction direction) { currentMovingDirection = direction; currentFacingDirection = direction; }
-std::shared_ptr<Room> Player::GetCurrentRoom() const { return GameData::Get()->GetRoomByIndex(playerRoomIndex); }
-std::shared_ptr<Room> Player::GetRoomByIndex(const int index) { return GameData::Get()->GetRoomByIndex(index); }
-shared_ptr<Room> Player::GetAdjacentRoomTo(const shared_ptr<Room>& room, const Side side) { return GameData::Get()->GetRoomByIndex(room->GetNeighbourIndex(side)); }
-void Player::Fire() { RemovePlayerFacingWall(); }
+
+void Player::Fire() const { RemovePlayerFacingWall(); }
 bool Player::PlayerHasPendingMoves() const { return !moveQueue.empty(); }
 
 bool Player::IsWithinRoom(const std::shared_ptr<Room>& room) const
@@ -164,11 +164,7 @@ bool Player::IsWithinRoom(const std::shared_ptr<Room>& room) const
 	return SDL_IntersectRectAndLine(&room->InnerBounds, &x1, &y1, &x1, &y1);
 }
 
-void Player::SetPlayerRoom(const std::shared_ptr<Room>& room) 
-{ 
-	playerRoomIndex = room->GetRoomNumber();
-	CurrentRoom = room;
-}
+
 
 void Player::SetSprite(const std::shared_ptr<gamelib::AnimatedSprite>& inSprite)
 {
@@ -178,7 +174,7 @@ void Player::SetSprite(const std::shared_ptr<gamelib::AnimatedSprite>& inSprite)
 	CalculateBounds(Position, width, height);
 }
 
-void Player::RemovePlayerFacingWall()
+void Player::RemovePlayerFacingWall() const
 {		
 	switch(currentFacingDirection)
 	{
@@ -200,22 +196,22 @@ void Player::RemovePlayerFacingWall()
 
 void Player::RemoveRightWall() const
 {
-	if (const auto rightRoom = GetRightRoom()) { CurrentRoom->RemoveWall(Side::Right); rightRoom->RemoveWall(Side::Left); }
+	if (const auto rightRoom = CurrentRoom->GetRightRoom()) { CurrentRoom->CurrentRoom->RemoveWall(Side::Right); rightRoom->RemoveWall(Side::Left); }
 }
 
 void Player::RemoveLeftWall() const
 {
-	if (const auto leftRoom = GetLeftRoom()) { CurrentRoom->RemoveWall(Side::Left); leftRoom->RemoveWall(Side::Right); }
+	if (const auto leftRoom = CurrentRoom->GetLeftRoom()) { CurrentRoom->CurrentRoom->RemoveWall(Side::Left); leftRoom->RemoveWall(Side::Right); }
 }
 
 void Player::RemoveBottomWall() const
 {
-	if (const auto bottomRoom = GetBottomRoom()) { CurrentRoom->RemoveWall(Side::Bottom); bottomRoom->RemoveWall(Side::Top); }
+	if (const auto bottomRoom = CurrentRoom->GetBottomRoom()) { CurrentRoom->CurrentRoom->RemoveWall(Side::Bottom); bottomRoom->RemoveWall(Side::Top); }
 }
 
 void Player::RemoveTopWall() const
 {
-	if (const auto topRoom = GetTopRoom()) { CurrentRoom->RemoveWall(Side::Top); topRoom->RemoveWall(Side::Bottom); }
+	if (const auto topRoom = CurrentRoom->GetTopRoom()) { CurrentRoom->CurrentRoom->RemoveWall(Side::Top); topRoom->RemoveWall(Side::Bottom); }
 }
 
 void Player::BaseProcessEvent(const shared_ptr<Event>& event, ListOfEvents& createdEvents, const unsigned long deltaMs)
@@ -228,10 +224,10 @@ void Player::CenterPlayerInRoom(const shared_ptr<Room>& targetRoom)
 	// local func
 	const function<Coordinate<int>(Room, Player)> centerPlayerFunc = [](const Room& room, const Player& p)
 	{
-		auto const room_x_mid = room.GetX() + (room.GetWidth() / 2);
-		auto const room_y_mid = room.GetY() + (room.GetHeight() / 2);
-		auto const x = room_x_mid - p.width / 2;
-		auto const y = room_y_mid - p.height / 2;
+		auto const roomXMid = room.GetX() + (room.GetWidth() / 2);
+		auto const roomYMid = room.GetY() + (room.GetHeight() / 2);
+		auto const x = roomXMid - p.width / 2;
+		auto const y = roomYMid - p.height / 2;
 		return Coordinate<int>(x, y);
 	};
 

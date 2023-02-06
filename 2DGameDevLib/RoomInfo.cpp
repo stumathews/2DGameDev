@@ -1,0 +1,14 @@
+#include "pch.h"
+#include "RoomInfo.h"
+#include "GameData.h"
+#include "Room.h"
+
+std::shared_ptr<Room> RoomInfo::GetCurrentRoom() const { return GameData::Get()->GetRoomByIndex(RoomIndex); }
+std::shared_ptr<Room> RoomInfo::GetRoomByIndex(const int index) { return GameData::Get()->GetRoomByIndex(index); }
+std::shared_ptr<Room> RoomInfo::GetAdjacentRoomTo(const std::shared_ptr<Room>& room, const Side side) { return GameData::Get()->GetRoomByIndex(room->GetNeighbourIndex(side)); }
+
+void RoomInfo::SetCurrentRoom(const std::shared_ptr<Room>& room) 
+{ 
+	RoomIndex = room->GetRoomNumber();
+	CurrentRoom = room;
+}

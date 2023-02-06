@@ -35,7 +35,7 @@ namespace gamelib
 			{
 				const auto player = GameData::Get()->GetPlayer();
 
-				if (player->GetCurrentRoom()->GetRoomNumber() == RoomNumber)
+				if (player->CurrentRoom->GetCurrentRoom()->GetRoomNumber() == RoomNumber)
 				{
 					if (SdlCollisionDetection::IsColliding(&player->Bounds, &Bounds))
 					{

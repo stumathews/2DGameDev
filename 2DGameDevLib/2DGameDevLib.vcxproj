@@ -161,14 +161,15 @@
   <ItemGroup>
     <ClInclude Include="CharacterBuilder.h" />
     <ClInclude Include="GameDataManager.h" />
+    <ClInclude Include="RoomInfo.h" />
     <ClInclude Include="Npc.h" />
-    <ClInclude Include="PlayerMoveStrategy.h" />
+    <ClInclude Include="IGameObjectMoveStrategy.h" />
     <ClInclude Include="DrawableFrameRate.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameObjectEventFactory.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="RoomGenerator.h" />
-    <ClInclude Include="MoveStrategy.h" />
+    <ClInclude Include="IGameMoveStrategy.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="pickup.h" />
     <ClInclude Include="Player.h" />
@@ -183,8 +184,9 @@
     <ClCompile Include="CharacterBuilder.cpp" />
     <ClCompile Include="DrawableFrameRate.cpp" />
     <ClCompile Include="GameDataManager.cpp" />
+    <ClCompile Include="RoomInfo.cpp" />
     <ClCompile Include="Npc.cpp" />
-    <ClCompile Include="PlayerMoveStrategy.cpp" />
+    <ClCompile Include="GameObjectMoveStrategy.cpp" />
     <ClCompile Include="GameData.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="RoomGenerator.cpp" />

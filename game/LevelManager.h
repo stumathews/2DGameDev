@@ -89,5 +89,5 @@ private:
     std::shared_ptr<GameCommands> _gameCommands;
     std::shared_ptr<Player> player;
     std::shared_ptr<Npc> npc;
-    std::vector<std::shared_ptr<gamelib::Pickup>> pickups;
+    std::vector<std::shared_ptr<gamelib::Pickup>> pickups;    
 };
