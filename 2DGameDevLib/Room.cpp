@@ -139,7 +139,7 @@ void Room::DrawDiagnostics(SDL_Renderer* renderer)
 				RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, Yellow);
 			}
 
-			if(RoomNumber == player->CurrentRoom->CurrentRoom->RoomNumber) { RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, red); }			
+			if(RoomNumber == player->CurrentRoom->TheRoom->GetRoomNumber()) { RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, red); }			
 		}
 		else { RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, Yellow); }
 	}
@@ -204,12 +204,12 @@ int Room::GetRowNumber(const int MaxCols) const { return GetRoomNumber() / MaxCo
 
 void Room::AddWall(Side wall) { this->walls[static_cast<int>(wall)] = true; 	SetWalled(wall); }
 void Room::RemoveWallZeroBased(Side wall) { this->walls[static_cast<int>(wall)] = false; SetNotWalled(wall); }
-void Room::ShouldRoomFill(const bool fill_me) { fill = fill_me; }
+void Room::ShouldRoomFill(const bool fillMe) { fill = fillMe; }
 
-int Room::GetColumnNumber(const int MaxCols) const
+int Room::GetColumnNumber(const int maxCols) const
 {
-	const auto row = GetRowNumber(MaxCols); // row for this roomNumber
-	const auto rowCol0 = row * MaxCols; // column 0 in this row
+	const auto row = GetRowNumber(maxCols); // row for this roomNumber
+	const auto rowCol0 = row * maxCols; // column 0 in this row
 	const auto col = GetRoomNumber() - rowCol0; // col for this roomNumber
 	return col;
 }
@@ -228,6 +228,15 @@ Coordinate<int> Room::GetCenter(const int w, const int h) const
 	auto const roomYMid = GetY() + (GetHeight() / 2);
 	auto const x = roomXMid - w /2;
 	auto const y = roomYMid - h /2;			
+	return {x, y};
+}
+
+Coordinate<int> Room::GetCenter(const gamelib::ABCDRectangle rectangle) const
+{
+	auto const roomXMid = GetX() + (GetWidth() / 2);
+	auto const roomYMid = GetY() + (GetHeight() / 2);
+	auto const x = roomXMid - rectangle.GetWidth() /2;
+	auto const y = roomYMid - rectangle.GetHeight() /2;			
 	return {x, y};
 }
 

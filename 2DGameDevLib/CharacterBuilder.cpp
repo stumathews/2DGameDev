@@ -11,12 +11,10 @@ std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, c
 {
 	// Get resource/asset
 	const auto spriteAsset = std::dynamic_pointer_cast<gamelib::SpriteAsset>(gamelib::ResourceManager::Get()->GetAssetInfo(resourceId));
-	const auto assetDimensions = spriteAsset->Dimensions;		
-	const auto positionInRoom = room->GetCenter(assetDimensions.GetWidth(), assetDimensions.GetHeight());
 
 	// Build sprite
 	const auto animatedSprite = gamelib::GameObjectFactory::Get().BuildSprite(
-		name, "Player", spriteAsset, gamelib::Coordinate<int>(positionInRoom.GetX(), positionInRoom.GetY()), true);
+		name, "Player", spriteAsset, room->GetCenter(spriteAsset->Dimensions), true);
 
 	// Build player
 	auto player = std::make_shared<Player>(name, "Player", room, nickName);
@@ -34,30 +32,31 @@ std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, c
 }
 
 std::shared_ptr<Npc> CharacterBuilder::BuildNpc(const std::string& name, const std::shared_ptr<Room>& room,
-                                                const int resourceId, const std::string& nick)
+                                                const int resourceId)
 {
-	const auto spriteAsset = std::dynamic_pointer_cast<gamelib::SpriteAsset>(gamelib::ResourceManager::Get()->GetAssetInfo(resourceId));
-	const auto assetDimensions = spriteAsset->Dimensions;		
-	const auto positionInRoom = room->GetCenter(assetDimensions.GetWidth(), assetDimensions.GetHeight());
+	const auto spriteAsset = std::dynamic_pointer_cast<gamelib::SpriteAsset>(
+		gamelib::ResourceManager::Get()->GetAssetInfo(resourceId));
+
+	const auto positionInRoom = room->GetCenter(spriteAsset->Dimensions);
 
 	// Build sprite
 	const auto animatedSprite = gamelib::GameObjectFactory::Get().BuildSprite(
-		name, "Npc", spriteAsset, gamelib::Coordinate<int>(positionInRoom.GetX(), positionInRoom.GetY()), true);
+		name, "Npc", spriteAsset, positionInRoom, true);
 
 	// Build player
-	auto npc = std::make_shared<Npc>(name, "Npc", positionInRoom, true, room->GetRoomNumber());
-	npc->SetSprite(animatedSprite);
+	auto npc = std::make_shared<Npc>(name, "Npc", positionInRoom, true, room, animatedSprite);
+	npc->Initialize();
 	return npc;
 }
 
 
 std::shared_ptr<gamelib::Pickup> CharacterBuilder::BuildPickup(const std::string& name, const std::shared_ptr<Room>& room, const int resourceId)
 {
-	const auto spriteAsset = std::dynamic_pointer_cast<gamelib::SpriteAsset>(gamelib::ResourceManager::Get()->GetAssetInfo(resourceId));
-	const auto assetDimensions = spriteAsset->Dimensions;		
-	const auto positionInRoom = room->GetCenter(assetDimensions.GetWidth(), assetDimensions.GetHeight());
-	auto pickup = std::make_shared<gamelib::Pickup>(name, "Pickup", positionInRoom.GetX(), positionInRoom.GetY(),
-	                                                      true, room->GetRoomNumber(), spriteAsset);
+	const auto spriteAsset = std::dynamic_pointer_cast<gamelib::SpriteAsset>(
+		gamelib::ResourceManager::Get()->GetAssetInfo(resourceId));
+
+	auto pickup = std::make_shared<gamelib::Pickup>(name, "Pickup", room->GetCenter(spriteAsset->Dimensions), true,
+	                                                room->GetRoomNumber(), spriteAsset);
 
 	pickup->Initialize();
 	return pickup;

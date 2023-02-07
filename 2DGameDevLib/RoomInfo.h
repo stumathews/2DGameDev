@@ -7,7 +7,8 @@ class RoomInfo
 {
 public:
 
-	std::shared_ptr<Room> CurrentRoom;	
+	RoomInfo(const std::shared_ptr<Room>& room);
+	std::shared_ptr<Room> TheRoom;	
 	int RoomIndex = 0;
 
 	[[nodiscard]] std::shared_ptr<Room> GetTopRoom() const { return GetAdjacentRoomTo(GetCurrentRoom(), Side::Top); }

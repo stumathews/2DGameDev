@@ -64,7 +64,7 @@ bool GameObjectMoveStrategy::IsValidMove(const std::shared_ptr<gamelib::IMovemen
 	return false;
 }
 
-bool GameObjectMoveStrategy::CanPlayerMove(const gamelib::Direction direction) const
+bool GameObjectMoveStrategy::	CanPlayerMove(const gamelib::Direction direction) const
 {
 	std::shared_ptr<Room> targetRoom;
 	bool touchingBlockingWalls = false, hasValidTargetRoom;
@@ -87,10 +87,12 @@ bool GameObjectMoveStrategy::CanPlayerMove(const gamelib::Direction direction) c
 	{	
 		targetRoom = roomInfo->GetLeftRoom();
 		hasValidTargetRoom = targetRoom != nullptr;
-		
+
+		auto x = (hasValidTargetRoom && targetRoom->HasRightWall() && intersectsRectAndLine(gameObject->Bounds, targetRoom->RightLine));
+		auto y = currentRoom->HasLeftWall() && intersectsRectAndLine(gameObject->Bounds, currentRoom->LeftLine);
 		touchingBlockingWalls =
-			(hasValidTargetRoom && targetRoom->HasRightWall() && intersectsRectAndLine(gameObject->Bounds, targetRoom->RightLine)) ||
-			currentRoom->HasLeftWall() && intersectsRectAndLine(gameObject->Bounds, currentRoom->LeftLine);
+			x ||
+			y;
 	}
 	else if (direction == gamelib::Direction::Up)
 	{

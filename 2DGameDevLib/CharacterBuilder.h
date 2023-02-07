@@ -19,8 +19,7 @@ public:
 	static [[nodiscard]] std::shared_ptr<Player> BuildPlayer(const std::string& name, const std::shared_ptr<Room>& room,
 	                                            int resourceId, const std::string& nickName);
 	static [[nodiscard]] std::shared_ptr<gamelib::Pickup> BuildPickup(const std::string& name, const std::shared_ptr<Room>& room, int resourceId);
-	static std::shared_ptr<Npc> BuildNpc(const std::string& name, const std::shared_ptr<Room>& room, int resourceId,
-	                                     const std::string& nick);
+	static std::shared_ptr<Npc> BuildNpc(const std::string& name, const std::shared_ptr<Room>& room, const int resourceId);
 
 private:
 };

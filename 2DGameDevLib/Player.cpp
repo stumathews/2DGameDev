@@ -31,28 +31,26 @@ Player::Player(const std::string& name, const std::string& type, const std::shar
 	: DrawableGameObject(name, type, playerRoom->GetCenter(playerWidth, playerHeight), true)
 {
 	CommonInit(playerWidth, playerHeight, identifier);
-	CurrentRoom->SetCurrentRoom(playerRoom);
+	CurrentRoom = make_shared<RoomInfo>(playerRoom);
 	CenterPlayerInRoom(playerRoom);
 }
 
-Player::Player(const std::string& name, const std::string& type, const std::shared_ptr<Room>& playerRoom, const std::string& identifier)
+Player::Player(const std::string& name, const std::string& type, const std::shared_ptr<Room>& playerRoom, const std::string& identifier)  // NOLINT(cppcoreguidelines-pro-type-member-init)
 	: DrawableGameObject(name, type, playerRoom->GetCenter(0, 0), true)
 {
 	CommonInit(0, 0, identifier); // Height / Width set by setting the asset
-	CurrentRoom->SetCurrentRoom(playerRoom);
+	CurrentRoom = make_shared<RoomInfo>(playerRoom);
 	CenterPlayerInRoom(playerRoom);
 }
 
-void Player::CommonInit(const int inWidth, const int inHeight, const std::string& inIdentifier)
+void Player::CommonInit(const int playerWidth, const int playerHeight, const std::string& identifier)
 {
-	width = inWidth;
-	height = inHeight;
+	width = playerWidth;
+	height = playerHeight;
 	sprite = nullptr;
 	currentMovingDirection = Direction::Up;
 	currentFacingDirection = this->currentMovingDirection;
-	Identifier = inIdentifier;
-	Hotspot = std::make_shared<gamelib::Hotspot>(Position, width, height, width / 2);
-	CurrentRoom = make_shared<RoomInfo>();
+	Identifier = identifier;
 	UpdateBounds(width, height);
 	SubscribeToEvent(EventType::ControllerMoveEvent);
 	SubscribeToEvent(EventType::SettingsReloaded);
@@ -97,7 +95,7 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 
 	if (sprite) 
 	{
-		sprite->Update(deltaMs, GetSpriteAnimationFrameGroupForPlayer());
+		sprite->Update(deltaMs, AnimatedSprite::GetStdDirectionAnimationFrameGroup(currentFacingDirection));
 		sprite->MoveSprite(Position.GetX(), Position.GetY());
 	}
 
@@ -126,9 +124,9 @@ void Player::Draw(SDL_Renderer* renderer)
 	}
 }
 
-std::string Player::GetSpriteAnimationFrameGroupForPlayer() const
+std::string Player::GetSpriteAnimationFrameGroupForPlayer(const Direction facingDirection)
 {
-	switch (currentFacingDirection)
+	switch (facingDirection)
 	{
 		case Direction::Up: return "up";
 		case Direction::Right: return "right";
@@ -147,7 +145,6 @@ void Player::LoadSettings()
 	verbose = SettingsManager::Get()->GetBool("global", "verbose");
 	pixelsToMove = SettingsManager::Get()->GetInt("player", "pixelsToMove");	
 	hotspotSize = SettingsManager::Get()->GetInt("player", "hotspotSize");
-	Hotspot->Width = hotspotSize;
 	drawHotSpot = SettingsManager::Get()->GetBool("player", "drawHotspot");
 	hideSprite = SettingsManager::Get()->GetBool("player", "hideSprite");
 }
@@ -155,15 +152,6 @@ void Player::LoadSettings()
 void Player::SetPlayerDirection(const Direction direction) { currentMovingDirection = direction; currentFacingDirection = direction; }
 
 void Player::Fire() const { RemovePlayerFacingWall(); }
-bool Player::PlayerHasPendingMoves() const { return !moveQueue.empty(); }
-
-bool Player::IsWithinRoom(const std::shared_ptr<Room>& room) const
-{
-	auto x1 = Hotspot->GetPosition().GetX();
-	auto y1 = Hotspot->GetPosition().GetY();
-	return SDL_IntersectRectAndLine(&room->InnerBounds, &x1, &y1, &x1, &y1);
-}
-
 
 
 void Player::SetSprite(const std::shared_ptr<gamelib::AnimatedSprite>& inSprite)
@@ -171,6 +159,9 @@ void Player::SetSprite(const std::shared_ptr<gamelib::AnimatedSprite>& inSprite)
 	sprite = inSprite;
 	width = inSprite->Dimensions.GetWidth();
 	height = inSprite->Dimensions.GetHeight();
+	
+	Hotspot = std::make_shared<gamelib::Hotspot>(Position, width, height, hotspotSize);
+
 	CalculateBounds(Position, width, height);
 }
 
@@ -196,22 +187,22 @@ void Player::RemovePlayerFacingWall() const
 
 void Player::RemoveRightWall() const
 {
-	if (const auto rightRoom = CurrentRoom->GetRightRoom()) { CurrentRoom->CurrentRoom->RemoveWall(Side::Right); rightRoom->RemoveWall(Side::Left); }
+	if (const auto rightRoom = CurrentRoom->GetRightRoom()) { CurrentRoom->TheRoom->RemoveWall(Side::Right); rightRoom->RemoveWall(Side::Left); }
 }
 
 void Player::RemoveLeftWall() const
 {
-	if (const auto leftRoom = CurrentRoom->GetLeftRoom()) { CurrentRoom->CurrentRoom->RemoveWall(Side::Left); leftRoom->RemoveWall(Side::Right); }
+	if (const auto leftRoom = CurrentRoom->GetLeftRoom()) { CurrentRoom->TheRoom->RemoveWall(Side::Left); leftRoom->RemoveWall(Side::Right); }
 }
 
 void Player::RemoveBottomWall() const
 {
-	if (const auto bottomRoom = CurrentRoom->GetBottomRoom()) { CurrentRoom->CurrentRoom->RemoveWall(Side::Bottom); bottomRoom->RemoveWall(Side::Top); }
+	if (const auto bottomRoom = CurrentRoom->GetBottomRoom()) { CurrentRoom->TheRoom->RemoveWall(Side::Bottom); bottomRoom->RemoveWall(Side::Top); }
 }
 
 void Player::RemoveTopWall() const
 {
-	if (const auto topRoom = CurrentRoom->GetTopRoom()) { CurrentRoom->CurrentRoom->RemoveWall(Side::Top); topRoom->RemoveWall(Side::Bottom); }
+	if (const auto topRoom = CurrentRoom->GetTopRoom()) { CurrentRoom->TheRoom->RemoveWall(Side::Top); topRoom->RemoveWall(Side::Bottom); }
 }
 
 void Player::BaseProcessEvent(const shared_ptr<Event>& event, ListOfEvents& createdEvents, const unsigned long deltaMs)

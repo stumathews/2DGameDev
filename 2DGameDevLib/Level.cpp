@@ -229,5 +229,5 @@ void Level::ParseProperty(XMLNode* pObjectChild, const shared_ptr<GameObject>& g
 	const auto& attributes = GetNodeAttributes(pObjectChild);
 	const auto& name = attributes.at("name");
 	const auto& value = attributes.at("value");
-	go->stringProperties[name] = value;
+	go->StringProperties[name] = value;
 }

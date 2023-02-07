@@ -31,7 +31,7 @@ public:
 	void SetWalled(Side wall);
 	void AddWall(Side wall);
 	void RemoveWallZeroBased(Side wall);
-	void ShouldRoomFill(bool fill_me = false);
+	void ShouldRoomFill(bool fillMe = false);
 	void DrawWalls(SDL_Renderer* renderer) const;
 	static void DrawLine(SDL_Renderer* renderer, const gamelib::Line& line);
 	void DrawDiagnostics(SDL_Renderer* renderer);
@@ -43,7 +43,8 @@ public:
 	gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 	gamelib::ListOfEvents& OnPlayerMoved(std::vector<std::shared_ptr<gamelib::Event>>& generatedEvents);
 	gamelib::Coordinate<int> GetCenter(int width, int height) const;
-	
+	gamelib::Coordinate<int> GetCenter(gamelib::ABCDRectangle rectangle) const;
+
 	gamelib::Coordinate<int> GetPosition();
 	int GetNeighbourIndex(Side index) const;
 	int GetX() const;
@@ -52,7 +53,7 @@ public:
 	int GetHeight() const;
 	int GetRoomNumber() const;
 	int GetRowNumber(int MaxCols) const;
-	int GetColumnNumber(int MaxCols) const;
+	int GetColumnNumber(int maxCols) const;
 
 	std::string GetName() override { return "Room"; }
 

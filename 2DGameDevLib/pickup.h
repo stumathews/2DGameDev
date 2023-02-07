@@ -20,7 +20,7 @@ namespace gamelib
 		/// <summary>
 		/// Create a new pickup at specific coordinates
 		/// </summary>
-		Pickup(const std::string name, const std::string type, const int x, const int y, const int width, const int height, bool visible, const int inRoomNumber) 
+		Pickup(const std::string name, const std::string type, const int x, const int y, const int width, const int height, const bool visible, const int inRoomNumber) 
 			: DrawableGameObject(name, type, gamelib::Coordinate<int>(x, y), visible)
 		{			
 			this->IsVisible = visible;
@@ -29,8 +29,8 @@ namespace gamelib
 			this->RoomNumber = inRoomNumber;
 		}
 
-		Pickup(const std::string name, const std::string type, const int x, const int y, bool visible, const int inRoomNumber, const std::shared_ptr<SpriteAsset> asset) 
-			: DrawableGameObject(name, type, gamelib::Coordinate<int>(x, y), visible)
+		Pickup(const std::string name, const std::string type, const Coordinate<int> startingPoint, const bool visible, const int inRoomNumber, const std::shared_ptr<SpriteAsset> asset) 
+			: DrawableGameObject(name, type, gamelib::Coordinate<int>(startingPoint.GetX(), startingPoint.GetY()), visible)
 		{
 			this->IsVisible = visible;
 			this->Asset = asset;

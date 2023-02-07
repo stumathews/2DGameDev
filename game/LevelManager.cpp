@@ -194,8 +194,7 @@ void LevelManager::CreatePlayer(const vector<shared_ptr<Room>> &rooms, const int
 
 void LevelManager::CreateNpc(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId)
 {
-	npc = CharacterBuilder::BuildNpc("Npc", rooms[GetRandomIndex(0, static_cast<int>(rooms.size()) - 1)], resourceId, "niky");
-	npc->SetMoveStrategy(std::make_shared<GameObjectMoveStrategy>(npc, npc->CurrentRoom));
+	npc = CharacterBuilder::BuildNpc("Npc", rooms[GetRandomIndex(0, static_cast<int>(rooms.size()) - 1)], resourceId);
 	AddGameObjectToScene(npc);
 }
 

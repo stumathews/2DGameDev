@@ -46,7 +46,7 @@ TEST_F(PlayerTests, BasicsSetCorrectly)
 	
 }
 
-TEST(PlayerTests, Basic)
+TEST_F(PlayerTests, Basic)
 {
 	Player player("player1", "Player", gamelib::Coordinate<int>(0,0), 0, 0, "player1");
 	EXPECT_EQ(player.Position.GetX(), 0);
@@ -59,7 +59,7 @@ TEST(PlayerTests, Basic)
 	EXPECT_EQ(player.GetGameObjectType(), gamelib::GameObjectType::GameDefined);		
 }
 
-TEST(PlayerTests, HandleEvents)
+TEST_F(PlayerTests, HandleEvents)
 {
 	Player player("player1", "Player", gamelib::Coordinate<int>(0, 0), 0, 0, "player1");
 }
