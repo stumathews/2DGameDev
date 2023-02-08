@@ -27,7 +27,7 @@ public:
 	{
 	}
 	
-  MOCK_METHOD(void, Update, (float), (override));
+  //MOCK_METHOD(void, Update, (float), (override));
   MOCK_METHOD(void, Draw, (SDL_Renderer*), (override));
   MOCK_METHOD(gamelib::GameObjectType, GetGameObjectType, (), (override));
   MOCK_METHOD(std::string, GetName,(), (override));
