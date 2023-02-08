@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include "util/SettingsManager.h"
 #include "gameWorld.h"
 #include "audio/AudioManager.h"
 #include "graphic/SDLGraphicsManager.h"
@@ -13,7 +12,6 @@
 #include "DrawableFrameRate.h"
 #include <processes/ProcessManager.h>
 #include <objects/StaticSprite.h>
-
 #include "Npc.h"
 #include "Pickup.h"
 
@@ -33,10 +31,10 @@ class LevelManager : public gamelib::EventSubscriber
 public:
 
     static LevelManager* Get();
-    ~LevelManager();
+    ~LevelManager() override;
     
     bool Initialize();
-    bool ChangeLevel(int levelNumber) const;
+    [[nodiscard]] bool ChangeLevel(int levelNumber) const;
     static bool GetBoolSetting(const std::string& section, const std::string& settingName);
     void GetKeyboardInput() const;
     void OnFetchedPickup() const;
@@ -56,7 +54,7 @@ public:
     void CreateNpc(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId);
     void CreateLevel(const std::string& filename);
     void CreateDrawableFrameRate();
-    void CreateHUD(const std::vector<std::shared_ptr<Room>>& inRooms, const std::shared_ptr<Player>& inPlayer);
+    void CreateHud(const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Player>& inPlayer);
     static std::shared_ptr<gamelib::Asset> GetAsset(const std::string& name);
     static int GetIntSetting(const std::string& section, const std::string& settingName);
     std::shared_ptr<Level> GetLevel();
@@ -66,23 +64,20 @@ public:
 
 
 protected:
-    static LevelManager* Instance;
+    static LevelManager* instance;
     
 private:
     void AddGameObjectToScene(const std::shared_ptr<gamelib::GameObject>& gameObject);
     void OnGameWon();
-    void CreatePlayer(const std::vector<std::shared_ptr<Room>>& rooms, const int resourceId);
+    void CreatePlayer(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId);
     void CreateAutoPickups(const std::vector<std::shared_ptr<Room>>& rooms);
-    static size_t GetRandomIndex(const int min, const int max) { return rand() % (max - min + 1) + min; }   
+    static size_t GetRandomIndex(const int min, const int max) { return rand() % (max - min + 1) + min; }     // NOLINT(concurrency-mt-unsafe)
 
-    bool _verbose;
-    int numLevelPickups = 0;
-    unsigned int maxNumLevels = 5;
-    unsigned long deltaMs;
+    bool verbose = false;
     unsigned int currentLevel = 1;
     gamelib::ProcessManager processManager;
-    gamelib::EventManager* _eventManager;
-    gamelib::EventFactory* _eventFactory;
+    gamelib::EventManager* eventManager = nullptr;
+    gamelib::EventFactory* eventFactory = nullptr;
     std::shared_ptr<gamelib::StaticSprite> _hudItem;
     std::shared_ptr<Level> level = nullptr;
     std::shared_ptr<DrawableFrameRate> drawableFrameRate;

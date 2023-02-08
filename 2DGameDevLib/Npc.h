@@ -20,7 +20,7 @@ public:
 		
 	void Draw(SDL_Renderer* renderer) override;
 	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined;}
-	void Update(float deltaMs) override;
+	void Update(unsigned long deltaMs) override;
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 	void SetNpcDirection(gamelib::Direction direction);
 	std::string GetSubscriberName() override { return "Npc";}

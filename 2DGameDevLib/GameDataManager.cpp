@@ -97,4 +97,4 @@ void GameDataManager::RemoveGameObject(const std::shared_ptr<GameObject>& gameOb
 	eventManager->Unsubscribe(gameObject->GetSubscriberId());
 }
 
-GameDataManager* GameDataManager::Instance = nullptr;
+GameDataManager* GameDataManager::instance = nullptr;

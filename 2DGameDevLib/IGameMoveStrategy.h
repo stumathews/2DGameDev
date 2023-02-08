@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
 #include <memory>
-#include <Direction.h>
 #include <movement/IMovement.h>
 
 class Room;

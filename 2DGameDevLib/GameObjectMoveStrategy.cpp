@@ -87,12 +87,10 @@ bool GameObjectMoveStrategy::	CanPlayerMove(const gamelib::Direction direction) 
 	{	
 		targetRoom = roomInfo->GetLeftRoom();
 		hasValidTargetRoom = targetRoom != nullptr;
-
-		auto x = (hasValidTargetRoom && targetRoom->HasRightWall() && intersectsRectAndLine(gameObject->Bounds, targetRoom->RightLine));
-		auto y = currentRoom->HasLeftWall() && intersectsRectAndLine(gameObject->Bounds, currentRoom->LeftLine);
+		
 		touchingBlockingWalls =
-			x ||
-			y;
+			(hasValidTargetRoom && targetRoom->HasRightWall() && intersectsRectAndLine(gameObject->Bounds, targetRoom->RightLine)) ||
+			currentRoom->HasLeftWall() && intersectsRectAndLine(gameObject->Bounds, currentRoom->LeftLine);
 	}
 	else if (direction == gamelib::Direction::Up)
 	{

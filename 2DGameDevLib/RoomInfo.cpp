@@ -11,7 +11,10 @@ RoomInfo::RoomInfo(const std::shared_ptr<Room>& room)
 
 std::shared_ptr<Room> RoomInfo::GetCurrentRoom() const { return GameData::Get()->GetRoomByIndex(RoomIndex); }
 std::shared_ptr<Room> RoomInfo::GetRoomByIndex(const int index) { return GameData::Get()->GetRoomByIndex(index); }
-std::shared_ptr<Room> RoomInfo::GetAdjacentRoomTo(const std::shared_ptr<Room>& room, const Side side) { return GameData::Get()->GetRoomByIndex(room->GetNeighbourIndex(side)); }
+std::shared_ptr<Room> RoomInfo::GetAdjacentRoomTo(const std::shared_ptr<Room>& room, const Side side)
+{
+	return GameData::Get()->GetRoomByIndex(room->GetNeighbourIndex(side));
+}
 
 void RoomInfo::SetCurrentRoom(const std::shared_ptr<Room>& room) 
 { 

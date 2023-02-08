@@ -21,7 +21,7 @@ DrawableGameObject(name, type, position, visible), Sprite(std::move(sprite)), mo
 	SubscribeToEvent(gamelib::EventType::ControllerMoveEvent);
 
 	CurrentRoom = std::make_shared<RoomInfo>(startRoom);
-	SetNpcDirection(gamelib::Direction::Down);
+	currentMovingDirection = currentFacingDirection = gamelib::Direction::Down;
 
 	upState = gamelib::FSMState( []{ gamelib::Logger::Get()->LogThis("NPC Entered Up State");}, []{}, []{gamelib::Logger::Get()->LogThis("NPC Exited Up State");}, "Moving Up" );
 	downState = gamelib::FSMState( []{ gamelib::Logger::Get()->LogThis("NPC Entered Down State");}, []{}, []{gamelib::Logger::Get()->LogThis("NPC Exited Down State");}, "Moving Down" );
@@ -68,7 +68,7 @@ void Npc::Draw(SDL_Renderer* renderer)
 	Sprite->Draw(renderer);
 }
 
-void Npc::Update(float deltaMs)
+void Npc::Update(const unsigned long deltaMs)
 {
 	// temp
 	Sprite->MoveSprite(Position);

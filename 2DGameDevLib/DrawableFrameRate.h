@@ -11,7 +11,7 @@ public:
 	/// Update the frame rate
 	/// </summary>
 	/// <param name="deltaMs"></param>
-	void Update(float deltaMs) override;
+	void Update(unsigned long deltaMs) override;
 
 	/// <summary>
 	/// All game objects can be drawn uniformly
@@ -27,7 +27,7 @@ public:
 	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
 
 private:
-	float accumulatedUpdateTime = 0;
+	unsigned long accumulatedUpdateTime = 0;
 	unsigned int countUpdates = 0;
 	unsigned int framesPerSecond = 0;
 	SDL_Rect* drawBounds = {};

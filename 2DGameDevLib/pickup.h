@@ -20,7 +20,8 @@ namespace gamelib
 		/// <summary>
 		/// Create a new pickup at specific coordinates
 		/// </summary>
-		Pickup(const std::string name, const std::string type, const int x, const int y, const int width, const int height, const bool visible, const int inRoomNumber) 
+		Pickup(const std::string name, const std::string type, const int x, const int y, const int width,
+		       const int height, const bool visible, const int inRoomNumber) 
 			: DrawableGameObject(name, type, gamelib::Coordinate<int>(x, y), visible)
 		{			
 			this->IsVisible = visible;
@@ -29,7 +30,8 @@ namespace gamelib
 			this->RoomNumber = inRoomNumber;
 		}
 
-		Pickup(const std::string name, const std::string type, const Coordinate<int> startingPoint, const bool visible, const int inRoomNumber, const std::shared_ptr<SpriteAsset> asset) 
+		Pickup(const std::string name, const std::string type, const Coordinate<int> startingPoint, const bool visible,
+		       const int inRoomNumber, const std::shared_ptr<SpriteAsset> asset) 
 			: DrawableGameObject(name, type, gamelib::Coordinate<int>(startingPoint.GetX(), startingPoint.GetY()), visible)
 		{
 			this->IsVisible = visible;
@@ -101,8 +103,11 @@ namespace gamelib
 		/// <summary>
 		///  Update Pickup
 		/// </summary>
-		void Update(float deltaMs) override;
+		void Update(unsigned long deltaMs) override;
 
+		/**
+		 * \brief The asset associated with the sprite
+		 */
 		std::shared_ptr<Asset> Asset;
 
 	protected:
@@ -126,6 +131,6 @@ namespace gamelib
 		/// <summary>
 		/// Animated sprite
 		/// </summary>
-		std::shared_ptr<AnimatedSprite> _sprite;
+		std::shared_ptr<AnimatedSprite> sprite;
 	};
 }

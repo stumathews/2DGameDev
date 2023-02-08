@@ -20,7 +20,7 @@ namespace tinyxml2
 class Player;
 class Room;
 
-class Level : public gamelib::EventSubscriber
+class Level final : public gamelib::EventSubscriber
 {
 public:
 	explicit Level(const std::string& filename);

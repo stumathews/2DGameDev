@@ -33,7 +33,6 @@ public:
 	void LoadSettings() override;
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;	
 	std::string GetName() override { return Name; }
-	[[nodiscard]] static std::string GetSpriteAnimationFrameGroupForPlayer(gamelib::Direction facingDirection);
 	void Fire() const;
 	void OnGameWon();
 	void RemovePlayerFacingWall() const;
@@ -42,7 +41,7 @@ public:
 	void RemoveBottomWall() const;
 	void RemoveTopWall() const;	
 	void SetPlayerDirection(gamelib::Direction direction);	
-	void Update(float deltaMs) override;
+	void Update(unsigned long deltaMs) override;
 	void Draw(SDL_Renderer* renderer) override;
 
 	void SetSprite(const std::shared_ptr<gamelib::AnimatedSprite>& inSprite);

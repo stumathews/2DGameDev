@@ -17,7 +17,7 @@ private:
 	bool debug;
 	std::shared_ptr<RoomInfo> roomInfo;
 	void SetPlayerPosition(gamelib::Coordinate<int> resultingMove) const;
-	[[nodiscard]] bool CanPlayerMove(const gamelib::Direction direction) const;
+	[[nodiscard]] bool CanPlayerMove(gamelib::Direction direction) const;
 	[[nodiscard]] gamelib::Coordinate<int> CalculatePlayerMove(const std::shared_ptr<gamelib::IMovement>& movement, int pixelsToMove) const;
 	[[nodiscard]] bool IsValidMove(const std::shared_ptr<gamelib::IMovement>& movement) const;
 	bool ignoreRestrictions;

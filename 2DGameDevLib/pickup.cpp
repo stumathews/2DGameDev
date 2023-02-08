@@ -19,9 +19,9 @@ namespace gamelib
 	{		
 		SetBounds();
 
-		_sprite = AnimatedSprite::Create(Position, dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(Asset->name)));
-		width = _sprite->Dimensions.GetWidth();
-		height = _sprite->Dimensions.GetHeight();
+		sprite = AnimatedSprite::Create(Position, dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(Asset->name)));
+		width = sprite->Dimensions.GetWidth();
+		height = sprite->Dimensions.GetHeight();
 		CalculateBounds(Position, width, height);
 	}
 
@@ -53,17 +53,17 @@ namespace gamelib
 
 	void Pickup::Draw(SDL_Renderer* renderer)
 	{
-		_sprite->Draw(renderer);		
+		sprite->Draw(renderer);		
 	}
 
 	void Pickup::SetBounds() { Bounds = { Position.GetX(), Position.GetY(), width, height }; }
 
-	void Pickup::Update(const float deltaMs)
+	void Pickup::Update(const unsigned long deltaMs)
 	{
-		_sprite->Position.SetX(Position.GetX());
-		_sprite->Position.SetY(Position.GetY());
+		sprite->Position.SetX(Position.GetX());
+		sprite->Position.SetY(Position.GetY());
 
 		// Progress sprite frame time
-		_sprite->Update(deltaMs);
+		sprite->Update(deltaMs);
 	}	
 }

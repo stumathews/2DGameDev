@@ -109,7 +109,7 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 	return createdEvents;
 }
 
-void Player::Update(float deltaMs) { }
+void Player::Update(const unsigned long deltaMs) { }
 
 void Player::Draw(SDL_Renderer* renderer)
 {
@@ -121,19 +121,6 @@ void Player::Draw(SDL_Renderer* renderer)
 		constexpr SDL_Color colour = { 255, 0 ,0 ,0 };
 		SDL_SetRenderDrawColor(renderer, colour.r, colour.g, colour.b, colour.a);
 		SDL_RenderDrawRect(renderer, &Bounds);
-	}
-}
-
-std::string Player::GetSpriteAnimationFrameGroupForPlayer(const Direction facingDirection)
-{
-	switch (facingDirection)
-	{
-		case Direction::Up: return "up";
-		case Direction::Right: return "right";
-		case Direction::Down: return "down";
-		case Direction::Left: return "left";
-		case Direction::None: THROW(0, "Invalid Direction", "Player")
-		default: THROW(0, "Invalid Direction", "Player")  // NOLINT(clang-diagnostic-covered-switch-default)
 	}
 }
 
@@ -154,7 +141,7 @@ void Player::SetPlayerDirection(const Direction direction) { currentMovingDirect
 void Player::Fire() const { RemovePlayerFacingWall(); }
 
 
-void Player::SetSprite(const std::shared_ptr<gamelib::AnimatedSprite>& inSprite)
+void Player::SetSprite(const std::shared_ptr<AnimatedSprite>& inSprite)
 {
 	sprite = inSprite;
 	width = inSprite->Dimensions.GetWidth();

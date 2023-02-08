@@ -7,15 +7,15 @@
 class GameDataManager final : public gamelib::EventSubscriber
 {
 public:
-	static GameDataManager* Get() { if (Instance == nullptr) { Instance = new GameDataManager(); } return Instance; }
-	~GameDataManager() override { Instance = nullptr; }
+	static GameDataManager* Get() { if (instance == nullptr) { instance = new GameDataManager(); } return instance; }
+	~GameDataManager() override { instance = nullptr; }
 
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long deltaMs) override;
 	std::string GetSubscriberName() override { return "GameDataManager"; }
 	static GameData* GameData() { return GameData::Get(); }
 	void Initialize();
 protected:
-	static GameDataManager* Instance;
+	static GameDataManager* instance;
 private:
 	GameDataManager();
 	void AddToGameData(const std::shared_ptr<gamelib::Event>& evt) const;

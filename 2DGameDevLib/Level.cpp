@@ -6,15 +6,14 @@
 #include "Rooms.h"
 #include "RoomGenerator.h"
 #include <objects/GameObject.h>
-#include <objects/GameObjectFactory.h>
 #include <resource/ResourceManager.h>
 #include "Player.h"
 #include "pickup.h"
 #include <filesystem>
 #include "GameData.h"
 #include "common/constants.h"
-// ReSharper disable once CppUnusedIncludeDirective
 #include "CharacterBuilder.h"
+// ReSharper disable once CppUnusedIncludeDirective
 #include "events/AddGameObjectToCurrentSceneEvent.h"
 #include "events/EventFactory.h"
 
@@ -156,9 +155,9 @@ void Level::Load()
 	}
 }
 
-std::vector<std::shared_ptr<gamelib::Event>> Level::HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long deltaMs)
+std::vector<std::shared_ptr<Event>> Level::HandleEvent(std::shared_ptr<Event> evt, unsigned long deltaMs)
 {
-	return std::vector<std::shared_ptr<gamelib::Event>>();
+	return {};
 }
 
 void Level::InitializePickups(const std::vector<std::shared_ptr<Pickup>>& inPickups)

@@ -10,7 +10,7 @@ DrawableFrameRate::DrawableFrameRate(SDL_Rect* bounds)
 	drawBounds = bounds;
 }
 
-void DrawableFrameRate::Update(const float deltaMs) 
+void DrawableFrameRate::Update(const unsigned long deltaMs) 
 {
 	if (accumulatedUpdateTime <= 1000)
 	{

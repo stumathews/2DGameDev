@@ -37,7 +37,7 @@ public:
 	void DrawDiagnostics(SDL_Renderer* renderer);
 	void LoadSettings() override;
 	void Draw(SDL_Renderer* renderer) override;
-	void Update(float deltaMs) override;
+	void Update(unsigned long deltaMs) override;
 
 	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
 	gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
@@ -52,7 +52,7 @@ public:
 	int GetWidth() const;
 	int GetHeight() const;
 	int GetRoomNumber() const;
-	int GetRowNumber(int MaxCols) const;
+	int GetRowNumber(int maxCols) const;
 	int GetColumnNumber(int maxCols) const;
 
 	std::string GetName() override { return "Room"; }
@@ -72,7 +72,7 @@ public:
 
 
 protected:
-	int RoomNumber;
+	int roomNumber;
 	bool walls[4]{};
 	gamelib::ABCDRectangle abcd{};
 	gamelib::ABCDRectangle& GetABCDRectangle();
@@ -80,8 +80,8 @@ protected:
 	int rightRoomIndex;
 	int bottomRoomIndex; 
 	int leftRoomIndex;
-	int Width;
-	int Height;	
+	int width;
+	int height;	
 
 private:	
 	bool isPlayerWithinRoom = false;

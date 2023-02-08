@@ -85,7 +85,7 @@ void GameCommands::LoadNewLevel(const int level)
 		default: { LevelManager::Get()->CreateAutoLevel(); } break;
 	}
 
-	RaiseChangedLevel(_verbose, level);	
+	RaiseChangedLevel(_verbose, static_cast<short>(level));	
 }
 
 void GameCommands::ToggleMusic(const bool verbose) const
@@ -139,7 +139,7 @@ void GameCommands::StartNetworkLevel()
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: StartNetworkLevel", _verbose); }
 
 	// Ask the LevelManager to prepare a level description and pass that to StartNetworkLevelEvent
-	// and let that propogate to all players
+	// and let that propagate to all players
 
 	EventManager::Get()->RaiseEvent(std::make_unique<StartNetworkLevelEvent>(1), this);
 }
@@ -148,12 +148,12 @@ void GameCommands::PingGameServer() { NetworkManager::Get()->PingGameServer(); }
 
 std::vector<std::shared_ptr<Event>> GameCommands::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
 {
-	switch (evt->Type)
+	switch (evt->Type)  // NOLINT(clang-diagnostic-switch-enum)
 	{
 	case EventType::NetworkPlayerJoined: { Logger::Get()->LogThis("--------------------------- Network Player joined"); } break;
 	case EventType::NetworkTrafficReceived: 
-	{ 
-		auto networkPlayerTrafficReceivedEvent = dynamic_pointer_cast<NetworkTrafficReceivedEvent>(evt);
+	{
+		const auto networkPlayerTrafficReceivedEvent = dynamic_pointer_cast<NetworkTrafficReceivedEvent>(evt);
 		std::stringstream message;
 		message << "--------------------------- Network traffic received: " 
 			    << networkPlayerTrafficReceivedEvent->Identifier << " Bytes received: "
@@ -165,6 +165,6 @@ std::vector<std::shared_ptr<Event>> GameCommands::HandleEvent(const std::shared_
 	default: return {};
 	}
 
-	// Dont currently handle any events yet
+	// Don't currently handle any events yet
 	return {};
 }
