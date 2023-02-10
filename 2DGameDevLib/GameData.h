@@ -4,7 +4,7 @@
 #include <vector>
 #include <objects/GameWorldData.h>
 
-#include "Npc.h"
+#include "Enemy.h"
 
 namespace gamelib 
 {
@@ -32,8 +32,8 @@ public:
 	void RemoveRoom(const std::shared_ptr<Room>& room);
 	void AddPickup(std::shared_ptr<gamelib::Pickup> pickup);
 	void RemovePickup(const std::shared_ptr<gamelib::Pickup>& pickup);
-	void AddNpc(std::shared_ptr<Npc> npc);
-	void RemoveNpc(const std::shared_ptr<Npc>& npc);
+	void AddEnemy(std::shared_ptr<Enemy> Enemy);
+	void RemoveEnemy(const std::shared_ptr<Enemy>& Enemy);
 	
 	std::shared_ptr<Room> GetRoomByIndex(int roomNumber);
 	[[nodiscard]] std::shared_ptr<Player> GetPlayer() const;
@@ -45,6 +45,7 @@ public:
 	void RemoveExpiredReferences();
 
 	std::vector<std::weak_ptr<gamelib::GameObject>> GameObjects;
+	std::vector<std::weak_ptr<Enemy>> Enemies() { return enemies;}
 protected:
 	GameData();
 	static GameData* instance;
@@ -53,7 +54,7 @@ private:
 	bool isGameWon;
 	std::map<int, std::weak_ptr<Room>> rooms;
 	std::vector<std::weak_ptr<gamelib::Pickup>> pickups;
-	std::vector<std::weak_ptr<Npc>> npcs;
+	std::vector<std::weak_ptr<Enemy>> enemies;
 	
 };
 

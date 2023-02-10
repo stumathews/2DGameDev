@@ -14,6 +14,7 @@
 #include "common/constants.h"
 #include "CharacterBuilder.h"
 // ReSharper disable once CppUnusedIncludeDirective
+#include "GameObjectMoveStrategy.h"
 #include "events/AddGameObjectToCurrentSceneEvent.h"
 #include "events/EventFactory.h"
 

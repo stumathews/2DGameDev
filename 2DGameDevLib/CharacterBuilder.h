@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
-#include "Npc.h"
+
+#include "Enemy.h"
 #include "Pickup.h"
 #include "Player.h"
 #include "Room.h"
@@ -21,8 +22,8 @@ public:
 	static [[nodiscard]] std::shared_ptr<gamelib::Pickup> BuildPickup(const std::string& name,
 	                                                                  const std::shared_ptr<Room>& room,
 	                                                                  int resourceId);
-	static std::shared_ptr<Npc> BuildNpc(const std::string& name, const std::shared_ptr<Room>& room, int resourceId);
-
-private:
+	static std::shared_ptr<Enemy> BuildEnemy(const std::string& name, const std::shared_ptr<Room>& room, int resourceId,
+	                                         gamelib::Direction startingDirection);
+	
 };
 

@@ -12,7 +12,8 @@
 #include "DrawableFrameRate.h"
 #include <processes/ProcessManager.h>
 #include <objects/StaticSprite.h>
-#include "Npc.h"
+
+#include "Enemy.h"
 #include "Pickup.h"
 
 typedef std::vector<std::weak_ptr<gamelib::GameObject>> ListOfGameObjects;
@@ -51,7 +52,8 @@ public:
     static std::string GetSetting(const std::string& section, const std::string& settingName);
     std::string GetSubscriberName() override { return "level_manager"; }
     void CreateAutoLevel();
-    void CreateNpc(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId);
+    void CreateNpcs(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId);
+    [[nodiscard]] gamelib::Direction GetRandomDirection() const;
     void CreateLevel(const std::string& filename);
     void CreateDrawableFrameRate();
     void CreateHud(const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Player>& inPlayer);
@@ -70,6 +72,7 @@ private:
     void AddGameObjectToScene(const std::shared_ptr<gamelib::GameObject>& gameObject);
     void OnGameWon();
     void CreatePlayer(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId);
+    static std::shared_ptr<Room> GetRandomRoom(const std::vector<std::shared_ptr<Room>>& rooms);
     void CreateAutoPickups(const std::vector<std::shared_ptr<Room>>& rooms);
     static size_t GetRandomIndex(const int min, const int max) { return rand() % (max - min + 1) + min; }     // NOLINT(concurrency-mt-unsafe)
 
@@ -78,11 +81,12 @@ private:
     gamelib::ProcessManager processManager;
     gamelib::EventManager* eventManager = nullptr;
     gamelib::EventFactory* eventFactory = nullptr;
-    std::shared_ptr<gamelib::StaticSprite> _hudItem;
+    std::shared_ptr<gamelib::StaticSprite> hudItem;
     std::shared_ptr<Level> level = nullptr;
     std::shared_ptr<DrawableFrameRate> drawableFrameRate;
-    std::shared_ptr<GameCommands> _gameCommands;
+    std::shared_ptr<GameCommands> gameCommands;
     std::shared_ptr<Player> player;
-    std::shared_ptr<Npc> npc;
+    std::shared_ptr<Enemy> enemy1;
+    std::shared_ptr<Enemy> enemy2;
     std::vector<std::shared_ptr<gamelib::Pickup>> pickups;    
 };

@@ -9,8 +9,8 @@
 #include <objects/AnimatedSprite.h>
 #include "util/Tuple.h"
 #include <Hotspot.h>
-#include "IGameObjectMoveStrategy.h"
 #include "RoomInfo.h"
+#include "movement/IGameMoveStrategy.h"
 
 typedef std::vector<std::shared_ptr<gamelib::Event>> ListOfEvents;
 typedef std::vector<std::weak_ptr<gamelib::GameObject>> ListOfGameObjects;
@@ -45,7 +45,7 @@ public:
 	void Draw(SDL_Renderer* renderer) override;
 
 	void SetSprite(const std::shared_ptr<gamelib::AnimatedSprite>& inSprite);
-	void SetMoveStrategy(const std::shared_ptr<IGameObjectMoveStrategy>& inMoveStrategy) { moveStrategy = inMoveStrategy; }
+	void SetMoveStrategy(const std::shared_ptr<gamelib::IGameObjectMoveStrategy>& inMoveStrategy) { moveStrategy = inMoveStrategy; }
 	[[nodiscard]] int GetHotSpotLength() const { return hotspotSize; }
 	[[nodiscard]] int GetWidth() const { return width; }
 	[[nodiscard]] int GetHeight() const { return height; }
@@ -69,7 +69,7 @@ private:
 	int hotspotSize = 0;
 	gamelib::Direction currentMovingDirection;
 	gamelib::Direction currentFacingDirection;
-	std::shared_ptr<IGameObjectMoveStrategy> moveStrategy;
+	std::shared_ptr<gamelib::IGameObjectMoveStrategy> moveStrategy;
 	bool verbose{};
 	bool gameWon = false;
 };

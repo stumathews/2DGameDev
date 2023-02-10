@@ -5,6 +5,7 @@
 #include <sstream>
 #include "SideUtils.h"
 #include "GameData.h"
+#include "GameDataManager.h"
 #include "util/SettingsManager.h"
 
 using namespace std;
@@ -195,7 +196,22 @@ bool Room::HasBottomWall() const { return IsWalled(Side::Bottom); }
 bool Room::HasLeftWall() const { return IsWalled(Side::Left); }
 bool Room::HasRightWall() const { return IsWalled(Side::Right); }
 
-void Room::Update(const unsigned long deltaMs) { }
+void Room::Update(const unsigned long deltaMs)
+{
+	// are any of the NPCs in this room?
+	for(auto& npc : GameDataManager::Get()->GameData()->Enemies())
+	{
+		if(const auto found = npc.lock())
+		{
+			const auto npcHotspot = found->Hotspot->GetBounds();
+			SDL_Rect result;
+			if(SDL_IntersectRect(&InnerBounds, &npcHotspot, &result))
+			{
+				found->CurrentRoom->SetCurrentRoom(shared_from_this());
+			}
+		}
+	}
+}
 
 ABCDRectangle& Room::GetABCDRectangle() { return abcd; }
 Coordinate<int> Room::GetPosition() { return GetABCDRectangle().GetCenter(); }

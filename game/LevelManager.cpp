@@ -18,7 +18,10 @@
 #include <events/Event.h>
 
 // ReSharper disable once CppUnusedIncludeDirective
+#include <random>
+
 #include "CharacterBuilder.h"
+#include "GameObjectMoveStrategy.h"
 
 using namespace gamelib;
 using namespace std;
@@ -31,7 +34,7 @@ bool LevelManager::Initialize()
 
 	eventManager = EventManager::Get();
 	eventFactory = EventFactory::Get();
-	_gameCommands = std::make_shared<GameCommands>();
+	gameCommands = std::make_shared<GameCommands>();
 
 	eventManager->SubscribeToEvent(EventType::GenerateNewLevel, this);
 	eventManager->SubscribeToEvent(EventType::InvalidMove, this);
@@ -56,7 +59,7 @@ ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event> evt, const u
 	{
 		case EventType::LevelChangedEventType: { OnLevelChanged(evt); } break;
 		case EventType::UpdateProcesses: { processManager.UpdateProcesses(inDeltaMs); } break;
-		case EventType::InvalidMove: { _gameCommands->InvalidMove(); } break;
+		case EventType::InvalidMove: { gameCommands->InvalidMove(); } break;
 		case EventType::NetworkPlayerJoined: { 	OnNetworkPlayerJoined(evt); }	break;
 		case EventType::StartNetworkLevel: { OnStartNetworkLevel(evt); }	break;
 		case EventType::FetchedPickup: { OnFetchedPickup(); } break;	
@@ -69,8 +72,8 @@ ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event> evt, const u
 
 void LevelManager::OnFetchedPickup() const
 {
-	_gameCommands->FetchedPickup();
-	_hudItem->AdvanceFrame();	
+	gameCommands->FetchedPickup();
+	hudItem->AdvanceFrame();	
 }
 
 void LevelManager::OnStartNetworkLevel(const std::shared_ptr<Event>& evt)
@@ -119,13 +122,13 @@ void LevelManager::PlayLevelMusic(const std::string& levelMusicAssetName)
 {
 	// ReSharper disable once CppTooWideScopeInitStatement
 	const auto asset = ResourceManager::Get()->GetAssetInfo(levelMusicAssetName);
-	if (asset && asset->isLoadedInMemory) { AudioManager::Get()->Play(AudioManager::ToAudioAsset(asset)->AsMusic()); }	
+	if (asset && asset->IsLoadedInMemory) { AudioManager::Get()->Play(AudioManager::ToAudioAsset(asset)->AsMusic()); }	
 }
 
 void LevelManager::OnGameWon()
 {
 	const auto a = std::static_pointer_cast<Process>(
-		std::make_shared<Action>([&]() { _gameCommands->ToggleMusic(verbose); }));
+		std::make_shared<Action>([&]() { gameCommands->ToggleMusic(verbose); }));
 	const auto b = std::static_pointer_cast<Process>(std::make_shared<Action>([&]()
 	{
 		AudioManager::Get()->Play(  // NOLINT(readability-static-accessed-through-instance)
@@ -138,7 +141,7 @@ void LevelManager::OnGameWon()
 
 	const auto d = std::static_pointer_cast<Process>(std::make_shared<Action>([&]()
 	{
-		_gameCommands->LoadNewLevel(static_cast<int>(++currentLevel));
+		gameCommands->LoadNewLevel(static_cast<int>(++currentLevel));
 	}));
 
 	// Chain a set of subsequent processes
@@ -156,10 +159,10 @@ void LevelManager::GetKeyboardInput() const
 	SDL_Event sdlEvent;
 	const auto keyState = SDL_GetKeyboardState(nullptr);
 
-	if (keyState[SDL_SCANCODE_UP] || keyState[SDL_SCANCODE_W]) { _gameCommands->MoveUp(verbose); }
-	if (keyState[SDL_SCANCODE_DOWN] || keyState[SDL_SCANCODE_S]) { _gameCommands->MoveDown(verbose); }
-	if (keyState[SDL_SCANCODE_LEFT] || keyState[SDL_SCANCODE_A]) { _gameCommands->MoveLeft(verbose); }
-	if (keyState[SDL_SCANCODE_RIGHT] || keyState[SDL_SCANCODE_D]) { _gameCommands->MoveRight(verbose); }
+	if (keyState[SDL_SCANCODE_UP] || keyState[SDL_SCANCODE_W]) { gameCommands->MoveUp(verbose); }
+	if (keyState[SDL_SCANCODE_DOWN] || keyState[SDL_SCANCODE_S]) { gameCommands->MoveDown(verbose); }
+	if (keyState[SDL_SCANCODE_LEFT] || keyState[SDL_SCANCODE_A]) { gameCommands->MoveLeft(verbose); }
+	if (keyState[SDL_SCANCODE_RIGHT] || keyState[SDL_SCANCODE_D]) { gameCommands->MoveRight(verbose); }
 		
 	while (SDL_PollEvent(&sdlEvent))
 	{		
@@ -168,16 +171,16 @@ void LevelManager::GetKeyboardInput() const
 			switch (sdlEvent.key.keysym.sym)
 			{						
 				case SDLK_q: 
-				case SDLK_ESCAPE: _gameCommands->Quit(verbose); break;
-				case SDLK_r: _gameCommands->ReloadSettings(verbose); break;
-				case SDLK_p: _gameCommands->PingGameServer(); break;
-				case SDLK_n: _gameCommands->StartNetworkLevel(); break;
-				case SDLK_SPACE: _gameCommands->Fire(verbose); break;
+				case SDLK_ESCAPE: gameCommands->Quit(verbose); break;
+				case SDLK_r: gameCommands->ReloadSettings(verbose); break;
+				case SDLK_p: gameCommands->PingGameServer(); break;
+				case SDLK_n: gameCommands->StartNetworkLevel(); break;
+				case SDLK_SPACE: gameCommands->Fire(verbose); break;
 			default: /* Do nothing */;
 			}
 		}
 		
-		if (sdlEvent.type == SDL_QUIT)  { _gameCommands->Quit(verbose); return; }
+		if (sdlEvent.type == SDL_QUIT)  { gameCommands->Quit(verbose); return; }
 	}
 }
 
@@ -192,10 +195,38 @@ void LevelManager::CreatePlayer(const vector<shared_ptr<Room>> &rooms, const int
 	AddGameObjectToScene(player);
 }
 
-void LevelManager::CreateNpc(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId)
+shared_ptr<Room> LevelManager::GetRandomRoom(const std::vector<std::shared_ptr<Room>>& rooms)
 {
-	npc = CharacterBuilder::BuildNpc("Npc", rooms[GetRandomIndex(0, static_cast<int>(rooms.size()) - 1)], resourceId);
-	AddGameObjectToScene(npc);
+	return rooms[GetRandomIndex(0, static_cast<int>(rooms.size()) - 1)];
+}
+
+void LevelManager::CreateNpcs(const std::vector<std::shared_ptr<Room>>& rooms, const int resourceId)
+{
+	enemy1 = CharacterBuilder::BuildEnemy("Enemy1", GetRandomRoom(rooms), resourceId, GetRandomDirection());
+	enemy1->Initialize();
+	enemy2 = CharacterBuilder::BuildEnemy("Enemy2", GetRandomRoom(rooms), resourceId, GetRandomDirection());
+	enemy2->Initialize();
+		
+	AddGameObjectToScene(enemy1);
+	AddGameObjectToScene(enemy2);
+}
+
+Direction LevelManager::GetRandomDirection() const
+{
+	vector directions =  
+		{
+			Direction::Left,
+			Direction::Right,
+			Direction::Up,
+			Direction::Down
+		};
+
+
+		vector<Direction> directionToSample;
+		std::sample(begin(directions), end(directions), std::back_inserter(directionToSample), 1,
+		            std::mt19937{std::random_device{}()});
+
+		return directionToSample.front();
 }
 
 void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms)
@@ -245,7 +276,7 @@ void LevelManager::CreateLevel(const string& filename)
 	InitializeRooms(rooms);	
 
 	CreatePlayer(rooms, GetAsset("edge_player")->uid);
-	CreateNpc(rooms, GetAsset("snap_player")->uid);
+	CreateNpcs(rooms, GetAsset("snap_player")->uid);
 	CreateHud(rooms, player);
 
 	if (level->IsAutoPopulatePickups())
@@ -265,9 +296,9 @@ void LevelManager::CreateDrawableFrameRate()
 void LevelManager::CreateHud(const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Player>& inPlayer)
 {
 	// ReSharper disable once StringLiteralTypo
-	_hudItem = GameObjectFactory::Get().BuildStaticSprite("","", GetAsset("hudspritesheet"), rooms[rooms.size() - 1]->GetCenter(inPlayer->GetWidth(), inPlayer->GetHeight()));
-	InitializeHudItem(_hudItem);
-	AddGameObjectToScene(_hudItem);
+	hudItem = GameObjectFactory::Get().BuildStaticSprite("","", GetAsset("hudspritesheet"), rooms[rooms.size() - 1]->GetCenter(inPlayer->GetWidth(), inPlayer->GetHeight()));
+	InitializeHudItem(hudItem);
+	AddGameObjectToScene(hudItem);
 }
 
 
@@ -287,7 +318,7 @@ void LevelManager::CreateAutoLevel()
 
 	// Register change level event
 	// ReSharper disable once CppNoDiscardExpression
-	Get()->ChangeLevel(1);
+	Get()->ChangeLevel(1);  // NOLINT(clang-diagnostic-unused-result)
 
 	level = std::make_shared<Level>();
 	level->Load();
@@ -341,7 +372,7 @@ bool LevelManager::ChangeLevel(const int levelNumber) const
 	bool isSuccess = false;
 	try
 	{
-		_gameCommands->RaiseChangedLevel(false, static_cast<short>(levelNumber));
+		gameCommands->RaiseChangedLevel(false, static_cast<short>(levelNumber));
 		isSuccess = true;
 	}
 	catch (...) { LogMessage("Could not start level for unknown reasons. level=" + std::to_string(levelNumber)); 	}

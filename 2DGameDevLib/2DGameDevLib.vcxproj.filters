@@ -33,10 +33,7 @@
     <ClInclude Include="PlayerComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IGameMoveStrategy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IGameObjectMoveStrategy.h">
+    <ClInclude Include="GameObjectMoveStrategy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameObjectEventFactory.h">
@@ -69,10 +66,10 @@
     <ClInclude Include="CharacterBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Npc.h">
+    <ClInclude Include="RoomInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RoomInfo.h">
+    <ClInclude Include="Enemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -116,10 +113,10 @@
     <ClCompile Include="CharacterBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Npc.cpp">
+    <ClCompile Include="RoomInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RoomInfo.cpp">
+    <ClCompile Include="Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -45,7 +45,7 @@ void GameDataManager::AddToGameData(const std::shared_ptr<Event>& evt) const
 		}
 		if (object->Type == "Npc")
 		{
-			GameData()->AddNpc(std::dynamic_pointer_cast<Npc>(object));
+			GameData()->AddEnemy(std::dynamic_pointer_cast<Enemy>(object));
 		}
 	}
 	else 
@@ -89,7 +89,7 @@ void GameDataManager::RemoveGameObject(const std::shared_ptr<GameObject>& gameOb
 	
 	if (gameObject->Type == "Npc")
 	{
-		GameData::Get()->RemoveNpc(dynamic_pointer_cast<Npc>(gameObject));
+		GameData::Get()->RemoveEnemy(dynamic_pointer_cast<Enemy>(gameObject));
 	}
 
 	GameData::Get()->RemoveGameObject(gameObject);

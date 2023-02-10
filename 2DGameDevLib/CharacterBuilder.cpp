@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "CharacterBuilder.h"
+
+#include "Enemy.h"
 #include "GameData.h"
-#include "Npc.h"
+#include "GameObjectMoveStrategy.h"
 #include "SpriteAsset.h"
 #include "common/constants.h"
 #include "objects/GameObjectFactory.h"
@@ -31,8 +33,8 @@ std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, c
 	return player;
 }
 
-std::shared_ptr<Npc> CharacterBuilder::BuildNpc(const std::string& name, const std::shared_ptr<Room>& room,
-                                                const int resourceId)
+std::shared_ptr<Enemy> CharacterBuilder::BuildEnemy(const std::string& name, const std::shared_ptr<Room>& room,
+                                                const int resourceId, gamelib::Direction startingDirection)
 {
 	const auto spriteAsset = std::dynamic_pointer_cast<gamelib::SpriteAsset>(
 		gamelib::ResourceManager::Get()->GetAssetInfo(resourceId));
@@ -42,11 +44,9 @@ std::shared_ptr<Npc> CharacterBuilder::BuildNpc(const std::string& name, const s
 	// Build sprite
 	const auto animatedSprite = gamelib::GameObjectFactory::Get().BuildSprite(
 		name, "Npc", spriteAsset, positionInRoom, true);
-
-	// Build player
-	auto npc = std::make_shared<Npc>(name, "Npc", positionInRoom, true, room, animatedSprite);
-	npc->Initialize();
-	return npc;
+	
+	auto enemy = std::make_shared<Enemy>(name, "Npc", positionInRoom, true, room, animatedSprite, startingDirection);
+	return enemy;
 }
 
 

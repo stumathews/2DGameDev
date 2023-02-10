@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "GameObjectMoveStrategy.h"
+
 #include "Player.h"
 #include "Room.h"
 #include <Direction.h>
@@ -6,6 +8,7 @@
 #include <exceptions/EngineException.h>
 #include <util/SettingsManager.h>
 #include "../game/LevelManager.h"
+#include "movement/IMovement.h"
 
 GameObjectMoveStrategy::GameObjectMoveStrategy(const std::shared_ptr<gamelib::GameObject>& gameObject, const std::shared_ptr<RoomInfo>& roomInfo)
 {
@@ -20,13 +23,13 @@ bool GameObjectMoveStrategy::MoveGameObject(const std::shared_ptr<gamelib::IMove
 	auto isMoveValid = false;
 	if (IsValidMove(movement)) 
 	{
-		SetPlayerPosition(CalculatePlayerMove(movement, movement->GetPixelsToMove()));
+		SetGameObjectPosition(CalculateGameObjectMove(movement, movement->GetPixelsToMove()));
 		isMoveValid = true;
 	}
 	return isMoveValid;
 }
 
-gamelib::Coordinate<int> GameObjectMoveStrategy::CalculatePlayerMove(const std::shared_ptr<gamelib::IMovement>& movement, const int pixelsToMove) const
+gamelib::Coordinate<int> GameObjectMoveStrategy::CalculateGameObjectMove(const std::shared_ptr<gamelib::IMovement>& movement, const int pixelsToMove) const
 {
 	int resultingY = gameObject->Position.GetY();
 	int resultingX = gameObject->Position.GetX();
@@ -43,7 +46,7 @@ gamelib::Coordinate<int> GameObjectMoveStrategy::CalculatePlayerMove(const std::
 	return {resultingX, resultingY};
 }
 
-void GameObjectMoveStrategy::SetPlayerPosition(const gamelib::Coordinate<int> resultingMove) const
+void GameObjectMoveStrategy::SetGameObjectPosition(const gamelib::Coordinate<int> resultingMove) const
 {
 	gameObject->Position.SetX(resultingMove.GetX());
 	gameObject->Position.SetY(resultingMove.GetY());
@@ -55,16 +58,16 @@ bool GameObjectMoveStrategy::IsValidMove(const std::shared_ptr<gamelib::IMovemen
 
 	switch (movement->GetDirection())
 	{
-		case gamelib::Direction::Down: return CanPlayerMove(gamelib::Direction::Down);
-		case gamelib::Direction::Left: return CanPlayerMove(gamelib::Direction::Left);
-		case gamelib::Direction::Right: return CanPlayerMove(gamelib::Direction::Right);
-		case gamelib::Direction::Up: return CanPlayerMove(gamelib::Direction::Up);
+		case gamelib::Direction::Down: return CanGameObjectMove(gamelib::Direction::Down);
+		case gamelib::Direction::Left: return CanGameObjectMove(gamelib::Direction::Left);
+		case gamelib::Direction::Right: return CanGameObjectMove(gamelib::Direction::Right);
+		case gamelib::Direction::Up: return CanGameObjectMove(gamelib::Direction::Up);
 		case gamelib::Direction::None: THROW(0, "Direction is NOne", "PlayerMoveStrategy")
 	}
 	return false;
 }
 
-bool GameObjectMoveStrategy::	CanPlayerMove(const gamelib::Direction direction) const
+bool GameObjectMoveStrategy::	CanGameObjectMove(const gamelib::Direction direction) const
 {
 	std::shared_ptr<Room> targetRoom;
 	bool touchingBlockingWalls = false, hasValidTargetRoom;
