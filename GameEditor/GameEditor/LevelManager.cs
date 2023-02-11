@@ -103,7 +103,10 @@ namespace GameEditor.ViewModels
                         {
                             level.NumCols = int.Parse(reader.GetAttribute("cols"));
                             level.NumRows = int.Parse(reader.GetAttribute("rows"));
-                            level.AutoPopulatePickups = bool.Parse(reader.GetAttribute("autoPopulatePickups"));
+                            if(bool.TryParse(reader.GetAttribute("autoPopulatePickups"), out var value))
+                            {
+                                level.AutoPopulatePickups = value;
+                            }
                         }
 
                         if(reader.Name.Equals("room"))

@@ -70,6 +70,7 @@
                 <ComboBox x:Name="newType" Grid.Row="0" Grid.Column="3" SelectedValue="{Binding NewType}" SelectedValuePath="Content">
                     <ComboBoxItem>Player</ComboBoxItem>
                     <ComboBoxItem>Pickup</ComboBoxItem>
+                    <ComboBoxItem>Enemy</ComboBoxItem>
                 </ComboBox>
                 <TextBlock Grid.Row="0" Grid.Column="4" Style="{StaticResource Header}">Asset:</TextBlock>
                 <ComboBox x:Name="newAsset" Grid.Row="0" Grid.Column="5" ItemsSource="{Binding Assets}" SelectedItem="{Binding NewAsset}">
