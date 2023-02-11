@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 
+#include "Enemy.h"
 #include "SpriteAsset.h"
 #include "events/EventSubscriber.h"
 
@@ -25,6 +26,7 @@ class Level final : public gamelib::EventSubscriber
 public:
 	explicit Level(const std::string& filename);
 	Level();
+	void InitializeEnemies(const std::vector<std::shared_ptr<Enemy>>& vector);
 	void Load();
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long deltaMs) override;
 	std::string GetSubscriberName() override { return "Level"; }
@@ -36,6 +38,7 @@ public:
 	static void ParseProperty(tinyxml2::XMLNode* pObjectChild, const std::shared_ptr<gamelib::GameObject>& go);
 	std::vector<std::shared_ptr<Room>> Rooms;
 	std::vector<std::shared_ptr<gamelib::Pickup>> Pickups;
+	std::vector<std::shared_ptr<Enemy>> Enemies;
 	std::shared_ptr<Player> Player1;
 	std::string FileName;
 	int NumCols;

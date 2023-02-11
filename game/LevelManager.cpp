@@ -259,7 +259,7 @@ void LevelManager::CreateLevel(const string& filename)
 	InitializeRooms(rooms);	
 
 	CreatePlayer(rooms, GetAsset("edge_player")->uid);
-	CreateNpcs(rooms, GetAsset("snap_player")->uid);
+	//CreateNpcs(rooms, GetAsset("snap_player")->uid);
 	CreateHud(rooms, player);
 
 	if (level->IsAutoPopulatePickups())

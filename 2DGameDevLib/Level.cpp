@@ -14,6 +14,7 @@
 #include "common/constants.h"
 #include "CharacterBuilder.h"
 // ReSharper disable once CppUnusedIncludeDirective
+#include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
 #include "events/AddGameObjectToCurrentSceneEvent.h"
 #include "events/EventFactory.h"
@@ -37,6 +38,8 @@ Level::Level()
 	ScreenWidth = SettingsManager::Get()->GetInt("global", "screen_width");
 	ScreenHeight = SettingsManager::Get()->GetInt("global", "screen_height");
 }
+
+
 
 map<string, string> GetNodeAttributes(XMLNode* pAssetNode)
 {
@@ -147,7 +150,8 @@ void Level::Load()
 					}
 					if(gameObject->Type == "Enemy")
 					{
-						
+						auto enemy = dynamic_pointer_cast<Enemy>(gameObject);
+							Enemies.push_back(enemy);
 					}
 				}
 			}
@@ -157,6 +161,7 @@ void Level::Load()
 		Rooms::ConfigureRooms(NumRows, NumCols, Rooms);
 
 		InitializePickups(Pickups);
+		InitializeEnemies(Enemies);
 	}
 }
 
@@ -176,6 +181,16 @@ void Level::InitializePickups(const std::vector<std::shared_ptr<Pickup>>& inPick
 	}
 }
 
+void Level::InitializeEnemies(const std::vector<std::shared_ptr<Enemy>>& vector)
+{
+	for(auto& enemy : Enemies)
+	{
+		enemy->Initialize();
+		GameDataManager::Get()->GameData()->AddEnemy(enemy);
+		AddGameObjectToScene(enemy);
+	}
+}
+
 void Level::AddGameObjectToScene(const std::shared_ptr<GameObject>& object)
 {
 	EventManager::Get()->RaiseEvent(std::dynamic_pointer_cast<Event>(EventFactory::Get()->CreateAddToSceneEvent(object)), this);
@@ -191,22 +206,20 @@ shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_pt
 
 	shared_ptr<GameObject> gameObject;
 		
-	if (type == "Player" || type == "Pickup")
-	{		
 		if (type == "Player")
 		{
 			gameObject = CharacterBuilder::BuildPlayer(name, room, resourceId, "playerNickName");
 		}
 
-		if (type == "Pickup")
+		else if (type == "Pickup")
 		{
 			gameObject = CharacterBuilder::BuildPickup(name, room, resourceId);
 		}
-		if (type == "Enemy")
+		else if (type == "Enemy")
 		{
 			gameObject = CharacterBuilder::BuildEnemy(name, room, resourceId, GetRandomDirection());
 		}
-	}
+	
 	
 	// Add properties to the game object
 	for (auto pObjectChild = pObject->FirstChild(); pObjectChild; pObjectChild = pObjectChild->NextSibling())
