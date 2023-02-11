@@ -32,8 +32,8 @@ public:
 	void RemoveRoom(const std::shared_ptr<Room>& room);
 	void AddPickup(std::shared_ptr<gamelib::Pickup> pickup);
 	void RemovePickup(const std::shared_ptr<gamelib::Pickup>& pickup);
-	void AddEnemy(std::shared_ptr<Enemy> Enemy);
-	void RemoveEnemy(const std::shared_ptr<Enemy>& Enemy);
+	void AddEnemy(std::shared_ptr<Enemy> enemy);
+	void RemoveEnemy(const std::shared_ptr<Enemy>& enemy);
 	
 	std::shared_ptr<Room> GetRoomByIndex(int roomNumber);
 	[[nodiscard]] std::shared_ptr<Player> GetPlayer() const;

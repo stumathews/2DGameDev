@@ -72,5 +72,6 @@ private:
 	std::shared_ptr<gamelib::IGameObjectMoveStrategy> moveStrategy;
 	bool verbose{};
 	bool gameWon = false;
+	gamelib::Inventory inventory;
 };
 

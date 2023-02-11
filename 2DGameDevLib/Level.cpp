@@ -145,6 +145,10 @@ void Level::Load()
 							Pickups.push_back(pickup);
 						}
 					}
+					if(gameObject->Type == "Enemy")
+					{
+						
+					}
 				}
 			}
 			Rooms.push_back(room);
@@ -197,6 +201,10 @@ shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_pt
 		if (type == "Pickup")
 		{
 			gameObject = CharacterBuilder::BuildPickup(name, room, resourceId);
+		}
+		if (type == "Enemy")
+		{
+			gameObject = CharacterBuilder::BuildEnemy(name, room, resourceId, GetRandomDirection());
 		}
 	}
 	

@@ -87,7 +87,7 @@ void GameDataManager::RemoveGameObject(const std::shared_ptr<GameObject>& gameOb
 		GameData::Get()->RemovePickup(dynamic_pointer_cast<Pickup>(gameObject));
 	}
 	
-	if (gameObject->Type == "Npc")
+	if (gameObject->Type == "Enemy")
 	{
 		GameData::Get()->RemoveEnemy(dynamic_pointer_cast<Enemy>(gameObject));
 	}

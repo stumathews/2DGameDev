@@ -19,17 +19,17 @@ void GameData::RemovePickup(const std::shared_ptr<Pickup>& pickup) { pickups.era
 void GameData::RemoveGameObject(const std::shared_ptr<GameObject>& gameObject) { GameObjects.erase(remove_if(begin(GameObjects), end(GameObjects), [=](const weak_ptr<GameObject> 	& obj) { return IsSameId(obj, gameObject); }), GameObjects.end()); }
 void GameData::RemoveExpiredReferences() { GameObjects.erase(remove_if(begin(GameObjects), end(GameObjects), [&](const weak_ptr<GameObject> & obj) { return obj.expired(); }), end(GameObjects)); }
 
-void GameData::AddEnemy(const std::shared_ptr<Enemy> npc)
+void GameData::AddEnemy(const std::shared_ptr<Enemy> enemy)
 {
-if (std::find_if(enemies.begin(), enemies.end(), [&](const std::weak_ptr<GameObject>& gameObject) { return !gameObject.expired() && gameObject.lock()->Id == npc->Id;}) == enemies.end())
+if (std::find_if(enemies.begin(), enemies.end(), [&](const std::weak_ptr<GameObject>& gameObject) { return !gameObject.expired() && gameObject.lock()->Id == enemy->Id;}) == enemies.end())
 	{
-		enemies.push_back(npc);		
+		enemies.push_back(enemy);		
 	}
 }
 
-void GameData::RemoveEnemy(const std::shared_ptr<Enemy>& npc)
+void GameData::RemoveEnemy(const std::shared_ptr<Enemy>& enemy)
 {
-	enemies.erase(remove_if(begin(enemies), end(enemies), [=](const weak_ptr<GameObject> 	& obj) { return IsSameId(obj, npc); }), enemies.end());
+	enemies.erase(remove_if(begin(enemies), end(enemies), [=](const weak_ptr<GameObject> 	& obj) { return IsSameId(obj, enemy); }), enemies.end());
 }
 
 bool GameData::IsSameId(const weak_ptr<GameObject>& obj, const std::shared_ptr<GameObject>& other) { return !obj.expired() && obj.lock()->Id == other->Id; }

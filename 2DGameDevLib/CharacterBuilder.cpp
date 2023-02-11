@@ -43,9 +43,9 @@ std::shared_ptr<Enemy> CharacterBuilder::BuildEnemy(const std::string& name, con
 
 	// Build sprite
 	const auto animatedSprite = gamelib::GameObjectFactory::Get().BuildSprite(
-		name, "Npc", spriteAsset, positionInRoom, true);
+		name, "Enemy", spriteAsset, positionInRoom, true);
 	
-	auto enemy = std::make_shared<Enemy>(name, "Npc", positionInRoom, true, room, animatedSprite, startingDirection);
+	auto enemy = std::make_shared<Enemy>(name, "Enemy", positionInRoom, true, room, animatedSprite, startingDirection);
 	return enemy;
 }
 

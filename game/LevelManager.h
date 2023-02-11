@@ -53,7 +53,6 @@ public:
     std::string GetSubscriberName() override { return "level_manager"; }
     void CreateAutoLevel();
     void CreateNpcs(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId);
-    [[nodiscard]] gamelib::Direction GetRandomDirection() const;
     void CreateLevel(const std::string& filename);
     void CreateDrawableFrameRate();
     void CreateHud(const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Player>& inPlayer);

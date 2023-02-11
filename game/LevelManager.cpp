@@ -21,6 +21,7 @@
 #include <random>
 
 #include "CharacterBuilder.h"
+#include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
 
 using namespace gamelib;
@@ -202,31 +203,13 @@ shared_ptr<Room> LevelManager::GetRandomRoom(const std::vector<std::shared_ptr<R
 
 void LevelManager::CreateNpcs(const std::vector<std::shared_ptr<Room>>& rooms, const int resourceId)
 {
-	enemy1 = CharacterBuilder::BuildEnemy("Enemy1", GetRandomRoom(rooms), resourceId, GetRandomDirection());
-	enemy1->Initialize();
-	enemy2 = CharacterBuilder::BuildEnemy("Enemy2", GetRandomRoom(rooms), resourceId, GetRandomDirection());
-	enemy2->Initialize();
-		
-	AddGameObjectToScene(enemy1);
-	AddGameObjectToScene(enemy2);
-}
-
-Direction LevelManager::GetRandomDirection() const
-{
-	vector directions =  
-		{
-			Direction::Left,
-			Direction::Right,
-			Direction::Up,
-			Direction::Down
-		};
-
-
-		vector<Direction> directionToSample;
-		std::sample(begin(directions), end(directions), std::back_inserter(directionToSample), 1,
-		            std::mt19937{std::random_device{}()});
-
-		return directionToSample.front();
+	for(auto i = 0; i < 10; i++)
+	{
+		const auto enemy = CharacterBuilder::BuildEnemy("Enemy" + std::to_string(i), GetRandomRoom(rooms), resourceId, GetRandomDirection());
+		enemy->Initialize();
+		GameDataManager::Get()->GameData()->AddEnemy(enemy);
+		AddGameObjectToScene(enemy);
+	}
 }
 
 void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms)
