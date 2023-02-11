@@ -89,36 +89,53 @@ namespace GameEditor.ViewModels
 
             if(openFileDialog.ShowDialog() is true)
             {
-                XmlReaderSettings settings = new XmlReaderSettings
+                var settings = new XmlReaderSettings
                 {
                     DtdProcessing = DtdProcessing.Ignore
                 };
-                XmlReader reader = XmlReader.Create(openFileDialog.FileName, settings);
+                var reader = XmlReader.Create(openFileDialog.FileName, settings);
                 RoomViewModel roomViewModel = null;
+                
                 while (reader.Read())
                 {                    
                     if (reader.NodeType == XmlNodeType.Element)
                     {
                         if(reader.Name.Equals("level"))
                         {
-                            level.NumCols = int.Parse(reader.GetAttribute("cols"));
-                            level.NumRows = int.Parse(reader.GetAttribute("rows"));
-                            if(bool.TryParse(reader.GetAttribute("autoPopulatePickups"), out var value))
-                            {
-                                level.AutoPopulatePickups = value;
-                            }
+                            level.NumCols = int.Parse(reader.GetAttribute("cols") ?? throw new Exception(
+                                "NumCols Not found"));
+                            level.NumRows = int.Parse(reader.GetAttribute("rows") ?? throw new Exception(
+                                "NumRows Not found"));
+                            level.AutoPopulatePickups = bool.Parse(reader.GetAttribute("autoPopulatePickups") ??
+                                                                   throw new Exception(
+                                                                       "AutoPopulatePickups not found"));
                         }
+
+                        roomViewModel = new RoomViewModel();
 
                         if(reader.Name.Equals("room"))
                         {
-                            roomViewModel = new RoomViewModel
-                            {
-                                RoomNumber = int.Parse(reader.GetAttribute("number")),
-                                TopWallVisibility = bool.Parse(reader.GetAttribute("top")) ? Visibility.Visible : Visibility.Hidden,
-                                RightWallVisibility = bool.Parse(reader.GetAttribute("right")) ? Visibility.Visible : Visibility.Hidden,
-                                BottomWallVisibility = bool.Parse(reader.GetAttribute("bottom")) ? Visibility.Visible : Visibility.Hidden,
-                                LeftWallVisibility = bool.Parse(reader.GetAttribute("left")) ? Visibility.Visible : Visibility.Hidden
-                            };
+                            roomViewModel.RoomNumber = int.Parse(reader.GetAttribute("number") ?? "0");
+                            roomViewModel.TopWallVisibility = bool.Parse(reader.GetAttribute("top") ??
+                                                                         throw new Exception(
+                                                                             "Top wall visibility Not found"))
+                                ? Visibility.Visible
+                                : Visibility.Hidden;
+                            roomViewModel.RightWallVisibility = bool.Parse(reader.GetAttribute("right") ??
+                                                                           throw new Exception(
+                                                                               "Right wall visibility Not found"))
+                                    ? Visibility.Visible
+                                    : Visibility.Hidden;
+                            roomViewModel.BottomWallVisibility = bool.Parse(reader.GetAttribute("bottom") ??
+                                                                            throw new Exception(
+                                                                                "Bottom wall visibility Not found"))
+                                    ? Visibility.Visible
+                                    : Visibility.Hidden;
+                            roomViewModel.LeftWallVisibility =
+                                bool.Parse(reader.GetAttribute("left") ??
+                                           throw new Exception("Left wall visibility Not found"))
+                                    ? Visibility.Visible
+                                    : Visibility.Hidden;
                         }
                         if (reader.Name.Equals("object"))
                         {
@@ -126,7 +143,7 @@ namespace GameEditor.ViewModels
                             {
                                 AssetPath = reader.GetAttribute("assetPath"),
                                 Name = reader.GetAttribute("name"),
-                                ResourceId = int.Parse(reader.GetAttribute("resourceId")),
+                                ResourceId = int.Parse(reader.GetAttribute("resourceId") ?? throw new Exception("Resource Id Not found")),
                                 Type = reader.GetAttribute("type"),
                                 Properties = new List<KeyValuePair<string, string>>()
                             };
@@ -148,7 +165,7 @@ namespace GameEditor.ViewModels
                     }
                 }
             }
-            OnLevelLoaded?.Invoke(this, new EventArgs());
+            OnLevelLoaded?.Invoke(this, EventArgs.Empty);
             return level;            
         }
     }
