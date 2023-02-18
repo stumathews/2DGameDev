@@ -2,217 +2,32 @@
 <level cols="10" rows="10" autoPopulatePickups="False">
   <room number="0" top="True" right="True" bottom="False" left="True">
     <object name="GoldPickup" type="Pickup" resourceId="19" assetPath="game/assets/coin_gold.png">
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="Value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
       <property name="value" value="5" />
     </object>
   </room>
   <room number="1" top="True" right="False" bottom="False" left="True">
     <object name="GoldPickup" type="Pickup" resourceId="19" assetPath="game/assets/coin_gold.png">
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="Value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
       <property name="value" value="5" />
     </object>
   </room>
   <room number="2" top="True" right="False" bottom="True" left="False">
     <object name="SilverPickup" type="Pickup" resourceId="20" assetPath="game/assets/coin_silver.png">
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="Value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
       <property name="value" value="10" />
     </object>
   </room>
   <room number="3" top="True" right="True" bottom="False" left="False">
     <object name="SilverPickup" type="Pickup" resourceId="20" assetPath="game/assets/coin_silver.png">
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="Value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="10" />
+          <property name="value" value="10" />
     </object>
   </room>
   <room number="4" top="True" right="False" bottom="True" left="True">
-    <object name="BronzePickup" type="Pickup" resourceId="21" assetPath="game/assets/coin_copper.png">
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="Value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
+    <object name="BronzePickup" type="Pickup" resourceId="21" assetPath="game/assets/coin_copper.png">     
       <property name="value" value="15" />
     </object>
   </room>
   <room number="5" top="True" right="True" bottom="False" left="False">
     <object name="BronzePickup" type="Pickup" resourceId="21" assetPath="game/assets/coin_copper.png">
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="Value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
+      
       <property name="value" value="15" />
     </object>
   </room>
@@ -220,70 +35,7 @@
   <room number="7" top="True" right="False" bottom="True" left="False" />
   <room number="8" top="True" right="True" bottom="False" left="False" />
   <room number="9" top="True" right="True" bottom="False" left="True">
-    <object name="BronzePickup" type="Pickup" resourceId="21" assetPath="game/assets/coin_copper.png">
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="Value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="name" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="name" />
-      <property name="name" value="value" />
-      <property name="value" value="value" />
-      <property name="name" value="name" />
-      <property name="value" value="value" />
-      <property name="name" value="value" />
+    <object name="BronzePickup" type="Pickup" resourceId="21" assetPath="game/assets/coin_copper.png">      
       <property name="value" value="15" />
     </object>
   </room>
@@ -306,7 +58,7 @@
   <room number="22" top="True" right="False" bottom="False" left="True" />
   <room number="23" top="False" right="False" bottom="False" left="False">
     <object name="BronzePickup" type="Pickup" resourceId="21" assetPath="game/assets/coin_copper.png">
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="15" />
@@ -360,67 +112,67 @@
   <room number="65" top="True" right="True" bottom="False" left="False" />
   <room number="66" top="False" right="True" bottom="False" left="True">
     <object name="BronzePickup" type="Pickup" resourceId="21" assetPath="game/assets/coin_copper.png">
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="Value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="15" />
@@ -433,67 +185,67 @@
   <room number="71" top="False" right="True" bottom="False" left="True" />
   <room number="72" top="False" right="False" bottom="False" left="True">
     <object name="BronzePickup" type="Pickup" resourceId="21" assetPath="game/assets/coin_copper.png">
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="Value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="15" />
@@ -522,207 +274,219 @@
   </room>
   <room number="90" top="True" right="False" bottom="True" left="True">
     <object name="GoldPickup" type="Pickup" resourceId="19" assetPath="game/assets/coin_gold.png">
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="Value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="5" />
     </object>
   </room>
-  <room number="91" top="False" right="True" bottom="True" left="False" />
+  <room number="91" top="False" right="True" bottom="True" left="False">
+    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png">
+      <property name="HitPoint" value="50" />
+    </object>
+  </room>
   <room number="92" top="False" right="True" bottom="True" left="True" />
   <room number="93" top="True" right="False" bottom="True" left="True" />
   <room number="94" top="True" right="False" bottom="True" left="False" />
   <room number="95" top="False" right="False" bottom="True" left="False" />
   <room number="96" top="True" right="False" bottom="True" left="False" />
-  <room number="97" top="False" right="True" bottom="True" left="False" />
-  <room number="98" top="False" right="False" bottom="True" left="True" />
+  <room number="97" top="False" right="True" bottom="True" left="False">
+    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png">
+      <property name="HitPoint" value="50" />
+    </object>
+  </room>
+  <room number="98" top="False" right="False" bottom="True" left="True">
+    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png">
+      <property name="HitPoint" value="50" />
+    </object>
+  </room>
   <room number="99" top="False" right="True" bottom="True" left="False">
     <object name="SilverPickup" type="Pickup" resourceId="20" assetPath="game/assets/coin_silver.png">
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="Value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="name" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="name" />
       <property name="name" value="value" />
       <property name="value" value="value" />
-      <property name="name" value="name" />
+      
       <property name="value" value="value" />
       <property name="name" value="value" />
       <property name="value" value="10" />

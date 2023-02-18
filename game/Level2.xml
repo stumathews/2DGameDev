@@ -45,7 +45,9 @@
   <room number="42" top="True" right="False" bottom="False" left="False" />
   <room number="43" top="False" right="False" bottom="False" left="False" />
   <room number="0" top="True" right="True" bottom="True" left="True">
-    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png" />
+    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png">
+      <property name="HitPoint" value="50" />
+    </object>
   </room>
   <room number="45" top="False" right="False" bottom="True" left="False" />
   <room number="46" top="True" right="False" bottom="True" left="False" />
@@ -57,13 +59,17 @@
   <room number="52" top="False" right="True" bottom="False" left="False" />
   <room number="53" top="False" right="True" bottom="True" left="True" />
   <room number="54" top="True" right="False" bottom="False" left="True">
-    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png" />
+    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png">
+      <property name="HitPoint" value="50" />
+    </object>
   </room>
   <room number="55" top="True" right="True" bottom="True" left="False" />
   <room number="56" top="True" right="False" bottom="False" left="True" />
   <room number="57" top="False" right="True" bottom="True" left="False" />
   <room number="58" top="False" right="False" bottom="False" left="True">
-    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png" />
+    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png">
+      <property name="HitPoint" value="50" />
+    </object>
   </room>
   <room number="59" top="False" right="True" bottom="True" left="False" />
   <room number="60" top="True" right="False" bottom="False" left="True" />

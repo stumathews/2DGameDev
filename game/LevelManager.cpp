@@ -22,6 +22,7 @@
 #include <events/UpdateProcessesEvent.h>
 
 #include "CharacterBuilder.h"
+#include "DirectionUtils.h"
 #include "EventNumber.h"
 #include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
@@ -242,7 +243,7 @@ void LevelManager::CreateNpcs(const std::vector<std::shared_ptr<Room>>& rooms, c
 {
 	for(auto i = 0; i < 10; i++)
 	{
-		const auto enemy = CharacterBuilder::BuildEnemy("Enemy" + std::to_string(i), GetRandomRoom(rooms), resourceId, GetRandomDirection());
+		const auto enemy = CharacterBuilder::BuildEnemy("Enemy" + std::to_string(i), GetRandomRoom(rooms), resourceId, DirectionUtils::GetRandomDirection());
 		enemy->Initialize();
 		GameDataManager::Get()->GameData()->AddEnemy(enemy);
 		AddGameObjectToScene(enemy);
