@@ -1,9 +1,9 @@
-﻿using GameEditor.Models;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Xml;
+using GameEditor.Models;
+using Microsoft.Win32;
 
 namespace GameEditor.ViewModels
 {
@@ -21,60 +21,63 @@ namespace GameEditor.ViewModels
                 Indent = true,
             };
 
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "XML Files (*.xml)|*.xml;";
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "XML Files (*.xml)|*.xml;"
+            };
+
             try
             {
-                if(saveFileDialog.ShowDialog() is true)
+                if (!(saveFileDialog.ShowDialog() is true)) return;
+
+                OnAboutToSaveFile?.Invoke(this, $"Saving File '{saveFileDialog.FileName}'...");
+
+                using (var writer = XmlWriter.Create(saveFileDialog.FileName, xmlSettings))
                 {
-                    OnAboutToSaveFile?.Invoke(this, $"Saving File '{saveFileDialog.FileName}'...");
-                    using (XmlWriter writer = XmlWriter.Create(saveFileDialog.FileName, xmlSettings))
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("level"); // <level ...
+                    writer.WriteAttributeString("cols", level.NumCols.ToString());
+                    writer.WriteAttributeString("rows", level.NumRows.ToString());
+                    writer.WriteAttributeString("autoPopulatePickups", level.AutoPopulatePickups.ToString());
+                    foreach(var roomViewModel in level.Rooms)
                     {
-                        writer.WriteStartDocument();
-                        writer.WriteStartElement("level"); // <level ...
-                        writer.WriteAttributeString("cols", level.NumCols.ToString());
-                        writer.WriteAttributeString("rows", level.NumRows.ToString());
-                        writer.WriteAttributeString("autoPopulatePickups", level.AutoPopulatePickups.ToString());
-                        foreach(var roomViewModel in level.Rooms)
+                        var topVisible = roomViewModel.TopWallVisibility == Visibility.Visible;
+                        var rightVisible = roomViewModel.RightWallVisibility == Visibility.Visible;
+                        var bottomVisible = roomViewModel.BottomWallVisibility == Visibility.Visible;
+                        var leftVisible = roomViewModel.LeftWallVisibility == Visibility.Visible;
+
+                        writer.WriteStartElement("room"); // <room ...
+                        writer.WriteAttributeString("number", roomViewModel.RoomNumber.ToString());
+                        writer.WriteAttributeString("top", topVisible.ToString() );
+                        writer.WriteAttributeString("right", rightVisible.ToString() );
+                        writer.WriteAttributeString("bottom", bottomVisible.ToString() );
+                        writer.WriteAttributeString("left", leftVisible.ToString() );
+
+                        if(roomViewModel.ResidentGameObjectType != null)
                         {
-                            var topVisible = roomViewModel.TopWallVisibility == Visibility.Visible;
-                            var rightVisible = roomViewModel.RightWallVisibility == Visibility.Visible;
-                            var bottomVisible = roomViewModel.BottomWallVisibility == Visibility.Visible;
-                            var leftVisible = roomViewModel.LeftWallVisibility == Visibility.Visible;
-
-                            writer.WriteStartElement("room"); // <room ...
-                            writer.WriteAttributeString("number", roomViewModel.RoomNumber.ToString());
-                            writer.WriteAttributeString("top", topVisible.ToString() );
-                            writer.WriteAttributeString("right", rightVisible.ToString() );
-                            writer.WriteAttributeString("bottom", bottomVisible.ToString() );
-                            writer.WriteAttributeString("left", leftVisible.ToString() );
-
-                            if(roomViewModel.ResidentGameObjectType != null)
+                            var gameObjectType = roomViewModel.ResidentGameObjectType;
+                            writer.WriteStartElement("object"); //<object ...
+                            writer.WriteAttributeString("name", gameObjectType.Name);
+                            writer.WriteAttributeString("type", gameObjectType.Type);
+                            writer.WriteAttributeString("resourceId", gameObjectType.ResourceId.ToString());
+                            writer.WriteAttributeString("assetPath", gameObjectType.AssetPath);
+                            foreach(var property in gameObjectType.Properties)
                             {
-                                var gameObjectType = roomViewModel.ResidentGameObjectType;
-                                writer.WriteStartElement("object"); //<object ...
-                                writer.WriteAttributeString("name", gameObjectType.Name);
-                                writer.WriteAttributeString("type", gameObjectType.Type);
-                                writer.WriteAttributeString("resourceId", gameObjectType.ResourceId.ToString());
-                                writer.WriteAttributeString("assetPath", gameObjectType.AssetPath);
-                                foreach(var property in gameObjectType.Properties)
-                                {
-                                    writer.WriteStartElement("property"); //<property ..
-                                    writer.WriteAttributeString("name", property.Key);
-                                    writer.WriteAttributeString("value", property.Value);
-                                    writer.WriteEndElement();
-                                }
+                                writer.WriteStartElement("property"); //<property ..
+                                writer.WriteAttributeString("name", property.Key);
+                                writer.WriteAttributeString("value", property.Value);
                                 writer.WriteEndElement();
                             }
-
                             writer.WriteEndElement();
                         }
-                        writer.WriteEndElement();
-                        writer.WriteEndDocument();
-                    }
 
-                    OnFileSaved?.Invoke(this,  $"Saved File '{saveFileDialog.FileName}'.");
-                } 
+                        writer.WriteEndElement();
+                    }
+                    writer.WriteEndElement();
+                    writer.WriteEndDocument();
+                }
+
+                OnFileSaved?.Invoke(this,  $"Saved File '{saveFileDialog.FileName}'.");
             }
             catch(Exception ex)
             {
@@ -106,9 +109,7 @@ namespace GameEditor.ViewModels
                                 "NumCols Not found"));
                             level.NumRows = int.Parse(reader.GetAttribute("rows") ?? throw new Exception(
                                 "NumRows Not found"));
-                            level.AutoPopulatePickups = bool.Parse(reader.GetAttribute("autoPopulatePickups") ??
-                                                                   throw new Exception(
-                                                                       "AutoPopulatePickups not found"));
+                            level.AutoPopulatePickups = bool.Parse(reader.GetAttribute("autoPopulatePickups") ?? bool.FalseString);
                         }
 
                         roomViewModel = new RoomViewModel();
