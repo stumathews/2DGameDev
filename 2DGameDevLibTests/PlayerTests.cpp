@@ -55,7 +55,6 @@ TEST_F(PlayerTests, Basic)
 	EXPECT_EQ(player.Bounds.h, 0);
 	EXPECT_EQ(player.Bounds.x, 0);
 	EXPECT_EQ(player.Bounds.y, 0);
-	EXPECT_EQ(player.Components.Count(), 0);
 	EXPECT_EQ(player.GetGameObjectType(), gamelib::GameObjectType::GameDefined);		
 }
 

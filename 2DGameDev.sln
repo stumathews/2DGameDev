@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29009.5
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "2DGameDev", "GameDev.vcxproj", "{A335C1BA-CFDA-41FD-A0E3-307EBDF715CC}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -19,6 +19,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "2DGameDevLibTests", "2DGameDevLibTests\2DGameDevLibTests.vcxproj", "{DD33B97B-06EB-4264-80CA-CE685A995029}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameEditor", "GameEditor\GameEditor\GameEditor.csproj", "{C8100667-08D9-4344-BF68-B9E2F7E34CC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameEditorTests", "GameEditorTests\GameEditorTests.csproj", "{232B2D92-1ADA-405D-856F-4C403FACA68A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -107,6 +109,18 @@ Global
 		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Release|x64.Build.0 = Release|Any CPU
 		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Release|x86.ActiveCfg = Release|Any CPU
 		{C8100667-08D9-4344-BF68-B9E2F7E34CC5}.Release|x86.Build.0 = Release|Any CPU
+		{232B2D92-1ADA-405D-856F-4C403FACA68A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{232B2D92-1ADA-405D-856F-4C403FACA68A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{232B2D92-1ADA-405D-856F-4C403FACA68A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{232B2D92-1ADA-405D-856F-4C403FACA68A}.Debug|x64.Build.0 = Debug|Any CPU
+		{232B2D92-1ADA-405D-856F-4C403FACA68A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{232B2D92-1ADA-405D-856F-4C403FACA68A}.Debug|x86.Build.0 = Debug|Any CPU
+		{232B2D92-1ADA-405D-856F-4C403FACA68A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{232B2D92-1ADA-405D-856F-4C403FACA68A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{232B2D92-1ADA-405D-856F-4C403FACA68A}.Release|x64.ActiveCfg = Release|Any CPU
+		{232B2D92-1ADA-405D-856F-4C403FACA68A}.Release|x64.Build.0 = Release|Any CPU
+		{232B2D92-1ADA-405D-856F-4C403FACA68A}.Release|x86.ActiveCfg = Release|Any CPU
+		{232B2D92-1ADA-405D-856F-4C403FACA68A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,11 +20,11 @@ void GameDataManager::Initialize()
 
 std::vector<std::shared_ptr<Event>> GameDataManager::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
 {
-	if(evt->Id.Id == AddGameObjectToCurrentSceneEventId.Id)
+	if(evt->Id.PrimaryId == AddGameObjectToCurrentSceneEventId.PrimaryId)
 	{
 		AddToGameData(evt); 
 	}
-	if(evt->Id.Id == GameObjectTypeEventId.Id)
+	if(evt->Id.PrimaryId == GameObjectTypeEventId.PrimaryId)
 	{
 		RemoveFromGameData(evt);
 	}

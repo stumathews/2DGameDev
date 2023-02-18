@@ -22,7 +22,6 @@
 #include <events/UpdateProcessesEvent.h>
 
 #include "CharacterBuilder.h"
-#include "EventIds.h"
 #include "EventNumber.h"
 #include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"

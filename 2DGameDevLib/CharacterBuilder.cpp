@@ -26,6 +26,7 @@ std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, c
 	player->SetMoveStrategy(std::make_shared<GameObjectMoveStrategy>(player, player->CurrentRoom));
 	player->SetTag(gamelib::constants::PlayerTag);	
 	player->SetSprite(animatedSprite);
+	player->IntProperties["Health"] = 100;
 
 	// We keep a reference to track of the player globally
 	GameData::Get()->player = player;

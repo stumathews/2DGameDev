@@ -72,13 +72,13 @@
     <ClInclude Include="Enemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CollidedWithEnemyEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EventIds.h">
+    <ClInclude Include="PlayerCollidedWithEnemyEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EventNumber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerCollidedWithPickupEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -126,6 +126,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerCollidedWithPickupEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

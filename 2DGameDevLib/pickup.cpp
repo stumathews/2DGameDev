@@ -12,6 +12,7 @@
 #include "EventNumber.h"
 #include "SDLCollisionDetection.h"
 #include "GameData.h"
+#include "PlayerCollidedWithPickupEvent.h"
 
 using namespace std;
 
@@ -31,7 +32,7 @@ namespace gamelib
 	{
 		ListOfEvents generatedEvents;
 
-		if(event->Id.Id == PlayerMovedEventTypeEventId.Id)  // NOLINT(clang-diagnostic-switch-enum)
+		if(event->Id.PrimaryId == PlayerMovedEventTypeEventId.PrimaryId)  // NOLINT(clang-diagnostic-switch-enum)
 		{			
 			const auto player = GameData::Get()->GetPlayer();
 
@@ -40,6 +41,7 @@ namespace gamelib
 				if (SdlCollisionDetection::IsColliding(&player->Bounds, &Bounds))
 				{
 					generatedEvents.push_back(make_shared<Event>(FetchedPickupEventId));
+					generatedEvents.push_back(make_shared<PlayerCollidedWithPickupEvent>(player, shared_from_this()));
 					generatedEvents.push_back(make_shared<GameObjectEvent>(shared_from_this(),
 						GameObjectEventContext::Remove));
 				}

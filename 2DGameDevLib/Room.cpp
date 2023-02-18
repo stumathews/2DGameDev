@@ -86,8 +86,8 @@ ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, const unsigne
 {	
 	auto generatedEvents(GameObject::HandleEvent(event, deltaMs));
 
-	if(event->Id.Id == PlayerMovedEventTypeEventId.Id) { OnPlayerMoved(generatedEvents); }
-	else if(event->Id.Id == SettingsReloadedEventId.Id) { LoadSettings(); }
+	if(event->Id.PrimaryId == PlayerMovedEventTypeEventId.PrimaryId) { OnPlayerMoved(generatedEvents); }
+	else if(event->Id.PrimaryId == SettingsReloadedEventId.PrimaryId) { LoadSettings(); }
 	else
 	{
 		std::stringstream message("Unhandled subscribed event in Room class:");

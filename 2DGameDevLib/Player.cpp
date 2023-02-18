@@ -64,11 +64,11 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event, const unsigned l
 	ListOfEvents createdEvents;
 	BaseProcessEvent(event, createdEvents, deltaMs);
 
-	if(event->Id.Id == ControllerMoveEventId.Id) { return OnControllerMove(event, createdEvents, deltaMs); }
-	if(event->Id.Id == FireEventId.Id) { LogMessage("Fire!", verbose); Fire(); }
-	if(event->Id.Id == SettingsReloadedEventId.Id) { LogMessage("Reloading player settings", verbose); 	LoadSettings();}
-	if(event->Id.Id == InvalidMoveEventId.Id) { LogMessage("Invalid move", verbose);}
-	if(event->Id.Id== GameWonEventId.Id) { OnGameWon(); }
+	if(event->Id.PrimaryId == ControllerMoveEventId.PrimaryId) { return OnControllerMove(event, createdEvents, deltaMs); }
+	if(event->Id.PrimaryId == FireEventId.PrimaryId) { LogMessage("Fire!", verbose); Fire(); }
+	if(event->Id.PrimaryId == SettingsReloadedEventId.PrimaryId) { LogMessage("Reloading player settings", verbose); 	LoadSettings();}
+	if(event->Id.PrimaryId == InvalidMoveEventId.PrimaryId) { LogMessage("Invalid move", verbose);}
+	if(event->Id.PrimaryId== GameWonEventId.PrimaryId) { OnGameWon(); }
 
 	return createdEvents;
 }

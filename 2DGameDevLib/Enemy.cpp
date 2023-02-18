@@ -10,8 +10,8 @@
 #include "events/ControllerMoveEvent.h"
 #include "events/GameObjectEvent.h"
 #include "Movement/Movement.h"
-#include <events/Events.h>
 
+#include "PlayerCollidedWithEnemyEvent.h"
 #include "EventNumber.h"
 
 namespace gamelib
@@ -106,18 +106,19 @@ void Enemy::Initialize()
 
 std::vector<std::shared_ptr<gamelib::Event>> Enemy::HandleEvent(const std::shared_ptr<gamelib::Event> event, unsigned long deltaMs)
 {
-	if(event->Id.Id == FireEventId.Id)
+	if(event->Id == FireEventId)
 	{
 		SwapCurrentDirection();		
 	}
 
-	if(event->Id.Id == gamelib::PlayerMovedEventTypeEventId.Id)
+	if(event->Id == gamelib::PlayerMovedEventTypeEventId)
 	{
 		const auto player = GameDataManager::Get()->GameData()->GetPlayer();
 		SDL_Rect result;
 		if(CurrentRoom->RoomIndex == player->CurrentRoom->RoomIndex && SDL_IntersectRect(&player->Bounds, &Bounds, &result))
 		{
-			RaiseEvent(std::make_shared<gamelib::GameObjectEvent>(shared_from_this(), gamelib::GameObjectEventContext::Remove));
+			RaiseEvent(std::make_shared<PlayerCollidedWithEnemyEvent>(shared_from_this(), player));
+			RaiseEvent(std::make_shared<gamelib::GameObjectEvent>(shared_from_this(), gamelib::GameObjectEventContext::Remove));			
 		}
 	}
 

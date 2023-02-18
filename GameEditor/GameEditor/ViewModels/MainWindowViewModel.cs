@@ -1,9 +1,7 @@
 ﻿using GameEditor.Utils;
 using GameEditor.Windows;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -15,9 +13,9 @@ namespace GameEditor.ViewModels
 
         private GameObjectEditorWindow gameObjectEditorWindow;
 
-        private NewLevelViewModel newLevelViewModel;
+        private readonly NewLevelViewModel newLevelViewModel;
 
-        private LevelManager levelManager;
+        private readonly LevelManager levelManager;
         public ICommand ShowAboutCommand {get;set;}
         public ICommand CloseCommand {get;set;}
         public ICommand ShowContentManagerCommand { get;set;}
@@ -105,7 +103,6 @@ namespace GameEditor.ViewModels
 
         internal void SaveLevel(List<RoomViewModel> rooms)
         {
-            
             levelManager.SaveLevelFile(new Level(newLevelViewModel.NumCols, newLevelViewModel.NumRows, rooms, AutoPopulateLevelPickups), GameObjectTypeManager.LoadGameObjectTypesActual("GameObjectTypes.xml"));
         }
     }

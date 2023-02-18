@@ -14,6 +14,7 @@
 #include "common/constants.h"
 #include "CharacterBuilder.h"
 // ReSharper disable once CppUnusedIncludeDirective
+#include "DirectionUtils.h"
 #include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
 #include "events/AddGameObjectToCurrentSceneEvent.h"
@@ -151,7 +152,7 @@ void Level::Load()
 					if(gameObject->Type == "Enemy")
 					{
 						auto enemy = dynamic_pointer_cast<Enemy>(gameObject);
-							Enemies.push_back(enemy);
+						Enemies.push_back(enemy);
 					}
 				}
 			}
@@ -217,7 +218,7 @@ shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_pt
 		}
 		else if (type == "Enemy")
 		{
-			gameObject = CharacterBuilder::BuildEnemy(name, room, resourceId, GetRandomDirection());
+			gameObject = CharacterBuilder::BuildEnemy(name, room, resourceId, DirectionUtils::GetRandomDirection());
 		}
 	
 	
