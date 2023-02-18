@@ -22,9 +22,12 @@
 #include <events/UpdateProcessesEvent.h>
 
 #include "CharacterBuilder.h"
+#include "EventIds.h"
 #include "EventNumber.h"
 #include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
+#include "PlayerCollidedWithEnemyEvent.h"
+#include "PlayerCollidedWithPickupEvent.h"
 #include "events/StartNetworkLevelEvent.h"
 #include "scene/SceneManager.h"
 
@@ -50,6 +53,9 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(StartNetworkLevelEventId, this);
 	eventManager->SubscribeToEvent(UpdateProcessesEventId, this);
 	eventManager->SubscribeToEvent(GameWonEventId, this);
+	eventManager->SubscribeToEvent(PlayerCollidedWithEnemyEventId, this);
+	eventManager->SubscribeToEvent(PlayerDiedEventId, this);
+	eventManager->SubscribeToEvent(PlayerCollidedWithPickupEventId, this);
 
 	verbose =  GetBoolSetting("global", "verbose");
 
@@ -60,16 +66,42 @@ bool LevelManager::Initialize()
 
 ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event> evt, const unsigned long inDeltaMs)
 {
-	if(evt->Id.Id == LevelChangedEventTypeEventId.Id) { OnLevelChanged(evt); }
-	if(evt->Id.Id == UpdateProcessesEventId.Id) { processManager.UpdateProcesses(inDeltaMs); }
-	if(evt->Id.Id == InvalidMoveEventId.Id) { gameCommands->InvalidMove();}
-	if(evt->Id.Id == NetworkPlayerJoinedEventId.Id) { OnNetworkPlayerJoined(evt);}
-	if(evt->Id.Id == StartNetworkLevelEventId.Id) { OnStartNetworkLevel(evt); }
-	if(evt->Id.Id == FetchedPickupEventId.Id) { OnFetchedPickup();}
-	if(evt->Id.Id == GameWonEventId.Id) { OnGameWon();}
+	if(evt->Id.PrimaryId == LevelChangedEventTypeEventId.PrimaryId) { OnLevelChanged(evt); }
+	if(evt->Id.PrimaryId == UpdateProcessesEventId.PrimaryId) { processManager.UpdateProcesses(inDeltaMs); }
+	if(evt->Id.PrimaryId == InvalidMoveEventId.PrimaryId) { gameCommands->InvalidMove();}
+	if(evt->Id.PrimaryId == NetworkPlayerJoinedEventId.PrimaryId) { OnNetworkPlayerJoined(evt);}
+	if(evt->Id.PrimaryId == StartNetworkLevelEventId.PrimaryId) { OnStartNetworkLevel(evt); }
+	if(evt->Id.PrimaryId == FetchedPickupEventId.PrimaryId) { OnFetchedPickup();}
+	if(evt->Id.PrimaryId == GameWonEventId.PrimaryId) { OnGameWon();}
+	if(evt->Id.PrimaryId == PlayerCollidedWithEnemyEventId.PrimaryId) { OnEnemyCollision(evt);}
+	if(evt->Id.PrimaryId == PlayerDiedEventId.PrimaryId) { OnPlayerDied(); }
+	if(evt->Id.PrimaryId == PlayerCollidedWithPickupEventId.PrimaryId) { OnPickupCollision(evt); }
 
 	return {};
 }
+
+void LevelManager::OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt) 
+{
+	gameCommands->FetchedPickup();
+	const auto collisionEvent = std::dynamic_pointer_cast<PlayerCollidedWithEnemyEvent>(evt);
+	const auto enemyHitPoints = collisionEvent->Enemy->StringProperties["HitPoint"];
+	collisionEvent->Player->IntProperties["Health"] -= strtol(enemyHitPoints.c_str(), nullptr, 0);
+	Logger::Get()->LogThis(string("Player Health: ") + to_string(collisionEvent->Player->IntProperties["Health"]));
+	if(collisionEvent->Player->IntProperties["Health"] <= 0)
+	{
+		eventManager->RaiseEvent(std::dynamic_pointer_cast<Event>(eventFactory->CreateGenericEvent(PlayerDiedEventId)), this);
+	}
+}
+
+void LevelManager::OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const
+{
+	const auto collisionEvent = std::dynamic_pointer_cast<PlayerCollidedWithPickupEvent>(evt);
+	const auto pickupValue = collisionEvent->Pickup->StringProperties["value"];
+	collisionEvent->Player->IntProperties["Points"] += strtol(pickupValue.c_str(), nullptr, 0);
+	
+	Logger::Get()->LogThis(string("Player Points: ") + to_string(collisionEvent->Player->IntProperties["Points"]));
+}
+
 
 void LevelManager::OnFetchedPickup() const
 {
@@ -77,11 +109,17 @@ void LevelManager::OnFetchedPickup() const
 	hudItem->AdvanceFrame();	
 }
 
+
+void LevelManager::OnPlayerDied()
+{	
+	Logger::Get()->LogThis("Player DIED!");
+}
+
 void LevelManager::OnStartNetworkLevel(const std::shared_ptr<Event>& evt)
 {
 	// read the start level event and create the level
 	// ReSharper disable once CppNoDiscardExpression
-	ChangeLevel(1);
+	ChangeLevel(1);  // NOLINT(clang-diagnostic-unused-result)
 
 	// Network games all start on level 1 for now
 	CreateLevel(GetSetting("global", "level1FileName"));
@@ -244,7 +282,7 @@ void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms)
 	}
 
 	// Setup the pickups
-	InitializePickups(pickups);
+	InitializeAutoPickups(pickups);
 }
 
 void LevelManager::CreateLevel(const string& filename)
@@ -259,7 +297,6 @@ void LevelManager::CreateLevel(const string& filename)
 	InitializeRooms(rooms);	
 
 	CreatePlayer(rooms, GetAsset("edge_player")->uid);
-	//CreateNpcs(rooms, GetAsset("snap_player")->uid);
 	CreateHud(rooms, player);
 
 	if (level->IsAutoPopulatePickups())
@@ -326,12 +363,13 @@ void LevelManager::InitializePlayer(const std::shared_ptr<Player>& inPlayer, con
 	GameData::Get()->player = inPlayer;
 }
 
-void LevelManager::InitializePickups(const std::vector<std::shared_ptr<Pickup>>& inPickups)
+void LevelManager::InitializeAutoPickups(const std::vector<std::shared_ptr<Pickup>>& inPickups)
 {
 	for (const auto& pickup : inPickups)
 	{
 		pickup->LoadSettings();
 		pickup->SubscribeToEvent(PlayerMovedEventTypeEventId);
+		pickup->StringProperties["value"] = "1";
 
 		AddGameObjectToScene(pickup);
 	}

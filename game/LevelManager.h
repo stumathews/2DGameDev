@@ -43,7 +43,7 @@ public:
     static void InitializeHudItem(const std::shared_ptr<gamelib::StaticSprite>& hudItem);
     void InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<gamelib::SpriteAsset>&
                           spriteAsset) const;
-    void InitializePickups(const std::vector<std::shared_ptr<gamelib::Pickup>>& inPickups);
+    void InitializeAutoPickups(const std::vector<std::shared_ptr<gamelib::Pickup>>& inPickups);
     void InitializeRooms(const std::vector<std::shared_ptr<Room>>& rooms);
     static std::string GetSetting(const std::string& section, const std::string& settingName);
     std::string GetSubscriberName() override { return "level_manager"; }
@@ -57,6 +57,9 @@ public:
     std::shared_ptr<Level> GetLevel();
     static Mix_Chunk* GetSoundEffect(const std::string& name);
 
+    void OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt);
+    static void OnPlayerDied();
+    void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
     gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long inDeltaMs) override;
 
 
@@ -85,3 +88,5 @@ private:
     std::shared_ptr<Enemy> enemy2;
     std::vector<std::shared_ptr<gamelib::Pickup>> pickups;    
 };
+
+
