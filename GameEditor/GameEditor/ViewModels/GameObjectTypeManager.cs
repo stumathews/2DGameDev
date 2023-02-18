@@ -9,14 +9,14 @@ namespace GameEditor.Utils
     {
         public static List<GameObjectType> LoadGameObjectTypesActual(string filename)
         {
-            List<GameObjectType> gameObjectTypes = new List<GameObjectType>();
+            var gameObjectTypes = new List<GameObjectType>();
             if (!File.Exists(filename))
             {
                 return gameObjectTypes;
             }
 
-            XmlReaderSettings settings = new XmlReaderSettings() { DtdProcessing = DtdProcessing.Ignore };
-            XmlReader reader = XmlReader.Create(filename, settings);
+            var settings = new XmlReaderSettings() { DtdProcessing = DtdProcessing.Ignore };
+            var reader = XmlReader.Create(filename, settings);
 
             GameObjectType gameObjectType = null;
 
@@ -59,7 +59,7 @@ namespace GameEditor.Utils
         public static void SaveGameObjectTypes(List<GameObjectType> gameObjectTypes)
         {
             // Write all Game Types created to file.
-            using (XmlWriter writer = XmlWriter.Create("GameObjectTypes.xml", new XmlWriterSettings { Indent = true }))
+            using (var writer = XmlWriter.Create("GameObjectTypes.xml", new XmlWriterSettings { Indent = true }))
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("GameObjectTypes");

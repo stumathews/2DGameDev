@@ -16,7 +16,7 @@ namespace GameEditor.ViewModels
         public event EventHandler<string> OnAboutToSaveFile;
         public event EventHandler OnLevelLoaded;
 
-        public void SaveLevelFile(Level level)
+        public void SaveLevelFile(Level level, List<GameObjectType> gameObjectTypes)
         {
             // Collect all the rooms and serialize to XML
             var xmlSettings = new XmlWriterSettings()
@@ -52,11 +52,11 @@ namespace GameEditor.ViewModels
                         gameObject != null 
                             ? new XElement("object",
                             new XAttribute("name", gameObject.Name),
-                            new XAttribute("type", gameObject.Type ?? ""),
+                            new XAttribute("type", gameObject.Type),
                             new XAttribute("resourceId", gameObject.ResourceId),
                             new XAttribute("assetPath", gameObject.AssetPath), 
                             // <property>
-                            from property in gameObject.Properties
+                            from property in gameObjectTypes.Single(x=>x.Type == gameObject.Type).Properties // save any new props
                             let key = new XAttribute("name", property.Key)
                             let value = new XAttribute("value", property.Value)
                             select new XElement("property", key, value)) 
@@ -86,6 +86,9 @@ namespace GameEditor.ViewModels
                 level = (from levels in XElement.Load(openFileDialog.FileName).AncestorsAndSelf()
                         select new Level
                         {
+                            NumCols = GetAsNumber(levels, "cols"),
+                            NumRows = GetAsNumber(levels, "rows"),
+                            AutoPopulatePickups = GetAsBool(levels, "autoPopulatePickups"),
                             Rooms = levels.Descendants("room").Select(r => new RoomViewModel
                             {
                                 RoomNumber = GetAsNumber(r, "number"),
@@ -96,8 +99,12 @@ namespace GameEditor.ViewModels
                                 ResidentGameObjectType = r.Descendants("object").Select(o => new GameObjectType()
                                 {
                                     Name = GetAsString(o, "name"),
+                                    Type = GetAsString(o, "type"),
+                                    ResourceId = GetAsNumber(o, "resourceId"),
                                     AssetPath = GetAsString(o, "assetPath"),
-                                    Properties = o.Descendants("property").Select(p => new KeyValuePair<string, string>(key: GetAsString(p, "name"), value: GetAsString(p, "value"))).ToList()
+                                    Properties = o.Descendants("property")
+                                        .Select(p => new KeyValuePair<string, string>(key: GetAsString(p, "name"), 
+                                            value: GetAsString(p, "value"))).ToList()
                                 }).SingleOrDefault()
                             }).ToList(),
                         }).SingleOrDefault();
@@ -106,6 +113,9 @@ namespace GameEditor.ViewModels
             OnLevelLoaded?.Invoke(this, EventArgs.Empty);
             return level;            
         }
+
+        private static bool GetAsBool(XElement o, string attributeName)
+            => GetAsString(o, attributeName).ToBool();
 
         private static string GetAsString(XElement o, string attributeName) 
             => (o.Attribute(attributeName) ?? throw new NullReferenceException(attributeName)).Value;

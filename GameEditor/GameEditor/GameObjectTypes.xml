@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GameObjectTypes>
+	<GameObjectType Type="Pickup" Name="GoldPickup" ResourceId="19" AssetPath="game/assets/coin_gold.png">
+		<Property Value="5" />
+	</GameObjectType>
+	<GameObjectType Type="Pickup" Name="SilverPickup" ResourceId="20" AssetPath="game/assets/coin_silver.png">
+		<Property Value="10" />
+	</GameObjectType>
+	<GameObjectType Type="Pickup" Name="BronzePickup"  ResourceId="21" AssetPath="game/assets/coin_copper.png">
+		<Property Value="15" />
+	</GameObjectType>
+	<GameObjectType Type="Player" Name="Player1" ResourceId="18" AssetPath="game/assets/character2.png">
+		<Property Health="100" />
+	</GameObjectType>
+	<GameObjectType Type="Player" Name="Player2"  ResourceId="7" AssetPath="Assets/Platformer/Base pack/Player/p2_front.png" />
+	<GameObjectType Type="Player" Name="Player3"  ResourceId="8" AssetPath="Assets/Platformer/Base pack/Player/p3_front.png" />
+	<GameObjectType Type="Player" Name="Player4" ResourceId="6" AssetPath="Assets/Platformer/Base pack/Player/p1_front.png">
+		<Property Health="50" />
+		<Property emotion="happy" />
+		<Property age="12" />
+	</GameObjectType>
+	<GameObjectType Type="Player" Name="hud"  ResourceId="22" AssetPath="game/assets/hud_spritesheet.png" />
+	<GameObjectType Type="Enemy" Name="Enemy"  ResourceId="18" AssetPath="game/assets/character2.png">
+		<Property HitPoint="50" />
+	</GameObjectType>
+</GameObjectTypes>

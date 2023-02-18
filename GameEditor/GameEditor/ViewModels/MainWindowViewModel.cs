@@ -1,7 +1,9 @@
-﻿using GameEditor.Windows;
+﻿using GameEditor.Utils;
+using GameEditor.Windows;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -103,7 +105,8 @@ namespace GameEditor.ViewModels
 
         internal void SaveLevel(List<RoomViewModel> rooms)
         {
-            levelManager.SaveLevelFile(new Level(newLevelViewModel.NumCols, newLevelViewModel.NumRows, rooms, AutoPopulateLevelPickups));
+            
+            levelManager.SaveLevelFile(new Level(newLevelViewModel.NumCols, newLevelViewModel.NumRows, rooms, AutoPopulateLevelPickups), GameObjectTypeManager.LoadGameObjectTypesActual("GameObjectTypes.xml"));
         }
     }
 }
