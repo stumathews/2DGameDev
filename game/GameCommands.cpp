@@ -151,8 +151,8 @@ void GameCommands::PingGameServer() { NetworkManager::Get()->PingGameServer(); }
 
 std::vector<std::shared_ptr<Event>> GameCommands::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
 {
-	if(evt->Id.Id == NetworkPlayerJoinedEventId.Id) { Logger::Get()->LogThis("--------------------------- Network Player joined");}
-	if(evt->Id.Id == NetworkTrafficReceivedEventId.Id)
+	if(evt->Id.PrimaryId == NetworkPlayerJoinedEventId.PrimaryId) { Logger::Get()->LogThis("--------------------------- Network Player joined");}
+	if(evt->Id.PrimaryId == NetworkTrafficReceivedEventId.PrimaryId)
 	{
 		const auto networkPlayerTrafficReceivedEvent = dynamic_pointer_cast<NetworkTrafficReceivedEvent>(evt);
 		std::stringstream message;
