@@ -11,6 +11,9 @@
 #include "LevelManager.h"
 #include <GameData.h>
 
+#include "EventNumber.h"
+#include "events/NetworkPlayerJoinedEvent.h"
+
 using namespace gamelib;
 using namespace std;
 
@@ -19,15 +22,15 @@ GameCommands::GameCommands()
 	_verbose = SettingsManager::Get()->GetBool("global", "verbose");
 	logCommands = SettingsManager::Get()->GetBool("global", "verbose");
 	
-	EventManager::Get()->SubscribeToEvent(EventType::NetworkPlayerJoined, this);
-	EventManager::Get()->SubscribeToEvent(EventType::NetworkTrafficReceived, this);
+	EventManager::Get()->SubscribeToEvent(NetworkPlayerJoinedEventId, this);
+	EventManager::Get()->SubscribeToEvent(NetworkTrafficReceivedEventId, this);
 }
 
 void GameCommands::Fire(const bool verbose)
 {
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: Fire", verbose); }	
 	PlaySoundEffect(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("scratch.wav"))->AsSoundEffect());	
-	EventManager::Get()->RaiseEvent(std::make_shared<Event>(EventType::Fire), this);
+	EventManager::Get()->RaiseEvent(std::make_shared<Event>(FireEventId), this);
 }
 
 void GameCommands::MoveUp(const bool verbose)
@@ -71,7 +74,7 @@ void GameCommands::ReloadSettings(const bool verbose)
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: ReloadSettings", verbose); }
 
 	SettingsManager::Get()->Reload();
-	EventManager::Get()->RaiseEvent(make_shared<Event>(EventType::SettingsReloaded), this);
+	EventManager::Get()->RaiseEvent(make_shared<Event>(SettingsReloadedEventId), this);
 }
 
 void GameCommands::LoadNewLevel(const int level)
@@ -148,10 +151,8 @@ void GameCommands::PingGameServer() { NetworkManager::Get()->PingGameServer(); }
 
 std::vector<std::shared_ptr<Event>> GameCommands::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
 {
-	switch (evt->Type)  // NOLINT(clang-diagnostic-switch-enum)
-	{
-	case EventType::NetworkPlayerJoined: { Logger::Get()->LogThis("--------------------------- Network Player joined"); } break;
-	case EventType::NetworkTrafficReceived: 
+	if(evt->Id.Id == NetworkPlayerJoinedEventId.Id) { Logger::Get()->LogThis("--------------------------- Network Player joined");}
+	if(evt->Id.Id == NetworkTrafficReceivedEventId.Id)
 	{
 		const auto networkPlayerTrafficReceivedEvent = dynamic_pointer_cast<NetworkTrafficReceivedEvent>(evt);
 		std::stringstream message;
@@ -160,9 +161,6 @@ std::vector<std::shared_ptr<Event>> GameCommands::HandleEvent(const std::shared_
 			    << networkPlayerTrafficReceivedEvent->BytesReceived << " Message: " << networkPlayerTrafficReceivedEvent->Message;
 		    
 		Logger::Get()->LogThis(message.str());
-	}
-	break;
-	default: return {};
 	}
 
 	// Don't currently handle any events yet

@@ -5,7 +5,6 @@
 #include "audio/AudioManager.h"
 #include "graphic/SDLGraphicsManager.h"
 #include "resource/ResourceManager.h"
-#include "scene/SceneManager.h"
 #include "GameCommands.h"
 #include "Room.h"
 #include <events/EventFactory.h>
@@ -17,9 +16,6 @@
 #include "Pickup.h"
 
 typedef std::vector<std::weak_ptr<gamelib::GameObject>> ListOfGameObjects;
-
-class gamelib::GameWorldData;
-class gamelib::EventManager;
 
 class Level;
 

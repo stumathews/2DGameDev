@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<level cols="10" rows="10">
+<level cols="10" rows="10" autoPopulatePickups="True">
   <room number="0" top="True" right="False" bottom="False" left="True" />
   <room number="1" top="True" right="False" bottom="True" left="False" />
   <room number="2" top="True" right="False" bottom="True" left="False" />
@@ -49,12 +49,16 @@
   <room number="46" top="False" right="False" bottom="False" left="True" />
   <room number="47" top="True" right="False" bottom="True" left="False" />
   <room number="48" top="True" right="False" bottom="True" left="False" />
-  <room number="49" top="False" right="True" bottom="False" left="False" />
+  <room number="0" top="True" right="True" bottom="True" left="True">
+    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png" />
+  </room>
   <room number="50" top="True" right="False" bottom="False" left="True" />
   <room number="51" top="False" right="False" bottom="True" left="False" />
   <room number="52" top="True" right="True" bottom="False" left="False" />
   <room number="53" top="False" right="False" bottom="False" left="True" />
-  <room number="54" top="False" right="True" bottom="False" left="False" />
+  <room number="0" top="True" right="True" bottom="True" left="True">
+    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png" />
+  </room>
   <room number="55" top="True" right="False" bottom="False" left="True" />
   <room number="56" top="False" right="True" bottom="True" left="False" />
   <room number="57" top="True" right="True" bottom="False" left="True" />
@@ -90,7 +94,9 @@
   <room number="87" top="False" right="False" bottom="True" left="True" />
   <room number="88" top="False" right="False" bottom="True" left="False" />
   <room number="89" top="True" right="True" bottom="False" left="False" />
-  <room number="90" top="False" right="False" bottom="True" left="True" />
+  <room number="0" top="True" right="True" bottom="True" left="True">
+    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png" />
+  </room>
   <room number="91" top="True" right="False" bottom="True" left="False" />
   <room number="92" top="False" right="True" bottom="True" left="False" />
   <room number="93" top="True" right="False" bottom="True" left="True" />

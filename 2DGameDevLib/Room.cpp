@@ -3,9 +3,12 @@
 #include <scene/SceneManager.h>
 #include "Player.h"
 #include <sstream>
+
+#include "EventNumber.h"
 #include "SideUtils.h"
 #include "GameData.h"
 #include "GameDataManager.h"
+#include "events/GameObjectEvent.h"
 #include "util/SettingsManager.h"
 
 using namespace std;
@@ -83,20 +86,14 @@ ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, const unsigne
 {	
 	auto generatedEvents(GameObject::HandleEvent(event, deltaMs));
 
-	switch(event->Type)  // NOLINT(clang-diagnostic-switch-enum)
+	if(event->Id.Id == PlayerMovedEventTypeEventId.Id) { OnPlayerMoved(generatedEvents); }
+	else if(event->Id.Id == SettingsReloadedEventId.Id) { LoadSettings(); }
+	else
 	{
-		case EventType::PlayerMovedEventType: { OnPlayerMoved(generatedEvents); }
-		break;
-		case EventType::SettingsReloaded: { LoadSettings(); }
-		break;
-		default:
-		{
-			std::stringstream message("Unhandled subscribed event in Room class:");
-			message << event->ToString();
-			Logger::Get()->LogThis(message.str());
-		}
+		std::stringstream message("Unhandled subscribed event in Room class:");
+		message << event->ToString();
+		Logger::Get()->LogThis(message.str());
 	}
-			
 	return generatedEvents;
 }
 
@@ -201,14 +198,14 @@ void Room::Update(const unsigned long deltaMs)
 	// are any of the NPCs in this room?
 	for(auto& npc : GameDataManager::Get()->GameData()->Enemies())
 	{
-		if(const auto found = npc.lock())
+		if(const auto enemy = npc.lock())
 		{
-			const auto npcHotspot = found->Hotspot->GetBounds();
+			const auto npcHotspot = enemy->Hotspot->GetBounds();
 			SDL_Rect result;
 			if(SDL_IntersectRect(&InnerBounds, &npcHotspot, &result))
 			{
-				found->CurrentRoom->SetCurrentRoom(shared_from_this());
-			}
+				enemy->CurrentRoom->SetCurrentRoom(shared_from_this());
+			}			
 		}
 	}
 }

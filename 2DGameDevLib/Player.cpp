@@ -10,6 +10,7 @@
 #include "GameData.h"
 #include <events/EventFactory.h>
 
+#include "EventNumber.h"
 #include "Movement/Movement.h"
 #include "util/SettingsManager.h"
 
@@ -52,26 +53,22 @@ void Player::CommonInit(const int playerWidth, const int playerHeight, const std
 	currentFacingDirection = this->currentMovingDirection;
 	Identifier = identifier;
 	UpdateBounds(width, height);
-	SubscribeToEvent(EventType::ControllerMoveEvent);
-	SubscribeToEvent(EventType::SettingsReloaded);
-	SubscribeToEvent(EventType::Fire);
-	SubscribeToEvent(EventType::GameWon);
+	SubscribeToEvent(ControllerMoveEventId);
+	SubscribeToEvent(SettingsReloadedEventId);
+	SubscribeToEvent(FireEventId);
+	SubscribeToEvent(GameWonEventId);
 }
 
 ListOfEvents Player::HandleEvent(const shared_ptr<Event> event, const unsigned long deltaMs)
 {
 	ListOfEvents createdEvents;
 	BaseProcessEvent(event, createdEvents, deltaMs);
-	
-	switch (event->Type)  // NOLINT(clang-diagnostic-switch-enum)
-	{		
-		case EventType::ControllerMoveEvent: { return OnControllerMove(event, createdEvents, deltaMs); }
-	case EventType::Fire: { LogMessage("Fire!", verbose); Fire(); } break;
-		case EventType::SettingsReloaded: { LogMessage("Reloading player settings", verbose); 	LoadSettings(); } break;
-		case EventType::InvalidMove: { LogMessage("Invalid move", verbose); } 	break;
-		case EventType::GameWon: { OnGameWon(); } break;
-		default: /* Do Nothing*/ ;
-	}
+
+	if(event->Id.Id == ControllerMoveEventId.Id) { return OnControllerMove(event, createdEvents, deltaMs); }
+	if(event->Id.Id == FireEventId.Id) { LogMessage("Fire!", verbose); Fire(); }
+	if(event->Id.Id == SettingsReloadedEventId.Id) { LogMessage("Reloading player settings", verbose); 	LoadSettings();}
+	if(event->Id.Id == InvalidMoveEventId.Id) { LogMessage("Invalid move", verbose);}
+	if(event->Id.Id== GameWonEventId.Id) { OnGameWon(); }
 
 	return createdEvents;
 }
@@ -91,7 +88,7 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 	// This line actually moves the player by a 'movement'
 	const auto isValidMove = moveStrategy->MoveGameObject(std::make_shared<Movement>(moveEvent->Direction, pixelsToMove));
 
-	if (!isValidMove) { EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(EventType::InvalidMove), this); }
+	if (!isValidMove) { EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(InvalidMoveEventId), this); }
 
 	if (sprite) 
 	{

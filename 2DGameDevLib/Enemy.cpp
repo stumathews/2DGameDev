@@ -1,11 +1,18 @@
 #include "pch.h"
 #include "Enemy.h"
 
+#include <memory>
 #include <utility>
 
+#include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
+#include "Player.h"
 #include "events/ControllerMoveEvent.h"
+#include "events/GameObjectEvent.h"
 #include "Movement/Movement.h"
+#include <events/Events.h>
+
+#include "EventNumber.h"
 
 namespace gamelib
 {
@@ -24,59 +31,57 @@ Enemy::Enemy(const std::string& name, const std::string& type, const gamelib::Co
 	invalidState = gamelib::FSMState( [&]
 		{
 			SwapCurrentDirection();
-			gamelib::Logger::Get()->LogThis(GetName() +" Entered Invalid State");
 		},
 		[](unsigned long deltaMs){}, [&]
 		{
-			gamelib::Logger::Get()->LogThis("NPC Exited Invalid State");
 			
 		},
 		"Invalid State" );
 
-	upState = gamelib::FSMState( [&]{ gamelib::Logger::Get()->LogThis(GetName() + " Entered Up State");},
+	upState = gamelib::FSMState( [&]{ },
 		[&](const unsigned long deltaMs)
 		{
 
-		}, []{gamelib::Logger::Get()->LogThis("NPC Exited Up State");},
+		}, []{},
 		"Moving Up" );
-	downState = gamelib::FSMState( [&]{ gamelib::Logger::Get()->LogThis(GetName() +" Entered Down State");},
+	downState = gamelib::FSMState( [&]{ },
 		[&](const unsigned long deltaMs)
 		{
 
 		},
-		[]{gamelib::Logger::Get()->LogThis("NPC Exited Down State");}, "Moving Down" );
-	leftState = gamelib::FSMState( [&]{ gamelib::Logger::Get()->LogThis(GetName() +" Entered Left state");},
+		[]{}, "Moving Down" );
+	leftState = gamelib::FSMState( [&]{ },
 		[&](const unsigned long deltaMs)
 		{
 			
 		}, 
-		[]{gamelib::Logger::Get()->LogThis("NPC Exited Left State");}, "Moving Left" );
-	rightState = gamelib::FSMState( [&]{ gamelib::Logger::Get()->LogThis(GetName() +" Entered Right state");},
+		[]{}, "Moving Left" );
+	rightState = gamelib::FSMState( [&]{ },
 		[&](const unsigned long deltaMs)
 		{
 			
 		}, 
-		[]{gamelib::Logger::Get()->LogThis("NPC Exited Right State");}, "Moving Right" );
+		[]{}, "Moving Right" );
 
 	invalidMoveTransition = gamelib::FSMTransition( [&]()-> bool { return !isValidMove; },
 		[&]()-> gamelib::FSMState*{ return &invalidState; },
-		[]{ gamelib::Logger::Get()->LogThis("NPC Transitioning to Invalid state");  });
+		[]{   });
 
 	onUpDirection = gamelib::FSMTransition( [&]()-> bool { return isValidMove && currentFacingDirection == gamelib::Direction::Up; },
 		[&]()-> gamelib::FSMState*{ return &upState; },
-		[]{ gamelib::Logger::Get()->LogThis("NPC Transitioning to Up state");  });
+		[]{   });
 
 	onDownDirection = gamelib::FSMTransition( [&]()-> bool { return isValidMove && currentFacingDirection == gamelib::Direction::Down; },
 		[&]()-> gamelib::FSMState*{ return &downState; },
-		[]{ gamelib::Logger::Get()->LogThis("NPC Transitioning to Down state");});
+		[]{ });
 
 	onLeftDirection = gamelib::FSMTransition( [&]()-> bool { return isValidMove && currentFacingDirection == gamelib::Direction::Left; },
 		[&]()-> gamelib::FSMState*{ return &leftState; },
-		[]{ gamelib::Logger::Get()->LogThis("NPC Transitioning to Left state");});
+		[]{ });
 
 	onRightDirection = gamelib::FSMTransition( [&]()-> bool { return isValidMove && currentFacingDirection == gamelib::Direction::Right; },
 		[&]()-> gamelib::FSMState*{ return &rightState; },
-		[]{ gamelib::Logger::Get()->LogThis("NPC Transitioning to Right state");});
+		[]{ });
 
 	upState.Transitions = { onDownDirection, onLeftDirection, onRightDirection, invalidMoveTransition };
 	downState.Transitions = { onUpDirection, onLeftDirection, onRightDirection, invalidMoveTransition };
@@ -90,7 +95,8 @@ Enemy::Enemy(const std::string& name, const std::string& type, const gamelib::Co
 
 void Enemy::Initialize()
 {
-	SubscribeToEvent(gamelib::EventType::Fire);
+	SubscribeToEvent(FireEventId);
+	SubscribeToEvent(gamelib::PlayerMovedEventTypeEventId);
 	
 	moveStrategy = moveStrategy == nullptr
 		? std::make_shared<GameObjectMoveStrategy>(shared_from_this(), CurrentRoom)
@@ -100,9 +106,19 @@ void Enemy::Initialize()
 
 std::vector<std::shared_ptr<gamelib::Event>> Enemy::HandleEvent(const std::shared_ptr<gamelib::Event> event, unsigned long deltaMs)
 {
-	if(event->Type == gamelib::EventType::Fire)
+	if(event->Id.Id == FireEventId.Id)
 	{
 		SwapCurrentDirection();		
+	}
+
+	if(event->Id.Id == gamelib::PlayerMovedEventTypeEventId.Id)
+	{
+		const auto player = GameDataManager::Get()->GameData()->GetPlayer();
+		SDL_Rect result;
+		if(CurrentRoom->RoomIndex == player->CurrentRoom->RoomIndex && SDL_IntersectRect(&player->Bounds, &Bounds, &result))
+		{
+			RaiseEvent(std::make_shared<gamelib::GameObjectEvent>(shared_from_this(), gamelib::GameObjectEventContext::Remove));
+		}
 	}
 
 	return {};

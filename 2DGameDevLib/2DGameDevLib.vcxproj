@@ -160,7 +160,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CharacterBuilder.h" />
+    <ClInclude Include="CollidedWithEnemyEvent.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EventIds.h" />
+    <ClInclude Include="EventNumber.h" />
     <ClInclude Include="GameDataManager.h" />
     <ClInclude Include="RoomInfo.h" />
     <ClInclude Include="GameObjectMoveStrategy.h" />

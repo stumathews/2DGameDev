@@ -19,10 +19,14 @@
 
 // ReSharper disable once CppUnusedIncludeDirective
 #include <random>
+#include <events/UpdateProcessesEvent.h>
 
 #include "CharacterBuilder.h"
+#include "EventNumber.h"
 #include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
+#include "events/StartNetworkLevelEvent.h"
+#include "scene/SceneManager.h"
 
 using namespace gamelib;
 using namespace std;
@@ -37,15 +41,15 @@ bool LevelManager::Initialize()
 	eventFactory = EventFactory::Get();
 	gameCommands = std::make_shared<GameCommands>();
 
-	eventManager->SubscribeToEvent(EventType::GenerateNewLevel, this);
-	eventManager->SubscribeToEvent(EventType::InvalidMove, this);
-	eventManager->SubscribeToEvent(EventType::FetchedPickup, this);
-	eventManager->SubscribeToEvent(EventType::GameObject, this);
-	eventManager->SubscribeToEvent(EventType::LevelChangedEventType, this);
-	eventManager->SubscribeToEvent(EventType::NetworkPlayerJoined, this);
-	eventManager->SubscribeToEvent(EventType::StartNetworkLevel, this);
-	eventManager->SubscribeToEvent(EventType::UpdateProcesses, this);
-	eventManager->SubscribeToEvent(EventType::GameWon, this);
+	eventManager->SubscribeToEvent(GenerateNewLevelEventId, this);
+	eventManager->SubscribeToEvent(InvalidMoveEventId, this);
+	eventManager->SubscribeToEvent(FetchedPickupEventId, this);
+	eventManager->SubscribeToEvent(GameObjectTypeEventId, this);
+	eventManager->SubscribeToEvent(LevelChangedEventTypeEventId, this);
+	eventManager->SubscribeToEvent(NetworkPlayerJoinedEventId, this);
+	eventManager->SubscribeToEvent(StartNetworkLevelEventId, this);
+	eventManager->SubscribeToEvent(UpdateProcessesEventId, this);
+	eventManager->SubscribeToEvent(GameWonEventId, this);
 
 	verbose =  GetBoolSetting("global", "verbose");
 
@@ -56,17 +60,13 @@ bool LevelManager::Initialize()
 
 ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event> evt, const unsigned long inDeltaMs)
 {
-	switch(evt->Type)  // NOLINT(clang-diagnostic-switch-enum)
-	{
-		case EventType::LevelChangedEventType: { OnLevelChanged(evt); } break;
-		case EventType::UpdateProcesses: { processManager.UpdateProcesses(inDeltaMs); } break;
-		case EventType::InvalidMove: { gameCommands->InvalidMove(); } break;
-		case EventType::NetworkPlayerJoined: { 	OnNetworkPlayerJoined(evt); }	break;
-		case EventType::StartNetworkLevel: { OnStartNetworkLevel(evt); }	break;
-		case EventType::FetchedPickup: { OnFetchedPickup(); } break;	
-		case EventType::GameWon: { OnGameWon(); } break;
-	default: /* Do Nothing */;
-	}
+	if(evt->Id.Id == LevelChangedEventTypeEventId.Id) { OnLevelChanged(evt); }
+	if(evt->Id.Id == UpdateProcessesEventId.Id) { processManager.UpdateProcesses(inDeltaMs); }
+	if(evt->Id.Id == InvalidMoveEventId.Id) { gameCommands->InvalidMove();}
+	if(evt->Id.Id == NetworkPlayerJoinedEventId.Id) { OnNetworkPlayerJoined(evt);}
+	if(evt->Id.Id == StartNetworkLevelEventId.Id) { OnStartNetworkLevel(evt); }
+	if(evt->Id.Id == FetchedPickupEventId.Id) { OnFetchedPickup();}
+	if(evt->Id.Id == GameWonEventId.Id) { OnGameWon();}
 
 	return {};
 }
@@ -289,7 +289,7 @@ void LevelManager::CreateHud(const std::vector<std::shared_ptr<Room>>& rooms, co
 void LevelManager::InitializeHudItem(const std::shared_ptr<StaticSprite>& hudItem)
 {
 	hudItem->LoadSettings();
-	hudItem->SubscribeToEvent(EventType::PlayerMovedEventType);
+	hudItem->SubscribeToEvent(PlayerMovedEventTypeEventId);
 }
 
 void LevelManager::AddGameObjectToScene(const std::shared_ptr<GameObject>& gameObject) { eventManager->RaiseEvent(std::dynamic_pointer_cast<Event>(eventFactory->CreateAddToSceneEvent(gameObject)), this); }
@@ -331,7 +331,7 @@ void LevelManager::InitializePickups(const std::vector<std::shared_ptr<Pickup>>&
 	for (const auto& pickup : inPickups)
 	{
 		pickup->LoadSettings();
-		pickup->SubscribeToEvent(EventType::PlayerMovedEventType);
+		pickup->SubscribeToEvent(PlayerMovedEventTypeEventId);
 
 		AddGameObjectToScene(pickup);
 	}
@@ -343,8 +343,8 @@ void LevelManager::InitializeRooms(const std::vector<std::shared_ptr<Room>>& roo
 	for (const auto& room : rooms)
 	{
 		room->LoadSettings();
-		room->SubscribeToEvent(EventType::PlayerMovedEventType);
-		room->SubscribeToEvent(EventType::SettingsReloaded);
+		room->SubscribeToEvent(PlayerMovedEventTypeEventId);
+		room->SubscribeToEvent(SettingsReloadedEventId);
 
 		AddGameObjectToScene(room);
 	}

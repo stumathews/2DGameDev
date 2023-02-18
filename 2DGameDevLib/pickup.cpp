@@ -8,6 +8,8 @@
 #include <memory>
 #include <SpriteAsset.h>
 #include <common/aliases.h>
+
+#include "EventNumber.h"
 #include "SDLCollisionDetection.h"
 #include "GameData.h"
 
@@ -29,24 +31,19 @@ namespace gamelib
 	{
 		ListOfEvents generatedEvents;
 
-		switch(event->Type)  // NOLINT(clang-diagnostic-switch-enum)
-		{
-			case EventType::PlayerMovedEventType:	
-			{
-				const auto player = GameData::Get()->GetPlayer();
+		if(event->Id.Id == PlayerMovedEventTypeEventId.Id)  // NOLINT(clang-diagnostic-switch-enum)
+		{			
+			const auto player = GameData::Get()->GetPlayer();
 
-				if (player->CurrentRoom->GetCurrentRoom()->GetRoomNumber() == RoomNumber)
+			if (player->CurrentRoom->GetCurrentRoom()->GetRoomNumber() == RoomNumber)
+			{
+				if (SdlCollisionDetection::IsColliding(&player->Bounds, &Bounds))
 				{
-					if (SdlCollisionDetection::IsColliding(&player->Bounds, &Bounds))
-					{
-						generatedEvents.push_back(make_shared<Event>(EventType::FetchedPickup));
-						generatedEvents.push_back(make_shared<GameObjectEvent>(shared_from_this(),
-							GameObjectEventContext::Remove));
-					}
+					generatedEvents.push_back(make_shared<Event>(FetchedPickupEventId));
+					generatedEvents.push_back(make_shared<GameObjectEvent>(shared_from_this(),
+						GameObjectEventContext::Remove));
 				}
-			}
-			break;
-			default: /* Do Nothing */;
+			}			
 		}
 		return generatedEvents;
 	}

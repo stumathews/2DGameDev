@@ -175,7 +175,7 @@ void Level::InitializePickups(const std::vector<std::shared_ptr<Pickup>>& inPick
 	for (const auto& pickup : inPickups)
 	{
 		pickup->LoadSettings();
-		pickup->SubscribeToEvent(EventType::PlayerMovedEventType);
+		pickup->SubscribeToEvent(PlayerMovedEventTypeEventId);
 
 		AddGameObjectToScene(pickup);
 	}

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<level cols="10" rows="10">
+<level cols="10" rows="10" autoPopulatePickups="True">
   <room number="0" top="True" right="True" bottom="False" left="True" />
   <room number="1" top="True" right="False" bottom="True" left="True" />
   <room number="2" top="True" right="True" bottom="False" left="False" />
@@ -48,7 +48,9 @@
   <room number="45" top="True" right="False" bottom="False" left="False" />
   <room number="46" top="True" right="False" bottom="True" left="False" />
   <room number="47" top="False" right="True" bottom="True" left="False" />
-  <room number="48" top="False" right="False" bottom="True" left="True" />
+  <room number="0" top="True" right="True" bottom="True" left="True">
+    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png" />
+  </room>
   <room number="49" top="True" right="True" bottom="False" left="False" />
   <room number="50" top="False" right="True" bottom="False" left="True" />
   <room number="51" top="True" right="False" bottom="True" left="True" />
@@ -74,7 +76,9 @@
   <room number="71" top="False" right="True" bottom="False" left="True" />
   <room number="72" top="False" right="True" bottom="False" left="True" />
   <room number="73" top="True" right="False" bottom="False" left="True" />
-  <room number="74" top="True" right="True" bottom="False" left="False" />
+  <room number="0" top="True" right="True" bottom="True" left="True">
+    <object name="Enemy" type="Enemy" resourceId="18" assetPath="game/assets/character2.png" />
+  </room>
   <room number="75" top="False" right="True" bottom="False" left="True" />
   <room number="76" top="True" right="False" bottom="False" left="True" />
   <room number="77" top="True" right="False" bottom="True" left="False" />

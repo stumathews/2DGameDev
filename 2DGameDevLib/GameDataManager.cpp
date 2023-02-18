@@ -5,6 +5,8 @@
 #include "Room.h"
 #include <events/AddGameObjectToCurrentSceneEvent.h>
 #include <events/GameObjectEvent.h>
+
+#include "EventNumber.h"
 #include "pickup.h"
 
 using namespace std;
@@ -12,17 +14,19 @@ using namespace gamelib;
 
 void GameDataManager::Initialize()
 {
-	eventManager->SubscribeToEvent(EventType::AddGameObjectToCurrentScene, this);
-	eventManager->SubscribeToEvent(EventType::GameObject, this);
+	eventManager->SubscribeToEvent(AddGameObjectToCurrentSceneEventId, this);
+	eventManager->SubscribeToEvent(GameObjectTypeEventId, this);
 }
 
 std::vector<std::shared_ptr<Event>> GameDataManager::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
 {
-	switch (evt->Type)  // NOLINT(clang-diagnostic-switch-enum)
+	if(evt->Id.Id == AddGameObjectToCurrentSceneEventId.Id)
 	{
-		case EventType::AddGameObjectToCurrentScene: AddToGameData(evt); break;
-		case EventType::GameObject: RemoveFromGameData(evt); break;
-		default: /* Do Nothing */ ;
+		AddToGameData(evt); 
+	}
+	if(evt->Id.Id == GameObjectTypeEventId.Id)
+	{
+		RemoveFromGameData(evt);
 	}
     return {};
 }
@@ -64,14 +68,14 @@ void GameDataManager::RemoveFromGameData(const std::shared_ptr<Event>& evt)
 	const auto gameObjectEvent = dynamic_pointer_cast<GameObjectEvent>(evt);
 	switch (gameObjectEvent->Context)  // NOLINT(clang-diagnostic-switch-enum)
 	{
-		case GameObjectEventContext::Remove: RemoveGameObject(gameObjectEvent->GameObject); break;
+		case GameObjectEventContext::Remove: RemoveGameObject(gameObjectEvent->Object); break;
 		default: /* Do Nothing */;
 	}
 
 	if (GameData::Get()->CountPickups() == 0 && !GameData::Get()->IsGameWon())
 	{
 		GameData::Get()->SetGameWon(true);
-		eventManager->RaiseEvent(std::make_shared<Event>(EventType::GameWon), this);
+		eventManager->RaiseEvent(std::make_shared<Event>(GameWonEventId), this);
 	}
 }
 

@@ -67,7 +67,7 @@ bool GameObjectMoveStrategy::IsValidMove(const std::shared_ptr<gamelib::IMovemen
 	return false;
 }
 
-bool GameObjectMoveStrategy::	CanGameObjectMove(const gamelib::Direction direction) const
+bool GameObjectMoveStrategy::CanGameObjectMove(const gamelib::Direction direction) const
 {
 	std::shared_ptr<Room> targetRoom;
 	bool touchingBlockingWalls = false, hasValidTargetRoom;
