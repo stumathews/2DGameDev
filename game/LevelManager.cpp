@@ -84,7 +84,7 @@ void LevelManager::OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt)
 {
 	gameCommands->FetchedPickup();
 	const auto collisionEvent = std::dynamic_pointer_cast<PlayerCollidedWithEnemyEvent>(evt);
-	const auto enemyHitPoints = collisionEvent->Enemy->StringProperties["HitPoint"];
+	const auto& enemyHitPoints = collisionEvent->Enemy->StringProperties["HitPoint"];
 	collisionEvent->Player->IntProperties["Health"] -= strtol(enemyHitPoints.c_str(), nullptr, 0);
 	Logger::Get()->LogThis(string("Player Health: ") + to_string(collisionEvent->Player->IntProperties["Health"]));
 	if(collisionEvent->Player->IntProperties["Health"] <= 0)
@@ -96,7 +96,7 @@ void LevelManager::OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt)
 void LevelManager::OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const
 {
 	const auto collisionEvent = std::dynamic_pointer_cast<PlayerCollidedWithPickupEvent>(evt);
-	const auto pickupValue = collisionEvent->Pickup->StringProperties["value"];
+	const auto& pickupValue = collisionEvent->Pickup->StringProperties["value"];
 	collisionEvent->Player->IntProperties["Points"] += strtol(pickupValue.c_str(), nullptr, 0);
 	
 	Logger::Get()->LogThis(string("Player Points: ") + to_string(collisionEvent->Player->IntProperties["Points"]));

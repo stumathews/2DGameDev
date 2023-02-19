@@ -35,7 +35,8 @@ std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, c
 }
 
 std::shared_ptr<Enemy> CharacterBuilder::BuildEnemy(const std::string& name, const std::shared_ptr<Room>& room,
-                                                const int resourceId, gamelib::Direction startingDirection)
+                                                const int resourceId, gamelib::Direction startingDirection, std::shared_ptr<const Level>
+                                                level)
 {
 	const auto spriteAsset = std::dynamic_pointer_cast<gamelib::SpriteAsset>(
 		gamelib::ResourceManager::Get()->GetAssetInfo(resourceId));
@@ -46,7 +47,7 @@ std::shared_ptr<Enemy> CharacterBuilder::BuildEnemy(const std::string& name, con
 	const auto animatedSprite = gamelib::GameObjectFactory::Get().BuildSprite(
 		name, "Enemy", spriteAsset, positionInRoom, true);
 	
-	auto enemy = std::make_shared<Enemy>(name, "Enemy", positionInRoom, true, room, animatedSprite, startingDirection);
+	auto enemy = std::make_shared<Enemy>(name, "Enemy", positionInRoom, true, room, animatedSprite, startingDirection, level);
 	return enemy;
 }
 

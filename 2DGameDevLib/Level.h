@@ -20,13 +20,14 @@ namespace tinyxml2
 
 class Player;
 class Room;
+class Enemy;
 
-class Level final : public gamelib::EventSubscriber
+class Level final : public gamelib::EventSubscriber, public std::enable_shared_from_this<Level>
 {
 public:
 	explicit Level(const std::string& filename);
 	Level();
-	void InitializeEnemies(const std::vector<std::shared_ptr<Enemy>>& vector);
+	void InitializeEnemies();
 	void Load();
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long deltaMs) override;
 	std::string GetSubscriberName() override { return "Level"; }

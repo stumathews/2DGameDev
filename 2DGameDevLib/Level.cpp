@@ -162,7 +162,7 @@ void Level::Load()
 		Rooms::ConfigureRooms(NumRows, NumCols, Rooms);
 
 		InitializePickups(Pickups);
-		InitializeEnemies(Enemies);
+		InitializeEnemies();
 	}
 }
 
@@ -182,7 +182,7 @@ void Level::InitializePickups(const std::vector<std::shared_ptr<Pickup>>& inPick
 	}
 }
 
-void Level::InitializeEnemies(const std::vector<std::shared_ptr<Enemy>>& vector)
+void Level::InitializeEnemies()
 {
 	for(auto& enemy : Enemies)
 	{
@@ -218,7 +218,7 @@ shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_pt
 		}
 		else if (type == "Enemy")
 		{
-			gameObject = CharacterBuilder::BuildEnemy(name, room, resourceId, DirectionUtils::GetRandomDirection());
+			gameObject = CharacterBuilder::BuildEnemy(name, room, resourceId, DirectionUtils::GetRandomDirection(), shared_from_this());
 		}
 	
 	

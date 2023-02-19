@@ -1,11 +1,15 @@
 #pragma once
+#include "Level.h"
 #include "objects/Npc.h"
+
+class Level;
 
 class Enemy final : public gamelib::Npc, public std::enable_shared_from_this<Enemy>
 {
 public:
 	Enemy(const std::string& name, const std::string& type, gamelib::Coordinate<int> position, bool visible,
 	    const std::shared_ptr<Room>& startRoom, std::shared_ptr<gamelib::AnimatedSprite> sprite, gamelib::Direction startingDirection,
+		std::shared_ptr<const Level> level,
 	    std::shared_ptr<gamelib::IGameObjectMoveStrategy> enemyMoveStrategy = nullptr);
 	void LookForPlayer();
 	bool LookForPlayerInDirection(gamelib::Direction lookDirection) const;
@@ -14,7 +18,8 @@ public:
 	void CheckForPlayerCollision();
 
 	std::shared_ptr<RoomInfo> CurrentRoom;
-	gamelib::Direction playerLastSpottedDirection;
+	gamelib::Direction PlayerLastSpottedDirection;
+	std::shared_ptr<const Level> CurrentLevel;
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 	void Update(unsigned long deltaMs) override;	
 	std::string GetSubscriberName() override { return Name;}
