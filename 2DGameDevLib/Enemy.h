@@ -7,8 +7,10 @@ public:
 	Enemy(const std::string& name, const std::string& type, gamelib::Coordinate<int> position, bool visible,
 	    const std::shared_ptr<Room>& startRoom, std::shared_ptr<gamelib::AnimatedSprite> sprite, gamelib::Direction startingDirection,
 	    std::shared_ptr<gamelib::IGameObjectMoveStrategy> enemyMoveStrategy = nullptr);
+	void LookForPlayer();
 
 	void Initialize();
+	void CheckForPlayerCollision();
 
 	std::shared_ptr<RoomInfo> CurrentRoom;
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;

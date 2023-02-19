@@ -5,10 +5,10 @@
 #include <sstream>
 
 #include "EventNumber.h"
-#include "SideUtils.h"
 #include "GameData.h"
 #include "GameDataManager.h"
 #include "events/GameObjectEvent.h"
+#include "geometry/SideUtils.h"
 #include "util/SettingsManager.h"
 
 using namespace std;

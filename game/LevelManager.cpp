@@ -239,16 +239,6 @@ shared_ptr<Room> LevelManager::GetRandomRoom(const std::vector<std::shared_ptr<R
 	return rooms[GetRandomIndex(0, static_cast<int>(rooms.size()) - 1)];
 }
 
-void LevelManager::CreateNpcs(const std::vector<std::shared_ptr<Room>>& rooms, const int resourceId)
-{
-	for(auto i = 0; i < 10; i++)
-	{
-		const auto enemy = CharacterBuilder::BuildEnemy("Enemy" + std::to_string(i), GetRandomRoom(rooms), resourceId, DirectionUtils::GetRandomDirection());
-		enemy->Initialize();
-		GameDataManager::Get()->GameData()->AddEnemy(enemy);
-		AddGameObjectToScene(enemy);
-	}
-}
 
 void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms)
 {

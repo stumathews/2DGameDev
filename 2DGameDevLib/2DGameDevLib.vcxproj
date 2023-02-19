@@ -179,8 +179,6 @@
     <ClInclude Include="Room.h" />
     <ClInclude Include="Rooms.h" />
     <ClInclude Include="SDLCollisionDetection.h" />
-    <ClInclude Include="Side.h" />
-    <ClInclude Include="SideUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CharacterBuilder.cpp" />

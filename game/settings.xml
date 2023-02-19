@@ -13,7 +13,7 @@
     <setting name="frames_per_column" type="int">3</setting>
     <setting name="verbose" type="bool">false</setting>
     <setting name="use_3d_render_manager" type="bool">false</setting>
-    <setting name="print_debugging_text" type="bool">false</setting>
+    <setting name="print_debugging_text" type="bool">true</setting>
     <setting name="print_debugging_text_neighbours_only" type="bool">true</setting>
 		<setting name="numPickups" type="int">20</setting>
 		<setting name="isNetworkGame" type="bool">false</setting>

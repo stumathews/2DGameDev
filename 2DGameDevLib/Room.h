@@ -7,8 +7,9 @@
 #include "util/Tuple.h"
 #include <geometry/Line.h>
 #include <common/aliases.h>
-#include "Side.h"
 #include <objects/MultipleInheritableEnableSharedFromThis.h>
+
+#include "geometry/Side.h"
 
 class Room : public gamelib::DrawableGameObject, public inheritable_enable_shared_from_this<Room>
 {	
@@ -16,7 +17,7 @@ public:
 
 	Room(const std::string& name, const std::string& type, int number, int x, int y, int width, int height, bool fill = false);
 
-	bool IsWalled(Side wall) const; // IsWalled (zero based). Does this room have a wall errected on specified side.
+	bool IsWalled(gamelib::Side wall) const; // IsWalled (zero based). Does this room have a wall errected on specified side.
 	bool HasTopWall() const;
 	bool HasBottomWall() const;
 	bool HasLeftWall() const;
@@ -25,12 +26,12 @@ public:
 	void UpdateInnerBounds();
 	void SetupWalls();
 	void SetSorroundingRooms(int topIndex, int rightIndex, int bottomIndex, int leftIndex);
-	void RemoveWall(Side wall);
-	void LogWallRemoval(Side wall) const;
-	void SetNotWalled(Side wall);
-	void SetWalled(Side wall);
-	void AddWall(Side wall);
-	void RemoveWallZeroBased(Side wall);
+	void RemoveWall(gamelib::Side wall);
+	void LogWallRemoval(gamelib::Side wall) const;
+	void SetNotWalled(gamelib::Side wall);
+	void SetWalled(gamelib::Side wall);
+	void AddWall(gamelib::Side wall);
+	void RemoveWallZeroBased(gamelib::Side wall);
 	void ShouldRoomFill(bool fillMe = false);
 	void DrawWalls(SDL_Renderer* renderer) const;
 	static void DrawLine(SDL_Renderer* renderer, const gamelib::Line& line);
@@ -46,7 +47,7 @@ public:
 	gamelib::Coordinate<int> GetCenter(gamelib::ABCDRectangle rectangle) const;
 
 	gamelib::Coordinate<int> GetPosition();
-	int GetNeighbourIndex(Side index) const;
+	int GetNeighbourIndex(const gamelib::Side index) const;
 	int GetX() const;
 	int GetY() const;
 	int GetWidth() const;

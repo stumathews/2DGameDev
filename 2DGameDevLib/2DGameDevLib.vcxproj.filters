@@ -54,12 +54,6 @@
     <ClInclude Include="SDLCollisionDetection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Side.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SideUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameDataManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
