@@ -8,11 +8,13 @@ public:
 	    const std::shared_ptr<Room>& startRoom, std::shared_ptr<gamelib::AnimatedSprite> sprite, gamelib::Direction startingDirection,
 	    std::shared_ptr<gamelib::IGameObjectMoveStrategy> enemyMoveStrategy = nullptr);
 	void LookForPlayer();
+	bool LookForPlayerInDirection(gamelib::Direction lookDirection) const;
 
 	void Initialize();
 	void CheckForPlayerCollision();
 
 	std::shared_ptr<RoomInfo> CurrentRoom;
+	gamelib::Direction playerLastSpottedDirection;
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 	void Update(unsigned long deltaMs) override;	
 	std::string GetSubscriberName() override { return Name;}

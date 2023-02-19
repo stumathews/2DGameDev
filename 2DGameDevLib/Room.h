@@ -44,6 +44,7 @@ public:
 	gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 	gamelib::ListOfEvents& OnPlayerMoved(std::vector<std::shared_ptr<gamelib::Event>>& generatedEvents);
 	gamelib::Coordinate<int> GetCenter(int width, int height) const;
+	gamelib::Coordinate<int> GetCenter() const;
 	gamelib::Coordinate<int> GetCenter(gamelib::ABCDRectangle rectangle) const;
 
 	gamelib::Coordinate<int> GetPosition();

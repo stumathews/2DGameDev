@@ -99,74 +99,112 @@ Enemy::Enemy(const std::string& name, const std::string& type, const gamelib::Co
 
 void Enemy::LookForPlayer()
 {
-	const auto player = GameData::Get()->GetPlayer();			
-			auto currentRoom = CurrentRoom->GetCurrentRoom();
+	const auto player = GameData::Get()->GetPlayer();
+	const auto currentRoom = CurrentRoom->GetCurrentRoom();
 
-			const auto playerRow = player->CurrentRoom->GetCurrentRoom()->GetRowNumber(10);
-			const auto enemyRow = currentRoom->GetRowNumber(10);
+	const auto playerRow = player->CurrentRoom->GetCurrentRoom()->GetRowNumber(10);
+	const auto enemyRow = currentRoom->GetRowNumber(10);
 
-			const auto playerCol = player->CurrentRoom->GetCurrentRoom()->GetColumnNumber(10);
-			const auto enemyCol = currentRoom->GetColumnNumber(10);
+	const auto playerCol = player->CurrentRoom->GetCurrentRoom()->GetColumnNumber(10);
+	const auto enemyCol = currentRoom->GetColumnNumber(10);
 
-			const auto oppositeDirection = gamelib::DirectionUtils::GetOppositeDirectionTo(currentFacingDirection);
-			const auto oppositeSide = gamelib::SideUtils::GetOppositeSideForDirection(currentFacingDirection);
 
-			if(currentFacingDirection == gamelib::Direction::Left || currentFacingDirection == gamelib::Direction::Right)
-			{
-				if(playerRow != enemyRow)
-				{
-					return;
-				}
-			}
+	if(playerRow != enemyRow && playerCol != enemyCol)
+	{
+		return;
+	}
 
-			if(currentFacingDirection == gamelib::Direction::Up || currentFacingDirection == gamelib::Direction::Down)
-			{
-				if(playerCol != enemyCol)
-				{
-					return;
-				}
-			}
+	if(playerLastSpottedDirection == currentMovingDirection)
+	{
+		return;
+	}
 
-			if(currentMovingDirection == oppositeDirection)
-			{
-				return;
-			}
+    // Don't look for player if you're already in the room, check for collision
+	if(currentRoom->GetRoomNumber() == player->CurrentRoom->RoomIndex)
+	{
+		CheckForPlayerCollision();
+		return;
+	}
+	
+	if(playerCol == enemyCol) // look up and down, chase in direction found
+	{
+		if(Hotspot->GetPosition().GetX() != player->Hotspot->GetPosition().GetX()) return;
 
-	        // Don't look for player if you're already in the room, check for collision
-			if(currentRoom->GetRoomNumber() == player->CurrentRoom->RoomIndex)
-			{
-				CheckForPlayerCollision();
-				return;
-			}
+		// search up.
+		if(LookForPlayerInDirection(gamelib::Direction::Up))
+		{			
+			SetNpcDirection(gamelib::Direction::Up);
+			playerLastSpottedDirection = gamelib::Direction::Up;
+			return;
+		}
 
-			int nextRoomIndex;
-			while((nextRoomIndex = currentRoom->GetNeighbourIndex(oppositeSide)) != -1)
-			{
-				if(currentRoom->GetRoomNumber() == player->CurrentRoom->RoomIndex)
-				{
-					gamelib::Logger::Get()->LogThis("Spotted player!");
-					SwapCurrentDirection();
-				}
-				const auto nextRoom =  GameData::Get()->GetRoomByIndex(nextRoomIndex);
-				if(currentFacingDirection == gamelib::Direction::Right)
-				{
-					if(currentRoom->HasLeftWall() || nextRoom->HasRightWall()) return;
-				}
-				if(currentFacingDirection == gamelib::Direction::Left)
-				{
-					if(currentRoom->HasRightWall() || nextRoom->HasLeftWall()) return;
-				}
-				if(currentFacingDirection == gamelib::Direction::Up)
-				{
-					if(currentRoom->HasBottomWall() || nextRoom->HasTopWall()) return;
-				}
-				if(currentFacingDirection == gamelib::Direction::Down)
-				{
-					if(currentRoom->HasTopWall() || nextRoom->HasBottomWall()) return;
-				}
-				// pursue next room
-				currentRoom = nextRoom;
-			}
+		if(LookForPlayerInDirection(gamelib::Direction::Down)) 
+		{
+			SetNpcDirection(gamelib::Direction::Down);
+			playerLastSpottedDirection = gamelib::Direction::Down;
+			return;
+		}
+
+		// search down
+	}
+	else if (playerRow == enemyRow) // look left and right, chase in direction found
+	{
+		// Only make decisions when in same axis as player
+		if(Hotspot->GetPosition().GetY() != player->Hotspot->GetPosition().GetY()) return;
+
+		if(LookForPlayerInDirection(gamelib::Direction::Left))
+		{
+			SetNpcDirection(gamelib::Direction::Left);
+			playerLastSpottedDirection = gamelib::Direction::Left;
+			return;
+		}
+
+		if(LookForPlayerInDirection(gamelib::Direction::Right)) 
+		{
+			SetNpcDirection(gamelib::Direction::Right);
+			playerLastSpottedDirection = gamelib::Direction::Right;
+			return;
+		}
+	}
+}
+
+bool Enemy::LookForPlayerInDirection(const gamelib::Direction lookDirection) const
+{
+	const auto player = GameData::Get()->GetPlayer();
+
+	// Search from the current room			
+	auto currentRoom = CurrentRoom->GetCurrentRoom();
+	int nextRoomIndex;
+	while((nextRoomIndex = currentRoom->GetNeighbourIndex(gamelib::SideUtils::GetSideForDirection(lookDirection))) != -1)
+	{
+		
+		const auto nextRoom =  GameData::Get()->GetRoomByIndex(nextRoomIndex);
+		if(lookDirection == gamelib::Direction::Right)
+		{
+			if(currentRoom->HasRightWall() || nextRoom->HasLeftWall()) return false; // player not found on right
+		}
+		if(lookDirection == gamelib::Direction::Left)
+		{			
+			if(currentRoom->HasLeftWall() || nextRoom->HasRightWall()) return false; // player not found on left
+		}
+		if(lookDirection == gamelib::Direction::Up)
+		{			
+			if(currentRoom->HasTopWall() || nextRoom->HasBottomWall()) return false; // player not found up
+		}
+		if(lookDirection == gamelib::Direction::Down)
+		{
+			if(currentRoom->HasBottomWall() || nextRoom->HasTopWall()) return false; // player not found down
+		}
+		// pursue next room
+		currentRoom = nextRoom;
+
+		if(currentRoom->GetRoomNumber() == player->CurrentRoom->RoomIndex)
+		{
+			gamelib::Logger::Get()->LogThis("Spotted player!");
+			return true;
+		}
+	}
+	return false; // player not found
 }
 
 void Enemy::Initialize()

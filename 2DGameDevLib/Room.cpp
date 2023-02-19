@@ -244,6 +244,11 @@ Coordinate<int> Room::GetCenter(const int w, const int h) const
 	return {x, y};
 }
 
+Coordinate<int> Room::GetCenter() const
+{
+	return GetCenter(GetWidth(), GetHeight());
+}
+
 Coordinate<int> Room::GetCenter(const ABCDRectangle rectangle) const
 {
 	auto const roomXMid = GetX() + (GetWidth() / 2);
