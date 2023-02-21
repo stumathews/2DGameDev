@@ -116,16 +116,16 @@ void Enemy::LookForPlayer()
 	// Don't look player unless player is un same row or column
 	if(playerRow != enemyRow && playerCol != enemyCol) { return; }
 
-	// Don't look for player if already spotted in the direction we are moving
-	if(PlayerLastSpottedDirection == currentMovingDirection) { return; }
-
-    // Don't look for player if you're already in the room, check for collision
+	// Don't look for player if you're already in the room, check for collision
 	if(currentRoom->GetRoomNumber() == player->CurrentRoom->RoomIndex)
 	{
 		CheckForPlayerCollision();
 		return;
 	}
-	
+
+	// Don't look for player if already spotted in the direction we are moving
+	if(PlayerLastSpottedDirection == currentMovingDirection) { return; }
+		
 	if(playerCol == enemyCol) // look up and down, chase in direction found
 	{
 		// Don't look for player if not in the same line as player
