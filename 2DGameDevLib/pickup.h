@@ -67,7 +67,7 @@ namespace gamelib
 		/// Provide name to event system
 		/// </summary>
 		/// <returns>Subscriber name</returns>
-		std::string GetSubscriberName() override { return "pickup"; }
+		std::string GetSubscriberName() override { return Name; }
 
 		/// <summary>
 		/// Provide Pickup game type
@@ -79,7 +79,7 @@ namespace gamelib
 		/// Provide name
 		/// </summary>
 		/// <returns>Name</returns>
-		std::string GetName() override { return "pickup"; }
+		std::string GetName() override { return Name; }
 
 		/// <summary>
 		/// Handle pickup events

@@ -1,1600 +1,710 @@
-19-01-2023 17:04:18 GameStructure::initialize()
-19-01-2023 17:04:18 SDLGraphicsManager::Initialize()
-19-01-2023 17:04:19 SDLGraphicsManager ready.
-19-01-2023 17:04:19 ResourceManager: reading resources.xml.
-19-01-2023 17:04:19 Discovered music asset#: 1 LevelMusic4
-19-01-2023 17:04:19 Discovered fx asset#: 2 scratch.wav
-19-01-2023 17:04:19 Discovered fx asset#: 3 high.wav
-19-01-2023 17:04:19 Discovered fx asset#: 4 medium.wav
-19-01-2023 17:04:19 Discovered fx asset#: 5 low.wav
-19-01-2023 17:04:19 Discovered graphic asset#: 6 p1.png
-19-01-2023 17:04:19 Discovered graphic asset#: 7 p2.png
-19-01-2023 17:04:19 Discovered graphic asset#: 8 p3.png
-19-01-2023 17:04:19 Unloading asset: Assets/Platformer/Base pack/Player/p1_walk/p1_walk.png
-19-01-2023 17:04:19 Discovered graphic asset#: 9 p1.png
-19-01-2023 17:04:19 Unloading asset: Assets/Platformer/Base pack/Player/p2_walk/p2_walk.png
-19-01-2023 17:04:19 Discovered graphic asset#: 10 p2.png
-19-01-2023 17:04:19 Unloading asset: Assets/Platformer/Base pack/Player/p3_walk/p3_walk.png
-19-01-2023 17:04:19 Discovered graphic asset#: 11 p3.png
-19-01-2023 17:04:19 Discovered font asset#: 12 arial.ttf
-19-01-2023 17:04:19 Discovered fx asset#: 13 beep.wav
-19-01-2023 17:04:19 Discovered fx asset#: 14 boop.wav
-19-01-2023 17:04:19 Discovered music asset#: 15 LevelMusic1
-19-01-2023 17:04:19 Discovered music asset#: 16 LevelMusic2
-19-01-2023 17:04:19 Discovered music asset#: 17 LevelMusic3
-19-01-2023 17:04:19 Unloading asset: game/assets/character2.png
-19-01-2023 17:04:19 Discovered graphic asset#: 18 snap_player
-19-01-2023 17:04:19 Unloading asset: game/assets/character1.png
-19-01-2023 17:04:19 Discovered graphic asset#: 188 edge_player
-19-01-2023 17:04:19 Unloading asset: game/assets/coin_gold.png
-19-01-2023 17:04:19 Discovered graphic asset#: 19 goldcoin
-19-01-2023 17:04:19 Unloading asset: game/assets/coin_silver.png
-19-01-2023 17:04:19 Discovered graphic asset#: 20 silvercoin
-19-01-2023 17:04:19 Unloading asset: game/assets/coin_copper.png
-19-01-2023 17:04:19 Discovered graphic asset#: 21 coppercoin
-19-01-2023 17:04:19 Unloading asset: game/assets/hud_spritesheet.png
-19-01-2023 17:04:19 Discovered graphic asset#: 22 hudspritesheet
-19-01-2023 17:04:19 Discovered fx asset#: 23 win.wav
-19-01-2023 17:04:19 Discovered music asset#: 24 AutoLevelMusic
-19-01-2023 17:04:19 25 assets available in resource manager.
-19-01-2023 17:04:19 ResourceManager::initialize()
-19-01-2023 17:04:19 EventManager: resource manager subscribed to event LevelChangedEventType
-19-01-2023 17:04:19 SceneManager::initialize()
-19-01-2023 17:04:19 EventManager: SceneManager subscribed to event LevelChangedEventType
-19-01-2023 17:04:19 EventManager: SceneManager subscribed to event AddGameObjectToCurrentSceneEventId
-19-01-2023 17:04:19 EventManager: SceneManager subscribed to event GenerateNewLevel
-19-01-2023 17:04:19 EventManager: SceneManager subscribed to event GameObjectTypeEvent
-19-01-2023 17:04:19 EventManager: SceneManager subscribed to event DrawCurrentScene
-19-01-2023 17:04:19 EventManager: SceneManager subscribed to event UpdateAllGameObjectsEventType
-19-01-2023 17:04:19 InitializeGameSubSystems...
-19-01-2023 17:04:19 InitializeGameSubSystems...
-19-01-2023 17:04:19 EventManager: GameCommands subscribed to event FetchedPickup
-19-01-2023 17:04:19 EventManager: GameCommands subscribed to event NetworkTrafficReceived
-19-01-2023 17:04:19 EventManager: level_manager subscribed to event GenerateNewLevel
-19-01-2023 17:04:19 EventManager: level_manager subscribed to event InvalidMove
-19-01-2023 17:04:19 EventManager: level_manager subscribed to event FetchedPickup
-19-01-2023 17:04:19 EventManager: level_manager subscribed to event GameObjectTypeEvent
-19-01-2023 17:04:19 EventManager: level_manager subscribed to event LevelChangedEventType
-19-01-2023 17:04:19 EventManager: level_manager subscribed to event FetchedPickup
-19-01-2023 17:04:19 EventManager: level_manager subscribed to event StartNetworkLevel
-19-01-2023 17:04:19 EventManager: level_manager subscribed to event UpdateProcesses
-19-01-2023 17:04:19 EventManager: level_manager subscribed to event GameWon
-19-01-2023 17:04:19 EventManager: level_manager subscribed to event CollidedWithEnemyEvent
-19-01-2023 17:04:19 EventManager: level_manager subscribed to event PLayerDied
-19-01-2023 17:04:19 EventManager: level_manager subscribed to event CollidedWithEnemyEvent
-19-01-2023 17:04:19 Initializing Level Manager...
-19-01-2023 17:04:19 Initializing Level Manager...
-19-01-2023 17:04:19 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:04:19 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Player1 subscribed to event ControllerMoveEvent
-19-01-2023 17:04:19 EventManager: Player1 subscribed to event SettingsReloaded
-19-01-2023 17:04:19 EventManager: Player1 subscribed to event Fire
-19-01-2023 17:04:19 EventManager: Player1 subscribed to event GameWon
-19-01-2023 17:04:19 EventManager: unknown subscribed to event PlayerMovedEventType
-19-01-2023 17:04:19 Creating Single player level...
-19-01-2023 17:04:19 Detected level change. Loading level assets...
-19-01-2023 17:04:19 scene 0: scratch.wav asset loaded.
-19-01-2023 17:04:19 scene 0: high.wav asset loaded.
-19-01-2023 17:04:19 scene 0: medium.wav asset loaded.
-19-01-2023 17:04:19 scene 0: low.wav asset loaded.
-19-01-2023 17:04:19 scene 0: arial.ttf asset loaded.
-19-01-2023 17:04:19 scene 0: beep.wav asset loaded.
-19-01-2023 17:04:19 scene 0: boop.wav asset loaded.
-19-01-2023 17:04:19 scene 0: snap_player asset loaded.
-19-01-2023 17:04:19 scene 0: edge_player asset loaded.
-19-01-2023 17:04:19 scene 0: goldcoin asset loaded.
-19-01-2023 17:04:19 scene 0: silvercoin asset loaded.
-19-01-2023 17:04:19 scene 0: coppercoin asset loaded.
-19-01-2023 17:04:19 scene 0: hudspritesheet asset loaded.
-19-01-2023 17:04:20 scene 0: win.wav asset loaded.
-19-01-2023 17:04:20 scene 0: AutoLevelMusic asset loaded.
-19-01-2023 17:04:20 scene 1: p1.png asset loaded.
-19-01-2023 17:04:20 scene 1: LevelMusic1 asset loaded.
-19-01-2023 17:04:20 Loading scene: game/scene1.xml
-19-01-2023 17:04:25 Spotted player!
-19-01-2023 17:04:40 Player Points: 15
-19-01-2023 17:04:43 Spotted player!
-19-01-2023 17:04:45 Spotted player!
-19-01-2023 17:04:47 Spotted player!
-19-01-2023 17:04:49 Spotted player!
-19-01-2023 17:04:50 Player Points: 30
-19-01-2023 17:04:56 Spotted player!
-19-01-2023 17:04:57 Player Points: 45
-19-01-2023 17:04:59 Spotted player!
-19-01-2023 17:04:59 Player Health: 100
-19-01-2023 17:05:02 Player Points: 60
-19-01-2023 17:05:05 Spotted player!
-19-01-2023 17:05:10 Spotted player!
-19-01-2023 17:05:12 Player Health: 100
-19-01-2023 17:05:14 Spotted player!
-19-01-2023 17:05:19 Spotted player!
-19-01-2023 17:05:24 Spotted player!
-19-01-2023 17:05:30 Spotted player!
-19-01-2023 17:05:35 Spotted player!
-19-01-2023 17:05:37 Player Health: 50
-19-01-2023 17:05:40 Spotted player!
-19-01-2023 17:05:41 Spotted player!
-19-01-2023 17:05:48 Spotted player!
-19-01-2023 17:05:49 Player Health: 50
-19-01-2023 17:05:51 Player Health: 0
-19-01-2023 17:05:51 Player DIED!
-19-01-2023 17:05:53 Player Points: 75
-19-01-2023 17:05:56 Fire!
-19-01-2023 17:05:56 Removed Right wall in room number 62
-19-01-2023 17:05:56 Removed Left wall in room number 63
-19-01-2023 17:06:01 Spotted player!
-19-01-2023 17:06:02 Spotted player!
-19-01-2023 17:06:07 Spotted player!
-19-01-2023 17:06:19 Spotted player!
-19-01-2023 17:06:21 Spotted player!
-19-01-2023 17:06:23 Player Points: 85
-19-01-2023 17:06:23 Player Points: 95
-19-01-2023 17:06:24 Player Points: 100
-19-01-2023 17:06:24 Spotted player!
-19-01-2023 17:06:24 Player Points: 105
-19-01-2023 17:06:27 Spotted player!
-19-01-2023 17:06:29 Spotted player!
-19-01-2023 17:06:30 Fire!
-19-01-2023 17:06:30 Removed Bottom wall in room number 80
-19-01-2023 17:06:30 Removed Top wall in room number 90
-19-01-2023 17:06:30 Spotted player!
-19-01-2023 17:06:30 Player Points: 110
-19-01-2023 17:06:35 Player Points: 120
-19-01-2023 17:06:35 Player Points: 130
-19-01-2023 17:06:37 Fire!
-19-01-2023 17:06:37 Removed Top wall in room number 48
-19-01-2023 17:06:37 Removed Bottom wall in room number 38
-19-01-2023 17:06:38 Fire!
-19-01-2023 17:06:38 Removed Top wall in room number 38
-19-01-2023 17:06:38 Removed Bottom wall in room number 28
-19-01-2023 17:06:38 Fire!
-19-01-2023 17:06:38 Removed Top wall in room number 28
-19-01-2023 17:06:38 Removed Bottom wall in room number 18
-19-01-2023 17:06:38 Fire!
-19-01-2023 17:06:38 Removed Right wall in room number 18
-19-01-2023 17:06:38 Removed Left wall in room number 19
-19-01-2023 17:06:39 Player Health: 0
-19-01-2023 17:06:39 Player DIED!
-19-01-2023 17:06:39 Player Points: 145
-19-01-2023 17:06:39 All Pickups Collected Well Done!
-19-01-2023 17:06:43 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:06:43 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:06:43 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:06:43 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Player1 subscribed to event ControllerMoveEvent
-19-01-2023 17:06:43 EventManager: Player1 subscribed to event SettingsReloaded
-19-01-2023 17:06:43 EventManager: Player1 subscribed to event Fire
-19-01-2023 17:06:43 EventManager: Player1 subscribed to event GameWon
-19-01-2023 17:06:43 EventManager: unknown subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:06:43 Detected level change. Loading level assets...
-19-01-2023 17:06:43 scene 0: arial.ttf asset loaded.
-19-01-2023 17:06:43 scene: 1p1.png asset unloaded.
-19-01-2023 17:06:43 scene: 1LevelMusic1 asset unloaded.
-19-01-2023 17:06:43 scene 2: p2.png asset loaded.
-19-01-2023 17:06:43 scene 2: p3.png asset loaded.
-19-01-2023 17:06:43 scene 2: LevelMusic2 asset loaded.
-19-01-2023 17:06:43 Loading scene: game/scene2.xml
-19-01-2023 17:06:43 Invalid or null object found in scene file
-19-01-2023 17:06:43 Unloading asset: Assets/Platformer/Base pack/Player/p2_front.png
-19-01-2023 17:06:43 Unloading asset: Assets/Platformer/Base pack/Player/p3_front.png
-19-01-2023 17:06:47 Player Points: 1
-19-01-2023 17:06:47 Player Points: 2
-19-01-2023 17:06:48 Player Points: 3
-19-01-2023 17:06:49 Player Points: 4
-19-01-2023 17:06:49 Player Points: 5
-19-01-2023 17:06:51 Player Points: 6
-19-01-2023 17:06:51 Player Points: 7
-19-01-2023 17:06:53 Player Points: 8
-19-01-2023 17:06:53 Player Points: 9
-19-01-2023 17:06:57 Player Points: 10
-19-01-2023 17:06:57 Player Points: 11
-19-01-2023 17:06:57 Player Points: 12
-19-01-2023 17:07:01 Player Points: 13
-19-01-2023 17:07:03 Player Points: 14
-19-01-2023 17:07:03 Player Points: 15
-19-01-2023 17:07:07 Fire!
-19-01-2023 17:07:07 Removed Bottom wall in room number 64
-19-01-2023 17:07:07 Removed Top wall in room number 74
-19-01-2023 17:07:08 Player Points: 16
-19-01-2023 17:07:08 Player Points: 17
-19-01-2023 17:07:09 Spotted player!
-19-01-2023 17:07:10 Player Points: 18
-19-01-2023 17:07:11 Player Points: 19
-19-01-2023 17:07:11 Fire!
-19-01-2023 17:07:11 Removed Right wall in room number 95
-19-01-2023 17:07:11 Removed Left wall in room number 96
-19-01-2023 17:07:11 Player Points: 20
-19-01-2023 17:07:13 Fire!
-19-01-2023 17:07:13 Removed Top wall in room number 86
-19-01-2023 17:07:13 Removed Bottom wall in room number 76
-19-01-2023 17:07:13 Player Points: 21
-19-01-2023 17:07:14 Player Points: 22
-19-01-2023 17:07:14 Fire!
-19-01-2023 17:07:14 Removed Right wall in room number 66
-19-01-2023 17:07:14 Removed Left wall in room number 67
-19-01-2023 17:07:14 Player Points: 23
-19-01-2023 17:07:14 Spotted player!
-19-01-2023 17:07:15 Fire!
-19-01-2023 17:07:15 Removed Right wall in room number 57
-19-01-2023 17:07:15 Removed Left wall in room number 58
-19-01-2023 17:07:16 Player Points: 24
-19-01-2023 17:07:16 Player Points: 25
-19-01-2023 17:07:16 All Pickups Collected Well Done!
-19-01-2023 17:07:17 Spotted player!
-19-01-2023 17:07:20 Spotted player!
-19-01-2023 17:07:20 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:07:20 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:07:20 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:07:20 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Player1 subscribed to event ControllerMoveEvent
-19-01-2023 17:07:20 EventManager: Player1 subscribed to event SettingsReloaded
-19-01-2023 17:07:20 EventManager: Player1 subscribed to event Fire
-19-01-2023 17:07:20 EventManager: Player1 subscribed to event GameWon
-19-01-2023 17:07:20 EventManager: unknown subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:07:20 Detected level change. Loading level assets...
-19-01-2023 17:07:20 scene 0: arial.ttf asset loaded.
-19-01-2023 17:07:20 scene: 2p2.png asset unloaded.
-19-01-2023 17:07:20 scene: 2p3.png asset unloaded.
-19-01-2023 17:07:20 scene: 2LevelMusic2 asset unloaded.
-19-01-2023 17:07:20 scene 3: p1.png asset loaded.
-19-01-2023 17:07:20 scene 3: p2.png asset loaded.
-19-01-2023 17:07:20 scene 3: p3.png asset loaded.
-19-01-2023 17:07:20 scene 3: LevelMusic3 asset loaded.
-19-01-2023 17:07:20 Loading scene: game/scene3.xml
-19-01-2023 17:07:22 Player Points: 1
-19-01-2023 17:07:23 Player Points: 2
-19-01-2023 17:07:23 Player Points: 3
-19-01-2023 17:07:23 Player Points: 4
-19-01-2023 17:07:23 Player Points: 5
-19-01-2023 17:07:24 Fire!
-19-01-2023 17:07:24 Removed Top wall in room number 10
-19-01-2023 17:07:24 Removed Bottom wall in room number 0
-19-01-2023 17:07:28 Fire!
-19-01-2023 17:07:28 Removed Top wall in room number 11
-19-01-2023 17:07:28 Removed Bottom wall in room number 1
-19-01-2023 17:07:30 Fire!
-19-01-2023 17:07:30 Removed Left wall in room number 1
-19-01-2023 17:07:30 Removed Right wall in room number 0
-19-01-2023 17:07:32 Player Points: 6
-19-01-2023 17:07:33 Fire!
-19-01-2023 17:07:33 Removed Bottom wall in room number 6
-19-01-2023 17:07:33 Removed Top wall in room number 16
-19-01-2023 17:07:35 Fire!
-19-01-2023 17:07:35 Removed Top wall in room number 13
-19-01-2023 17:07:35 Removed Bottom wall in room number 3
-19-01-2023 17:07:38 Fire!
-19-01-2023 17:07:38 Removed Bottom wall in room number 13
-19-01-2023 17:07:38 Removed Top wall in room number 23
-19-01-2023 17:07:39 Fire!
-19-01-2023 17:07:39 Removed Top wall in room number 23
-19-01-2023 17:07:39 Removed Bottom wall in room number 13
-19-01-2023 17:07:40 Spotted player!
-19-01-2023 17:07:40 Spotted player!
-19-01-2023 17:08:03 Spotted player!
-19-01-2023 17:08:03 Spotted player!
-19-01-2023 17:08:05 Player Points: 7
-19-01-2023 17:08:06 Player Points: 8
-19-01-2023 17:08:06 Player Points: 9
-19-01-2023 17:08:07 Player Points: 10
-19-01-2023 17:08:08 Player Points: 11
-19-01-2023 17:08:08 Player Points: 12
-19-01-2023 17:08:11 Player Points: 13
-19-01-2023 17:08:11 Player Points: 14
-19-01-2023 17:08:12 Player Points: 15
-19-01-2023 17:08:18 Player Points: 16
-19-01-2023 17:08:21 Player Points: 17
-19-01-2023 17:08:26 Player Points: 18
-19-01-2023 17:08:26 Player Points: 19
-19-01-2023 17:08:27 Player Points: 20
-19-01-2023 17:08:28 Player Points: 21
-19-01-2023 17:08:29 Player Points: 22
-19-01-2023 17:08:29 Player Points: 23
-19-01-2023 17:08:30 Player Points: 24
-19-01-2023 17:08:30 Player Points: 25
-19-01-2023 17:08:38 Spotted player!
-19-01-2023 17:08:38 Spotted player!
-19-01-2023 17:08:48 Player Points: 26
-19-01-2023 17:08:48 Player Points: 27
-19-01-2023 17:08:48 All Pickups Collected Well Done!
-19-01-2023 17:08:49 Player Health: 100
-19-01-2023 17:08:51 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:08:51 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Enemy subscribed to event Fire
-19-01-2023 17:08:51 EventManager: Enemy subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Player1 subscribed to event ControllerMoveEvent
-19-01-2023 17:08:51 EventManager: Player1 subscribed to event SettingsReloaded
-19-01-2023 17:08:51 EventManager: Player1 subscribed to event Fire
-19-01-2023 17:08:51 EventManager: Player1 subscribed to event GameWon
-19-01-2023 17:08:51 EventManager: unknown subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:51 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:08:52 Detected level change. Loading level assets...
-19-01-2023 17:08:52 scene 0: arial.ttf asset loaded.
-19-01-2023 17:08:52 scene: 3p1.png asset unloaded.
-19-01-2023 17:08:52 scene: 3p2.png asset unloaded.
-19-01-2023 17:08:52 scene: 3p3.png asset unloaded.
-19-01-2023 17:08:52 scene: 3LevelMusic3 asset unloaded.
-19-01-2023 17:08:52 scene 4: LevelMusic4 asset loaded.
-19-01-2023 17:08:52 Loading scene: game/scene4.xml
-19-01-2023 17:08:54 Player Points: 1
-19-01-2023 17:08:55 Player Points: 2
-19-01-2023 17:08:55 Player Points: 3
-19-01-2023 17:08:55 Player Points: 4
-19-01-2023 17:08:55 Player Points: 5
-19-01-2023 17:08:55 Player Points: 6
-19-01-2023 17:08:56 Fire!
-19-01-2023 17:08:56 Removed Top wall in room number 10
-19-01-2023 17:08:56 Removed Bottom wall in room number 0
-19-01-2023 17:08:56 Fire!
-19-01-2023 17:08:56 Removed Top wall in room number 10
-19-01-2023 17:08:56 Removed Bottom wall in room number 0
-19-01-2023 17:08:57 Player Health: 100
-19-01-2023 17:08:57 Player Health: 100
-19-01-2023 17:08:58 Player Points: 7
-19-01-2023 17:08:58 Player Points: 8
-19-01-2023 17:08:59 Player Points: 9
-19-01-2023 17:08:59 Player Points: 10
-19-01-2023 17:09:00 Fire!
-19-01-2023 17:09:00 Removed Top wall in room number 13
-19-01-2023 17:09:00 Removed Bottom wall in room number 3
-19-01-2023 17:09:00 Player Points: 11
-19-01-2023 17:09:01 Player Points: 12
-19-01-2023 17:09:02 Fire!
-19-01-2023 17:09:02 Removed Right wall in room number 26
-19-01-2023 17:09:02 Removed Left wall in room number 27
-19-01-2023 17:09:02 Player Points: 13
-19-01-2023 17:09:03 Fire!
-19-01-2023 17:09:03 Removed Bottom wall in room number 27
-19-01-2023 17:09:03 Removed Top wall in room number 37
-19-01-2023 17:09:05 Fire!
-19-01-2023 17:09:05 Removed Bottom wall in room number 55
-19-01-2023 17:09:05 Removed Top wall in room number 65
-19-01-2023 17:09:05 Player Points: 14
-19-01-2023 17:09:05 Player Points: 15
-19-01-2023 17:09:05 Player Points: 16
-19-01-2023 17:09:05 Player Points: 17
-19-01-2023 17:09:05 Player Points: 18
-19-01-2023 17:09:06 Player Points: 19
-19-01-2023 17:09:06 Player Points: 20
-19-01-2023 17:09:07 Fire!
-19-01-2023 17:09:07 Removed Left wall in room number 51
-19-01-2023 17:09:07 Removed Right wall in room number 50
-19-01-2023 17:09:08 Player Points: 21
-19-01-2023 17:09:12 Player Points: 22
-19-01-2023 17:09:12 Player Points: 23
-19-01-2023 17:09:12 Player Points: 24
-19-01-2023 17:09:12 Player Points: 25
-19-01-2023 17:09:12 Player Points: 26
-19-01-2023 17:09:12 Player Points: 27
-19-01-2023 17:09:12 All Pickups Collected Well Done!
-19-01-2023 17:09:16 ResourceManager: reading resources.xml.
-19-01-2023 17:09:16 Discovered music asset#: 1 LevelMusic4
-19-01-2023 17:09:16 Discovered fx asset#: 2 scratch.wav
-19-01-2023 17:09:16 Discovered fx asset#: 3 high.wav
-19-01-2023 17:09:16 Discovered fx asset#: 4 medium.wav
-19-01-2023 17:09:16 Discovered fx asset#: 5 low.wav
-19-01-2023 17:09:16 Discovered graphic asset#: 6 p1.png
-19-01-2023 17:09:16 Discovered graphic asset#: 7 p2.png
-19-01-2023 17:09:16 Discovered graphic asset#: 8 p3.png
-19-01-2023 17:09:16 Unloading asset: Assets/Platformer/Base pack/Player/p1_walk/p1_walk.png
-19-01-2023 17:09:16 Discovered graphic asset#: 9 p1.png
-19-01-2023 17:09:16 Unloading asset: Assets/Platformer/Base pack/Player/p2_walk/p2_walk.png
-19-01-2023 17:09:16 Discovered graphic asset#: 10 p2.png
-19-01-2023 17:09:16 Unloading asset: Assets/Platformer/Base pack/Player/p3_walk/p3_walk.png
-19-01-2023 17:09:16 Discovered graphic asset#: 11 p3.png
-19-01-2023 17:09:16 Discovered font asset#: 12 arial.ttf
-19-01-2023 17:09:16 Discovered fx asset#: 13 beep.wav
-19-01-2023 17:09:16 Discovered fx asset#: 14 boop.wav
-19-01-2023 17:09:16 Discovered music asset#: 15 LevelMusic1
-19-01-2023 17:09:16 Discovered music asset#: 16 LevelMusic2
-19-01-2023 17:09:16 Discovered music asset#: 17 LevelMusic3
-19-01-2023 17:09:16 Unloading asset: game/assets/character2.png
-19-01-2023 17:09:16 Discovered graphic asset#: 18 snap_player
-19-01-2023 17:09:16 Unloading asset: game/assets/character1.png
-19-01-2023 17:09:16 Discovered graphic asset#: 188 edge_player
-19-01-2023 17:09:16 Unloading asset: game/assets/coin_gold.png
-19-01-2023 17:09:16 Discovered graphic asset#: 19 goldcoin
-19-01-2023 17:09:16 Unloading asset: game/assets/coin_silver.png
-19-01-2023 17:09:16 Discovered graphic asset#: 20 silvercoin
-19-01-2023 17:09:16 Unloading asset: game/assets/coin_copper.png
-19-01-2023 17:09:16 Discovered graphic asset#: 21 coppercoin
-19-01-2023 17:09:16 Unloading asset: game/assets/hud_spritesheet.png
-19-01-2023 17:09:16 Discovered graphic asset#: 22 hudspritesheet
-19-01-2023 17:09:16 Discovered fx asset#: 23 win.wav
-19-01-2023 17:09:16 Discovered music asset#: 24 AutoLevelMusic
-19-01-2023 17:09:16 50 assets available in resource manager.
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Room subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: Room subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Player1 subscribed to event ControllerMoveEvent
-19-01-2023 17:09:16 EventManager: Player1 subscribed to event SettingsReloaded
-19-01-2023 17:09:16 EventManager: Player1 subscribed to event Fire
-19-01-2023 17:09:16 EventManager: Player1 subscribed to event GameWon
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: pickup subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 EventManager: unknown subscribed to event PlayerMovedEventType
-19-01-2023 17:09:16 Detected level change. Loading level assets...
-19-01-2023 17:09:16 scene 0: arial.ttf asset loaded.
-19-01-2023 17:09:16 scene 0: scratch.wav asset loaded.
-19-01-2023 17:09:16 scene 0: high.wav asset loaded.
-19-01-2023 17:09:16 scene 0: medium.wav asset loaded.
-19-01-2023 17:09:16 scene 0: low.wav asset loaded.
-19-01-2023 17:09:16 scene 0: arial.ttf asset loaded.
-19-01-2023 17:09:16 scene 0: beep.wav asset loaded.
-19-01-2023 17:09:16 scene 0: boop.wav asset loaded.
-19-01-2023 17:09:16 scene 0: snap_player asset loaded.
-19-01-2023 17:09:16 scene 0: edge_player asset loaded.
-19-01-2023 17:09:16 scene 0: goldcoin asset loaded.
-19-01-2023 17:09:16 scene 0: silvercoin asset loaded.
-19-01-2023 17:09:16 scene 0: coppercoin asset loaded.
-19-01-2023 17:09:16 scene 0: hudspritesheet asset loaded.
-19-01-2023 17:09:16 scene 0: win.wav asset loaded.
-19-01-2023 17:09:16 scene 0: AutoLevelMusic asset loaded.
-19-01-2023 17:09:16 scene 1: p1.png asset loaded.
-19-01-2023 17:09:16 scene 1: LevelMusic1 asset loaded.
-19-01-2023 17:09:16 scene 1: p1.png asset loaded.
-19-01-2023 17:09:16 scene 1: LevelMusic1 asset loaded.
-19-01-2023 17:09:16 scene: 4LevelMusic4 asset unloaded.
-19-01-2023 17:09:16 Loading scene: game/scene1.xml
-19-01-2023 17:09:16 Detected level change. Loading level assets...
-19-01-2023 17:09:16 scene 0: arial.ttf asset loaded.
-19-01-2023 17:09:16 scene 0: arial.ttf asset loaded.
-19-01-2023 17:09:16 scene: 1p1.png asset unloaded.
-19-01-2023 17:09:16 scene: 1LevelMusic1 asset unloaded.
-19-01-2023 17:09:16 scene: 1p1.png asset unloaded.
-19-01-2023 17:09:16 scene: 1LevelMusic1 asset unloaded.
-19-01-2023 17:09:16 Scene already loaded. Skipping.
-19-01-2023 17:09:17 Player Points: 1
-19-01-2023 17:09:18 Unloading all resources...
-19-01-2023 17:09:18 Unloaded asset 'AutoLevelMusic'.
-19-01-2023 17:09:18 Unloaded asset 'LevelMusic1'.
-19-01-2023 17:09:18 Unloaded asset 'LevelMusic2'.
-19-01-2023 17:09:18 Unloaded asset 'LevelMusic3'.
-19-01-2023 17:09:18 Unloaded asset 'LevelMusic4'.
-19-01-2023 17:09:18 Unloaded asset 'arial.ttf'.
-19-01-2023 17:09:18 Unloaded asset 'beep.wav'.
-19-01-2023 17:09:18 Unloaded asset 'boop.wav'.
-19-01-2023 17:09:18 Unloaded asset 'coppercoin'.
-19-01-2023 17:09:18 Unloaded asset 'edge_player'.
-19-01-2023 17:09:18 Unloaded asset 'goldcoin'.
-19-01-2023 17:09:18 Unloaded asset 'high.wav'.
-19-01-2023 17:09:18 Unloaded asset 'hudspritesheet'.
-19-01-2023 17:09:18 Unloaded asset 'low.wav'.
-19-01-2023 17:09:18 Unloaded asset 'medium.wav'.
-19-01-2023 17:09:18 Unloaded asset 'p1.png'.
-19-01-2023 17:09:18 Unloaded asset 'p2.png'.
-19-01-2023 17:09:18 Unloaded asset 'p3.png'.
-19-01-2023 17:09:18 Unloaded asset 'scratch.wav'.
-19-01-2023 17:09:18 Unloaded asset 'silvercoin'.
-19-01-2023 17:09:18 Unloaded asset 'snap_player'.
-19-01-2023 17:09:18 Unloaded asset 'win.wav'.
-19-01-2023 17:09:18 Unloading game subsystems failed
-19-01-2023 17:09:18 Unloading game subsystems failed
-19-01-2023 17:09:18 Unloading all resources...
-19-01-2023 17:09:18 Unloaded asset 'AutoLevelMusic'.
-19-01-2023 17:09:18 Unloaded asset 'LevelMusic1'.
-19-01-2023 17:09:18 Unloaded asset 'LevelMusic2'.
-19-01-2023 17:09:18 Unloaded asset 'LevelMusic3'.
-19-01-2023 17:09:18 Unloaded asset 'LevelMusic4'.
-19-01-2023 17:09:18 Unloaded asset 'arial.ttf'.
-19-01-2023 17:09:18 Unloaded asset 'beep.wav'.
-19-01-2023 17:09:18 Unloaded asset 'boop.wav'.
-19-01-2023 17:09:18 Unloaded asset 'coppercoin'.
-19-01-2023 17:09:18 Unloaded asset 'edge_player'.
-19-01-2023 17:09:18 Unloaded asset 'goldcoin'.
-19-01-2023 17:09:18 Unloaded asset 'high.wav'.
-19-01-2023 17:09:18 Unloaded asset 'hudspritesheet'.
-19-01-2023 17:09:18 Unloaded asset 'low.wav'.
-19-01-2023 17:09:18 Unloaded asset 'medium.wav'.
-19-01-2023 17:09:18 Unloaded asset 'p1.png'.
-19-01-2023 17:09:18 Unloaded asset 'p2.png'.
-19-01-2023 17:09:18 Unloaded asset 'p3.png'.
-19-01-2023 17:09:18 Unloaded asset 'scratch.wav'.
-19-01-2023 17:09:18 Unloaded asset 'silvercoin'.
-19-01-2023 17:09:18 Unloaded asset 'snap_player'.
-19-01-2023 17:09:18 Unloaded asset 'win.wav'.
+11-02-2023 18:04:40 GameStructure::initialize()
+11-02-2023 18:04:40 SDLGraphicsManager::Initialize()
+11-02-2023 18:04:40 SDLGraphicsManager ready.
+11-02-2023 18:04:40 ResourceManager: reading resources.xml.
+11-02-2023 18:04:40 Discovered music asset#: 1 LevelMusic4
+11-02-2023 18:04:40 Discovered fx asset#: 2 scratch.wav
+11-02-2023 18:04:40 Discovered fx asset#: 3 high.wav
+11-02-2023 18:04:40 Discovered fx asset#: 4 medium.wav
+11-02-2023 18:04:40 Discovered fx asset#: 5 low.wav
+11-02-2023 18:04:40 Discovered graphic asset#: 6 p1.png
+11-02-2023 18:04:40 Discovered graphic asset#: 7 p2.png
+11-02-2023 18:04:40 Discovered graphic asset#: 8 p3.png
+11-02-2023 18:04:40 Unloading asset: Assets/Platformer/Base pack/Player/p1_walk/p1_walk.png
+11-02-2023 18:04:40 Discovered graphic asset#: 9 p1.png
+11-02-2023 18:04:40 Unloading asset: Assets/Platformer/Base pack/Player/p2_walk/p2_walk.png
+11-02-2023 18:04:40 Discovered graphic asset#: 10 p2.png
+11-02-2023 18:04:40 Unloading asset: Assets/Platformer/Base pack/Player/p3_walk/p3_walk.png
+11-02-2023 18:04:40 Discovered graphic asset#: 11 p3.png
+11-02-2023 18:04:40 Discovered font asset#: 12 arial.ttf
+11-02-2023 18:04:40 Discovered fx asset#: 13 beep.wav
+11-02-2023 18:04:40 Discovered fx asset#: 14 boop.wav
+11-02-2023 18:04:40 Discovered music asset#: 15 LevelMusic1
+11-02-2023 18:04:40 Discovered music asset#: 16 LevelMusic2
+11-02-2023 18:04:40 Discovered music asset#: 17 LevelMusic3
+11-02-2023 18:04:40 Unloading asset: game/assets/character2.png
+11-02-2023 18:04:40 Discovered graphic asset#: 18 snap_player
+11-02-2023 18:04:40 Unloading asset: game/assets/character1.png
+11-02-2023 18:04:40 Discovered graphic asset#: 188 edge_player
+11-02-2023 18:04:40 Unloading asset: game/assets/coin_gold.png
+11-02-2023 18:04:40 Discovered graphic asset#: 19 goldcoin
+11-02-2023 18:04:40 Unloading asset: game/assets/coin_silver.png
+11-02-2023 18:04:40 Discovered graphic asset#: 20 silvercoin
+11-02-2023 18:04:40 Unloading asset: game/assets/coin_copper.png
+11-02-2023 18:04:40 Discovered graphic asset#: 21 coppercoin
+11-02-2023 18:04:40 Unloading asset: game/assets/hud_spritesheet.png
+11-02-2023 18:04:40 Discovered graphic asset#: 22 hudspritesheet
+11-02-2023 18:04:40 Discovered fx asset#: 23 win.wav
+11-02-2023 18:04:40 Discovered music asset#: 24 AutoLevelMusic
+11-02-2023 18:04:40 Discovered music asset#: 25 LevelMusic5
+11-02-2023 18:04:40 Discovered font asset#: 26 kenvector_future2.ttf
+11-02-2023 18:04:40 27 assets available in resource manager.
+11-02-2023 18:04:40 ResourceManager::initialize()
+11-02-2023 18:04:40 EventManager: resource manager subscribed to event LevelChangedEventType
+11-02-2023 18:04:40 SceneManager::initialize()
+11-02-2023 18:04:40 EventManager: SceneManager subscribed to event LevelChangedEventType
+11-02-2023 18:04:40 EventManager: SceneManager subscribed to event AddGameObjectToCurrentSceneEventId
+11-02-2023 18:04:40 EventManager: SceneManager subscribed to event GenerateNewLevel
+11-02-2023 18:04:40 EventManager: SceneManager subscribed to event GameObjectTypeEvent
+11-02-2023 18:04:40 EventManager: SceneManager subscribed to event DrawCurrentScene
+11-02-2023 18:04:40 EventManager: SceneManager subscribed to event UpdateAllGameObjectsEventType
+11-02-2023 18:04:40 InitializeGameSubSystems...
+11-02-2023 18:04:40 InitializeGameSubSystems...
+11-02-2023 18:04:40 EventManager: GameCommands subscribed to event FetchedPickup
+11-02-2023 18:04:40 EventManager: GameCommands subscribed to event NetworkTrafficReceived
+11-02-2023 18:04:40 EventManager: level_manager subscribed to event GenerateNewLevel
+11-02-2023 18:04:40 EventManager: level_manager subscribed to event InvalidMove
+11-02-2023 18:04:40 EventManager: level_manager subscribed to event FetchedPickup
+11-02-2023 18:04:40 EventManager: level_manager subscribed to event GameObjectTypeEvent
+11-02-2023 18:04:40 EventManager: level_manager subscribed to event LevelChangedEventType
+11-02-2023 18:04:40 EventManager: level_manager subscribed to event FetchedPickup
+11-02-2023 18:04:40 EventManager: level_manager subscribed to event StartNetworkLevel
+11-02-2023 18:04:40 EventManager: level_manager subscribed to event UpdateProcesses
+11-02-2023 18:04:40 EventManager: level_manager subscribed to event GameWon
+11-02-2023 18:04:40 EventManager: level_manager subscribed to event CollidedWithEnemyEvent
+11-02-2023 18:04:40 EventManager: level_manager subscribed to event PLayerDied
+11-02-2023 18:04:40 EventManager: level_manager subscribed to event CollidedWithEnemyEvent
+11-02-2023 18:04:40 Initializing Level Manager...
+11-02-2023 18:04:40 Initializing Level Manager...
+11-02-2023 18:04:40 EventManager: Enemy subscribed to event Fire
+11-02-2023 18:04:40 EventManager: Enemy subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Enemy subscribed to event Fire
+11-02-2023 18:04:40 EventManager: Enemy subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Enemy subscribed to event Fire
+11-02-2023 18:04:40 EventManager: Enemy subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Enemy subscribed to event Fire
+11-02-2023 18:04:40 EventManager: Enemy subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Enemy subscribed to event Fire
+11-02-2023 18:04:40 EventManager: Enemy subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Enemy subscribed to event Fire
+11-02-2023 18:04:40 EventManager: Enemy subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:40 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:40 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Player1 subscribed to event ControllerMoveEvent
+11-02-2023 18:04:41 EventManager: Player1 subscribed to event SettingsReloaded
+11-02-2023 18:04:41 EventManager: Player1 subscribed to event Fire
+11-02-2023 18:04:41 EventManager: Player1 subscribed to event GameWon
+11-02-2023 18:04:41 EventManager: unknown subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup67 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup34 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup0 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup69 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup24 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup78 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup58 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup62 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup64 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup5 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup45 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup81 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup27 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup61 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup91 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup95 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup42 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup27 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup36 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 EventManager: RoomPickup91 subscribed to event PlayerMovedEventType
+11-02-2023 18:04:41 Creating Single player level...
+11-02-2023 18:04:42 Detected level change. Loading level assets...
+11-02-2023 18:04:42 scene 0: scratch.wav asset loaded.
+11-02-2023 18:04:42 scene 0: high.wav asset loaded.
+11-02-2023 18:04:42 scene 0: medium.wav asset loaded.
+11-02-2023 18:04:42 scene 0: low.wav asset loaded.
+11-02-2023 18:04:42 scene 0: arial.ttf asset loaded.
+11-02-2023 18:04:42 scene 0: beep.wav asset loaded.
+11-02-2023 18:04:42 scene 0: boop.wav asset loaded.
+11-02-2023 18:04:42 scene 0: snap_player asset loaded.
+11-02-2023 18:04:42 scene 0: edge_player asset loaded.
+11-02-2023 18:04:42 scene 0: goldcoin asset loaded.
+11-02-2023 18:04:42 scene 0: silvercoin asset loaded.
+11-02-2023 18:04:42 scene 0: coppercoin asset loaded.
+11-02-2023 18:04:42 scene 0: hudspritesheet asset loaded.
+11-02-2023 18:04:42 scene 0: win.wav asset loaded.
+11-02-2023 18:04:42 scene 0: AutoLevelMusic asset loaded.
+11-02-2023 18:04:42 scene 0: kenvector_future2.ttf asset loaded.
+11-02-2023 18:04:42 scene 1: p1.png asset loaded.
+11-02-2023 18:04:42 scene 1: LevelMusic1 asset loaded.
+11-02-2023 18:04:42 Loading scene: game/scene1.xml
+11-02-2023 18:04:45 Player Points: 1
+11-02-2023 18:04:46 Spotted player!
+11-02-2023 18:04:48 Player Points: 2
+11-02-2023 18:04:49 Spotted player!
+11-02-2023 18:04:49 Spotted player!
+11-02-2023 18:04:51 Player Points: 3
+11-02-2023 18:04:51 Player Points: 4
+11-02-2023 18:04:53 Spotted player!
+11-02-2023 18:04:54 Player Points: 5
+11-02-2023 18:04:54 Player Points: 6
+11-02-2023 18:04:55 Player Points: 7
+11-02-2023 18:04:56 Player Points: 8
+11-02-2023 18:04:58 Player Points: 9
+11-02-2023 18:04:58 Player Points: 10
+11-02-2023 18:04:59 Player Points: 11
+11-02-2023 18:04:59 Player Points: 12
+11-02-2023 18:05:00 Player Points: 13
+11-02-2023 18:05:00 Player Points: 14
+11-02-2023 18:05:00 Spotted player!
+11-02-2023 18:05:00 Player Points: 15
+11-02-2023 18:05:00 Player Points: 16
+11-02-2023 18:05:04 Player Points: 17
+11-02-2023 18:05:07 Spotted player!
+11-02-2023 18:05:10 Player Points: 18
+11-02-2023 18:05:12 Player Points: 19
+11-02-2023 18:05:12 Player Points: 20
+11-02-2023 18:05:12 Player Points: 21
+11-02-2023 18:05:12 Player Points: 22
+11-02-2023 18:05:13 Spotted player!
+11-02-2023 18:05:16 Player Points: 23
+11-02-2023 18:05:16 Player Points: 24
+11-02-2023 18:05:19 Player Health: 50
+11-02-2023 18:05:19 Player Health: 0
+11-02-2023 18:05:19 Player DIED!
+11-02-2023 18:05:21 Player Health: -50
+11-02-2023 18:05:21 Player DIED!
+11-02-2023 18:05:24 Fire!
+11-02-2023 18:05:24 Removed Left wall in room number 79
+11-02-2023 18:05:24 Removed Right wall in room number 78
+11-02-2023 18:05:24 Player Points: 25
+11-02-2023 18:05:24 Player Health: -100
+11-02-2023 18:05:24 Player DIED!
+11-02-2023 18:05:29 Player Points: 26
+11-02-2023 18:05:29 Spotted player!
+11-02-2023 18:05:32 Player Points: 27
+11-02-2023 18:05:32 All Pickups Collected Well Done!
+11-02-2023 18:05:35 EventManager: Enemy subscribed to event Fire
+11-02-2023 18:05:35 EventManager: Enemy subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Enemy subscribed to event Fire
+11-02-2023 18:05:35 EventManager: Enemy subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Enemy subscribed to event Fire
+11-02-2023 18:05:35 EventManager: Enemy subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Room subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: Room subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Player1 subscribed to event ControllerMoveEvent
+11-02-2023 18:05:35 EventManager: Player1 subscribed to event SettingsReloaded
+11-02-2023 18:05:35 EventManager: Player1 subscribed to event Fire
+11-02-2023 18:05:35 EventManager: Player1 subscribed to event GameWon
+11-02-2023 18:05:35 EventManager: unknown subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup47 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup84 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup48 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup71 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup64 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup13 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup75 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup45 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup12 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup46 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup78 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup69 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup62 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup19 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup85 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup89 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup0 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup65 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup40 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 EventManager: RoomPickup45 subscribed to event PlayerMovedEventType
+11-02-2023 18:05:35 Detected level change. Loading level assets...
+11-02-2023 18:05:35 scene 0: arial.ttf asset loaded.
+11-02-2023 18:05:35 scene 0: kenvector_future2.ttf asset loaded.
+11-02-2023 18:05:35 scene: 1p1.png asset unloaded.
+11-02-2023 18:05:35 scene: 1LevelMusic1 asset unloaded.
+11-02-2023 18:05:35 scene 2: p2.png asset loaded.
+11-02-2023 18:05:35 scene 2: p3.png asset loaded.
+11-02-2023 18:05:35 scene 2: LevelMusic2 asset loaded.
+11-02-2023 18:05:35 Loading scene: game/scene2.xml
+11-02-2023 18:05:35 Invalid or null object found in scene file
+11-02-2023 18:05:35 Unloading asset: Assets/Platformer/Base pack/Player/p2_front.png
+11-02-2023 18:05:35 Unloading asset: Assets/Platformer/Base pack/Player/p3_front.png
+11-02-2023 18:05:59 Player Points: 1
+11-02-2023 18:06:02 Player Points: 2
+11-02-2023 18:06:02 Player Points: 3
+11-02-2023 18:06:02 Player Points: 4
+11-02-2023 18:06:02 Spotted player!
+11-02-2023 18:06:06 Player Health: 50
+11-02-2023 18:06:09 Player Points: 5
+11-02-2023 18:06:13 Player Points: 6
+11-02-2023 18:06:13 Player Points: 7
+11-02-2023 18:06:17 Player Points: 8
+11-02-2023 18:06:17 Player Points: 9
+11-02-2023 18:06:18 Player Points: 10
+11-02-2023 18:06:20 Player Points: 11
+11-02-2023 18:06:20 Player Points: 12
+11-02-2023 18:06:23 Player Points: 13
+11-02-2023 18:06:23 Player Points: 14
+11-02-2023 18:06:24 Player Points: 15
+11-02-2023 18:06:24 Player Points: 16
+11-02-2023 18:06:26 Player Points: 17
+11-02-2023 18:06:29 Fire!
+11-02-2023 18:06:29 Removed Left wall in room number 76
+11-02-2023 18:06:29 Removed Right wall in room number 75
+11-02-2023 18:06:29 Player Points: 18
+11-02-2023 18:06:30 Player Points: 19
+11-02-2023 18:06:30 Player Points: 20
+11-02-2023 18:06:33 Player Points: 21
+11-02-2023 18:06:38 Spotted player!
+11-02-2023 18:06:45 Spotted player!
+11-02-2023 18:06:46 Spotted player!
+11-02-2023 18:06:47 Player Points: 22
+11-02-2023 18:06:48 Player Points: 23
+11-02-2023 18:06:50 Fire!
+11-02-2023 18:06:50 Removed Right wall in room number 92
+11-02-2023 18:06:50 Removed Left wall in room number 93
+11-02-2023 18:06:51 Fire!
+11-02-2023 18:06:51 Removed Right wall in room number 93
+11-02-2023 18:06:51 Removed Left wall in room number 94
+11-02-2023 18:06:51 Fire!
+11-02-2023 18:06:51 Removed Right wall in room number 94
+11-02-2023 18:06:51 Removed Left wall in room number 95
+11-02-2023 18:06:52 Fire!
+11-02-2023 18:06:52 Removed Right wall in room number 95
+11-02-2023 18:06:52 Removed Left wall in room number 96
+11-02-2023 18:06:53 Unloading all resources...
+11-02-2023 18:06:53 Unloaded asset 'AutoLevelMusic'.
+11-02-2023 18:06:53 Unloaded asset 'LevelMusic1'.
+11-02-2023 18:06:53 Unloaded asset 'LevelMusic2'.
+11-02-2023 18:06:53 Unloaded asset 'LevelMusic3'.
+11-02-2023 18:06:53 Unloaded asset 'LevelMusic4'.
+11-02-2023 18:06:53 Unloaded asset 'LevelMusic5'.
+11-02-2023 18:06:53 Unloaded asset 'arial.ttf'.
+11-02-2023 18:06:53 Unloaded asset 'beep.wav'.
+11-02-2023 18:06:53 Unloaded asset 'boop.wav'.
+11-02-2023 18:06:53 Unloaded asset 'coppercoin'.
+11-02-2023 18:06:53 Unloaded asset 'edge_player'.
+11-02-2023 18:06:53 Unloaded asset 'goldcoin'.
+11-02-2023 18:06:53 Unloaded asset 'high.wav'.
+11-02-2023 18:06:53 Unloaded asset 'hudspritesheet'.
+11-02-2023 18:06:53 Unloaded asset 'kenvector_future2.ttf'.
+11-02-2023 18:06:53 Unloaded asset 'low.wav'.
+11-02-2023 18:06:53 Unloaded asset 'medium.wav'.
+11-02-2023 18:06:53 Unloaded asset 'p1.png'.
+11-02-2023 18:06:53 Unloaded asset 'p2.png'.
+11-02-2023 18:06:53 Unloaded asset 'p3.png'.
+11-02-2023 18:06:53 Unloaded asset 'scratch.wav'.
+11-02-2023 18:06:53 Unloaded asset 'silvercoin'.
+11-02-2023 18:06:53 Unloaded asset 'snap_player'.
+11-02-2023 18:06:53 Unloaded asset 'win.wav'.
+11-02-2023 18:06:53 Unloading game subsystems failed
+11-02-2023 18:06:53 Unloading game subsystems failed
+11-02-2023 18:06:53 Unloading all resources...
+11-02-2023 18:06:53 Unloaded asset 'AutoLevelMusic'.
+11-02-2023 18:06:53 Unloaded asset 'LevelMusic1'.
+11-02-2023 18:06:53 Unloaded asset 'LevelMusic2'.
+11-02-2023 18:06:53 Unloaded asset 'LevelMusic3'.
+11-02-2023 18:06:53 Unloaded asset 'LevelMusic4'.
+11-02-2023 18:06:53 Unloaded asset 'LevelMusic5'.
+11-02-2023 18:06:53 Unloaded asset 'arial.ttf'.
+11-02-2023 18:06:53 Unloaded asset 'beep.wav'.
+11-02-2023 18:06:53 Unloaded asset 'boop.wav'.
+11-02-2023 18:06:53 Unloaded asset 'coppercoin'.
+11-02-2023 18:06:53 Unloaded asset 'edge_player'.
+11-02-2023 18:06:53 Unloaded asset 'goldcoin'.
+11-02-2023 18:06:53 Unloaded asset 'high.wav'.
+11-02-2023 18:06:53 Unloaded asset 'hudspritesheet'.
+11-02-2023 18:06:53 Unloaded asset 'kenvector_future2.ttf'.
+11-02-2023 18:06:53 Unloaded asset 'low.wav'.
+11-02-2023 18:06:53 Unloaded asset 'medium.wav'.
+11-02-2023 18:06:53 Unloaded asset 'p1.png'.
+11-02-2023 18:06:53 Unloaded asset 'p2.png'.
+11-02-2023 18:06:53 Unloaded asset 'p3.png'.
+11-02-2023 18:06:53 Unloaded asset 'scratch.wav'.
+11-02-2023 18:06:53 Unloaded asset 'silvercoin'.
+11-02-2023 18:06:53 Unloaded asset 'snap_player'.
+11-02-2023 18:06:53 Unloaded asset 'win.wav'.

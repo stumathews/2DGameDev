@@ -60,6 +60,7 @@ void PrepareLevel()
 	if (!GameData::Get()->IsNetworkGame)
 	{
 		// ReSharper disable once CppExpressionWithoutSideEffects
+		// ReSharper disable once CppNoDiscardExpression
 		LevelManager::Get()->ChangeLevel(1);
 		
 		if (SettingsManager::Get()->GetBool("global", "createAutoLevel")) 

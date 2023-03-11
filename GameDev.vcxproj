@@ -37,6 +37,7 @@
     <Xml Include="game\Level2.xml" />
     <Xml Include="game\Level3.xml" />
     <Xml Include="game\Level4.xml" />
+    <Xml Include="game\Level5.xml" />
     <Xml Include="game\Resources.xml" />
     <Xml Include="game\scene1.xml" />
     <Xml Include="game\scene2.xml" />

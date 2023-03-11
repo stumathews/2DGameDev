@@ -8,12 +8,13 @@
 #include "GameCommands.h"
 #include "Room.h"
 #include <events/EventFactory.h>
-#include "DrawableFrameRate.h"
+#include "graphic/DrawableFrameRate.h"
 #include <processes/ProcessManager.h>
 #include <objects/StaticSprite.h>
 
 #include "Enemy.h"
 #include "Pickup.h"
+#include "graphic/DrawableText.h"
 
 typedef std::vector<std::weak_ptr<gamelib::GameObject>> ListOfGameObjects;
 
@@ -57,7 +58,7 @@ public:
     static Mix_Chunk* GetSoundEffect(const std::string& name);
 
     void OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt);
-    static void OnPlayerDied();
+    void OnPlayerDied();
     void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
     gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long inDeltaMs) override;
 
@@ -80,7 +81,8 @@ private:
     gamelib::EventFactory* eventFactory = nullptr;
     std::shared_ptr<gamelib::StaticSprite> hudItem;
     std::shared_ptr<Level> level = nullptr;
-    std::shared_ptr<DrawableFrameRate> drawableFrameRate;
+    std::shared_ptr<gamelib::DrawableFrameRate> drawableFrameRate;
+    std::shared_ptr<gamelib::DrawableText> drawableGameStatus;
     std::shared_ptr<GameCommands> gameCommands;
     std::shared_ptr<Player> player;
     std::shared_ptr<Enemy> enemy1;

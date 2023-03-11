@@ -2,13 +2,13 @@
 <settings>
   <!-- Global Game Settings -->
   <global>
-    <!-- 20 times a second = 50 milliseconds, 1 second is 20*50 = 1000 milliseconds -->
-    <setting name="tick_time_ms" type="int">20</setting>
+    <!-- 1 update very 20 ms = 50 times a second (1000 milliseconds) -->
+    <setting name="tick_time_ms" type="int">16</setting>
     <setting name="square_width" type="int">150</setting>
     <setting name="sprite_width" type="int">50</setting>
     <setting name="max_loops" type="int">4</setting>
-    <setting name="screen_width" type="int">640</setting>
-    <setting name="screen_height" type="int">480</setting>
+    <setting name="screen_width" type="int">1024</setting>
+    <setting name="screen_height" type="int">768</setting>
     <setting name="frames_per_row" type="int">3</setting>
     <setting name="frames_per_column" type="int">3</setting>
     <setting name="verbose" type="bool">false</setting>
@@ -18,10 +18,11 @@
 		<setting name="numPickups" type="int">20</setting>
 		<setting name="isNetworkGame" type="bool">false</setting>
 		<setting name="createAutoLevel" type="bool">false</setting>
-		<setting name="level1FileName" type="string">game\\Level1.xml</setting>
-		<setting name="level2FileName" type="string">game\\balls.xml</setting>
-    <setting name="level3FileName" type="string">game\\eight.xml</setting>
-    <setting name="level4FileName" type="string">game\\stu.xml</setting>
+		<setting name="level1FileName" type="string">game\\Level5.xml</setting>
+		<setting name="level2FileName" type="string">game\\Level2.xml</setting>
+    <setting name="level3FileName" type="string">game\\Level3.xml</setting>
+    <setting name="level4FileName" type="string">game\\Level4.xml</setting>
+    <setting name="level5FileName" type="string">game\\Level5.xml</setting>
   </global>
 
 	<gamecommands>
@@ -70,13 +71,14 @@
   <audio>
     <setting name="invalid_move" type="string">low.wav</setting>
     <setting name="fetched_pickup" type="string">boop.wav</setting>
+		<setting name="win_music" type="string">win.wav</setting>
   </audio>
   
   <!-- Player settings -->
   <player>
-    <setting name="move_interval" type="int">1</setting>
+    <!--<setting name="move_interval" type="int">1</setting>-->
     <setting name="drawBounds" type="bool">false</setting>
-    <setting name="hotspotSize" type="int">2</setting>
+    <setting name="hotspotSize" type="int">5</setting>
     <setting name="drawHotspot" type="bool">false</setting>
     <setting name="hideSprite" type="bool">false</setting>
     <setting name="box_width" type="int">10</setting>
@@ -86,10 +88,9 @@
     <setting name="a" type="int">0</setting> 
     <setting name="verbose" type="bool">false</setting>
     <setting name="ignoreRestrictions" type="bool">false</setting>
-    <setting name="moveStrategy" type="string">edge</setting> <!-- 'snap' or 'edge' strategy -->
 		<setting name="debugMovement" type="bool">false</setting>
 		<setting name="moveDurationMs" type="int">200</setting>
-		<setting name="maxPixelsToMove" type="int">10</setting>
+		<setting name="pixelsToMove" type="int">3</setting>
   </player>
 
 	<sprite>

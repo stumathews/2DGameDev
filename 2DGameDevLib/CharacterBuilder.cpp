@@ -6,6 +6,7 @@
 #include "GameObjectMoveStrategy.h"
 #include "SpriteAsset.h"
 #include "common/constants.h"
+#include "events/PlayerMovedEvent.h"
 #include "objects/GameObjectFactory.h"
 
 
@@ -35,11 +36,12 @@ std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, c
 }
 
 std::shared_ptr<Enemy> CharacterBuilder::BuildEnemy(const std::string& name, const std::shared_ptr<Room>& room,
-                                                const int resourceId, gamelib::Direction startingDirection, std::shared_ptr<const Level>
+                                                const int spriteResourceId, gamelib::Direction startingDirection, const std::shared_ptr<const Level>
+                                                &
                                                 level)
 {
 	const auto spriteAsset = std::dynamic_pointer_cast<gamelib::SpriteAsset>(
-		gamelib::ResourceManager::Get()->GetAssetInfo(resourceId));
+		gamelib::ResourceManager::Get()->GetAssetInfo(spriteResourceId));
 
 	const auto positionInRoom = room->GetCenter(spriteAsset->Dimensions);
 
@@ -61,6 +63,8 @@ std::shared_ptr<gamelib::Pickup> CharacterBuilder::BuildPickup(const std::string
 	                                                room->GetRoomNumber(), spriteAsset);
 
 	pickup->Initialize();
+	pickup->LoadSettings();
+	pickup->SubscribeToEvent(gamelib::PlayerMovedEventTypeEventId);
 	return pickup;
 }
 

@@ -167,7 +167,6 @@
     <ClInclude Include="PlayerCollidedWithPickupEvent.h" />
     <ClInclude Include="RoomInfo.h" />
     <ClInclude Include="GameObjectMoveStrategy.h" />
-    <ClInclude Include="DrawableFrameRate.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GameObjectEventFactory.h" />
     <ClInclude Include="Level.h" />
@@ -182,7 +181,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CharacterBuilder.cpp" />
-    <ClCompile Include="DrawableFrameRate.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameDataManager.cpp" />
     <ClCompile Include="PlayerCollidedWithPickupEvent.cpp" />

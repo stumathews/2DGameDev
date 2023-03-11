@@ -59,6 +59,7 @@
     <Xml Include="game\Level2.xml" />
     <Xml Include="game\Level3.xml" />
     <Xml Include="game\Level4.xml" />
+    <Xml Include="game\Level5.xml" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="2DGameDev.rc">

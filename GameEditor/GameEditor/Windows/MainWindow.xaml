@@ -3,15 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:xcpg="http://schemas.xceed.com/wpf/xaml/propertygrid"
-        xmlns:local="clr-namespace:GameEditor"
-        xmlns:viewsmodel="clr-namespace:GameEditor.ViewModels"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         Title="2D GameDev Game Editor" Height="450" Width="800" WindowStartupLocation="CenterScreen">
 
-    <Grid x:Name="grid" MouseUp="grid_MouseUp">
+    <Grid x:Name="Grid" MouseUp="grid_MouseUp">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="MenuBarRow" Height="Auto" /> <!-- Note how Auto fits the the content, and ignores being equal to other rows (which is the default)-->
             <RowDefinition x:Name="ToolBarRow" Height="Auto" />
@@ -24,18 +20,18 @@
         </Grid.ColumnDefinitions>
         
         <!-- Menu -->
-        <Menu Name="mainMenu" Grid.Row="0" Grid.ColumnSpan="2">
+        <Menu Name="MainMenu" Grid.Row="0" Grid.ColumnSpan="2">
             <!-- File Menu -->
-            <MenuItem Header="File" Name="fileMenuItem" >
-                <MenuItem Name="newMenuItem" Header="New level..." Click="newMenuItem_Click" ></MenuItem>
-                <MenuItem Name="openMenuItem" Header="Open level..." Click="openMenuItem_Click"></MenuItem>
-                <MenuItem Name="contentManagerMenuItem" Header="Content Manager..." Command="{Binding ShowContentManagerCommand}" />
-                <MenuItem Name="saveAsMenuItem" Header="Save level as..." Click="saveAsMenuItem_Click"></MenuItem>
-                <MenuItem Name="closeMenuItem" Header="Close" Command="{Binding CloseCommand}"></MenuItem>
+            <MenuItem Header="File" Name="FileMenuItem" >
+                <MenuItem Name="NewMenuItem" Header="New level..." Click="newMenuItem_Click" ></MenuItem>
+                <MenuItem Name="OpenMenuItem" Header="Open level..." Click="openMenuItem_Click"></MenuItem>
+                <MenuItem Name="ContentManagerMenuItem" Header="Content Manager..." Command="{Binding ShowContentManagerCommand}" />
+                <MenuItem Name="SaveAsMenuItem" Header="Save level as..." Click="saveAsMenuItem_Click"></MenuItem>
+                <MenuItem Name="CloseMenuItem" Header="Close" Command="{Binding CloseCommand}"></MenuItem>
             </MenuItem>
             
             <!-- Edit Menu -->
-            <MenuItem Header="Edit" Name="editMenuItem">
+            <MenuItem Header="Edit" Name="EditMenuItem">
                 <MenuItem Header="Add object" Command="{Binding AddPickupCommand}">
                     <MenuItem.Icon>
                         <Image>
@@ -57,7 +53,7 @@
             </MenuItem>
             
             <!-- About Menu -->
-            <MenuItem Header="About" Name="aboutMenuItem" Command="{Binding ShowAboutCommand}"></MenuItem>
+            <MenuItem Header="About" Name="AboutMenuItem" Command="{Binding ShowAboutCommand}"></MenuItem>
         </Menu>
        
         <!-- ToolBar -->
@@ -76,18 +72,16 @@
                 </Button>
                 
                 <!-- Remove Object-->
-                <Button>
-                    <Button Command="{Binding RemovePickupCommand}">
-                    <StackPanel >
-                        <Image>
-                            <Image.Source>
-                                <BitmapImage UriSource="pack://application:,,,/images/Delete.png"/>
-                            </Image.Source>
-                        </Image>   
-                        <TextBlock>Delete Game Object</TextBlock>
-                    </StackPanel>
-                </Button>
-                </Button>
+                <Button Command="{Binding RemovePickupCommand}">
+                <StackPanel >
+                    <Image>
+                        <Image.Source>
+                            <BitmapImage UriSource="pack://application:,,,/images/Delete.png"/>
+                        </Image.Source>
+                    </Image>   
+                    <TextBlock>Delete Game Object</TextBlock>
+                </StackPanel>
+            </Button>
             </ToolBar>
         </ToolBarTray>
         
@@ -98,18 +92,17 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <xctk:PropertyGrid Grid.Row="0" Name="propertyGrid"  SelectedObject="{Binding}"/>
+            <xctk:PropertyGrid Grid.Row="0" Name="PropertyGrid"  SelectedObject="{Binding}"/>
             <StackPanel Grid.Row="1">
-                <CheckBox x:Name="autoPopulatePickupsCheckBox" IsChecked="{Binding AutoPopulateLevelPickups}" >Allow game to populate Pickups automatically</CheckBox>
+                <CheckBox x:Name="AutoPopulatePickupsCheckBox" IsChecked="{Binding AutoPopulateLevelPickups}">Allow game to populate Pickups automatically</CheckBox>
             </StackPanel>
-            
         </Grid>
         
 
         <!-- Status Bar -->
-         <StatusBar Grid.Row="3" Grid.ColumnSpan="2">
+         <StatusBar Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="0">
             <StatusBarItem>
-                <TextBlock Name="status"></TextBlock>
+                <TextBlock Name="Status"></TextBlock>
             </StatusBarItem>
         </StatusBar>
     </Grid>

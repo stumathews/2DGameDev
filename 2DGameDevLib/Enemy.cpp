@@ -16,6 +16,7 @@
 #include "EventNumber.h"
 #include "geometry/SideUtils.h"
 #include "Room.h"
+#include "SDLCollisionDetection.h"
 
 namespace gamelib
 {
@@ -31,7 +32,7 @@ Enemy::Enemy(const std::string& name, const std::string& type, const gamelib::Co
 	SetNpcDirection(startingDirection);
 	CurrentRoom = std::make_shared<RoomInfo>(startRoom);
 
-	HitWallState = gamelib::FSMState( [&]
+	hitWallState = gamelib::FSMState( [&]
 		{
 			SwapCurrentDirection();
 		},
@@ -68,7 +69,7 @@ Enemy::Enemy(const std::string& name, const std::string& type, const gamelib::Co
 		[]{}, "Moving Right" );
 
 	invalidMoveTransition = gamelib::FSMTransition( [&]()-> bool { return !isValidMove; },
-		[&]()-> gamelib::FSMState*{ return &HitWallState; },
+		[&]()-> gamelib::FSMState*{ return &hitWallState; },
 		[]{   });
 
 	// Set the state depending on which direction the enemy is facing
@@ -93,13 +94,13 @@ Enemy::Enemy(const std::string& name, const std::string& type, const gamelib::Co
 	downState.Transitions = { onUpDirection, onLeftDirection, onRightDirection, invalidMoveTransition };
 	leftState.Transitions = { onUpDirection, onDownDirection, onRightDirection, invalidMoveTransition };
 	rightState.Transitions = { onUpDirection, onDownDirection, onLeftDirection, invalidMoveTransition };
-	HitWallState.Transitions = {onUpDirection, onDownDirection, onLeftDirection, onRightDirection};
+	hitWallState.Transitions = {onUpDirection, onDownDirection, onLeftDirection, onRightDirection};
 
 	// Set state machine to states it can be in
-	stateMachine.States = { 	upState, downState, leftState, rightState, HitWallState };
+	stateMachine.States = { 	upState, downState, leftState, rightState, hitWallState };
 
-	// Set the initial state to the first one
-	stateMachine.InitialState = &stateMachine.States.front();
+	// Set the initial state to down
+	stateMachine.InitialState = &downState;
 }
 
 void Enemy::LookForPlayer()
@@ -226,8 +227,7 @@ void Enemy::Initialize()
 void Enemy::CheckForPlayerCollision()
 {
 	const auto player = GameDataManager::Get()->GameData()->GetPlayer();
-	SDL_Rect result;
-	if(CurrentRoom->RoomIndex == player->CurrentRoom->RoomIndex && SDL_IntersectRect(&player->Bounds, &Bounds, &result))
+	if(CurrentRoom->RoomIndex == player->CurrentRoom->RoomIndex && SdlCollisionDetection::IsColliding(&player->Bounds, &Bounds))
 	{
 		RaiseEvent(std::make_shared<PlayerCollidedWithEnemyEvent>(shared_from_this(), player));
 		RaiseEvent(std::make_shared<gamelib::GameObjectEvent>(shared_from_this(), gamelib::GameObjectEventContext::Remove));			
@@ -251,6 +251,7 @@ std::vector<std::shared_ptr<gamelib::Event>> Enemy::HandleEvent(const std::share
 
 void Enemy::Update(const unsigned long deltaMs)
 {
+	if(GameData::Get()->IsGameWon()) return;
 	isValidMove = moveStrategy->MoveGameObject(std::make_shared<Movement>(currentFacingDirection));		
 	Hotspot->Update(Position);
 	Sprite->MoveSprite(Position);

@@ -33,13 +33,14 @@ public:
 	std::string GetSubscriberName() override { return "Level"; }
 	void InitializePickups(const std::vector<std::shared_ptr<gamelib::Pickup>>& inPickups);
 	void AddGameObjectToScene(const std::shared_ptr<gamelib::GameObject>& object);
-	std::shared_ptr<gamelib::GameObject> ParseObject(tinyxml2::XMLNode* pSpriteChild, const std::shared_ptr<Room>& room) const;
+	std::shared_ptr<gamelib::GameObject> ParseObject(tinyxml2::XMLNode* pObject, const std::shared_ptr<Room>& room) const;
 	void InitializePlayer(const std::shared_ptr<Player>& inPlayer,
 	                      const std::shared_ptr<gamelib::SpriteAsset>& spriteAsset) const;
 	static void ParseProperty(tinyxml2::XMLNode* pObjectChild, const std::shared_ptr<gamelib::GameObject>& go);
 	std::vector<std::shared_ptr<Room>> Rooms;
 	std::vector<std::shared_ptr<gamelib::Pickup>> Pickups;
 	std::vector<std::shared_ptr<Enemy>> Enemies;
+	std::shared_ptr<Room> GetRoom(int row, int col);
 	std::shared_ptr<Player> Player1;
 	std::string FileName;
 	int NumCols;

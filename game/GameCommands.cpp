@@ -85,6 +85,7 @@ void GameCommands::LoadNewLevel(const int level)
 		case 2: { LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level2FileName")); } break;
 		case 3: { LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level3FileName")); } break;
 		case 4: { LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level4FileName")); } break;
+		case 5: { LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level5FileName")); } break;
 		default: { LevelManager::Get()->CreateAutoLevel(); } break;
 	}
 
@@ -97,7 +98,7 @@ void GameCommands::ToggleMusic(const bool verbose) const
 
 	if (!Mix_PlayingMusic())
 	{
-		AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("MainTheme.wav"))->AsMusic());
+		AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("LevelMusic4"))->AsMusic());
 	}
 	else
 	{

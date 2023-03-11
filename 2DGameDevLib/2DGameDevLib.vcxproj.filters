@@ -48,9 +48,6 @@
     <ClInclude Include="Rooms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DrawableFrameRate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SDLCollisionDetection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -105,9 +102,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Rooms.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DrawableFrameRate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameDataManager.cpp">

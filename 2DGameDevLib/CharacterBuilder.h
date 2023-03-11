@@ -22,8 +22,9 @@ public:
 	static [[nodiscard]] std::shared_ptr<gamelib::Pickup> BuildPickup(const std::string& name,
 	                                                                  const std::shared_ptr<Room>& room,
 	                                                                  int resourceId);
-	static std::shared_ptr<Enemy> BuildEnemy(const std::string& name, const std::shared_ptr<Room>& room, const int resourceId,
-	                                         gamelib::Direction startingDirection, std::shared_ptr<const Level> level);
+	static std::shared_ptr<Enemy> BuildEnemy(const std::string& name, const std::shared_ptr<Room>& room, const int spriteResourceId,
+	                                         gamelib::Direction startingDirection, const std::shared_ptr<const Level>&
+	                                         level);
 	
 };
 

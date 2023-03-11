@@ -18,23 +18,24 @@ void GameDataManager::Initialize()
 	eventManager->SubscribeToEvent(GameObjectTypeEventId, this);
 }
 
-std::vector<std::shared_ptr<Event>> GameDataManager::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
-{
-	if(evt->Id.PrimaryId == AddGameObjectToCurrentSceneEventId.PrimaryId)
-	{
-		AddToGameData(evt); 
-	}
-	if(evt->Id.PrimaryId == GameObjectTypeEventId.PrimaryId)
-	{
-		RemoveFromGameData(evt);
-	}
-    return {};
-}
-
 GameDataManager::GameDataManager()
 {	
 	eventManager = EventManager::Get();
 	eventFactory = EventFactory::Get();	
+}
+
+std::vector<std::shared_ptr<Event>> GameDataManager::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
+{
+	if(evt->Id == AddGameObjectToCurrentSceneEventId)
+	{
+		AddToGameData(evt); 
+	}
+
+	if(evt->Id == GameObjectTypeEventId)
+	{
+		RemoveFromGameData(evt);
+	}
+    return {};
 }
 
 void GameDataManager::AddToGameData(const std::shared_ptr<Event>& evt) const

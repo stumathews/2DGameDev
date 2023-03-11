@@ -17,6 +17,7 @@
 #include "DirectionUtils.h"
 #include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
+// ReSharper disable once CppUnusedIncludeDirective
 #include "events/AddGameObjectToCurrentSceneEvent.h"
 #include "events/EventFactory.h"
 
@@ -41,22 +42,6 @@ Level::Level()
 }
 
 
-
-map<string, string> GetNodeAttributes(XMLNode* pAssetNode)
-{
-	map<string, string> attributes;
-	if (pAssetNode)
-	{
-		// Nodes need to be converted to elements to access their attributes
-		for (auto attribute = pAssetNode->ToElement()->FirstAttribute(); attribute; attribute = attribute->Next())
-		{
-			const auto* name = attribute->Name();
-			const auto* value = attribute->Value();
-			attributes[name] = value;
-		}
-	}
-	return attributes;
-}
 
 void Level::Load()
 {
@@ -102,14 +87,14 @@ void Level::Load()
 			auto rowCol0 = row * NumCols;
 			auto col = number - rowCol0; // col for this roomNumber
 
-			const auto square_width = ScreenWidth / NumCols;
-			const auto square_height = ScreenHeight / NumRows;
+			const auto squareWidth = ScreenWidth / NumCols;
+			const auto squareHeight = ScreenHeight / NumRows;
 			const auto roomName = string("Room") + std::to_string(number);
 
-			auto room = std::make_shared<Room>(roomName, "Room", number, col * square_width, row * square_height,
-			                                   square_width, square_height, false);
+			auto room = std::make_shared<Room>(roomName, "Room", number, col * squareWidth, row * squareHeight,
+			                                   squareWidth, squareHeight, false);
 			
-			auto SetWall = [&](const std::string& isSideVisible, const Side side, const std::shared_ptr<Room>& inRoom) -> void
+			auto setWall = [&](const std::string& isSideVisible, const Side side, const std::shared_ptr<Room>& inRoom) -> void
 			{
 				if (isSideVisible == "True")
 				{
@@ -121,10 +106,10 @@ void Level::Load()
 				}
 			};
 
-			SetWall(right, Side::Right, room);
-			SetWall(left, Side::Left, room);
-			SetWall(top, Side::Top, room);
-			SetWall(bottom, Side::Bottom, room);
+			setWall(right, Side::Right, room);
+			setWall(left, Side::Left, room);
+			setWall(top, Side::Top, room);
+			setWall(bottom, Side::Bottom, room);
 
 			// Set room tag to room number
 			room->SetTag(std::to_string(number));
@@ -141,14 +126,13 @@ void Level::Load()
 					{
 						Player1 = dynamic_pointer_cast<Player>(gameObject);
 					}
-					if (gameObject->Type == "Pickup")
+
+					if (gameObject->Type == "Pickup" && !IsAutoPopulatePickups())
 					{
-						if (!IsAutoPopulatePickups())
-						{
-							auto pickup = dynamic_pointer_cast<Pickup>(gameObject);
-							Pickups.push_back(pickup);
-						}
+						auto pickup = dynamic_pointer_cast<Pickup>(gameObject);
+						Pickups.push_back(pickup);
 					}
+
 					if(gameObject->Type == "Enemy")
 					{
 						auto enemy = dynamic_pointer_cast<Enemy>(gameObject);
@@ -169,6 +153,22 @@ void Level::Load()
 std::vector<std::shared_ptr<Event>> Level::HandleEvent(std::shared_ptr<Event> evt, unsigned long deltaMs)
 {
 	return {};
+}
+
+map<string, string> GetNodeAttributes(XMLNode* pAssetNode)
+{
+	map<string, string> attributes;
+	if (pAssetNode)
+	{
+		// Nodes need to be converted to elements to access their attributes
+		for (auto attribute = pAssetNode->ToElement()->FirstAttribute(); attribute; attribute = attribute->Next())
+		{
+			const auto* name = attribute->Name();
+			const auto* value = attribute->Value();
+			attributes[name] = value;
+		}
+	}
+	return attributes;
 }
 
 void Level::InitializePickups(const std::vector<std::shared_ptr<Pickup>>& inPickups)
@@ -207,20 +207,18 @@ shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_pt
 
 	shared_ptr<GameObject> gameObject;
 		
-		if (type == "Player")
-		{
-			gameObject = CharacterBuilder::BuildPlayer(name, room, resourceId, "playerNickName");
-		}
-
-		else if (type == "Pickup")
-		{
-			gameObject = CharacterBuilder::BuildPickup(name, room, resourceId);
-		}
-		else if (type == "Enemy")
-		{
-			gameObject = CharacterBuilder::BuildEnemy(name, room, resourceId, DirectionUtils::GetRandomDirection(), shared_from_this());
-		}
-	
+	if (type == "Player")
+	{
+		gameObject = CharacterBuilder::BuildPlayer(name, room, resourceId, "playerNickName");
+	}
+	else if (type == "Pickup")
+	{
+		gameObject = CharacterBuilder::BuildPickup(name, room, resourceId);
+	}
+	else if (type == "Enemy")
+	{
+		gameObject = CharacterBuilder::BuildEnemy(name, room, resourceId, DirectionUtils::GetRandomDirection(), shared_from_this());
+	}	
 	
 	// Add properties to the game object
 	for (auto pObjectChild = pObject->FirstChild(); pObjectChild; pObjectChild = pObjectChild->NextSibling())
@@ -252,4 +250,9 @@ void Level::ParseProperty(XMLNode* pObjectChild, const shared_ptr<GameObject>& g
 	const auto& name = attributes.at("name");
 	const auto& value = attributes.at("value");
 	go->StringProperties[name] = value;
+}
+
+std::shared_ptr<Room> Level::GetRoom(const int row, const int col)
+{	
+	return Rooms[((row-1) * NumCols) + col-1];
 }

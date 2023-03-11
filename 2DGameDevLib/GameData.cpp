@@ -21,7 +21,7 @@ void GameData::RemoveExpiredReferences() { GameObjects.erase(remove_if(begin(Gam
 
 void GameData::AddEnemy(const std::shared_ptr<Enemy> enemy)
 {
-if (std::find_if(enemies.begin(), enemies.end(), [&](const std::weak_ptr<GameObject>& gameObject) { return !gameObject.expired() && gameObject.lock()->Id == enemy->Id;}) == enemies.end())
+	if (std::find_if(enemies.begin(), enemies.end(), [&](const std::weak_ptr<GameObject>& gameObject) { return !gameObject.expired() && gameObject.lock()->Id == enemy->Id;}) == enemies.end())
 	{
 		enemies.push_back(enemy);		
 	}

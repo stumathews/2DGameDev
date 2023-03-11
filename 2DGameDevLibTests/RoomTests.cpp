@@ -12,10 +12,10 @@ TEST(RoomTests, Basic)
 	Room room("roomName", "Room", number, x, y, width, height, fill);
 
 	// Expect all walls of a room to be walled solid by default
-	EXPECT_TRUE(room.IsWalled(Side::Top));
-	EXPECT_TRUE(room.IsWalled(Side::Bottom));
-	EXPECT_TRUE(room.IsWalled(Side::Left));
-	EXPECT_TRUE(room.IsWalled(Side::Right));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Top));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Bottom));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Left));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Right));
 	EXPECT_TRUE(room.IsActive);
 	EXPECT_TRUE(room.IsVisible);
 	EXPECT_EQ(room.GetWidth(), width);
@@ -41,26 +41,26 @@ TEST(RoomTests, RemoveWalls)
 	bool fill = false;
 	Room room("NoName","Room", number, x, y, width, height, fill);
 
-	EXPECT_TRUE(room.IsWalled(Side::Bottom));
-	EXPECT_TRUE(room.IsWalled(Side::Top));	
-	EXPECT_TRUE(room.IsWalled(Side::Left));
-	EXPECT_TRUE(room.IsWalled(Side::Right));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Bottom));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Top));	
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Left));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Right));
 
 	// Remove Wall
-	room.RemoveWall(Side::Bottom);
-	EXPECT_FALSE(room.IsWalled(Side::Bottom));
+	room.RemoveWall(gamelib::Side::Bottom);
+	EXPECT_FALSE(room.IsWalled(gamelib::Side::Bottom));
 
 	// Remove Wall
-	room.RemoveWall(Side::Top);
-	EXPECT_FALSE(room.IsWalled(Side::Top));
+	room.RemoveWall(gamelib::Side::Top);
+	EXPECT_FALSE(room.IsWalled(gamelib::Side::Top));
 
 	// Remove Wall
-	room.RemoveWall(Side::Left);
-	EXPECT_FALSE(room.IsWalled(Side::Left));
+	room.RemoveWall(gamelib::Side::Left);
+	EXPECT_FALSE(room.IsWalled(gamelib::Side::Left));
 
 	// Remove Wall
-	room.RemoveWall(Side::Right);
-	EXPECT_FALSE(room.IsWalled(Side::Right));
+	room.RemoveWall(gamelib::Side::Right);
+	EXPECT_FALSE(room.IsWalled(gamelib::Side::Right));
 }
 
 TEST(RoomTests, AddWalls)
@@ -73,34 +73,34 @@ TEST(RoomTests, AddWalls)
 	bool fill = false;
 	Room room("noName", "Room", number, x, y, width, height, fill);
 
-	EXPECT_TRUE(room.IsWalled(Side::Bottom));
-	EXPECT_TRUE(room.IsWalled(Side::Top));
-	EXPECT_TRUE(room.IsWalled(Side::Left));
-	EXPECT_TRUE(room.IsWalled(Side::Right));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Bottom));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Top));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Left));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Right));
 
 	// Remove Wall
-	room.RemoveWall(Side::Bottom);
-	EXPECT_FALSE(room.IsWalled(Side::Bottom));
+	room.RemoveWall(gamelib::Side::Bottom);
+	EXPECT_FALSE(room.IsWalled(gamelib::Side::Bottom));
 
 	// Remove Wall
-	room.RemoveWall(Side::Top);
-	EXPECT_FALSE(room.IsWalled(Side::Top));
+	room.RemoveWall(gamelib::Side::Top);
+	EXPECT_FALSE(room.IsWalled(gamelib::Side::Top));
 
 	// Remove Wall
-	room.RemoveWall(Side::Left);
-	EXPECT_FALSE(room.IsWalled(Side::Left));
+	room.RemoveWall(gamelib::Side::Left);
+	EXPECT_FALSE(room.IsWalled(gamelib::Side::Left));
 
 	// Remove Wall
-	room.RemoveWall(Side::Right);
-	EXPECT_FALSE(room.IsWalled(Side::Right));
+	room.RemoveWall(gamelib::Side::Right);
+	EXPECT_FALSE(room.IsWalled(gamelib::Side::Right));
 
-	room.AddWall(Side::Top);
-	room.AddWall(Side::Right);
-	room.AddWall(Side::Bottom);
-	room.AddWall(Side::Left);
+	room.AddWall(gamelib::Side::Top);
+	room.AddWall(gamelib::Side::Right);
+	room.AddWall(gamelib::Side::Bottom);
+	room.AddWall(gamelib::Side::Left);
 
-	EXPECT_TRUE(room.IsWalled(Side::Bottom));
-	EXPECT_TRUE(room.IsWalled(Side::Top));
-	EXPECT_TRUE(room.IsWalled(Side::Left));
-	EXPECT_TRUE(room.IsWalled(Side::Right));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Bottom));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Top));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Left));
+	EXPECT_TRUE(room.IsWalled(gamelib::Side::Right));
 }

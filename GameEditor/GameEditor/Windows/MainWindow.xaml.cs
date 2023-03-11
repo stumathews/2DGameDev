@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Media;
 
 namespace GameEditor.Windows
@@ -18,7 +17,7 @@ namespace GameEditor.Windows
         public MainWindow()
         {
             viewModel = new MainWindowViewModel(this);
-            DataContext = viewModel;
+            DataContext = viewModel; // Hook up UI to view model
             InitializeComponent();
             InitializeEmptyMaze();
         }
@@ -28,86 +27,95 @@ namespace GameEditor.Windows
             var rooms = new List<RoomViewModel>();
             for(var i = 0; i < viewModel.NewLevelViewModel.NumRows * viewModel.NewLevelViewModel.NumRows;i++)
             {
-                var room = new RoomViewModel
+                // Add new room
+                rooms.Add(new RoomViewModel
                 {
                     RoomNumber = i
-                };
-                rooms.Add(room);
+                });
             }
             SetMaze(rooms);
         }
 
         private void newMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var window = new CreateNewLevelWindow(viewModel.NewLevelViewModel);
-            window.ShowDialog();
+            // Show create new level window
+            new CreateNewLevelWindow(viewModel.NewLevelViewModel).ShowDialog();
             InitializeEmptyMaze();
         }
 
         private void SetMaze(List<RoomViewModel> rooms)
         {
             // We can create the main content now, which is a uniform grid representing our maze of rooms
-
-            var numRows = viewModel.NewLevelViewModel.NumRows;
-            var numCols = viewModel.NewLevelViewModel.NumCols;
-
-            if(grid.Children.Contains(maze))
+            if(Grid.Children.Contains(maze))
             {
                 maze.Children.Clear();
-                grid.Children.Remove(maze);
+                Grid.Children.Remove(maze);
             }
 
             maze = new UniformGrid
             {
-                Rows = numRows,
-                Columns = numCols,
+                Rows = viewModel.NewLevelViewModel.NumRows,
+                Columns = viewModel.NewLevelViewModel.NumCols,
                 Background = Brushes.WhiteSmoke
             };
 
             maze.SetValue(Grid.RowProperty, 2);
             maze.SetValue(Grid.ColumnProperty, 0);
-            grid.Children.Add(maze);
+            Grid.Children.Add(maze);
                         
             foreach(var room in rooms)
             {
-                var roomView = new RoomView(room.RoomNumber);
-                roomView.ViewModel.RightWallVisibility = room.RightWallVisibility;
-                roomView.ViewModel.LeftWallVisibility = room.LeftWallVisibility;
-                roomView.ViewModel.TopWallVisibility = room.TopWallVisibility;
-                roomView.ViewModel.BottomWallVisibility = room.BottomWallVisibility;
-                roomView.ViewModel.ResidentGameObjectType = room.ResidentGameObjectType;
+                var roomView = new RoomView(room.RoomNumber)
+                {
+                    ViewModel =
+                    {
+                        RightWallVisibility = room.RightWallVisibility,
+                        LeftWallVisibility = room.LeftWallVisibility,
+                        TopWallVisibility = room.TopWallVisibility,
+                        BottomWallVisibility = room.BottomWallVisibility,
+                        ResidentGameObjectType = room.ResidentGameObjectType
+                    }
+                };
                 maze.Children.Add(roomView);
             }
         }
 
         private void grid_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (e.Source.GetType() == typeof(RoomView))
-            {
-                var roomView = (RoomView)e.Source;
-                viewModel.SelectedRoom = roomView.ViewModel;
+            if (e.Source.GetType() != typeof(RoomView)) return;
 
-                propertyGrid.SelectedObject = viewModel.SelectedRoom;
-                propertyGrid.SelectedObjectName = $"Editing Room {roomView.ViewModel.RoomNumber}";
-                propertyGrid.SelectedObjectTypeName = "Room";                
-            }
+            var room = (RoomView)e.Source;
+
+            // The main window keeps track of the select room
+            viewModel.SelectedRoom = room.ViewModel;
+
+            // Let the property grid show the selected room
+            PropertyGrid.SelectedObject = viewModel.SelectedRoom;
+            PropertyGrid.SelectedObjectName = $"Editing Room {room.ViewModel.RoomNumber}";
+            PropertyGrid.SelectedObjectTypeName = "Room";
         }
 
         private void openMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            // The view model knows how to ask for a new load window ro be shown
             var level = viewModel.LoadLevelFile();
+
+            // With the newly loaded level, use it as the maze
             SetMaze(level.Rooms);
         }
 
         private void saveAsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var rooms = new List<RoomViewModel>();
+
+            // fetch all the rooms in the maze, i.e the roomviews that are in the grid
             foreach(var child in maze.Children)
             {
                 var roomView = child as RoomView;
-                rooms.Add(roomView.ViewModel);
+                rooms.Add(roomView?.ViewModel);
             }
 
+            // Serialize the rooms
             viewModel.SaveLevel(rooms);
         }
     }
