@@ -22,13 +22,11 @@
 #include <events/UpdateProcessesEvent.h>
 
 #include "CharacterBuilder.h"
-#include "DirectionUtils.h"
 #include "EventNumber.h"
 #include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
 #include "PlayerCollidedWithEnemyEvent.h"
 #include "PlayerCollidedWithPickupEvent.h"
-#include "Rooms.h"
 #include "events/StartNetworkLevelEvent.h"
 #include "graphic/DrawableFrameRate.h"
 #include "graphic/DrawableText.h"
@@ -316,7 +314,6 @@ void LevelManager::CreateDrawableFrameRate()
 
 	drawableFrameRate = std::make_shared<DrawableFrameRate>(&level->GetRoom(firstRow,lastColumn)->Bounds);
 	AddGameObjectToScene(drawableFrameRate);
-	SDL_Colour colour = {255,255,255,255};
 	
 	auto joinRects = [=](const bool vertically, std::initializer_list<SDL_Rect> rects)-> SDL_Rect
 	{
