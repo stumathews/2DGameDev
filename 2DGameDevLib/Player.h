@@ -50,6 +50,8 @@ public:
 	[[nodiscard]] int GetWidth() const { return width; }
 	[[nodiscard]] int GetHeight() const { return height; }
 	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
+	int GetHealth();
+	int GetPoints();
 	std::shared_ptr<RoomInfo> CurrentRoom;
 	std::string Identifier;
 	std::shared_ptr<gamelib::Hotspot> Hotspot;

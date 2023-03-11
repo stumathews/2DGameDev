@@ -89,10 +89,10 @@ void LevelManager::OnEnemyCollision(const std::shared_ptr<Event>& evt)
 	const auto collisionEvent = std::dynamic_pointer_cast<PlayerCollidedWithEnemyEvent>(evt);
 	const auto& enemyHitPoints = collisionEvent->Enemy->StringProperties["HitPoint"];
 	collisionEvent->Player->IntProperties["Health"] -= strtol(enemyHitPoints.c_str(), nullptr, 0);
-	auto msg = string("Player Health: ") + to_string(collisionEvent->Player->IntProperties["Health"]);
+	auto msg = to_string(collisionEvent->Player->GetHealth());
 	Logger::Get()->LogThis(msg);
-	drawableGameStatus->Text = msg;
-	if(collisionEvent->Player->IntProperties["Health"] <= 0)
+	playerHealth->Text = msg;
+	if(collisionEvent->Player->GetHealth() <= 0)
 	{
 		
 		eventManager->RaiseEvent(std::dynamic_pointer_cast<Event>(eventFactory->CreateGenericEvent(PlayerDiedEventId)), this);
@@ -104,8 +104,8 @@ void LevelManager::OnPickupCollision(const std::shared_ptr<Event>& evt) const
 	const auto collisionEvent = std::dynamic_pointer_cast<PlayerCollidedWithPickupEvent>(evt);
 	const auto& pickupValue = collisionEvent->Pickup->StringProperties["value"];
 	collisionEvent->Player->IntProperties["Points"] += strtol(pickupValue.c_str(), nullptr, 0);
-	const auto msg = string("Player Points: ") + to_string(collisionEvent->Player->IntProperties["Points"]);
-	drawableGameStatus->Text = msg;
+	const auto msg = to_string(collisionEvent->Player->GetPoints());
+	playerPoints->Text = msg;
 	Logger::Get()->LogThis(msg);
 }
 
@@ -119,7 +119,6 @@ void LevelManager::OnFetchedPickup() const
 
 void LevelManager::OnPlayerDied()
 {
-	drawableGameStatus->Text = "Player died.";
 	Logger::Get()->LogThis("Player DIED!");
 }
 
@@ -200,7 +199,6 @@ void LevelManager::OnGameWon()
 	processManager.AttachProcess(a);
 
 	const auto msg = "All Pickups Collected Well Done!";
-	drawableGameStatus->Text = msg;
 	Logger::Get()->LogThis(msg);	
 }
 
@@ -333,17 +331,23 @@ void LevelManager::CreateDrawableFrameRate()
 		return result;
 	};
 
-	auto room1 = level->GetRoom(lastRow,2)->Bounds;
-	auto room2 = level->GetRoom(lastRow,3)->Bounds;
-	auto room3 = level->GetRoom(lastRow,4)->Bounds;
-	drawableGameStatus = make_shared<DrawableText>(joinRects(false, {room1, room2, room3}), "Hello", colour);
-	AddGameObjectToScene(drawableGameStatus);
+	const auto pointsRoom = level->GetRoom(lastRow,lastColumn);
+	const auto healthRoom = level->GetRoom(lastRow,1);
+	const auto amount = pointsRoom->InnerBounds.h / 2;
+	pointsRoom->InnerBounds.h /= 2;
+	healthRoom->InnerBounds.h /= 2;
+	pointsRoom->InnerBounds.y += amount/2;
+	healthRoom->InnerBounds.y += amount/2;
+	playerHealth = make_shared<DrawableText>(joinRects(false, {healthRoom->InnerBounds}), std::to_string(player->GetHealth()), SDL_Color {255,0,0,0});
+	playerPoints = make_shared<DrawableText>(joinRects(false, {pointsRoom->InnerBounds}), std::to_string(player->GetPoints()), SDL_Color {0,0,255,0});
+	AddGameObjectToScene(playerHealth);
+	AddGameObjectToScene(playerPoints);
 }
 
 void LevelManager::CreateHud(const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Player>& inPlayer)
 {
 	// ReSharper disable once StringLiteralTypo
-	hudItem = GameObjectFactory::Get().BuildStaticSprite("","", GetAsset("hudspritesheet"), rooms[rooms.size() - 1]->GetCenter(inPlayer->GetWidth(), inPlayer->GetHeight()));
+	hudItem = GameObjectFactory::Get().BuildStaticSprite("","", GetAsset("hudspritesheet"), level->GetRoom(1, 1)->GetCenter(inPlayer->GetWidth(), inPlayer->GetHeight()));
 	
 	InitializeHudItem(hudItem);
 	AddGameObjectToScene(hudItem);

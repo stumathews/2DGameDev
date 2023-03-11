@@ -43,7 +43,8 @@ public:
 	void AddGameObject(const std::shared_ptr<gamelib::GameObject>& gameObject);
 	void RemoveGameObject(const std::shared_ptr<gamelib::GameObject>& gameObject);
 	void RemoveExpiredReferences();
-	
+	void Clear();
+
 	std::vector<std::weak_ptr<gamelib::GameObject>> GameObjects;
 	std::vector<std::weak_ptr<Enemy>> Enemies() { return enemies;}
 protected:

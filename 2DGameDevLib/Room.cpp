@@ -116,6 +116,18 @@ void Room::DrawWalls(SDL_Renderer* renderer) const
 	if (HasLeftWall()) { DrawLine(renderer, LeftLine); }
 }
 
+std::shared_ptr<Room> Room::GetSideRoom(Side side)
+{
+	switch(side)
+	{
+		case Side::Top: return TopRoom; 
+		case Side::Right: return RightRoom;
+		case Side::Bottom: return BottomRoom; 
+		case Side::Left:return LeftRoom;
+		default: return TopRoom; // should never happen  // NOLINT(clang-diagnostic-covered-switch-default)
+	}
+}
+
 void Room::DrawLine(SDL_Renderer* renderer, const Line& line) { SDL_RenderDrawLine(renderer, line.X1, line.Y1, line.X2, line.Y2); }
 
 void Room::DrawDiagnostics(SDL_Renderer* renderer)
@@ -227,12 +239,16 @@ int Room::GetColumnNumber(const int maxCols) const
 	return col;
 }
 
-void Room::SetSorroundingRooms(const int top_index, const int right_index, const int bottom_index, const int left_index)
+void Room::SetSorroundingRooms(const int top_index, const int right_index, const int bottom_index, const int left_index, std::vector<shared_ptr<Room>> rooms)
 {
 	this->topRoomIndex = top_index;
+	this->TopRoom = rooms[topRoomIndex < 1 ? 0 : topRoomIndex];
 	this->rightRoomIndex = right_index;
+	this->RightRoom = rooms[rightRoomIndex < 1 ? 0 : rightRoomIndex];
 	this->bottomRoomIndex = bottom_index;
+	this->BottomRoom = rooms[bottomRoomIndex  < 1 ? 0 : bottomRoomIndex];
 	this->leftRoomIndex = left_index;
+	this->LeftRoom = rooms[leftRoomIndex  < 1 ? 0 : leftRoomIndex];
 }
 
 Coordinate<int> Room::GetCenter(const int w, const int h) const

@@ -72,7 +72,7 @@ void RoomGenerator::ConfigureRooms(const std::vector<std::shared_ptr<Room>>& roo
 		auto& thisRoom = rooms[i];
 		auto& nextRoom = nextIndex == totalRooms ? rooms[i] : rooms[nextIndex];
 
-		thisRoom->SetSorroundingRooms(roomIndexAbove, roomIndexRight, roomIndexBelow, roomIndexLeft);
+		thisRoom->SetSorroundingRooms(roomIndexAbove, roomIndexRight, roomIndexBelow, roomIndexLeft, rooms);
 
 		ConfigureWalls(thisRoom, canRemoveTopWall, rooms, nextRoom, canRemoveRightWall, canRemoveBottomWall, canRemoveLeftWall, prevIndex);
 	}

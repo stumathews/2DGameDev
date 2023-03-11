@@ -58,7 +58,7 @@ public:
     static Mix_Chunk* GetSoundEffect(const std::string& name);
 
     void OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt);
-    void OnPlayerDied();
+    static void OnPlayerDied();
     void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
     gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long inDeltaMs) override;
 
@@ -82,7 +82,8 @@ private:
     std::shared_ptr<gamelib::StaticSprite> hudItem;
     std::shared_ptr<Level> level = nullptr;
     std::shared_ptr<gamelib::DrawableFrameRate> drawableFrameRate;
-    std::shared_ptr<gamelib::DrawableText> drawableGameStatus;
+    std::shared_ptr<gamelib::DrawableText> playerPoints;
+    std::shared_ptr<gamelib::DrawableText> playerHealth;
     std::shared_ptr<GameCommands> gameCommands;
     std::shared_ptr<Player> player;
     std::shared_ptr<Enemy> enemy1;

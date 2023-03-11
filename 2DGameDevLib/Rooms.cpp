@@ -31,7 +31,7 @@ void Rooms::ConfigureRooms(const int rows, const int columns, std::vector<std::s
 		auto thisRoom = rooms[i];
 		auto nextRoom = nextIndex == totalRooms ? nullptr : rooms[nextIndex];
 
-		thisRoom->SetSorroundingRooms(roomIndexAbove, roomIndexRight, roomIndexBelow, roomIndexLeft);
+		thisRoom->SetSorroundingRooms(roomIndexAbove, roomIndexRight, roomIndexBelow, roomIndexLeft, rooms);
 
 		ConfigureWalls(thisRoom, canRemoveTopWall, rooms, nextRoom, canRemoveRightWall, canRemoveBottomWall, canRemoveLeftWall, prevIndex);
 	}

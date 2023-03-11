@@ -51,6 +51,16 @@ void GameData::RemoveExpiredReferences()
 	                            [&](const weak_ptr<GameObject>& obj) { return obj.expired(); }), end(GameObjects));
 }
 
+void GameData::Clear()
+{
+	enemies.clear();
+	pickups.clear();
+	rooms.clear();
+	GameObjects.clear();
+	isGameWon = false;
+	IsNetworkGame = false;	
+}
+
 void GameData::AddEnemy(const std::shared_ptr<Enemy> enemy)
 {
 	if (std::find_if(enemies.begin(), enemies.end(), [&](const std::weak_ptr<GameObject>& gameObject)

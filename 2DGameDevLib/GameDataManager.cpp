@@ -14,8 +14,8 @@ using namespace gamelib;
 
 void GameDataManager::Initialize()
 {
-	eventManager->SubscribeToEvent(AddGameObjectToCurrentSceneEventId, this);
-	eventManager->SubscribeToEvent(GameObjectTypeEventId, this);
+	SubscribeToEvent(AddGameObjectToCurrentSceneEventId);
+	SubscribeToEvent(GameObjectTypeEventId);
 }
 
 GameDataManager::GameDataManager()
@@ -48,7 +48,7 @@ void GameDataManager::AddToGameData(const std::shared_ptr<Event>& evt) const
 		{
 			GameData()->AddRoom(std::dynamic_pointer_cast<Room>(object));
 		}
-		if (object->Type == "Npc")
+		if (object->Type == "Enemy")
 		{
 			GameData()->AddEnemy(std::dynamic_pointer_cast<Enemy>(object));
 		}

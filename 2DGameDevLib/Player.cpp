@@ -44,6 +44,17 @@ Player::Player(const std::string& name, const std::string& type, const std::shar
 	CenterPlayerInRoom(playerRoom);
 }
 
+int Player::GetHealth()
+{
+	return IntProperties["Health"];
+}
+
+int Player::GetPoints()
+{
+	return IntProperties["Points"];
+}
+
+
 void Player::CommonInit(const int playerWidth, const int playerHeight, const std::string& identifier)
 {
 	width = playerWidth;

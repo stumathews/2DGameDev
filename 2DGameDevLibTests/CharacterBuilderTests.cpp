@@ -14,10 +14,10 @@ class CharacterBuilderTests : public testing::Test
 
 	void SetUp() override
 	{
-	gamelib::ResourceManager::Get()->Initialize("Resources.xml");
-	expectedAssetDimensions = gamelib::ABCDRectangle(0,0,32,32);
-	level = std::make_shared<Level>();
-	room = std::make_shared<Room>("MyRoom", "Room", roomNumber, roomX, roomY, roomWidth, roomHeight);
+		gamelib::ResourceManager::Get()->Initialize("Resources.xml");
+		expectedAssetDimensions = gamelib::ABCDRectangle(0,0,32,32);
+		level = std::make_shared<Level>();
+		room = std::make_shared<Room>("MyRoom", "Room", roomNumber, roomX, roomY, roomWidth, roomHeight);
 	}
 
 	void TearDown() override

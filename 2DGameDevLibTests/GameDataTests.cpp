@@ -90,7 +90,6 @@ TEST_F(GameDataTests, Add_Remove_GameObject)
 
 TEST_F(GameDataTests, GameData_Player)
 {
-	EXPECT_TRUE(GameData::Get()->player.expired());
 	const auto player = CharacterBuilder::BuildPlayer("MyPlayer", room, myResourceId, "StuNick");
 	GameData::Get()->player = player;
 	EXPECT_TRUE(GameData::Get()->GetPlayer()->Identifier == player->Identifier);

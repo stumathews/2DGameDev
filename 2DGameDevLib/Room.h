@@ -25,7 +25,8 @@ public:
 
 	void UpdateInnerBounds();
 	void SetupWalls();
-	void SetSorroundingRooms(int topIndex, int rightIndex, int bottomIndex, int leftIndex);
+	void SetSorroundingRooms(const int top_index, const int right_index, const int bottom_index, const int left_index, std::vector<std::shared_ptr<
+	                         Room>> rooms);
 	void RemoveWall(gamelib::Side wall);
 	void LogWallRemoval(gamelib::Side wall) const;
 	void SetNotWalled(gamelib::Side wall);
@@ -34,6 +35,7 @@ public:
 	void RemoveWallZeroBased(gamelib::Side wall);
 	void ShouldRoomFill(bool fillMe = false);
 	void DrawWalls(SDL_Renderer* renderer) const;
+	std::shared_ptr<Room> GetSideRoom(gamelib::Side side);
 	static void DrawLine(SDL_Renderer* renderer, const gamelib::Line& line);
 	void DrawDiagnostics(SDL_Renderer* renderer);
 	void LoadSettings() override;
@@ -79,6 +81,10 @@ protected:
 	gamelib::ABCDRectangle abcd{};
 	gamelib::ABCDRectangle& GetABCDRectangle();
 	int topRoomIndex;
+	std::shared_ptr<Room> RightRoom;
+	std::shared_ptr<Room> LeftRoom;
+	std::shared_ptr<Room> TopRoom;
+	std::shared_ptr<Room> BottomRoom;
 	int rightRoomIndex;
 	int bottomRoomIndex; 
 	int leftRoomIndex;

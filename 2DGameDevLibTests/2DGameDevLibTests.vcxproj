@@ -46,6 +46,7 @@
     <ClCompile Include="..\packages\gmock.1.11.0\lib\native\src\gtest\src\gtest_main.cc" />
     <ClCompile Include="2DGameDevLibTests.cpp" />
     <ClCompile Include="CharacterBuilderTests.cpp" />
+    <ClCompile Include="GameDataManagerTests.cpp" />
     <ClCompile Include="LevelGeneratorTests.cpp" />
     <ClCompile Include="LevelTesting.cpp" />
     <ClCompile Include="pch.cpp">
