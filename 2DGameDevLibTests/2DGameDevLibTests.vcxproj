@@ -56,6 +56,7 @@
     </ClCompile>
     <ClCompile Include="PlayerTests.cpp" />
     <ClCompile Include="RoomTests.cpp" />
+    <ClCompile Include="GameDataTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\2DGameDevLib\2DGameDevLib.vcxproj">

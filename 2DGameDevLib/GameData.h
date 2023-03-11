@@ -3,7 +3,6 @@
 #include <map>
 #include <vector>
 #include <objects/GameWorldData.h>
-
 #include "Enemy.h"
 
 namespace gamelib 
@@ -14,6 +13,7 @@ namespace gamelib
 
 class Room;
 class Player;
+
 
 /**
  * \brief Holds Game Data that is updated periodically by the Game Data Manager
@@ -43,7 +43,7 @@ public:
 	void AddGameObject(const std::shared_ptr<gamelib::GameObject>& gameObject);
 	void RemoveGameObject(const std::shared_ptr<gamelib::GameObject>& gameObject);
 	void RemoveExpiredReferences();
-
+	
 	std::vector<std::weak_ptr<gamelib::GameObject>> GameObjects;
 	std::vector<std::weak_ptr<Enemy>> Enemies() { return enemies;}
 protected:
