@@ -62,7 +62,7 @@ bool GameObjectMoveStrategy::IsValidMove(const std::shared_ptr<gamelib::IMovemen
 		case gamelib::Direction::Left: return CanGameObjectMove(gamelib::Direction::Left);
 		case gamelib::Direction::Right: return CanGameObjectMove(gamelib::Direction::Right);
 		case gamelib::Direction::Up: return CanGameObjectMove(gamelib::Direction::Up);
-		case gamelib::Direction::None: THROW(0, "Direction is NOne", "PlayerMoveStrategy")
+		case gamelib::Direction::None: THROW(0, "Direction is None", "PlayerMoveStrategy")
 	}
 	return false;
 }
@@ -72,6 +72,8 @@ bool GameObjectMoveStrategy::CanGameObjectMove(const gamelib::Direction directio
 	std::shared_ptr<Room> targetRoom;
 	bool touchingBlockingWalls = false, hasValidTargetRoom;
 	const auto currentRoom = roomInfo->GetCurrentRoom();
+
+	if(!currentRoom) { return false; }
 	
 	auto intersectsRectAndLine = [=](const SDL_Rect bounds, gamelib::Line line) -> bool 
 	{

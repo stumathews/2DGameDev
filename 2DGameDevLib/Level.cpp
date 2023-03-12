@@ -114,12 +114,13 @@ void Level::Load()
 			// Set room tag to room number
 			room->SetTag(std::to_string(number));
 
-			// <object name="xyz" type="abc" ...
+			// <object name="xyz" type="abc" ...ie inspect all the objects in the room
 			for (auto pRoomChild = roomNode->FirstChild(); pRoomChild; pRoomChild = pRoomChild->NextSibling())
 			{
 				string roomChildName = pRoomChild->Value();
 				if (roomChildName == "object")
-				{					
+				{
+					// Create whatever Game Object the object represents and return it as a GameObject
 					auto gameObject = ParseObject(pRoomChild, room);
 					
 					if (gameObject->Type == "Player")
@@ -129,14 +130,12 @@ void Level::Load()
 
 					if (gameObject->Type == "Pickup" && !IsAutoPopulatePickups())
 					{
-						auto pickup = dynamic_pointer_cast<Pickup>(gameObject);
-						Pickups.push_back(pickup);
+						Pickups.push_back(dynamic_pointer_cast<Pickup>(gameObject));
 					}
 
 					if(gameObject->Type == "Enemy")
 					{
-						auto enemy = dynamic_pointer_cast<Enemy>(gameObject);
-						Enemies.push_back(enemy);
+						Enemies.push_back(dynamic_pointer_cast<Enemy>(gameObject));
 					}
 				}
 			}
@@ -253,6 +252,8 @@ void Level::ParseProperty(XMLNode* pObjectChild, const shared_ptr<GameObject>& g
 }
 
 std::shared_ptr<Room> Level::GetRoom(const int row, const int col)
-{	
+{
+	if(row > NumRows || col > NumCols) { return nullptr; }
+
 	return Rooms[((row-1) * NumCols) + col-1];
 }

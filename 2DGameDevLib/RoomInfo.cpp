@@ -19,6 +19,7 @@ std::shared_ptr<Room> RoomInfo::GetRoomByIndex(const int index)
 }
 std::shared_ptr<Room> RoomInfo::GetAdjacentRoomTo(const std::shared_ptr<Room>& room, const gamelib::Side side)
 {
+	if(!room) { return nullptr;}
 	return GameData::Get()->GetRoomByIndex(room->GetNeighbourIndex(side));
 }
 

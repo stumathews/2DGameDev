@@ -25,7 +25,6 @@ namespace gamelib
 		sprite = AnimatedSprite::Create(Position, dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(Asset->name)));
 		width = sprite->Dimensions.GetWidth();
 		height = sprite->Dimensions.GetHeight();
-		CalculateBounds(Position, width, height);
 	}
 
 	ListOfEvents Pickup::HandleEvent(const shared_ptr<Event> event, unsigned long deltaMs)
@@ -55,7 +54,7 @@ namespace gamelib
 		sprite->Draw(renderer);		
 	}
 
-	void Pickup::SetBounds() { Bounds = { Position.GetX(), Position.GetY(), width, height }; }
+	void Pickup::SetBounds() { Bounds = CalculateBounds(Position, width, height); }
 
 	void Pickup::Update(const unsigned long deltaMs)
 	{
