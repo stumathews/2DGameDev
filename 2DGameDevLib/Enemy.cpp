@@ -47,12 +47,12 @@ Enemy::Enemy(const std::string& name, const std::string& type, const gamelib::Co
 
 	// Define what to do behavior states
 
-	upState = gamelib::FSMState("Moving Up", DoLookForPlayer());
-	downState = gamelib::FSMState("Moving Down", DoLookForPlayer());
-	leftState = gamelib::FSMState("Moving Left", DoLookForPlayer());
-	rightState = gamelib::FSMState( "Moving Right",  DoLookForPlayer());
+	upState = gamelib::FSMState("Up", DoLookForPlayer());
+	downState = gamelib::FSMState("Down", DoLookForPlayer());
+	leftState = gamelib::FSMState("Left", DoLookForPlayer());
+	rightState = gamelib::FSMState( "Right",  DoLookForPlayer());
 	invalidMoveTransition = gamelib::FSMTransition([&]()-> bool { return !isValidMove; }, [&]()-> gamelib::FSMState* { return &hitWallState; });
-	hitWallState = gamelib::FSMState( "Invalid State", gamelib::FSMState::NoUpdate, [&] {SwapCurrentDirection();});
+	hitWallState = gamelib::FSMState( "Invalid", gamelib::FSMState::NoUpdate, [&] {SwapCurrentDirection();});
 
 	// Set the state depending on which direction the enemy is facing
 	onUpDirection = gamelib::FSMTransition(IfMovedIn(gamelib::Direction::Up),[&]()-> gamelib::FSMState* { return &upState;});
@@ -92,7 +92,7 @@ void Enemy::LookForPlayer()
 	const auto playerCol = player->CurrentRoom->GetCurrentRoom()->GetColumnNumber(CurrentLevel->NumCols);
 	const auto enemyCol = currentRoom->GetColumnNumber(CurrentLevel->NumCols);
 
-	// Don't look player unless player is un same row or column
+	// Don't look player unless player is in same row or column
 	if (playerRow != enemyRow && playerCol != enemyCol) { return; }
 
 	// Don't look for player if you're already in the room, check for collision
@@ -111,7 +111,6 @@ void Enemy::LookForPlayer()
 		if (LookForPlayerInDirection(gamelib::Direction::Up))
 		{
 			SetNpcDirection(gamelib::Direction::Up);
-			if(currentFacingDirection != gamelib::Direction::Up) SwapCurrentDirection();
 			return;
 		}
 
@@ -119,7 +118,6 @@ void Enemy::LookForPlayer()
 		if (LookForPlayerInDirection(gamelib::Direction::Down))
 		{
 			SetNpcDirection(gamelib::Direction::Down);
-			if(currentFacingDirection != gamelib::Direction::Down) SwapCurrentDirection();
 			return;
 		}
 	}
@@ -132,7 +130,6 @@ void Enemy::LookForPlayer()
 		if (LookForPlayerInDirection(gamelib::Direction::Left))
 		{
 			SetNpcDirection(gamelib::Direction::Left);
-			if(currentFacingDirection != gamelib::Direction::Left) SwapCurrentDirection();
 			return;
 		}
 
@@ -140,7 +137,6 @@ void Enemy::LookForPlayer()
 		if (LookForPlayerInDirection(gamelib::Direction::Right))
 		{
 			SetNpcDirection(gamelib::Direction::Right);
-			if(currentFacingDirection != gamelib::Direction::Right) SwapCurrentDirection();
 			return;
 		}
 	}
@@ -229,6 +225,8 @@ std::vector<std::shared_ptr<gamelib::Event>> Enemy::HandleEvent(const std::share
 
 void Enemy::Update(const unsigned long deltaMs)
 {
+	Npc::Update(deltaMs);
+
 	if (GameData::Get()->IsGameWon()) return;
 	isValidMove = moveStrategy->MoveGameObject(std::make_shared<Movement>(currentFacingDirection));
 	Hotspot->Update(Position);
@@ -236,6 +234,11 @@ void Enemy::Update(const unsigned long deltaMs)
 	Sprite->Update(deltaMs, gamelib::AnimatedSprite::GetStdDirectionAnimationFrameGroup(currentFacingDirection));
 	UpdateBounds(Dimensions);
 
+	
+	Status->Text = stateMachine.ActiveState != nullptr ? stateMachine.ActiveState->GetName().substr(0,1) : "";
+
 	// Do Behavior 
 	stateMachine.Update(deltaMs);
 }
+
+
