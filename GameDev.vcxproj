@@ -22,7 +22,6 @@
     <ClCompile Include="game\GameCommands.cpp" />
     <ClCompile Include="game\LevelManager.cpp" />
     <ClCompile Include="game\game.cpp" />
-    <ClCompile Include="tinyxml2-master\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\game.h" />
