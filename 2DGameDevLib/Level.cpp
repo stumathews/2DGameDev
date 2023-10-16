@@ -46,10 +46,15 @@ Level::Level()
 void Level::Load()
 {
 	if (IsAutoLevel()) 
-	{				
-		Rooms = RoomGenerator(static_cast<int>(ScreenWidth), static_cast<int>(ScreenHeight), NumRows, NumCols,
-		                      SettingsManager::Get()->GetBool("grid", "removeSidesRandomly")).Generate();
-		return; 
+	{
+		// Get Auto Level creation options:
+		const auto removeRandomSidesOption = SettingsManager::Bool("grid", "removeSidesRandomly");
+
+		Rooms = RoomGenerator(static_cast<int>(ScreenWidth), 
+							 static_cast<int>(ScreenHeight),
+							NumRows,NumCols,
+							removeRandomSidesOption).Generate();
+		return;
 	}
 
 	XMLDocument doc;
