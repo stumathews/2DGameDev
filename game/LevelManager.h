@@ -32,7 +32,7 @@ public:
     ~LevelManager() override;
     
     bool Initialize();
-    [[nodiscard]] bool ChangeLevel(int levelNumber) const;
+    [[nodiscard]] bool ChangeLevel(int levelNum) const; // Raises change level event
     static bool GetBoolSetting(const std::string& section, const std::string& settingName);
     void GetKeyboardInput() const;
     void OnFetchedPickup() const;
@@ -48,8 +48,9 @@ public:
     void InitializeRooms(const std::vector<std::shared_ptr<Room>>& rooms);
     static std::string GetSetting(const std::string& section, const std::string& settingName);
     std::string GetSubscriberName() override { return "level_manager"; }
-    void CreateAutoLevel();
-    void CreateLevel(const std::string& filename);
+    void CreateAutoLevel(); // Raises level creation events
+    void CreatePlayerStats();
+    void CreateLevel(const std::string& levelFilePath); // Raises level creation events
     void CreateDrawableFrameRate();
     void CreateHud(const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Player>& inPlayer);
     static std::shared_ptr<gamelib::Asset> GetAsset(const std::string& name);

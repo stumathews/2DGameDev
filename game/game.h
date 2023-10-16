@@ -1,2 +1,2 @@
-void InitializeGameSubSystems(gamelib::GameStructure& infrastructure);
-void PrepareLevel();
+void InitializeGameSubSystems(gamelib::GameStructure& gameStructure);
+void PrepareFirstLevel();

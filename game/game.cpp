@@ -9,7 +9,7 @@
 
 using namespace std;
 using namespace gamelib;
-
+typedef SettingsManager Settings;
 /*
   	##   ##    ##     ### ##   ### ###  ### ##            ## ##    ### ##
   	## ##      ##    ##  ##    ##  ##   ##  ##           ##  ##    ##  ##
@@ -34,7 +34,7 @@ int main(int argc, char *args[])
 		InitializeGameSubSystems(infrastructure);
 
 		// Load level and create/add game objects
-		PrepareLevel();
+		PrepareFirstLevel();
 
 		// Start the game loop which will pump update/draw events onto the event system, which level objects subscribe to
 		infrastructure.DoGameLoop(GameData::Get());
@@ -54,44 +54,53 @@ int main(int argc, char *args[])
 	return 0;
 }
 
-void PrepareLevel()
+void PrepareFirstLevel()
 {
-	// Single player mode
-	if (!GameData::Get()->IsNetworkGame)
+	const auto isSinglePlayerGame = GameData::Get()->IsSinglePlayerGame();
+
+	if (isSinglePlayerGame)
 	{
-		// ReSharper disable once CppExpressionWithoutSideEffects
-		// ReSharper disable once CppNoDiscardExpression
-		LevelManager::Get()->ChangeLevel(1);
+		auto _ = LevelManager::Get()->ChangeLevel(1);
 		
-		if (SettingsManager::Get()->GetBool("global", "createAutoLevel")) 
+		if (Settings::Bool("global", "createAutoLevel")) 
 		{
 			LevelManager::Get()->CreateAutoLevel();
 		}
 		else 
-		{ 
-			LevelManager::Get()->CreateLevel(SettingsManager::Get()->GetString("global", "level1FileName")); 
+		{
+			// Get the name of the level file for the first level
+			const auto firstLevelFilePath = Settings::String("global", "level1FileName");
+
+			LevelManager::Get()->CreateLevel(firstLevelFilePath); 
 		}
 	}
 
-	Logger::Get()->LogThis(GameData::Get()->IsNetworkGame
+	Logger::Get()->LogThis(!isSinglePlayerGame
 		? NetworkManager::Get()->IsGameServer()
 			? "Waiting for network players. Press 'n' to start network game."
 			: "Waiting for the server to start the network game to begin." 
 		: "Creating Single player level...");
 }
 
-void InitializeGameSubSystems(GameStructure& infrastructure)
+void InitializeGameSubSystems(GameStructure& gameStructure)
 {
-	// ReSharper disable once CppTooWideScopeInitStatement
 	constexpr auto screenWidth = 0; // 0 will mean it will get read from the settings file
-	// ReSharper disable once CppTooWideScopeInitStatement
-	constexpr auto screenHeight = 0; // 0 will mean it will get read from the settings file	
+	constexpr auto screenHeight = 0; // 0 will mean it will get read from the settings file
+	constexpr auto windowTitle = "Initialize Game subsystems...";
+	constexpr auto resourcesFilePath = "game\\Resources.xml";
 
-	if (!IsSuccess(infrastructure.InitializeGameSubSystems(screenWidth, screenHeight, "Initialize Game subsystems...", 
-		"game\\Resources.xml"), "InitializeGameSubSystems...") ||
-		!IsSuccess(LevelManager::Get()->Initialize(), "Initializing Level Manager..."))
+	const auto initialized1 = gameStructure.InitializeGameSubSystems(screenWidth, screenHeight, windowTitle, resourcesFilePath);
+	const auto initialized2 = LevelManager::Get()->Initialize();
+
+	const auto someInitFailed = !IsSuccess(initialized1, "InitializeGameSubSystems...") || 
+								 !IsSuccess(initialized2, "Initializing Level Manager...");
+
+	if (someInitFailed)
 	{
-		LogMessage("Game initialization failed.", SettingsManager::Get()->GetBool("global", "verbose"), true);
+		const auto verboseLoggingEnabled = Settings::Bool("global", "verbose");
+
+		LogMessage("Game initialization failed.", verboseLoggingEnabled, true);
+
 		THROW(12, "There was a problem initializing the game subsystems", "Initialize Subsystems")
 	}
 }

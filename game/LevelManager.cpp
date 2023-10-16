@@ -283,18 +283,22 @@ void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms)
 	InitializeAutoPickups(pickups);
 }
 
-void LevelManager::CreateLevel(const string& filename)
+void LevelManager::CreateLevel(const string& levelFilePath)
 {	
 	RemoveAllGameObjects();
 
 	// Load the level definition file
-	level = std::make_shared<Level>(filename);	
+	level = std::make_shared<Level>(levelFilePath);	
 	level->Load();
 
+	// Setup rooms in the level
 	const auto& rooms = level->Rooms;
 	InitializeRooms(rooms);	
 
+	// Add player to room in level
 	CreatePlayer(rooms, GetAsset("edge_player")->uid);
+
+	// Add Hud
 	CreateHud(rooms, player);
 
 	if (level->IsAutoPopulatePickups())
@@ -302,19 +306,29 @@ void LevelManager::CreateLevel(const string& filename)
 		CreateAutoPickups(rooms);
 	}
 
+	// Add FrameRate to scene
 	CreateDrawableFrameRate();
+
+	// Add Player stats to scene
+	CreatePlayerStats();
 }
 
 void LevelManager::CreateDrawableFrameRate()
 {
-	const auto lastRow = level->NumRows;
-	constexpr auto firstRow = 1;
 	const int lastColumn = level->NumCols;
 
+	constexpr auto firstRow = 1;
+	auto widgetArea = &level->GetRoom(firstRow,lastColumn)->Bounds;
 
-	drawableFrameRate = std::make_shared<DrawableFrameRate>(&level->GetRoom(firstRow,lastColumn)->Bounds);
-	AddGameObjectToScene(drawableFrameRate);
-	
+	// Add frame rate
+	drawableFrameRate = std::make_shared<DrawableFrameRate>(widgetArea);
+	AddGameObjectToScene(drawableFrameRate);	
+}
+
+void LevelManager::CreatePlayerStats()
+{
+	const auto lastRow = level->NumRows;
+	const int lastColumn = level->NumCols;
 	auto joinRects = [=](const bool vertically, std::initializer_list<SDL_Rect> rects)-> SDL_Rect
 	{
 		SDL_Rect result {};
@@ -327,7 +341,7 @@ void LevelManager::CreateDrawableFrameRate()
 		}
 		return result;
 	};
-
+	
 	const auto pointsRoom = level->GetRoom(lastRow,lastColumn);
 	const auto healthRoom = level->GetRoom(lastRow,1);
 	const auto amount = pointsRoom->InnerBounds.h / 2;
@@ -335,6 +349,7 @@ void LevelManager::CreateDrawableFrameRate()
 	healthRoom->InnerBounds.h /= 2;
 	pointsRoom->InnerBounds.y += amount/2;
 	healthRoom->InnerBounds.y += amount/2;
+
 	playerHealth = make_shared<DrawableText>(joinRects(false, {healthRoom->InnerBounds}), std::to_string(player->GetHealth()), SDL_Color {255,0,0,0});
 	playerPoints = make_shared<DrawableText>(joinRects(false, {pointsRoom->InnerBounds}), std::to_string(player->GetPoints()), SDL_Color {0,0,255,0});
 	AddGameObjectToScene(playerHealth);
@@ -343,14 +358,20 @@ void LevelManager::CreateDrawableFrameRate()
 
 void LevelManager::CreateHud(const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Player>& inPlayer)
 {
-	// ReSharper disable once StringLiteralTypo
-	hudItem = GameObjectFactory::Get().BuildStaticSprite("","", GetAsset("hudspritesheet"), level->GetRoom(1, 1)->GetCenter(inPlayer->GetWidth(), inPlayer->GetHeight()));
-	
+	constexpr auto firstRow = 1;
+	constexpr auto firstCol = 1;
+
+	// Place the hud in top left of screen
+	const auto hudPosition = level->GetRoom(firstRow, firstCol)->GetCenter(inPlayer->GetWidth(), inPlayer->GetHeight());
+	const auto hudAsset = GetAsset("hudspritesheet");
+
+	// build hud
+	hudItem = GameObjectFactory::Get().BuildStaticSprite(hudAsset, hudPosition);
+
+	// add to scene
 	InitializeHudItem(hudItem);
 	AddGameObjectToScene(hudItem);
 }
-
-
 
 void LevelManager::InitializeHudItem(const std::shared_ptr<StaticSprite>& hudItem)
 {
@@ -364,13 +385,11 @@ void LevelManager::CreateAutoLevel()
 {
 	ResourceManager::Get()->IndexResourceFile(); 
 	RemoveAllGameObjects();
-
-	// Register change level event
-	// ReSharper disable once CppNoDiscardExpression
-	Get()->ChangeLevel(1);  // NOLINT(clang-diagnostic-unused-result)
-
+	
+	const auto _ = Get()->ChangeLevel(1);
+		
 	level = std::make_shared<Level>();
-	level->Load();
+	level->Load(); // construct a level
 
 	InitializeRooms(level->Rooms);
 	CreatePlayer(level->Rooms, GetAsset("edge_player")->uid);
@@ -378,10 +397,7 @@ void LevelManager::CreateAutoLevel()
 	CreateHud(level->Rooms, player);
 }
 
-
-
-void LevelManager::InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<SpriteAsset>&
-                                    spriteAsset) const
+void LevelManager::InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<SpriteAsset>&spriteAsset) const
 {
 	inPlayer->SetMoveStrategy(std::make_shared<GameObjectMoveStrategy>(inPlayer, inPlayer->CurrentRoom));
 	inPlayer->SetTag(constants::PlayerTag);
@@ -396,14 +412,13 @@ void LevelManager::InitializeAutoPickups(const std::vector<std::shared_ptr<Picku
 {
 	for (const auto& pickup : inPickups)
 	{		
-		pickup->StringProperties["value"] = "1";
+		pickup->StringProperties["value"] = "1"; // The value of each pickup if 1 point but this value could be read from config
 		AddGameObjectToScene(pickup);
 	}
 }
 
 void LevelManager::InitializeRooms(const std::vector<std::shared_ptr<Room>>& rooms)
 {
-
 	for (const auto& room : rooms)
 	{
 		room->LoadSettings();
@@ -414,16 +429,21 @@ void LevelManager::InitializeRooms(const std::vector<std::shared_ptr<Room>>& roo
 	}
 }
 
-bool LevelManager::ChangeLevel(const int levelNumber) const
+bool LevelManager::ChangeLevel(const int levelNum) const
 {
-	bool isSuccess = false;
+	bool changedLevel = false;
 	try
 	{
-		gameCommands->RaiseChangedLevel(false, static_cast<short>(levelNumber));
-		isSuccess = true;
+		gameCommands->RaiseChangedLevel(false, static_cast<short>(levelNum));
+		changedLevel = true;
 	}
-	catch (...) { LogMessage("Could not start level for unknown reasons. level=" + std::to_string(levelNumber)); 	}
-	return isSuccess;
+	catch (exception &e)
+	{
+		std::stringstream message;
+		message << "Could not start level reason="<< e.what() << ", level=" << std::to_string(levelNum);
+		LogMessage(message.str());		
+	}
+	return changedLevel;
 }
 
 void LevelManager::OnNetworkPlayerJoined(const std::shared_ptr<Event>& evt) const
