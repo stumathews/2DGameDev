@@ -6,10 +6,9 @@
 class PlayerComponent : public gamelib::Component
 {
 public:
-	PlayerComponent(const std::string& component_name, Player* player);
+	PlayerComponent(const std::string& componentName, Player* player);
 
 	Player* ThePlayer;
-		
+
 	int Room;
 };
-

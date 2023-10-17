@@ -14,6 +14,16 @@ GameData::GameData(): isGameWon(false)
 {
 }
 
+void GameData::Clear()
+{
+	enemies.clear();
+	pickups.clear();
+	rooms.clear();
+	GameObjects.clear();
+	isGameWon = false;
+	IsNetworkGame = false;
+}
+
 GameData* GameData::instance = nullptr;
 
 void GameData::AddRoom(const std::shared_ptr<Room>& room)
@@ -51,15 +61,6 @@ void GameData::RemoveExpiredReferences()
 	                            [&](const weak_ptr<GameObject>& obj) { return obj.expired(); }), end(GameObjects));
 }
 
-void GameData::Clear()
-{
-	enemies.clear();
-	pickups.clear();
-	rooms.clear();
-	GameObjects.clear();
-	isGameWon = false;
-	IsNetworkGame = false;	
-}
 
 void GameData::AddEnemy(const std::shared_ptr<Enemy> enemy)
 {

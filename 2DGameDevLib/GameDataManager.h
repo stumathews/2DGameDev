@@ -1,5 +1,5 @@
 #pragma once
-#include <events\EventSubscriber.h>
+#include <events/EventSubscriber.h>
 #include "GameData.h"
 #include <events/EventManager.h>
 #include <events/EventFactory.h>
@@ -7,15 +7,23 @@
 class GameDataManager final : public gamelib::EventSubscriber
 {
 public:
-	static GameDataManager* Get() { if (instance == nullptr) { instance = new GameDataManager(); } return instance; }
+	static GameDataManager* Get()
+	{
+		if (instance == nullptr) { instance = new GameDataManager(); }
+		return instance;
+	}
+
 	~GameDataManager() override { instance = nullptr; }
 
-	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long deltaMs) override;
+	std::vector<std::shared_ptr<gamelib::Event>>
+	HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long deltaMs) override;
 	std::string GetSubscriberName() override { return "GameDataManager"; }
 	static GameData* GameData() { return GameData::Get(); }
 	void Initialize();
+
 protected:
 	static GameDataManager* instance;
+
 private:
 	GameDataManager();
 	void AddToGameData(const std::shared_ptr<gamelib::Event>& evt) const;
@@ -25,4 +33,3 @@ private:
 	gamelib::EventManager* eventManager;
 	gamelib::EventFactory* eventFactory;
 };
-

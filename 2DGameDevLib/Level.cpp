@@ -33,27 +33,28 @@ Level::Level(const std::string& filename): NumCols(0), NumRows(0), ScreenWidth(0
 
 Level::Level()
 {
-	isAutoLevel = true;	
+	isAutoLevel = true;
 	isAutoPopulatePickups = true;
-	NumRows = SettingsManager::Get()->GetInt("grid", "rows");
-	NumCols = SettingsManager::Get()->GetInt("grid", "cols");
-	ScreenWidth = SettingsManager::Get()->GetInt("global", "screen_width");
-	ScreenHeight = SettingsManager::Get()->GetInt("global", "screen_height");
-}
 
+	// Read config for level creation:
+	NumRows = SettingsManager::Int("grid", "rows");
+	NumCols = SettingsManager::Int("grid", "cols");
+	ScreenWidth = SettingsManager::Int("global", "screen_width");
+	ScreenHeight = SettingsManager::Int("global", "screen_height");
+}
 
 
 void Level::Load()
 {
-	if (IsAutoLevel()) 
+	if (IsAutoLevel())
 	{
 		// Get Auto Level creation options:
 		const auto removeRandomSidesOption = SettingsManager::Bool("grid", "removeSidesRandomly");
 
-		Rooms = RoomGenerator(static_cast<int>(ScreenWidth), 
-							 static_cast<int>(ScreenHeight),
-							NumRows,NumCols,
-							removeRandomSidesOption).Generate();
+		Rooms = RoomGenerator(static_cast<int>(ScreenWidth),
+		                      static_cast<int>(ScreenHeight),
+		                      NumRows, NumCols,
+		                      removeRandomSidesOption).Generate();
 		return;
 	}
 
@@ -62,31 +63,36 @@ void Level::Load()
 	doc.LoadFile(FileName.c_str());
 
 	if (doc.ErrorID() == 0)
-	{		
+	{
 		auto* scene = doc.FirstChildElement("level");
 		NumCols = std::strtol(scene->ToElement()->Attribute("cols"), nullptr, 0);
 		NumRows = std::strtol(scene->ToElement()->Attribute("rows"), nullptr, 0);
 
-		if (auto autoPopulatePickups = scene->ToElement()->Attribute("autoPopulatePickups"); autoPopulatePickups != nullptr) 
+		// Check if the level file specifies that we should automatically create pickups for the level
+		if (auto autoPopulatePickups = scene->ToElement()->Attribute("autoPopulatePickups"); autoPopulatePickups !=
+			nullptr)
 		{
 			auto strToTransform = string(autoPopulatePickups);
 			std::transform(strToTransform.begin(), strToTransform.end(), strToTransform.begin(), ::toupper);
 			isAutoPopulatePickups = strToTransform == "TRUE";
 		}
-		
-		ScreenWidth = SettingsManager::Get()->GetInt("global", "screen_width");
-		ScreenHeight = SettingsManager::Get()->GetInt("global", "screen_height");
+
+		// Read some config that specifies how big the screen is
+		ScreenWidth = SettingsManager::Int("global", "screen_width");
+		ScreenHeight = SettingsManager::Int("global", "screen_height");
 
 		// List of Rooms generated
-		
+
 		for (auto roomNode = scene->FirstChild(); roomNode; roomNode = roomNode->NextSibling()) //  <room ...>
 		{
 			auto roomElement = roomNode->ToElement();
 			auto number = std::strtol(roomElement->ToElement()->Attribute("number"), nullptr, 0);
-			auto top = string(roomElement->ToElement()->Attribute("top"));
-			auto right = string(roomElement->ToElement()->Attribute("right"));
-			auto bottom = string(roomElement->ToElement()->Attribute("bottom"));
-			auto left = string(roomElement->ToElement()->Attribute("left"));
+
+			// Get visibility strings for the room sides (True/False)
+			auto topSideVisible = string(roomElement->ToElement()->Attribute("top"));
+			auto rightSideVisible = string(roomElement->ToElement()->Attribute("right"));
+			auto bottomSideVisible = string(roomElement->ToElement()->Attribute("bottom"));
+			auto leftSideVisible = string(roomElement->ToElement()->Attribute("left"));
 
 			auto row = number / NumCols; // row for this roomNumber
 			auto rowCol0 = row * NumCols;
@@ -96,12 +102,14 @@ void Level::Load()
 			const auto squareHeight = ScreenHeight / NumRows;
 			const auto roomName = string("Room") + std::to_string(number);
 
+			// Deserialize a room
 			auto room = std::make_shared<Room>(roomName, "Room", number, col * squareWidth, row * squareHeight,
 			                                   squareWidth, squareHeight, false);
-			
-			auto setWall = [&](const std::string& isSideVisible, const Side side, const std::shared_ptr<Room>& inRoom) -> void
+
+			auto setWall = [&](const std::string& sideVisibilityString, const Side side,
+			                   const std::shared_ptr<Room>& inRoom) -> void
 			{
-				if (isSideVisible == "True")
+				if (sideVisibilityString == "True")
 				{
 					inRoom->AddWall(side);
 				}
@@ -111,34 +119,39 @@ void Level::Load()
 				}
 			};
 
-			setWall(right, Side::Right, room);
-			setWall(left, Side::Left, room);
-			setWall(top, Side::Top, room);
-			setWall(bottom, Side::Bottom, room);
+			setWall(rightSideVisible, Side::Right, room);
+			setWall(leftSideVisible, Side::Left, room);
+			setWall(topSideVisible, Side::Top, room);
+			setWall(bottomSideVisible, Side::Bottom, room);
 
 			// Set room tag to room number
 			room->SetTag(std::to_string(number));
+
+			// Now process the objects declared inside the room element
 
 			// <object name="xyz" type="abc" ...ie inspect all the objects in the room
 			for (auto pRoomChild = roomNode->FirstChild(); pRoomChild; pRoomChild = pRoomChild->NextSibling())
 			{
 				string roomChildName = pRoomChild->Value();
-				if (roomChildName == "object")
+				if (roomChildName == "object") // <object ...
 				{
 					// Create whatever Game Object the object represents and return it as a GameObject
 					auto gameObject = ParseObject(pRoomChild, room);
-					
+
+					// We store the player object
 					if (gameObject->Type == "Player")
 					{
 						Player1 = dynamic_pointer_cast<Player>(gameObject);
 					}
 
+					// We collect pickup objects
 					if (gameObject->Type == "Pickup" && !IsAutoPopulatePickups())
 					{
 						Pickups.push_back(dynamic_pointer_cast<Pickup>(gameObject));
 					}
 
-					if(gameObject->Type == "Enemy")
+					// We collect Enemy objects
+					if (gameObject->Type == "Enemy")
 					{
 						Enemies.push_back(dynamic_pointer_cast<Enemy>(gameObject));
 					}
@@ -149,6 +162,7 @@ void Level::Load()
 
 		Rooms::ConfigureRooms(NumRows, NumCols, Rooms);
 
+		// Initialize all the objects we deserialized
 		InitializePickups(Pickups);
 		InitializeEnemies();
 	}
@@ -156,6 +170,7 @@ void Level::Load()
 
 std::vector<std::shared_ptr<Event>> Level::HandleEvent(std::shared_ptr<Event> evt, unsigned long deltaMs)
 {
+	// Level itself does not handle any events
 	return {};
 }
 
@@ -180,7 +195,7 @@ void Level::InitializePickups(const std::vector<std::shared_ptr<Pickup>>& inPick
 	for (const auto& pickup : inPickups)
 	{
 		pickup->LoadSettings();
-		pickup->SubscribeToEvent(PlayerMovedEventTypeEventId);
+		pickup->SubscribeToEvent(PlayerMovedEventTypeEventId); // pickup want to know if player moved
 
 		AddGameObjectToScene(pickup);
 	}
@@ -188,7 +203,7 @@ void Level::InitializePickups(const std::vector<std::shared_ptr<Pickup>>& inPick
 
 void Level::InitializeEnemies()
 {
-	for(auto& enemy : Enemies)
+	for (auto& enemy : Enemies)
 	{
 		enemy->Initialize();
 		GameDataManager::Get()->GameData()->AddEnemy(enemy);
@@ -198,46 +213,50 @@ void Level::InitializeEnemies()
 
 void Level::AddGameObjectToScene(const std::shared_ptr<GameObject>& object)
 {
-	EventManager::Get()->RaiseEvent(std::dynamic_pointer_cast<Event>(EventFactory::Get()->CreateAddToSceneEvent(object)), this);
+	EventManager::Get()->RaiseEvent(
+		std::dynamic_pointer_cast<Event>(EventFactory::Get()->CreateAddToSceneEvent(object)), this);
 }
 
 
 shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_ptr<Room>& room) const
 {
 	const auto attributes = GetNodeAttributes(pObject);
-	const string name = attributes.at("name");
-	const string type = attributes.at("type");
-	const auto resourceId = stoi(attributes.at("resourceId"));
+	const string objectName = attributes.at("name");
+	const string objectType = attributes.at("type");
+	const auto objectResourceId = stoi(attributes.at("resourceId"));
 
 	shared_ptr<GameObject> gameObject;
-		
-	if (type == "Player")
+
+	// Make Game Objects from the serialized object
+	if (objectType == "Player")
 	{
-		gameObject = CharacterBuilder::BuildPlayer(name, room, resourceId, "playerNickName");
+		gameObject = CharacterBuilder::BuildPlayer(objectName, room, objectResourceId, "playerNickName");
 	}
-	else if (type == "Pickup")
+	else if (objectType == "Pickup")
 	{
-		gameObject = CharacterBuilder::BuildPickup(name, room, resourceId);
+		gameObject = CharacterBuilder::BuildPickup(objectName, room, objectResourceId);
 	}
-	else if (type == "Enemy")
+	else if (objectType == "Enemy")
 	{
-		gameObject = CharacterBuilder::BuildEnemy(name, room, resourceId, DirectionUtils::GetRandomDirection(), shared_from_this());
-	}	
-	
-	// Add properties to the game object
+		gameObject = CharacterBuilder::BuildEnemy(objectName, room, objectResourceId,
+		                                          DirectionUtils::GetRandomDirection(), shared_from_this());
+	}
+
+	// Look for and add properties to the game object
 	for (auto pObjectChild = pObject->FirstChild(); pObjectChild; pObjectChild = pObjectChild->NextSibling())
 	{
 		string objectChildName = pObjectChild->Value();
 
 		if (objectChildName == "property")
 		{
-			ParseProperty(pObjectChild, gameObject);
+			ParseProperty(pObjectChild, gameObject); // hmm, this object has a property attached
 		}
 	}
 	return gameObject;
 }
 
-void Level::InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<SpriteAsset>& spriteAsset) const
+void Level::InitializePlayer(const std::shared_ptr<Player>& inPlayer,
+                             const std::shared_ptr<SpriteAsset>& spriteAsset) const
 {
 	inPlayer->SetMoveStrategy(std::make_shared<GameObjectMoveStrategy>(inPlayer, inPlayer->CurrentRoom));
 	inPlayer->SetTag(constants::PlayerTag);
@@ -248,17 +267,18 @@ void Level::InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std:
 	GameData::Get()->player = inPlayer;
 }
 
-void Level::ParseProperty(XMLNode* pObjectChild, const shared_ptr<GameObject>& go)
+void Level::ParseProperty(XMLNode* pObjectChild, const shared_ptr<GameObject>& gameObject)
 {
 	const auto& attributes = GetNodeAttributes(pObjectChild);
 	const auto& name = attributes.at("name");
 	const auto& value = attributes.at("value");
-	go->StringProperties[name] = value;
+
+	gameObject->StringProperties[name] = value;
 }
 
 std::shared_ptr<Room> Level::GetRoom(const int row, const int col)
 {
-	if(row > NumRows || col > NumCols) { return nullptr; }
+	if (row > NumRows || col > NumCols) { return nullptr; }
 
-	return Rooms[((row-1) * NumCols) + col-1];
+	return Rooms[((row - 1) * NumCols) + col - 1];
 }

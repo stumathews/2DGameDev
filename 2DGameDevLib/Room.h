@@ -12,12 +12,13 @@
 #include "geometry/Side.h"
 
 class Room : public gamelib::DrawableGameObject, public inheritable_enable_shared_from_this<Room>
-{	
-public:		
+{
+public:
+	Room(const std::string& name, const std::string& type, int number, int x, int y, int width, int height,
+	     bool fill = false);
 
-	Room(const std::string& name, const std::string& type, int number, int x, int y, int width, int height, bool fill = false);
-
-	bool IsWalled(gamelib::Side wall) const; // IsWalled (zero based). Does this room have a wall errected on specified side.
+	bool IsWalled(gamelib::Side wall) const;
+	// IsWalled (zero based). Does this room have a wall errected on specified side.
 	bool HasTopWall() const;
 	bool HasBottomWall() const;
 	bool HasLeftWall() const;
@@ -25,8 +26,9 @@ public:
 
 	void UpdateInnerBounds();
 	void SetupWalls();
-	void SetSorroundingRooms(const int top_index, const int right_index, const int bottom_index, const int left_index, std::vector<std::shared_ptr<
-	                         Room>> rooms);
+	void SetSorroundingRooms(int top_index, int right_index, int bottom_index, int left_index,
+	                         std::vector<std::shared_ptr<
+		                         Room>> rooms);
 	void RemoveWall(gamelib::Side wall);
 	void LogWallRemoval(gamelib::Side wall) const;
 	void SetNotWalled(gamelib::Side wall);
@@ -50,7 +52,7 @@ public:
 	gamelib::Coordinate<int> GetCenter(gamelib::ABCDRectangle rectangle) const;
 
 	gamelib::Coordinate<int> GetPosition();
-	int GetNeighbourIndex(const gamelib::Side index) const;
+	int GetNeighbourIndex(gamelib::Side index) const;
 	int GetX() const;
 	int GetY() const;
 	int GetWidth() const;
@@ -62,18 +64,16 @@ public:
 	std::string GetName() override { return "Room"; }
 
 	SDL_Rect InnerBounds{};
-	
+
 	bool IsTopWalled{};
 	bool IsBottomWalled{};
 	bool IsRightWalled{};
 	bool IsLeftWalled{};
-	
+
 	gamelib::Line TopLine;
 	gamelib::Line RightLine;
 	gamelib::Line BottomLine;
 	gamelib::Line LeftLine;
-
-
 
 protected:
 	int roomNumber;
@@ -86,12 +86,12 @@ protected:
 	std::shared_ptr<Room> TopRoom;
 	std::shared_ptr<Room> BottomRoom;
 	int rightRoomIndex;
-	int bottomRoomIndex; 
+	int bottomRoomIndex;
 	int leftRoomIndex;
 	int width;
-	int height;	
+	int height;
 
-private:	
+private:
 	bool isPlayerWithinRoom = false;
 	bool fill = false;
 	int innerBoundsOffset;
@@ -99,8 +99,5 @@ private:
 	bool drawInnerBounds{};
 	bool drawHotSpot{};
 	bool printDebuggingTextNeighboursOnly{};
-	bool printDebuggingText{};	
+	bool printDebuggingText{};
 };
-
-
-

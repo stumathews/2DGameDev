@@ -16,14 +16,13 @@ namespace gamelib
 	class Pickup final : public DrawableGameObject, public inheritable_enable_shared_from_this<Pickup>
 	{
 	public:
-		
 		/// <summary>
 		/// Create a new pickup at specific coordinates
 		/// </summary>
 		Pickup(const std::string name, const std::string type, const int x, const int y, const int width,
-		       const int height, const bool visible, const int inRoomNumber) 
+		       const int height, const bool visible, const int inRoomNumber)
 			: DrawableGameObject(name, type, gamelib::Coordinate<int>(x, y), visible)
-		{			
+		{
 			this->IsVisible = visible;
 			this->width = width;
 			this->height = height;
@@ -31,8 +30,9 @@ namespace gamelib
 		}
 
 		Pickup(const std::string name, const std::string type, const Coordinate<int> startingPoint, const bool visible,
-		       const int inRoomNumber, const std::shared_ptr<SpriteAsset> asset) 
-			: DrawableGameObject(name, type, gamelib::Coordinate<int>(startingPoint.GetX(), startingPoint.GetY()), visible)
+		       const int inRoomNumber, const std::shared_ptr<SpriteAsset> asset)
+			: DrawableGameObject(name, type, gamelib::Coordinate<int>(startingPoint.GetX(), startingPoint.GetY()),
+			                     visible)
 		{
 			this->IsVisible = visible;
 			this->Asset = asset;
@@ -40,13 +40,13 @@ namespace gamelib
 			this->height = asset->Dimensions.GetHeight();
 			this->RoomNumber = inRoomNumber;
 		}
-		
+
 		/// <summary>
 		/// Create a new pickup with undefined coordinates
 		/// </summary>
 		/// <param name="visible">initial visible state</param>
 		Pickup(const bool visible) : DrawableGameObject(0, 0, visible)
-		{			
+		{
 			this->IsVisible = visible;
 			this->width = 0;
 			this->height = 0;
@@ -62,7 +62,7 @@ namespace gamelib
 		/// Initialize the pickup
 		/// </summary>
 		void Initialize();
-		
+
 		/// <summary>
 		/// Provide name to event system
 		/// </summary>
@@ -92,7 +92,9 @@ namespace gamelib
 		/// <summary>
 		/// Load pickup settings
 		/// </summary>
-		void LoadSettings() override { }
+		void LoadSettings() override
+		{
+		}
 
 		/// <summary>
 		/// Draw Pickup
@@ -111,13 +113,12 @@ namespace gamelib
 		std::shared_ptr<Asset> Asset;
 
 	protected:
-		
 		/// <summary>
 		/// Update our bounds
 		/// </summary>
 		void SetBounds();
-	private:
 
+	private:
 		/// <summary>
 		/// Pickup width
 		/// </summary>

@@ -5,6 +5,7 @@
 #include "events/Event.h"
 
 const EventId PlayerCollidedWithEnemyEventId(CollidedWithEnemy, "CollidedWithEnemyEvent");
+
 class PlayerCollidedWithEnemyEvent final : public gamelib::Event
 {
 public:
@@ -12,6 +13,7 @@ public:
 		Event(PlayerCollidedWithEnemyEventId), Enemy(std::move(enemy)), Player(std::move(other))
 	{
 	}
+
 	std::shared_ptr<Enemy> Enemy;
 	std::shared_ptr<Player> Player;
 };

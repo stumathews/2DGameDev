@@ -5,7 +5,7 @@
 #include <objects/GameWorldData.h>
 #include "Enemy.h"
 
-namespace gamelib 
+namespace gamelib
 {
 	class GameObject;
 	class Pickup;
@@ -34,10 +34,10 @@ public:
 	void RemovePickup(const std::shared_ptr<gamelib::Pickup>& pickup);
 	void AddEnemy(std::shared_ptr<Enemy> enemy);
 	void RemoveEnemy(const std::shared_ptr<Enemy>& enemy);
-	
+
 	std::shared_ptr<Room> GetRoomByIndex(int roomNumber);
 	[[nodiscard]] std::shared_ptr<Player> GetPlayer() const;
-	[[nodiscard]] unsigned int CountPickups() const { return pickups.size(); }	
+	[[nodiscard]] unsigned int CountPickups() const { return pickups.size(); }
 	[[nodiscard]] bool IsGameWon() const { return isGameWon; }
 	void SetGameWon(const bool yesNo) { isGameWon = yesNo; }
 	void AddGameObject(const std::shared_ptr<gamelib::GameObject>& gameObject);
@@ -46,16 +46,17 @@ public:
 	void Clear();
 
 	std::vector<std::weak_ptr<gamelib::GameObject>> GameObjects;
-	std::vector<std::weak_ptr<Enemy>> Enemies() { return enemies;}
+	std::vector<std::weak_ptr<Enemy>> Enemies() { return enemies; }
+
 protected:
 	GameData();
 	static GameData* instance;
+
 private:
-	static bool IsSameId(const std::weak_ptr<gamelib::GameObject>& obj, const std::shared_ptr<gamelib::GameObject>& other);
+	static bool IsSameId(const std::weak_ptr<gamelib::GameObject>& obj,
+	                     const std::shared_ptr<gamelib::GameObject>& other);
 	bool isGameWon;
 	std::map<int, std::weak_ptr<Room>> rooms;
 	std::vector<std::weak_ptr<gamelib::Pickup>> pickups;
 	std::vector<std::weak_ptr<Enemy>> enemies;
-	
 };
-

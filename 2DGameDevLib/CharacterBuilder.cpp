@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "CharacterBuilder.h"
-
 #include "Enemy.h"
 #include "GameData.h"
 #include "GameObjectMoveStrategy.h"
@@ -10,10 +9,12 @@
 #include "objects/GameObjectFactory.h"
 
 
-std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, const std::shared_ptr<Room>& room, const int resourceId, const std::string& nickName)
+std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, const std::shared_ptr<Room>& room,
+                                                      const int resourceId, const std::string& nickName)
 {
 	// Get resource/asset
-	const auto spriteAsset = std::dynamic_pointer_cast<gamelib::SpriteAsset>(gamelib::ResourceManager::Get()->GetAssetInfo(resourceId));
+	const auto spriteAsset = std::dynamic_pointer_cast<gamelib::SpriteAsset>(
+		gamelib::ResourceManager::Get()->GetAssetInfo(resourceId));
 
 	// Build sprite
 	const auto animatedSprite = gamelib::GameObjectFactory::Get().BuildSprite(
@@ -25,7 +26,7 @@ std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, c
 	// Initialize player
 	player->LoadSettings();
 	player->SetMoveStrategy(std::make_shared<GameObjectMoveStrategy>(player, player->CurrentRoom));
-	player->SetTag(gamelib::constants::PlayerTag);	
+	player->SetTag(gamelib::constants::PlayerTag);
 	player->SetSprite(animatedSprite);
 	player->IntProperties["Health"] = 100;
 
@@ -36,9 +37,8 @@ std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, c
 }
 
 std::shared_ptr<Enemy> CharacterBuilder::BuildEnemy(const std::string& name, const std::shared_ptr<Room>& room,
-                                                const int spriteResourceId, gamelib::Direction startingDirection, const std::shared_ptr<const Level>
-                                                &
-                                                level)
+                                                    const int spriteResourceId, gamelib::Direction startingDirection,
+                                                    const std::shared_ptr<const Level>& level)
 {
 	const auto spriteAsset = std::dynamic_pointer_cast<gamelib::SpriteAsset>(
 		gamelib::ResourceManager::Get()->GetAssetInfo(spriteResourceId));
@@ -48,13 +48,15 @@ std::shared_ptr<Enemy> CharacterBuilder::BuildEnemy(const std::string& name, con
 	// Build sprite
 	const auto animatedSprite = gamelib::GameObjectFactory::Get().BuildSprite(
 		name, "Enemy", spriteAsset, positionInRoom, true);
-	
-	auto enemy = std::make_shared<Enemy>(name, "Enemy", positionInRoom, true, room, animatedSprite, startingDirection, level);
+
+	auto enemy = std::make_shared<Enemy>(name, "Enemy", positionInRoom, true, room, animatedSprite, startingDirection,
+	                                     level);
 	return enemy;
 }
 
 
-std::shared_ptr<gamelib::Pickup> CharacterBuilder::BuildPickup(const std::string& name, const std::shared_ptr<Room>& room, const int resourceId)
+std::shared_ptr<gamelib::Pickup> CharacterBuilder::BuildPickup(const std::string& name,
+                                                               const std::shared_ptr<Room>& room, const int resourceId)
 {
 	const auto spriteAsset = std::dynamic_pointer_cast<gamelib::SpriteAsset>(
 		gamelib::ResourceManager::Get()->GetAssetInfo(resourceId));
@@ -67,4 +69,3 @@ std::shared_ptr<gamelib::Pickup> CharacterBuilder::BuildPickup(const std::string
 	pickup->SubscribeToEvent(gamelib::PlayerMovedEventTypeEventId);
 	return pickup;
 }
-

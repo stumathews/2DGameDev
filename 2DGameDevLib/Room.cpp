@@ -14,10 +14,11 @@
 using namespace std;
 using namespace gamelib;
 
-Room::Room(const string& name, const string& type, const int number, const int x, const int y, const int width, const int height, const bool fill) 
+Room::Room(const string& name, const string& type, const int number, const int x, const int y, const int width,
+           const int height, const bool fill)
 	: DrawableGameObject(name, type, Coordinate<int>(x, y), true)
 {
-	this->Bounds = { x, y, width, height };	
+	this->Bounds = {x, y, width, height};
 	this->width = width;
 	this->height = height;
 	this->roomNumber = number;
@@ -27,9 +28,9 @@ Room::Room(const string& name, const string& type, const int number, const int x
 	this->rightRoomIndex = 0;
 	this->bottomRoomIndex = 0;
 	this->width = width;
-	this->height = height; 
+	this->height = height;
 	this->leftRoomIndex = 0;
-	this->innerBoundsOffset = 0;	 
+	this->innerBoundsOffset = 0;
 	this->abcd = ABCDRectangle(x, y, width, height);
 	UpdateInnerBounds(); // We only need to update the bounds once, so do it in the constructor only
 	SetupWalls();
@@ -37,9 +38,9 @@ Room::Room(const string& name, const string& type, const int number, const int x
 
 void Room::UpdateInnerBounds()
 {
-	this->InnerBounds = SDL_Rect 
-	{ 
-		Bounds.x + innerBoundsOffset, 
+	this->InnerBounds = SDL_Rect
+	{
+		Bounds.x + innerBoundsOffset,
 		Bounds.y + innerBoundsOffset,
 		Bounds.w - innerBoundsOffset * 2,
 		Bounds.h - innerBoundsOffset * 2
@@ -57,37 +58,49 @@ void Room::SetupWalls()
 
 	// Calculate the geometry of the walls
 	const auto& rect = this->abcd;
-	const auto ax = rect.GetAx(); const auto ay = rect.GetAy();
-	const auto bx = rect.GetBx(); const auto by = rect.GetBy();
-	const auto cx = rect.GetCx(); const auto cy = rect.GetCy();
-	const auto dx = rect.GetDx(); const auto dy = rect.GetDy();
+	const auto ax = rect.GetAx();
+	const auto ay = rect.GetAy();
+	const auto bx = rect.GetBx();
+	const auto by = rect.GetBy();
+	const auto cx = rect.GetCx();
+	const auto cy = rect.GetCy();
+	const auto dx = rect.GetDx();
+	const auto dy = rect.GetDy();
 
 	// Top wall line geometry
-	TopLine.X1 = ax; TopLine.Y1 = ay;
-	TopLine.X2 = bx; TopLine.Y2 = by;
+	TopLine.X1 = ax;
+	TopLine.Y1 = ay;
+	TopLine.X2 = bx;
+	TopLine.Y2 = by;
 
 	// Right wall line geometry
-	RightLine.X1 = bx; RightLine.Y1 = by;
-	RightLine.X2 = cx; RightLine.Y2 = cy;
+	RightLine.X1 = bx;
+	RightLine.Y1 = by;
+	RightLine.X2 = cx;
+	RightLine.Y2 = cy;
 
 	// Bottom wall line geometry
-	BottomLine.X1 = cx; BottomLine.Y1 = cy;
-	BottomLine.X2 = dx; BottomLine.Y2 = dy;
+	BottomLine.X1 = cx;
+	BottomLine.Y1 = cy;
+	BottomLine.X2 = dx;
+	BottomLine.Y2 = dy;
 
 	// Left wall line geometry
-	LeftLine.X1 = dx; LeftLine.Y1 = dy;
-	LeftLine.X2 = ax; LeftLine.Y2 = ay;
+	LeftLine.X1 = dx;
+	LeftLine.Y1 = dy;
+	LeftLine.X2 = ax;
+	LeftLine.Y2 = ay;
 
 	// All walls are present by default
 	walls[0] = walls[1] = walls[2] = walls[3] = IsLeftWalled = IsTopWalled = IsRightWalled = IsBottomWalled = true;
 }
 
 ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, const unsigned long deltaMs)
-{	
+{
 	auto generatedEvents(GameObject::HandleEvent(event, deltaMs));
 
-	if(event->Id.PrimaryId == PlayerMovedEventTypeEventId.PrimaryId) { OnPlayerMoved(generatedEvents); }
-	else if(event->Id.PrimaryId == SettingsReloadedEventId.PrimaryId) { LoadSettings(); }
+	if (event->Id.PrimaryId == PlayerMovedEventTypeEventId.PrimaryId) { OnPlayerMoved(generatedEvents); }
+	else if (event->Id.PrimaryId == SettingsReloadedEventId.PrimaryId) { LoadSettings(); }
 	else
 	{
 		std::stringstream message("Unhandled subscribed event in Room class:");
@@ -103,65 +116,71 @@ ListOfEvents& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedEvents)
 	const auto playerHotSpotBounds = player->Hotspot->GetBounds();
 	SDL_Rect result;
 	isPlayerWithinRoom = SDL_IntersectRect(&InnerBounds, &playerHotSpotBounds, &result);
-	if(isPlayerWithinRoom) { player->CurrentRoom->SetCurrentRoom(shared_from_this()); }
+	if (isPlayerWithinRoom) { player->CurrentRoom->SetCurrentRoom(shared_from_this()); }
 
 	return generatedEvents;
 }
 
 void Room::DrawWalls(SDL_Renderer* renderer) const
 {
-	if (HasTopWall()) { DrawLine(renderer, TopLine); }		
-	if (HasRightWall()) { DrawLine(renderer, RightLine); }			
-	if (HasBottomWall()) { DrawLine(renderer, BottomLine); }		
+	if (HasTopWall()) { DrawLine(renderer, TopLine); }
+	if (HasRightWall()) { DrawLine(renderer, RightLine); }
+	if (HasBottomWall()) { DrawLine(renderer, BottomLine); }
 	if (HasLeftWall()) { DrawLine(renderer, LeftLine); }
 }
 
 std::shared_ptr<Room> Room::GetSideRoom(Side side)
 {
-	switch(side)
+	switch (side)
 	{
-		case Side::Top: return TopRoom; 
-		case Side::Right: return RightRoom;
-		case Side::Bottom: return BottomRoom; 
-		case Side::Left:return LeftRoom;
-		default: return TopRoom; // should never happen  // NOLINT(clang-diagnostic-covered-switch-default)
+	case Side::Top: return TopRoom;
+	case Side::Right: return RightRoom;
+	case Side::Bottom: return BottomRoom;
+	case Side::Left: return LeftRoom;
+	default: return TopRoom; // should never happen  // NOLINT(clang-diagnostic-covered-switch-default)
 	}
 }
 
-void Room::DrawLine(SDL_Renderer* renderer, const Line& line) { SDL_RenderDrawLine(renderer, line.X1, line.Y1, line.X2, line.Y2); }
+void Room::DrawLine(SDL_Renderer* renderer, const Line& line)
+{
+	SDL_RenderDrawLine(renderer, line.X1, line.Y1, line.X2, line.Y2);
+}
 
 void Room::DrawDiagnostics(SDL_Renderer* renderer)
 {
-	constexpr SDL_Color red = { 255, 0, 0, 0 };
-	constexpr SDL_Color Yellow = { 255, 255, 0, 0 };
-	if (fill) { DrawFilledRect(renderer, &Bounds, { 255, 0 ,0 ,0 }); }
-		
-	if(printDebuggingText)
+	constexpr SDL_Color red = {255, 0, 0, 0};
+	constexpr SDL_Color Yellow = {255, 255, 0, 0};
+	if (fill) { DrawFilledRect(renderer, &Bounds, {255, 0, 0, 0}); }
+
+	if (printDebuggingText)
 	{
 		const auto player = GameData::Get()->GetPlayer();
 
-		if(printDebuggingTextNeighboursOnly)
+		if (printDebuggingTextNeighboursOnly)
 		{
 			const auto playerRoom = player->CurrentRoom->GetCurrentRoom();
-			if(roomNumber == playerRoom->topRoomIndex || roomNumber == playerRoom->rightRoomIndex || 
-			   roomNumber == playerRoom->bottomRoomIndex || roomNumber == playerRoom->leftRoomIndex)
+			if (roomNumber == playerRoom->topRoomIndex || roomNumber == playerRoom->rightRoomIndex ||
+				roomNumber == playerRoom->bottomRoomIndex || roomNumber == playerRoom->leftRoomIndex)
 			{
 				RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, Yellow);
 			}
 
-			if(roomNumber == player->CurrentRoom->TheRoom->GetRoomNumber()) { RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, red); }			
+			if (roomNumber == player->CurrentRoom->TheRoom->GetRoomNumber())
+			{
+				RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, red);
+			}
 		}
 		else { RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, Yellow); }
 	}
-	
-	if(drawHotSpot)
+
+	if (drawHotSpot)
 	{
-		const SDL_Rect pointBounds = { GetPosition().GetX() - width/2, GetPosition().GetY() +height/2 , 0, 0};
-		constexpr SDL_Color cyan = { 0, 255, 255, 0 };
-		DrawFilledRect(renderer, &pointBounds , cyan);
+		const SDL_Rect pointBounds = {GetPosition().GetX() - width / 2, GetPosition().GetY() + height / 2, 0, 0};
+		constexpr SDL_Color cyan = {0, 255, 255, 0};
+		DrawFilledRect(renderer, &pointBounds, cyan);
 	}
 
-	if(drawInnerBounds)
+	if (drawInnerBounds)
 	{
 		SDL_SetRenderDrawColor(renderer, Yellow.r, Yellow.g, Yellow.b, Yellow.a);
 		SDL_RenderDrawRect(renderer, &InnerBounds);
@@ -171,24 +190,25 @@ void Room::DrawDiagnostics(SDL_Renderer* renderer)
 
 void Room::Draw(SDL_Renderer* renderer)
 {
-	DrawableGameObject::Draw(renderer);	
+	DrawableGameObject::Draw(renderer);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); // Black
 	DrawWalls(renderer);
-	DrawDiagnostics(renderer);	
+	DrawDiagnostics(renderer);
 }
 
 void Room::LoadSettings()
 {
-	GameObject::LoadSettings();	
+	GameObject::LoadSettings();
 
-	fill = SettingsManager::Get()->GetBool("room_fill", "enable");
-	innerBoundsOffset = SettingsManager::Get()->GetInt("room", "innerBoundsOffset");	
-	logWallRemovals = SettingsManager::Get()->GetBool("room", "logWallRemovals");
-	drawInnerBounds = SettingsManager::Get()->GetBool("room", "drawinnerBounds");
-	drawHotSpot = SettingsManager::Get()->GetBool("room", "drawHotSpot");
-	printDebuggingTextNeighboursOnly = SettingsManager::Get()->GetBool("global", "print_debugging_text_neighbours_only");
-	printDebuggingText = SettingsManager::Get()->GetBool("global", "print_debugging_text");
-	
+	fill = SettingsManager::Bool("room_fill", "enable");
+	innerBoundsOffset = SettingsManager::Int("room", "innerBoundsOffset");
+	logWallRemovals = SettingsManager::Bool("room", "logWallRemovals");
+	drawInnerBounds = SettingsManager::Bool("room", "drawinnerBounds");
+	drawHotSpot = SettingsManager::Bool("room", "drawHotSpot");
+	printDebuggingTextNeighboursOnly = SettingsManager::Get()->
+		GetBool("global", "print_debugging_text_neighbours_only");
+	printDebuggingText = SettingsManager::Bool("global", "print_debugging_text");
+
 	UpdateInnerBounds();
 }
 
@@ -208,16 +228,16 @@ bool Room::HasRightWall() const { return IsWalled(Side::Right); }
 void Room::Update(const unsigned long deltaMs)
 {
 	// are any of the NPCs in this room?
-	for(auto& npc : GameDataManager::Get()->GameData()->Enemies())
+	for (auto& npc : GameDataManager::Get()->GameData()->Enemies())
 	{
-		if(const auto enemy = npc.lock())
+		if (const auto enemy = npc.lock())
 		{
 			const auto npcHotspot = enemy->Hotspot->GetBounds();
 			SDL_Rect result;
-			if(SDL_IntersectRect(&InnerBounds, &npcHotspot, &result))
+			if (SDL_IntersectRect(&InnerBounds, &npcHotspot, &result))
 			{
 				enemy->CurrentRoom->SetCurrentRoom(shared_from_this());
-			}			
+			}
 		}
 	}
 }
@@ -227,8 +247,18 @@ Coordinate<int> Room::GetPosition() { return GetABCDRectangle().GetCenter(); }
 int Room::GetRoomNumber() const { return roomNumber; }
 int Room::GetRowNumber(const int maxCols) const { return GetRoomNumber() / maxCols; }
 
-void Room::AddWall(Side wall) { this->walls[static_cast<int>(wall)] = true; 	SetWalled(wall); }
-void Room::RemoveWallZeroBased(Side wall) { this->walls[static_cast<int>(wall)] = false; SetNotWalled(wall); }
+void Room::AddWall(Side wall)
+{
+	this->walls[static_cast<int>(wall)] = true;
+	SetWalled(wall);
+}
+
+void Room::RemoveWallZeroBased(Side wall)
+{
+	this->walls[static_cast<int>(wall)] = false;
+	SetNotWalled(wall);
+}
+
 void Room::ShouldRoomFill(const bool fillMe) { fill = fillMe; }
 
 int Room::GetColumnNumber(const int maxCols) const
@@ -239,24 +269,25 @@ int Room::GetColumnNumber(const int maxCols) const
 	return col;
 }
 
-void Room::SetSorroundingRooms(const int top_index, const int right_index, const int bottom_index, const int left_index, std::vector<shared_ptr<Room>> rooms)
+void Room::SetSorroundingRooms(const int top_index, const int right_index, const int bottom_index, const int left_index,
+                               std::vector<shared_ptr<Room>> rooms)
 {
 	this->topRoomIndex = top_index;
 	this->TopRoom = rooms[topRoomIndex < 1 ? 0 : topRoomIndex];
 	this->rightRoomIndex = right_index;
 	this->RightRoom = rooms[rightRoomIndex < 1 ? 0 : rightRoomIndex];
 	this->bottomRoomIndex = bottom_index;
-	this->BottomRoom = rooms[bottomRoomIndex  < 1 ? 0 : bottomRoomIndex];
+	this->BottomRoom = rooms[bottomRoomIndex < 1 ? 0 : bottomRoomIndex];
 	this->leftRoomIndex = left_index;
-	this->LeftRoom = rooms[leftRoomIndex  < 1 ? 0 : leftRoomIndex];
+	this->LeftRoom = rooms[leftRoomIndex < 1 ? 0 : leftRoomIndex];
 }
 
 Coordinate<int> Room::GetCenter(const int w, const int h) const
 {
-	auto const roomXMid = GetX() + (GetWidth() / 2);
-	auto const roomYMid = GetY() + (GetHeight() / 2);
-	auto const x = roomXMid - w /2;
-	auto const y = roomYMid - h /2;			
+	const auto roomXMid = GetX() + (GetWidth() / 2);
+	const auto roomYMid = GetY() + (GetHeight() / 2);
+	const auto x = roomXMid - w / 2;
+	const auto y = roomYMid - h / 2;
 	return {x, y};
 }
 
@@ -267,10 +298,10 @@ Coordinate<int> Room::GetCenter() const
 
 Coordinate<int> Room::GetCenter(const ABCDRectangle rectangle) const
 {
-	auto const roomXMid = GetX() + (GetWidth() / 2);
-	auto const roomYMid = GetY() + (GetHeight() / 2);
-	auto const x = roomXMid - rectangle.GetWidth() /2;
-	auto const y = roomYMid - rectangle.GetHeight() /2;			
+	const auto roomXMid = GetX() + (GetWidth() / 2);
+	const auto roomYMid = GetY() + (GetHeight() / 2);
+	const auto x = roomXMid - rectangle.GetWidth() / 2;
+	const auto y = roomYMid - rectangle.GetHeight() / 2;
 	return {x, y};
 }
 
@@ -278,20 +309,19 @@ int Room::GetNeighbourIndex(const Side index) const
 {
 	switch (index)
 	{
-		case Side::Top: return topRoomIndex;
-		case Side::Right: return rightRoomIndex;
-		case Side::Bottom: return bottomRoomIndex;
-		case Side::Left: return leftRoomIndex;
+	case Side::Top: return topRoomIndex;
+	case Side::Right: return rightRoomIndex;
+	case Side::Bottom: return bottomRoomIndex;
+	case Side::Left: return leftRoomIndex;
 	}
 	return 0;
 }
 
 void Room::RemoveWall(Side wall)
-{	
+{
 	walls[static_cast<int>(wall)] = false;
 	SetNotWalled(wall);
 	LogWallRemoval(wall);
-	
 }
 
 void Room::LogWallRemoval(const Side wall) const
@@ -308,10 +338,14 @@ void Room::SetNotWalled(const Side wall)
 {
 	switch (wall)
 	{
-		case Side::Top: IsTopWalled = false; break;
-		case Side::Bottom: IsBottomWalled = false; break;
-		case Side::Left: IsLeftWalled = false; break;
-		case Side::Right: IsRightWalled = false; break;
+	case Side::Top: IsTopWalled = false;
+		break;
+	case Side::Bottom: IsBottomWalled = false;
+		break;
+	case Side::Left: IsLeftWalled = false;
+		break;
+	case Side::Right: IsRightWalled = false;
+		break;
 	}
 }
 
@@ -319,12 +353,13 @@ void Room::SetWalled(const Side wall)
 {
 	switch (wall)
 	{
-		case Side::Top: {IsTopWalled = true; } 	break;
-		case Side::Bottom: {IsBottomWalled = true; } break;
-		case Side::Left: {IsLeftWalled = true; } break;
-		case Side::Right: {IsRightWalled = true; } break;
+	case Side::Top: { IsTopWalled = true; }
+		break;
+	case Side::Bottom: { IsBottomWalled = true; }
+		break;
+	case Side::Left: { IsLeftWalled = true; }
+		break;
+	case Side::Right: { IsRightWalled = true; }
+		break;
 	}
 }
-
-
-

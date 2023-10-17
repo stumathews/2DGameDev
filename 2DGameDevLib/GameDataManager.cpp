@@ -19,23 +19,24 @@ void GameDataManager::Initialize()
 }
 
 GameDataManager::GameDataManager()
-{	
+{
 	eventManager = EventManager::Get();
-	eventFactory = EventFactory::Get();	
+	eventFactory = EventFactory::Get();
 }
 
-std::vector<std::shared_ptr<Event>> GameDataManager::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
+std::vector<std::shared_ptr<Event>> GameDataManager::HandleEvent(const std::shared_ptr<Event> evt,
+                                                                 unsigned long deltaMs)
 {
-	if(evt->Id == AddGameObjectToCurrentSceneEventId)
+	if (evt->Id == AddGameObjectToCurrentSceneEventId)
 	{
-		AddToGameData(evt); 
+		AddToGameData(evt);
 	}
 
-	if(evt->Id == GameObjectTypeEventId)
+	if (evt->Id == GameObjectTypeEventId)
 	{
 		RemoveFromGameData(evt);
 	}
-    return {};
+	return {};
 }
 
 void GameDataManager::AddToGameData(const std::shared_ptr<Event>& evt) const
@@ -53,7 +54,7 @@ void GameDataManager::AddToGameData(const std::shared_ptr<Event>& evt) const
 			GameData()->AddEnemy(std::dynamic_pointer_cast<Enemy>(object));
 		}
 	}
-	else 
+	else
 	{
 		if (object->GetGameObjectType() == GameObjectType::Pickup)
 		{
@@ -67,10 +68,11 @@ void GameDataManager::AddToGameData(const std::shared_ptr<Event>& evt) const
 void GameDataManager::RemoveFromGameData(const std::shared_ptr<Event>& evt)
 {
 	const auto gameObjectEvent = dynamic_pointer_cast<GameObjectEvent>(evt);
-	switch (gameObjectEvent->Context)  // NOLINT(clang-diagnostic-switch-enum)
+	switch (gameObjectEvent->Context) // NOLINT(clang-diagnostic-switch-enum)
 	{
-		case GameObjectEventContext::Remove: RemoveGameObject(gameObjectEvent->Object); break;
-		default: /* Do Nothing */;
+	case GameObjectEventContext::Remove: RemoveGameObject(gameObjectEvent->Object);
+		break;
+	default: /* Do Nothing */;
 	}
 
 	if (GameData::Get()->CountPickups() == 0 && !GameData::Get()->IsGameWon())
@@ -91,7 +93,7 @@ void GameDataManager::RemoveGameObject(const std::shared_ptr<GameObject>& gameOb
 	{
 		GameData::Get()->RemovePickup(dynamic_pointer_cast<Pickup>(gameObject));
 	}
-	
+
 	if (gameObject->Type == "Enemy")
 	{
 		GameData::Get()->RemoveEnemy(dynamic_pointer_cast<Enemy>(gameObject));

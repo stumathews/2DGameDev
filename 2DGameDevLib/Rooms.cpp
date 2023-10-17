@@ -33,26 +33,31 @@ void Rooms::ConfigureRooms(const int rows, const int columns, std::vector<std::s
 
 		thisRoom->SetSorroundingRooms(roomIndexAbove, roomIndexRight, roomIndexBelow, roomIndexLeft, rooms);
 
-		ConfigureWalls(thisRoom, canRemoveTopWall, rooms, nextRoom, canRemoveRightWall, canRemoveBottomWall, canRemoveLeftWall, prevIndex);
+		ConfigureWalls(thisRoom, canRemoveTopWall, rooms, nextRoom, canRemoveRightWall, canRemoveBottomWall,
+		               canRemoveLeftWall, prevIndex);
 	}
 }
 
 Coordinate<int> Rooms::CenterOfRoom(const std::shared_ptr<Room>& room, const int yourWidth, const int yourHeight)
 {
 	// local func to the center the player in the given room
-	const std::function<Coordinate<int>(Room, int, int)> centerPlayerFunc = [](const Room& inRoom, const int w, const int h)
+	const std::function<Coordinate<int>(Room, int, int)> centerPlayerFunc = [
+		](const Room& inRoom, const int w, const int h)
 	{
-		auto const roomXMid = inRoom.GetX() + (inRoom.GetWidth() / 2);
-		auto const roomYMid = inRoom.GetY() + (inRoom.GetHeight() / 2);
-		auto const x = roomXMid - w / 2;
-		auto const y = roomYMid - h / 2;
+		const auto roomXMid = inRoom.GetX() + (inRoom.GetWidth() / 2);
+		const auto roomYMid = inRoom.GetY() + (inRoom.GetHeight() / 2);
+		const auto x = roomXMid - w / 2;
+		const auto y = roomYMid - h / 2;
 		return Coordinate<int>(x, y);
 	};
 
 	return centerPlayerFunc(*room, yourWidth, yourHeight);
 }
 
-void Rooms::ConfigureWalls(const std::shared_ptr<Room>& thisRoom, bool& canRemoveWallAbove, std::vector<std::shared_ptr<Room>>&rooms, std::shared_ptr<Room>&nextRoom, bool& canRemoveWallRight, bool& canRemoveWallBelow, bool& canRemoveWallLeft, const int& prevIndex)
+void Rooms::ConfigureWalls(const std::shared_ptr<Room>& thisRoom, bool& canRemoveWallAbove,
+                           std::vector<std::shared_ptr<Room>>& rooms, std::shared_ptr<Room>& nextRoom,
+                           bool& canRemoveWallRight, bool& canRemoveWallBelow, bool& canRemoveWallLeft,
+                           const int& prevIndex)
 {
 	if (SettingsManager::Get()->GetBool("grid", "nowalls"))
 	{
@@ -60,8 +65,10 @@ void Rooms::ConfigureWalls(const std::shared_ptr<Room>& thisRoom, bool& canRemov
 	}
 }
 
-void Rooms::RemoveAllWalls(const std::shared_ptr<Room>&thisRoom)
+void Rooms::RemoveAllWalls(const std::shared_ptr<Room>& thisRoom)
 {
-	thisRoom->RemoveWall(Side::Top); thisRoom->RemoveWall(Side::Right);
-	thisRoom->RemoveWall(Side::Bottom); thisRoom->RemoveWall(Side::Left);
+	thisRoom->RemoveWall(Side::Top);
+	thisRoom->RemoveWall(Side::Right);
+	thisRoom->RemoveWall(Side::Bottom);
+	thisRoom->RemoveWall(Side::Left);
 }

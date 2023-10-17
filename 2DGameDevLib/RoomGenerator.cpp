@@ -9,7 +9,8 @@
 using namespace std;
 using namespace gamelib;
 
-RoomGenerator::RoomGenerator(const int screenWidth, const int screenHeight, const int rows, const int columns, const bool removeRandomSides)
+RoomGenerator::RoomGenerator(const int screenWidth, const int screenHeight, const int rows, const int columns,
+                             const bool removeRandomSides)
 {
 	this->screenWidth = screenWidth;
 	this->screenHeight = screenHeight;
@@ -22,22 +23,22 @@ RoomGenerator::RoomGenerator(const int screenWidth, const int screenHeight, cons
 /// Generates the Rooms in the Level
 /// </summary>
 vector<shared_ptr<Room>> RoomGenerator::Generate() const
-{		
+{
 	vector<shared_ptr<Room>> rooms;
 	auto count = 0;
-	const auto squareWidth = screenWidth / columns; 
+	const auto squareWidth = screenWidth / columns;
 	const auto squareHeight = screenHeight / rows;
-	
-	for(auto row = 0; row < rows; row++)
+
+	for (auto row = 0; row < rows; row++)
 	{
-		for(auto col = 0; col < columns; col++)
+		for (auto col = 0; col < columns; col++)
 		{
 			const auto number = count++;
-			auto roomName = string("Room") + std::to_string(number);							
+			auto roomName = string("Room") + std::to_string(number);
 			auto room = std::make_shared<Room>(roomName, "Room", number, col * squareWidth, row * squareHeight,
-			                                   squareWidth, squareHeight, false);				
+			                                   squareWidth, squareHeight, false);
 			room->SetTag(std::to_string(number));
-			rooms.push_back(room);			
+			rooms.push_back(room);
 		}
 	}
 
@@ -74,28 +75,39 @@ void RoomGenerator::ConfigureRooms(const std::vector<std::shared_ptr<Room>>& roo
 
 		thisRoom->SetSorroundingRooms(roomIndexAbove, roomIndexRight, roomIndexBelow, roomIndexLeft, rooms);
 
-		ConfigureWalls(thisRoom, canRemoveTopWall, rooms, nextRoom, canRemoveRightWall, canRemoveBottomWall, canRemoveLeftWall, prevIndex);
+		ConfigureWalls(thisRoom, canRemoveTopWall, rooms, nextRoom, canRemoveRightWall, canRemoveBottomWall,
+		               canRemoveLeftWall, prevIndex);
 	}
 }
 
-void RoomGenerator::ConfigureWalls(const std::shared_ptr<Room>& thisRoom, const bool& canRemoveWallAbove, const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Room>& nextRoom, const bool& canRemoveWallRight, const bool& canRemoveWallBelow, const bool& canRemoveWallLeft, const int& prevIndex) const
+void RoomGenerator::ConfigureWalls(const std::shared_ptr<Room>& thisRoom, const bool& canRemoveWallAbove,
+                                   const std::vector<std::shared_ptr<Room>>& rooms,
+                                   const std::shared_ptr<Room>& nextRoom, const bool& canRemoveWallRight,
+                                   const bool& canRemoveWallBelow, const bool& canRemoveWallLeft,
+                                   const int& prevIndex) const
 {
-	if (SettingsManager::Get()->GetBool("grid", "nowalls")) { Rooms::RemoveAllWalls(thisRoom); return; }
-	
-	RemoveSidesRandomly(canRemoveWallAbove, thisRoom, rooms, nextRoom, canRemoveWallRight, canRemoveWallBelow, canRemoveWallLeft, prevIndex);
+	if (SettingsManager::Get()->GetBool("grid", "nowalls"))
+	{
+		Rooms::RemoveAllWalls(thisRoom);
+		return;
+	}
+
+	RemoveSidesRandomly(canRemoveWallAbove, thisRoom, rooms, nextRoom, canRemoveWallRight, canRemoveWallBelow,
+	                    canRemoveWallLeft, prevIndex);
 }
 
 
 void RoomGenerator::RemoveSidesRandomly(const bool& canRemoveAbove, const std::shared_ptr<Room>& currentRoom,
-                                        const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Room>& nextRoom,
+                                        const std::vector<std::shared_ptr<Room>>& rooms,
+                                        const std::shared_ptr<Room>& nextRoom,
                                         const bool& canRemoveRight, const bool& canRemoveBelow,
                                         const bool& canRemoveLeft, const int& prevIndex) const
 {
 	vector<Side> removableSides;
-	
-	if (canRemoveAbove) { removableSides.push_back(Side::Top); 	}	
-	if (canRemoveBelow) { removableSides.push_back(Side::Bottom); }	
-	if (canRemoveLeft) { removableSides.push_back(Side::Left); 	}	
+
+	if (canRemoveAbove) { removableSides.push_back(Side::Top); }
+	if (canRemoveBelow) { removableSides.push_back(Side::Bottom); }
+	if (canRemoveLeft) { removableSides.push_back(Side::Left); }
 	if (canRemoveRight) { removableSides.push_back(Side::Right); }
 
 	if (removeRandomSides)
@@ -107,10 +119,10 @@ void RoomGenerator::RemoveSidesRandomly(const bool& canRemoveAbove, const std::s
 		const auto aSide = sidesToSample.front();
 
 		if (aSide == Side::Top && canRemoveAbove)
-		{			
+		{
 			currentRoom->RemoveWallZeroBased(Side::Top);
 			const auto& roomAbove = rooms[currentRoom->GetNeighbourIndex(Side::Top)];
-			
+
 			roomAbove->RemoveWallZeroBased(Side::Bottom);
 			nextRoom->RemoveWallZeroBased(Side::Bottom);
 		}
