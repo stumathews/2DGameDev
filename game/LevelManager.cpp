@@ -167,7 +167,7 @@ void LevelManager::PlayLevelMusic(const std::string& levelMusicAssetName)
 {
 	// ReSharper disable once CppTooWideScopeInitStatement
 	const auto asset = ResourceManager::Get()->GetAssetInfo(levelMusicAssetName);
-	if (asset && asset->IsLoadedInMemory) { AudioManager::Get()->Play(AudioManager::ToAudioAsset(asset)->AsMusic()); }	
+	if (asset && asset->IsLoadedInMemory) { AudioManager::Get()->Play(AudioManager::ToAudioAsset(asset)); }	
 }
 
 void LevelManager::OnGameWon()
@@ -176,10 +176,7 @@ void LevelManager::OnGameWon()
 		std::make_shared<Action>([&]() { gameCommands->ToggleMusic(verbose); }));
 	const auto b = std::static_pointer_cast<Process>(std::make_shared<Action>([&]()
 	{
-		AudioManager::Get()->Play(  // NOLINT(readability-static-accessed-through-instance)
-			AudioManager::ToAudioAsset(
-				ResourceManager::Get()->GetAssetInfo(SettingsManager::Get()->GetString("audio", "win_music")))->
-			AsSoundEffect());
+		AudioManager::Get()->Play(ResourceManager::Get()->GetAssetInfo(SettingsManager::String("audio", "win_music")));
 	}));
 	
 	const auto c = std::static_pointer_cast<Process>(std::make_shared<DelayProcess>(5000));
@@ -274,7 +271,7 @@ void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms)
 			spriteAssert = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(GetSetting("pickup3", "assetName")));
 		}
 
-		auto pickup = CharacterBuilder::BuildPickup(pickupName, randomRoom, spriteAssert->uid);
+		auto pickup = CharacterBuilder::BuildPickup(pickupName, randomRoom, spriteAssert->Uid);
 		
 		pickups.push_back(pickup);
 	}
@@ -296,7 +293,7 @@ void LevelManager::CreateLevel(const string& levelFilePath)
 	InitializeRooms(rooms);	
 
 	// Add player to room in level
-	CreatePlayer(rooms, GetAsset("edge_player")->uid);
+	CreatePlayer(rooms, GetAsset("edge_player")->Uid);
 
 	// Add Hud
 	CreateHud(rooms, player);
@@ -392,7 +389,7 @@ void LevelManager::CreateAutoLevel()
 	level->Load(); // construct a level
 
 	InitializeRooms(level->Rooms);
-	CreatePlayer(level->Rooms, GetAsset("edge_player")->uid);
+	CreatePlayer(level->Rooms, GetAsset("edge_player")->Uid);
 	CreateAutoPickups(level->Rooms);
 	CreateHud(level->Rooms, player);
 }

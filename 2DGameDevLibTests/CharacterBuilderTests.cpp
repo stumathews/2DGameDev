@@ -81,7 +81,7 @@ TEST_F(CharacterBuilderTests, BuildPickupWorks)
 	EXPECT_TRUE(pickup->IsVisible);
 	EXPECT_TRUE(pickup->IsActive);
 	EXPECT_TRUE(pickup->Position == room->GetCenter(expectedAssetDimensions));
-	EXPECT_TRUE(pickup->Asset->uid == myResourceId);
+	EXPECT_TRUE(pickup->Asset->Uid == myResourceId);
 	EXPECT_TRUE(pickup->SubscribesTo(gamelib::PlayerMovedEventTypeEventId));
 }
 
@@ -106,7 +106,7 @@ TEST_F(CharacterBuilderTests, BuildPlayerWorks)
 
 void CharacterBuilderTests::DoBasicNpcTests(const std::shared_ptr<gamelib::Npc> npc) const
 {
-	EXPECT_TRUE(npc->Sprite->Asset->uid == myResourceId);
+	EXPECT_TRUE(npc->Sprite->Asset->Uid == myResourceId);
 	EXPECT_TRUE(npc->Sprite->Asset->Dimensions == expectedAssetDimensions);
 	
 }

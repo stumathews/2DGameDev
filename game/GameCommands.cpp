@@ -32,7 +32,7 @@ void GameCommands::Fire(const bool verbose)
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: Fire", verbose); }
 
 	// Sound it
-	PlaySoundEffect(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("scratch.wav"))->AsSoundEffect());
+	PlaySoundEffect(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("scratch.wav")));
 
 	// Send event to do it
 	EventManager::Get()->RaiseEvent(std::make_shared<Event>(FireEventId), this);
@@ -74,7 +74,7 @@ void GameCommands::MoveRight(const bool verbose)
 	EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Right), this);
 }
 
-void GameCommands::PlaySoundEffect(Mix_Chunk* effect) const
+void GameCommands::PlaySoundEffect(const shared_ptr<AudioAsset>& effect) const
 {
 	// Log it
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: PlaySoundEffect", _verbose); }
@@ -128,7 +128,7 @@ void GameCommands::ToggleMusic(const bool verbose) const
 	if (!Mix_PlayingMusic() && !Mix_PausedMusic())
 	{
 		// We always plat level 4's music if no music is playing
-		AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("LevelMusic4"))->AsMusic());
+		AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("LevelMusic4")));
 	}
 		
 	if (Mix_PausedMusic() == 1) 
@@ -161,7 +161,7 @@ void GameCommands::FetchedPickup(const bool verbose) const
 	// Log it
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: FetchedPickup", verbose); }
 
-	AudioManager::Get()->Play(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo(SettingsManager::String("audio", "fetched_pickup")))->AsSoundEffect());
+	AudioManager::Get()->Play(ResourceManager::Get()->GetAssetInfo(SettingsManager::String("audio", "fetched_pickup")));
 }
 
 void GameCommands::StartNetworkLevel()

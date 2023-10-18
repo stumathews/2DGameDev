@@ -44,7 +44,7 @@ TEST_F(PickupTests, Construction)
 	EXPECT_EQ(pickup->GetName(), pickupName);
 	EXPECT_EQ(pickup->RoomNumber, room->GetRoomNumber());
 	EXPECT_THAT(pickup->IntProperties, testing::IsEmpty());
-	EXPECT_THAT(pickup->Asset->uid, testing::Eq(pickupAssetId));
+	EXPECT_THAT(pickup->Asset->Uid, testing::Eq(pickupAssetId));
 }
 
 TEST_F(PickupTests, Initialize)

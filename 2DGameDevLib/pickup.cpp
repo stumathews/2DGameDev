@@ -23,7 +23,7 @@ namespace gamelib
 		SetBounds();
 
 		sprite = AnimatedSprite::Create(
-			Position, dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(Asset->name)));
+			Position, dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(Asset->Name)));
 		width = sprite->Dimensions.GetWidth();
 		height = sprite->Dimensions.GetHeight();
 	}
