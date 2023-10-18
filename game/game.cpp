@@ -39,7 +39,7 @@ int main(int argc, char *args[])
 		// Start the game loop which will pump update/draw events onto the event system, which level objects subscribe to
 		infrastructure.DoGameLoop(GameData::Get());
 
-		return IsSuccess(infrastructure.UnloadGameSubsystems(), "Unloading game subsystems failed");	
+		return IsSuccess(infrastructure.Unload(), "Unloading game subsystems failed");	
 	}
 	catch(EngineException& e)
 	{
@@ -86,10 +86,11 @@ void InitializeGameSubSystems(GameStructure& gameStructure)
 {
 	constexpr auto screenWidth = 0; // 0 will mean it will get read from the settings file
 	constexpr auto screenHeight = 0; // 0 will mean it will get read from the settings file
-	constexpr auto windowTitle = "Initialize Game subsystems...";
+	constexpr auto windowTitle = "Mazer2D!";
 	constexpr auto resourcesFilePath = "game\\Resources.xml";
+	constexpr auto gameSettingsFilePath = "game/settings.xml";
 
-	const auto initialized1 = gameStructure.InitializeGameSubSystems(screenWidth, screenHeight, windowTitle, resourcesFilePath);
+	const auto initialized1 = gameStructure.Initialize(screenWidth, screenHeight, windowTitle, resourcesFilePath, gameSettingsFilePath);
 	const auto initialized2 = LevelManager::Get()->Initialize();
 
 	const auto someInitFailed = !IsSuccess(initialized1, "InitializeGameSubSystems...") || 
