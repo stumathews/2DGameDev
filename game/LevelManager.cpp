@@ -167,7 +167,7 @@ void LevelManager::PlayLevelMusic(const std::string& levelMusicAssetName)
 {
 	// ReSharper disable once CppTooWideScopeInitStatement
 	const auto asset = ResourceManager::Get()->GetAssetInfo(levelMusicAssetName);
-	if (asset && asset->IsLoadedInMemory) { AudioManager::Get()->Play(AudioManager::ToAudioAsset(asset)); }	
+	if (asset && asset->IsLoadedInMemory) { AudioManager::Get()->Play(asset); }	
 }
 
 void LevelManager::OnGameWon()
