@@ -3,7 +3,7 @@
 
 #include "Player.h"
 #include "Room.h"
-#include <Direction.h>
+#include <character/Direction.h>
 #include <common/Logger.h>
 #include <exceptions/EngineException.h>
 #include <util/SettingsManager.h>

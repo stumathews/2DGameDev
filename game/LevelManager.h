@@ -10,8 +10,7 @@
 #include <events/EventFactory.h>
 #include "graphic/DrawableFrameRate.h"
 #include <processes/ProcessManager.h>
-#include <objects/StaticSprite.h>
-
+#include <character/StaticSprite.h>
 #include "Enemy.h"
 #include "Pickup.h"
 #include "graphic/DrawableText.h"

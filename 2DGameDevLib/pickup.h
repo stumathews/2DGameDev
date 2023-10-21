@@ -2,10 +2,10 @@
 
 #include "Room.h"
 #include "objects/DrawableGameObject.h"
-#include <objects/AnimatedSprite.h>
+#include <character/AnimatedSprite.h>
 #include <util/Tuple.h>
 
-#include "SpriteAsset.h"
+#include "asset/SpriteAsset.h"
 
 namespace gamelib
 {

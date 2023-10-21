@@ -6,7 +6,7 @@
 #include <scene/SceneManager.h>
 #include "player.h"
 #include <memory>
-#include <SpriteAsset.h>
+#include <asset/SpriteAsset.h>
 #include <common/aliases.h>
 
 #include "EventNumber.h"

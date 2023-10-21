@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "Enemy.h"
-#include "SpriteAsset.h"
+#include "asset/SpriteAsset.h"
 #include "events/EventSubscriber.h"
 
 namespace gamelib

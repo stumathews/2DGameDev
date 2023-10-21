@@ -15,7 +15,7 @@
 #include <processes/DelayProcess.h>
 #include <processes/Action.h>
 #include <functional>
-#include <events/Event.h>
+#include <cppgamelib/events.h>
 
 // ReSharper disable once CppUnusedIncludeDirective
 #include <random>

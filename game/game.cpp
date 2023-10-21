@@ -1,10 +1,10 @@
 #include <SDL.h>
-#include <net/NetworkManager.h>
+#include <cppgamelib/net.h>
 #include <Windows.h>
 #include "LevelManager.h"
 #include "GameStructure.h"
 #include "game.h"
-#include "Logging/ErrorLogManager.h"
+//#include "Logging/ErrorLogManager.h"
 #include <GameDataManager.h>
 
 using namespace std;

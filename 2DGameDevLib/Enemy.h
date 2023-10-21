@@ -1,6 +1,6 @@
 #pragma once
 #include "Level.h"
-#include "objects/Npc.h"
+#include "character/Npc.h"
 
 class Level;
 class Player;

@@ -1,5 +1,5 @@
 #pragma once
-#include <objects/Component.h>
+#include <character/Component.h>
 #include "Player.h"
 #include "Room.h"
 

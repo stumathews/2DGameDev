@@ -3,7 +3,7 @@
 #include "Enemy.h"
 #include "GameData.h"
 #include "GameObjectMoveStrategy.h"
-#include "SpriteAsset.h"
+#include "asset/SpriteAsset.h"
 #include "common/constants.h"
 #include "events/PlayerMovedEvent.h"
 #include "objects/GameObjectFactory.h"

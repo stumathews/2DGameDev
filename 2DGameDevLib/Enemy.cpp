@@ -4,7 +4,7 @@
 #include <memory>
 #include <utility>
 
-#include "DirectionUtils.h"
+#include "character/DirectionUtils.h"
 #include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
 #include "Player.h"

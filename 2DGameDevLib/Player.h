@@ -6,9 +6,9 @@
 #include "events/Event.h"
 #include "Room.h"
 #include <ai/FSM.h>
-#include <objects/AnimatedSprite.h>
+#include <character/AnimatedSprite.h>
 #include "util/Tuple.h"
-#include <Hotspot.h>
+#include <character/Hotspot.h>
 #include "RoomInfo.h"
 #include "movement/IGameMoveStrategy.h"
 

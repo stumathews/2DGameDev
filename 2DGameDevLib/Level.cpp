@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Level.h"
-#include "tinyxml2.h"
+#include "file/tinyxml2.h"
 #include "Room.h"
 #include <util/SettingsManager.h>
 #include "Rooms.h"
@@ -14,7 +14,7 @@
 #include "common/constants.h"
 #include "CharacterBuilder.h"
 // ReSharper disable once CppUnusedIncludeDirective
-#include "DirectionUtils.h"
+#include "character/DirectionUtils.h"
 #include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
 // ReSharper disable once CppUnusedIncludeDirective

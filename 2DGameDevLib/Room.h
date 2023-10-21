@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL.h>
-#include <scene/ABCDRectangle.h>
+#include <geometry/ABCDRectangle.h>
 #include "objects/DrawableGameObject.h"
 #include "objects/GameObject.h"
 #include <events/Event.h>
