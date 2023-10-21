@@ -96,6 +96,24 @@ bool Enemy::IfMoved(const gamelib::Direction direction) const
 	return isValidMove && currentFacingDirection == direction;
 }
 
+bool Enemy::IsPlayerInSameAxis(const std::shared_ptr<Player>& player, const bool verticalView)
+{
+	const auto playerHotspotPosition = player->Hotspot->GetPosition();
+	const auto playerHotspotParentHeight = static_cast<int>(player->Hotspot->ParentHeight);
+	const auto playerHotspotParentWidth = static_cast<int>(player->Hotspot->ParentWidth);
+	constexpr auto half = 2;
+
+	const auto isWithinVerticalFov =
+		playerHotspotPosition.GetY() > playerHotspotPosition.GetY() + playerHotspotParentHeight / half ||
+		playerHotspotPosition.GetY() < playerHotspotPosition.GetY() - playerHotspotParentHeight / half;
+
+	const auto isWithinHorizontalFov = 
+		playerHotspotPosition.GetX() > playerHotspotPosition.GetX() + playerHotspotParentWidth / half ||
+		playerHotspotPosition.GetX() < playerHotspotPosition.GetX() - playerHotspotParentWidth / half;
+
+	return verticalView ? isWithinVerticalFov : isWithinHorizontalFov;
+}
+
 void Enemy::LookForPlayer()
 {
 	const auto player = GameData::Get()->GetPlayer();
@@ -121,8 +139,7 @@ void Enemy::LookForPlayer()
 	if (playerCol == enemyCol)
 	{
 		// Don't look for player if not in the same line as player
-		if (Hotspot->GetPosition().GetX() > player->Hotspot->GetPosition().GetX() + (player->Hotspot->ParentWidth/2) ||
-			Hotspot->GetPosition().GetX() < player->Hotspot->GetPosition().GetX() - (player->Hotspot->ParentWidth/2)) { return;}
+		if (IsPlayerInSameAxis(player, false)) { return;}
 
 		// Search for player up.
 		if (IsPlayerInLineOfSight(gamelib::Direction::Up))
@@ -143,8 +160,7 @@ void Enemy::LookForPlayer()
 	if (playerRow == enemyRow) // look left and right, chase in direction found
 	{
 		// Don't look for player if not in the same line as player
-		if (Hotspot->GetPosition().GetY() > player->Hotspot->GetPosition().GetY() + (player->Hotspot->ParentHeight/2) ||
-			Hotspot->GetPosition().GetY() < player->Hotspot->GetPosition().GetY() - (player->Hotspot->ParentHeight/2)) {return;}
+		if (IsPlayerInSameAxis(player, true)) {return;}
 
 		// Search for player Left.
 		if (IsPlayerInLineOfSight(gamelib::Direction::Left))
