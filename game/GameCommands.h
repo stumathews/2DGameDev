@@ -1,7 +1,6 @@
 #pragma once
 #include "util/SettingsManager.h"
 #include "events/EventManager.h"
-#include <objects/MultipleInheritableEnableSharedFromThis.h>
 #include <events/EventSubscriber.h>
 #include <memory>
 #include "audio/AudioManager.h"
@@ -9,11 +8,15 @@
 #include "GameWorld.h"
 #include <events/Event.h>
 
-class GameCommands :  public gamelib::EventSubscriber, public inheritable_enable_shared_from_this<GameCommands>
+class GameCommands final : public gamelib::EventSubscriber, public std::enable_shared_from_this<GameCommands>
 {
 public:	
 	GameCommands();
+	~GameCommands() override = default;
 	GameCommands(const GameCommands& copy) = delete;
+	GameCommands(const GameCommands&& copy) = delete;
+	GameCommands& operator=(const GameCommands& other) = delete;
+	GameCommands& operator=(const GameCommands&& other) = delete;
 
 	std::string GetSubscriberName() override { return "GameCommands"; }
 
@@ -33,7 +36,7 @@ public:
 	void StartNetworkLevel();
 	static void PingGameServer();
 private:
-	bool _verbose;
+	bool verbose;
 	bool logCommands;
 
 	// Inherited via EventSubscriber

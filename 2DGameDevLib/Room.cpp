@@ -31,7 +31,7 @@ Room::Room(const string& name, const string& type, const int number, const int x
 	this->height = height;
 	this->leftRoomIndex = 0;
 	this->innerBoundsOffset = 0;
-	this->abcd = ABCDRectangle(x, y, width, height);
+	this->abcd = AbcdRectangle(x, y, width, height);
 	UpdateInnerBounds(); // We only need to update the bounds once, so do it in the constructor only
 	SetupWalls();
 }
@@ -242,7 +242,7 @@ void Room::Update(const unsigned long deltaMs)
 	}
 }
 
-ABCDRectangle& Room::GetABCDRectangle() { return abcd; }
+AbcdRectangle& Room::GetABCDRectangle() { return abcd; }
 Coordinate<int> Room::GetPosition() { return GetABCDRectangle().GetCenter(); }
 int Room::GetRoomNumber() const { return roomNumber; }
 int Room::GetRowNumber(const int maxCols) const { return GetRoomNumber() / maxCols; }
@@ -296,7 +296,7 @@ Coordinate<int> Room::GetCenter() const
 	return GetCenter(GetWidth(), GetHeight());
 }
 
-Coordinate<int> Room::GetCenter(const ABCDRectangle rectangle) const
+Coordinate<int> Room::GetCenter(const AbcdRectangle rectangle) const
 {
 	const auto roomXMid = GetX() + (GetWidth() / 2);
 	const auto roomYMid = GetY() + (GetHeight() / 2);

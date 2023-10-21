@@ -3,7 +3,6 @@
 #include "Room.h"
 #include "objects/DrawableGameObject.h"
 #include <objects/AnimatedSprite.h>
-#include <objects/MultipleInheritableEnableSharedFromThis.h>
 #include <util/Tuple.h>
 
 #include "SpriteAsset.h"
@@ -13,7 +12,7 @@ namespace gamelib
 	/// <summary>
 	/// Represents a Pickup in the game
 	/// </summary>
-	class Pickup final : public DrawableGameObject, public inheritable_enable_shared_from_this<Pickup>
+	class Pickup final : public DrawableGameObject, public std::enable_shared_from_this<Pickup>
 	{
 	public:
 		/// <summary>

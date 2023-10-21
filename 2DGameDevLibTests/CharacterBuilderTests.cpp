@@ -15,7 +15,7 @@ class CharacterBuilderTests : public testing::Test
 	void SetUp() override
 	{
 		gamelib::ResourceManager::Get()->Initialize("Resources.xml");
-		expectedAssetDimensions = gamelib::ABCDRectangle(0,0,32,32);
+		expectedAssetDimensions = gamelib::AbcdRectangle(0,0,32,32);
 		level = std::make_shared<Level>();
 		room = std::make_shared<Room>("MyRoom", "Room", roomNumber, roomX, roomY, roomWidth, roomHeight);
 	}
@@ -34,7 +34,7 @@ class CharacterBuilderTests : public testing::Test
 	int roomNumber = 12;
 	int roomWidth = 100;
 	int roomHeight = 100;
-	gamelib::ABCDRectangle expectedAssetDimensions = {};
+	gamelib::AbcdRectangle expectedAssetDimensions = {};
 	int myResourceId = 188;
 	gamelib::Direction expectedStartingDirection = gamelib::Direction::Down;
 	std::shared_ptr<Level> level;

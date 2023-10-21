@@ -18,7 +18,7 @@ using namespace std;
 
 GameCommands::GameCommands()
 {
-	_verbose = SettingsManager::Bool("global", "verbose");
+	verbose = SettingsManager::Bool("global", "verbose");
 	logCommands = SettingsManager::Bool("global", "verbose");
 
 	// The Game Commands subscribe to certain event too
@@ -77,7 +77,7 @@ void GameCommands::MoveRight(const bool verbose)
 void GameCommands::PlaySoundEffect(const shared_ptr<AudioAsset>& effect) const
 {
 	// Log it
-	if (logCommands) { Logger::Get()->LogThis("GameCommand: PlaySoundEffect", _verbose); }
+	if (logCommands) { Logger::Get()->LogThis("GameCommand: PlaySoundEffect", verbose); }
 
 	// do it
 	AudioManager::Get()->Play(effect);
@@ -117,7 +117,7 @@ void GameCommands::LoadNewLevel(const int level)
 	}
 
 	// Send event to change level to selected level
-	RaiseChangedLevel(_verbose, static_cast<short>(level));	
+	RaiseChangedLevel(verbose, static_cast<short>(level));	
 }
 
 void GameCommands::ToggleMusic(const bool verbose) const
@@ -172,7 +172,7 @@ void GameCommands::StartNetworkLevel()
 		return;
 	}
 
-	if (logCommands) { Logger::Get()->LogThis("GameCommand: StartNetworkLevel", _verbose); }
+	if (logCommands) { Logger::Get()->LogThis("GameCommand: StartNetworkLevel", verbose); }
 
 	// Ask the LevelManager to prepare a level description and pass that to StartNetworkLevelEvent
 	// and let that propagate to all players

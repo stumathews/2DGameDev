@@ -120,6 +120,10 @@ void Enemy::LookForPlayer()
 	// look up and down?
 	if (playerCol == enemyCol)
 	{
+		// Don't look for player if not in the same line as player
+		if (Hotspot->GetPosition().GetX() > player->Hotspot->GetPosition().GetX() + (player->Hotspot->ParentWidth/2) ||
+			Hotspot->GetPosition().GetX() < player->Hotspot->GetPosition().GetX() - (player->Hotspot->ParentWidth/2)) { return;}
+
 		// Search for player up.
 		if (IsPlayerInLineOfSight(gamelib::Direction::Up))
 		{
@@ -138,6 +142,10 @@ void Enemy::LookForPlayer()
 	// look left and right?
 	if (playerRow == enemyRow) // look left and right, chase in direction found
 	{
+		// Don't look for player if not in the same line as player
+		if (Hotspot->GetPosition().GetY() > player->Hotspot->GetPosition().GetY() + (player->Hotspot->ParentHeight/2) ||
+			Hotspot->GetPosition().GetY() < player->Hotspot->GetPosition().GetY() - (player->Hotspot->ParentHeight/2)) {return;}
+
 		// Search for player Left.
 		if (IsPlayerInLineOfSight(gamelib::Direction::Left))
 		{

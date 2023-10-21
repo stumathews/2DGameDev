@@ -124,7 +124,7 @@ void LevelManager::OnStartNetworkLevel(const std::shared_ptr<Event>& evt)
 {
 	// read the start level event and create the level
 	// ReSharper disable once CppNoDiscardExpression
-	ChangeLevel(1);  // NOLINT(clang-diagnostic-unused-result)
+	auto _ = ChangeLevel(1);  // NOLINT(clang-diagnostic-unused-result)
 
 	// Network games all start on level 1 for now
 	CreateLevel(GetSetting("global", "level1FileName"));

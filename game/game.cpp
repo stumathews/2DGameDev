@@ -39,7 +39,7 @@ int main(int argc, char *args[])
 		// Start the game loop which will pump update/draw events onto the event system, which level objects subscribe to
 		infrastructure.DoGameLoop(GameData::Get());
 
-		return IsSuccess(infrastructure.Unload(), "Unloading game subsystems failed");	
+		return IsSuccess(infrastructure.Unload(), "Unloading game subsystems successful.");	
 	}
 	catch(EngineException& e)
 	{
@@ -93,14 +93,14 @@ void InitializeGameSubSystems(GameStructure& gameStructure)
 	const auto initialized1 = gameStructure.Initialize(screenWidth, screenHeight, windowTitle, resourcesFilePath, gameSettingsFilePath);
 	const auto initialized2 = LevelManager::Get()->Initialize();
 
-	const auto someInitFailed = !IsSuccess(initialized1, "InitializeGameSubSystems...") || 
-								 !IsSuccess(initialized2, "Initializing Level Manager...");
+	const auto someInitFailed = !IsSuccess(initialized1, "Successfully initialized game structure.") || 
+								     !IsSuccess(initialized2, "Successfully initialized Level Manager...");
 
 	if (someInitFailed)
 	{
 		const auto verboseLoggingEnabled = Settings::Bool("global", "verbose");
 
-		LogMessage("Game initialization failed.", verboseLoggingEnabled, true);
+		LogMessage("Game subsystem initialization failed.", verboseLoggingEnabled, true);
 
 		THROW(12, "There was a problem initializing the game subsystems", "Initialize Subsystems")
 	}

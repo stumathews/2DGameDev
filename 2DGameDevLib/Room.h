@@ -7,11 +7,10 @@
 #include "util/Tuple.h"
 #include <geometry/Line.h>
 #include <common/aliases.h>
-#include <objects/MultipleInheritableEnableSharedFromThis.h>
 
 #include "geometry/Side.h"
 
-class Room : public gamelib::DrawableGameObject, public inheritable_enable_shared_from_this<Room>
+class Room : public gamelib::DrawableGameObject, public std::enable_shared_from_this<Room>
 {
 public:
 	Room(const std::string& name, const std::string& type, int number, int x, int y, int width, int height,
@@ -49,7 +48,7 @@ public:
 	gamelib::ListOfEvents& OnPlayerMoved(std::vector<std::shared_ptr<gamelib::Event>>& generatedEvents);
 	gamelib::Coordinate<int> GetCenter(int width, int height) const;
 	gamelib::Coordinate<int> GetCenter() const;
-	gamelib::Coordinate<int> GetCenter(gamelib::ABCDRectangle rectangle) const;
+	gamelib::Coordinate<int> GetCenter(gamelib::AbcdRectangle rectangle) const;
 
 	gamelib::Coordinate<int> GetPosition();
 	int GetNeighbourIndex(gamelib::Side index) const;
@@ -78,8 +77,8 @@ public:
 protected:
 	int roomNumber;
 	bool walls[4]{};
-	gamelib::ABCDRectangle abcd{};
-	gamelib::ABCDRectangle& GetABCDRectangle();
+	gamelib::AbcdRectangle abcd{};
+	gamelib::AbcdRectangle& GetABCDRectangle();
 	int topRoomIndex;
 	std::shared_ptr<Room> RightRoom;
 	std::shared_ptr<Room> LeftRoom;
