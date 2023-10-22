@@ -7,8 +7,6 @@
 #include "player.h"
 #include <memory>
 #include <asset/SpriteAsset.h>
-#include <common/aliases.h>
-
 #include "EventNumber.h"
 #include "SDLCollisionDetection.h"
 #include "GameData.h"
