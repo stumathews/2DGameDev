@@ -1,8 +1,8 @@
 #pragma once
 #include <util/Tuple.h>
-#include <movement/IMovement.h>
+#include <character/IMovement.h>
 #include "RoomInfo.h"
-#include "movement/IGameMoveStrategy.h"
+#include "character/IGameMoveStrategy.h"
 
 class Player;
 class Room;

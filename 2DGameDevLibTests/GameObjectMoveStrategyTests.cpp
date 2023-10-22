@@ -4,7 +4,7 @@
 #include "GameObjectMoveStrategy.h"
 #include "RoomGenerator.h"
 #include "gtest/gtest.h"
-#include "Movement/Movement.h"
+#include "character/Movement.h"
 #include "objects/GameObjectFactory.h"
 #include "resource/ResourceManager.h"
 

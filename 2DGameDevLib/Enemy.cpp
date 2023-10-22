@@ -1,17 +1,15 @@
 #include "pch.h"
 #include "Enemy.h"
-
 #include <memory>
 #include <utility>
-
 #include "character/DirectionUtils.h"
 #include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
 #include "Player.h"
-#include "events/ControllerMoveEvent.h"
+// ReSharper disable once CppUnusedIncludeDirective
+#include <events/ControllerMoveEvent.h>
 #include "events/GameObjectEvent.h"
-#include "Movement/Movement.h"
-
+#include "character/Movement.h"
 #include "PlayerCollidedWithEnemyEvent.h"
 #include "EventNumber.h"
 #include "geometry/SideUtils.h"

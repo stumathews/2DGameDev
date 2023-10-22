@@ -11,7 +11,7 @@
 #include <events/EventFactory.h>
 
 #include "EventNumber.h"
-#include "Movement/Movement.h"
+#include "character/Movement.h"
 #include "util/SettingsManager.h"
 
 using namespace std;

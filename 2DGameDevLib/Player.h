@@ -10,7 +10,7 @@
 #include "util/Tuple.h"
 #include <character/Hotspot.h>
 #include "RoomInfo.h"
-#include "movement/IGameMoveStrategy.h"
+#include "character/IGameMoveStrategy.h"
 
 using ListOfEvents = std::vector<std::shared_ptr<gamelib::Event>>;
 using ListOfGameObjects = std::vector<std::weak_ptr<gamelib::GameObject>>;
