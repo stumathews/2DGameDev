@@ -33,7 +33,7 @@ private:
 	void CheckForPlayerCollision();
 	bool isValidMove{};
 	bool IfMoved(gamelib::Direction direction) const;
-	static bool IsPlayerInSameAxis(const std::shared_ptr<Player>& player, bool verticalView);
+	bool IsPlayerInSameAxis(const std::shared_ptr<Player>& player, bool verticalView) const;
 	void LookForPlayer();
 	bool IsPlayerInLineOfSight(gamelib::Direction lookDirection) const;
 	std::function<void(unsigned long deltaMs)> DoLookForPlayer(); // returns a function taking a delta time

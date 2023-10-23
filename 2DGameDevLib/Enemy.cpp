@@ -94,7 +94,7 @@ bool Enemy::IfMoved(const gamelib::Direction direction) const
 	return isValidMove && currentFacingDirection == direction;
 }
 
-bool Enemy::IsPlayerInSameAxis(const std::shared_ptr<Player>& player, const bool verticalView)
+bool Enemy::IsPlayerInSameAxis(const std::shared_ptr<Player>& player, const bool verticalView) const
 {
 	const auto playerHotspotPosition = player->Hotspot->GetPosition();
 	const auto playerHotspotParentHeight = static_cast<int>(player->Hotspot->ParentHeight);
@@ -102,12 +102,12 @@ bool Enemy::IsPlayerInSameAxis(const std::shared_ptr<Player>& player, const bool
 	constexpr auto half = 2;
 
 	const auto isWithinVerticalFov =
-		playerHotspotPosition.GetY() > playerHotspotPosition.GetY() + playerHotspotParentHeight / half ||
-		playerHotspotPosition.GetY() < playerHotspotPosition.GetY() - playerHotspotParentHeight / half;
+		Hotspot->GetPosition().GetY() > playerHotspotPosition.GetY() + playerHotspotParentHeight / half ||
+		Hotspot->GetPosition().GetY() < playerHotspotPosition.GetY() - playerHotspotParentHeight / half;
 
 	const auto isWithinHorizontalFov = 
-		playerHotspotPosition.GetX() > playerHotspotPosition.GetX() + playerHotspotParentWidth / half ||
-		playerHotspotPosition.GetX() < playerHotspotPosition.GetX() - playerHotspotParentWidth / half;
+		Hotspot->GetPosition().GetX() > playerHotspotPosition.GetX() + playerHotspotParentWidth / half ||
+		Hotspot->GetPosition().GetX() < playerHotspotPosition.GetX() - playerHotspotParentWidth / half;
 
 	return verticalView ? isWithinVerticalFov : isWithinHorizontalFov;
 }
