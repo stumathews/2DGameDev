@@ -3,7 +3,7 @@
 #include "Room.h"
 #include "objects/DrawableGameObject.h"
 #include <character/AnimatedSprite.h>
-#include <util/Tuple.h>
+#include <geometry/Coordinate.h>
 
 #include "asset/SpriteAsset.h"
 

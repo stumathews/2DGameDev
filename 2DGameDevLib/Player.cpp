@@ -12,7 +12,7 @@
 
 #include "EventNumber.h"
 #include "character/Movement.h"
-#include "util/SettingsManager.h"
+#include "file/SettingsManager.h"
 
 using namespace std;
 using namespace gamelib;

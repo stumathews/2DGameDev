@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <random>
 #include <vector>
-#include <util/SettingsManager.h>
+#include <file/SettingsManager.h>
 #include "Rooms.h"
 
 using namespace std;

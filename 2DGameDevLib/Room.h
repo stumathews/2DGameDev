@@ -4,7 +4,7 @@
 #include "objects/DrawableGameObject.h"
 #include "objects/GameObject.h"
 #include <events/Event.h>
-#include "util/Tuple.h"
+#include "geometry/Coordinate.h"
 #include <geometry/Line.h>
 #include <common/aliases.h>
 

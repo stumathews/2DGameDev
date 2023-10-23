@@ -4,9 +4,9 @@
 #include "Player.h"
 #include "Room.h"
 #include <character/Direction.h>
-#include <common/Logger.h>
+#include <file/Logger.h>
 #include <exceptions/EngineException.h>
-#include <util/SettingsManager.h>
+#include <file/SettingsManager.h>
 #include "../game/LevelManager.h"
 #include "character/IMovement.h"
 

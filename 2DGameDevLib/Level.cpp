@@ -2,7 +2,7 @@
 #include "Level.h"
 #include "file/tinyxml2.h"
 #include "Room.h"
-#include <util/SettingsManager.h>
+#include <file/SettingsManager.h>
 #include "Rooms.h"
 #include "RoomGenerator.h"
 #include <objects/GameObject.h>

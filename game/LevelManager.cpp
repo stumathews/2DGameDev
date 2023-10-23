@@ -10,8 +10,7 @@
 #include <GameData.h>
 #include <events/NetworkPlayerJoinedEvent.h>
 #include <Level.h>
-#include "util/RectDebugging.h"
-#include "windows.h"
+#include "graphic/RectDebugging.h"
 #include <processes/DelayProcess.h>
 #include <processes/Action.h>
 #include <functional>
@@ -23,7 +22,6 @@
 
 #include "CharacterBuilder.h"
 #include "EventNumber.h"
-#include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
 #include "PlayerCollidedWithEnemyEvent.h"
 #include "PlayerCollidedWithPickupEvent.h"

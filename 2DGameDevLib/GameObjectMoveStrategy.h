@@ -1,5 +1,5 @@
 #pragma once
-#include <util/Tuple.h>
+#include <geometry/Coordinate.h>
 #include <character/IMovement.h>
 #include "RoomInfo.h"
 #include "character/IGameMoveStrategy.h"

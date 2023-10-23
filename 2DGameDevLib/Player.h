@@ -7,7 +7,7 @@
 #include "Room.h"
 #include <ai/FSM.h>
 #include <character/AnimatedSprite.h>
-#include "util/Tuple.h"
+#include "geometry/Coordinate.h"
 #include <character/Hotspot.h>
 #include "RoomInfo.h"
 #include "character/IGameMoveStrategy.h"

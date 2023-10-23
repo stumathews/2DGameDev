@@ -1,15 +1,13 @@
 #include "pch.h"
-#include "util/RectDebugging.h"
+#include "graphic/RectDebugging.h"
 #include <scene/SceneManager.h>
 #include "Player.h"
 #include <sstream>
-
 #include "EventNumber.h"
 #include "GameData.h"
 #include "GameDataManager.h"
-#include "events/GameObjectEvent.h"
 #include "geometry/SideUtils.h"
-#include "util/SettingsManager.h"
+#include "file/SettingsManager.h"
 
 using namespace std;
 using namespace gamelib;
