@@ -12,10 +12,17 @@
 using namespace std;
 using namespace gamelib;
 
-void GameDataManager::Initialize()
+void GameDataManager::Initialize(const bool isNetworkGame = false)
 {
 	SubscribeToEvent(AddGameObjectToCurrentSceneEventId);
 	SubscribeToEvent(GameObjectTypeEventId);
+	GameData::Get()->IsNetworkGame = isNetworkGame;
+	GameData::Get()->IsGameDone = false;
+	GameData::Get()->IsNetworkGame = false;
+	GameData::Get()->CanDraw = true;
+	GameWorldData.CanDraw = GameData::Get()->CanDraw;
+	GameWorldData.IsNetworkGame = GameData::Get()->IsNetworkGame;
+	GameWorldData.IsGameDone = GameData::Get()->IsGameDone;
 }
 
 GameDataManager::GameDataManager()

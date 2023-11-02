@@ -19,8 +19,9 @@ public:
 	HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long deltaMs) override;
 	std::string GetSubscriberName() override { return "GameDataManager"; }
 	static GameData* GameData() { return GameData::Get(); }
-	void Initialize();
-
+	void Initialize(const bool isNetworkGame);
+	
+	gamelib::GameWorldData GameWorldData {};
 protected:
 	static GameDataManager* instance;
 
@@ -32,4 +33,5 @@ private:
 
 	gamelib::EventManager* eventManager;
 	gamelib::EventFactory* eventFactory;
+
 };
