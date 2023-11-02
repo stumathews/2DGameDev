@@ -1,11 +1,15 @@
 #include <SDL.h>
 #include <cppgamelib/net.h>
-#include <Windows.h>
 #include "LevelManager.h"
-#include "GameStructure.h"
+#include "structure/GameStructure.h"
 #include "game.h"
 //#include "Logging/ErrorLogManager.h"
 #include <GameDataManager.h>
+#include <events/UpdateProcessesEvent.h>
+#include <structure/VariableGameLoop.h>
+
+#include "structure/FixedStepGameLoop.h"
+#include "events/UpdateAllGameObjectsEvent.h"
 
 using namespace std;
 using namespace gamelib;
@@ -21,16 +25,17 @@ typedef SettingsManager Settings;
 */
 
 
+shared_ptr<FixedStepGameLoop> CreateGameLoopStrategy();
+
 int main(int argc, char *args[])
 {
-	GameDataManager::Get()->Initialize();
+	GameDataManager::Get()->Initialize(false);
 	ErrorLogManager::GetErrorLogManager()->Create("GameErrors.txt");
 
 	try
 	{
-		// Create our game structure that uses the level manager's polling function for keyboard input
-		GameStructure infrastructure([&]() { LevelManager::Get()->GetKeyboardInput(); });
-				
+		GameStructure infrastructure(CreateGameLoopStrategy());
+		
 		InitializeGameSubSystems(infrastructure);
 
 		// Load level and create/add game objects
@@ -90,6 +95,7 @@ void InitializeGameSubSystems(GameStructure& gameStructure)
 	constexpr auto resourcesFilePath = "game\\Resources.xml";
 	constexpr auto gameSettingsFilePath = "game/settings.xml";
 
+	
 	const auto initialized1 = gameStructure.Initialize(screenWidth, screenHeight, windowTitle, resourcesFilePath, gameSettingsFilePath);
 	const auto initialized2 = LevelManager::Get()->Initialize();
 
@@ -104,4 +110,27 @@ void InitializeGameSubSystems(GameStructure& gameStructure)
 
 		THROW(12, "There was a problem initializing the game subsystems", "Initialize Subsystems")
 	}
+}
+
+shared_ptr<FixedStepGameLoop> CreateGameLoopStrategy()
+{
+	return std::make_shared<FixedStepGameLoop>(16,
+	                                           [](const unsigned long deltaMs)
+	                                           {
+		                                           EventManager::Get()->ProcessAllEvents(deltaMs);
+		                                           EventManager::Get()->DispatchEventToSubscriber(
+			                                           make_shared<UpdateAllGameObjectsEvent>(), deltaMs);
+		                                           EventManager::Get()->DispatchEventToSubscriber(
+			                                           make_shared<UpdateProcessesEvent>(), deltaMs);
+	                                           },
+	                                           []()
+	                                           {
+		                                           // Time-sensitive, skip queue. Draws the current scene
+		                                           EventManager::Get()->DispatchEventToSubscriber(
+			                                           std::make_shared<Event>(DrawCurrentSceneEventId), 0UL);
+	                                           }, [](const unsigned long deltaMs)
+	                                           {
+		                                           LevelManager::Get()->GetInputManager()->Sample(deltaMs);
+		                                           NetworkManager::Get()->Listen();
+	                                           });
 }

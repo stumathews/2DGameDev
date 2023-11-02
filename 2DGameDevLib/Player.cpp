@@ -9,9 +9,8 @@
 #include <functional>
 #include "GameData.h"
 #include <events/EventFactory.h>
-
 #include "EventNumber.h"
-#include "character/Movement.h"
+#include "character/MovementAtSpeed.h"
 #include "file/SettingsManager.h"
 
 using namespace std;
@@ -122,9 +121,9 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 
 	SetPlayerDirection(moveEvent->Direction);
 
-	// This line actually moves the player by a 'movement'
-	const auto isValidMove = moveStrategy->MoveGameObject(
-		std::make_shared<Movement>(moveEvent->Direction, pixelsToMove));
+	// This line actually moves the player by a 'movement':
+	const auto isValidMove = moveStrategy->MoveGameObject(std::make_shared<MovementAtSpeed>(speed, moveEvent->Direction, deltaMs));
+	//const auto isValidMove = moveStrategy->MoveGameObject(std::make_shared<gamelib::Movement>(moveEvent->Direction, pixelsToMove));
 
 	if (!isValidMove)
 	{
@@ -141,14 +140,17 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 
 	UpdateBounds(width, height);
 
+	
 	// Tell subscribers player moved
 	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreatePlayerMovedEvent(moveEvent->Direction), this);
+
 
 	return createdEvents;
 }
 
 void Player::Update(const unsigned long deltaMs)
 {
+	moveTimer.Update(deltaMs);
 }
 
 void Player::Draw(SDL_Renderer* renderer)
@@ -176,6 +178,10 @@ void Player::LoadSettings()
 	hotspotSize = SettingsManager::Get()->GetInt("player", "hotspotSize");
 	drawHotSpot = SettingsManager::Get()->GetBool("player", "drawHotspot");
 	hideSprite = SettingsManager::Get()->GetBool("player", "hideSprite");
+	speed = SettingsManager::Get()->Int("player", "speed");
+	moveRateMs = SettingsManager::Int("enemy", "moveRateMs");
+		
+	moveTimer.SetFrequency(moveRateMs);
 }
 
 void Player::SetPlayerDirection(const Direction direction)
@@ -268,7 +274,7 @@ void Player::CenterPlayerInRoom(const shared_ptr<Room>& targetRoom)
 		const auto roomYMid = room.GetY() + (room.GetHeight() / 2);
 		const auto x = roomXMid - p.width / 2;
 		const auto y = roomYMid - p.height / 2;
-		return Coordinate<int>(x, y);
+		return Coordinate(x, y);
 	};
 
 	const auto coords = centerPlayerFunc(*targetRoom, *this);

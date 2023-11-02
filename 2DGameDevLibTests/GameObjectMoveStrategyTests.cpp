@@ -7,6 +7,7 @@
 #include "character/Movement.h"
 #include "objects/GameObjectFactory.h"
 #include "resource/ResourceManager.h"
+#include <character/Movement.h>
 
 class GameObjectMoveStrategyTests : public testing::Test 
 {
@@ -52,28 +53,28 @@ TEST_F(GameObjectMoveStrategyTests, BasicPositionChangedTest)
 	GameObjectMoveStrategy moveStrategy(gameObject, std::make_shared<RoomInfo>(room));
 
 	// When using the move strategy to move right by 25 pixels...
-	moveStrategy.MoveGameObject(std::make_shared<Movement>(gamelib::Direction::Right, 25));
+	moveStrategy.MoveGameObject(std::make_shared<gamelib::Movement>(gamelib::Direction::Right, 25));
 
 	// Ensure we move up by 25 pixels only
 	EXPECT_EQ(gameObject->Position.GetX(), initialPosition.GetX() + 25);
 	EXPECT_EQ(gameObject->Position.GetY(), initialPosition.GetY());
 
 	// When moving left by 25 pixels
-	moveStrategy.MoveGameObject(std::make_shared<Movement>(gamelib::Direction::Left, 25));
+	moveStrategy.MoveGameObject(std::make_shared<gamelib::Movement>(gamelib::Direction::Left, 25));
 
 	// Ensure we only move left by 25 pixels
 	EXPECT_EQ(gameObject->Position.GetX(), initialPosition.GetX());
 	EXPECT_EQ(gameObject->Position.GetY(), initialPosition.GetY());
 
 	// When moving 25 pixels up
-	moveStrategy.MoveGameObject(std::make_shared<Movement>(gamelib::Direction::Up, 25));
+	moveStrategy.MoveGameObject(std::make_shared<gamelib::Movement>(gamelib::Direction::Up, 25));
 
 	// Ensure we only move 25 pixels up
 	EXPECT_EQ(gameObject->Position.GetX(), initialPosition.GetX());
 	EXPECT_EQ(gameObject->Position.GetY(), initialPosition.GetY() - 25);
 
 	// When moving 25 pixels down
-	moveStrategy.MoveGameObject(std::make_shared<Movement>(gamelib::Direction::Down, 25));
+	moveStrategy.MoveGameObject(std::make_shared<gamelib::Movement>(gamelib::Direction::Down, 25));
 
 	// Ensure we are only moving 25 pixels down
 	EXPECT_EQ(gameObject->Position.GetX(), initialPosition.GetX());

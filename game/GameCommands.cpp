@@ -24,6 +24,7 @@ GameCommands::GameCommands()
 	// The Game Commands subscribe to certain event too
 	EventManager::Get()->SubscribeToEvent(NetworkPlayerJoinedEventId, this);
 	EventManager::Get()->SubscribeToEvent(NetworkTrafficReceivedEventId, this);
+	EventManager::Get()->SubscribeToEvent(PlayerMovedEventTypeEventId, this);
 }
 
 void GameCommands::Fire(const bool verbose)
@@ -44,7 +45,7 @@ void GameCommands::MoveUp(const bool verbose)
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: MoveUp", verbose); }
 
 	// Send even to do it
-	EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Up), this);
+	Move(Direction::Up);
 }
 
 void GameCommands::MoveDown(const bool verbose)
@@ -53,7 +54,7 @@ void GameCommands::MoveDown(const bool verbose)
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: MoveDown", verbose); }
 
 	// Send event to do it
-	EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Down), this);
+	Move(Direction::Down);
 }
 
 void GameCommands::MoveLeft(const bool verbose)
@@ -62,7 +63,7 @@ void GameCommands::MoveLeft(const bool verbose)
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: MoveLeft", verbose); }
 
 	// Send event to do it
-	EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Left), this);
+	Move(Direction::Left);
 }
 
 void GameCommands::MoveRight(const bool verbose)
@@ -71,7 +72,28 @@ void GameCommands::MoveRight(const bool verbose)
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: MoveRight", verbose); }
 
 	// Send event to do it
-	EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Right), this);
+	Move(Direction::Right);
+}
+
+void GameCommands::Move(const Direction direction)
+{
+	switch(direction)
+	{
+	case Direction::Up:
+		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Up), this);
+		break;
+	case Direction::Down: 
+		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Down), this);
+		break;
+	case Direction::Left: 
+		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Left), this);
+		break;
+	case Direction::Right:
+		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Right), this);
+		break;
+	case Direction::None:
+		THROW(12, "Unknown direction", "GameCommands")
+	}
 }
 
 void GameCommands::PlaySoundEffect(const shared_ptr<AudioAsset>& effect) const

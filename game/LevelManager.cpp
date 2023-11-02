@@ -35,6 +35,12 @@ using namespace std;
 
 bool LevelManager::Initialize()
 {
+	if(initialized) { return true; }
+
+	verbose =  GetBoolSetting("global", "verbose");
+	disableCharacters = GetBoolSetting("global", "disableCharacters");
+	GameData::Get()->IsNetworkGame = GetBoolSetting("global", "isNetworkGame");
+
 	GameData::Get()->IsGameDone = false;
 	GameData::Get()->IsNetworkGame = false;
 	GameData::Get()->CanDraw = true;
@@ -42,6 +48,7 @@ bool LevelManager::Initialize()
 	eventManager = EventManager::Get();
 	eventFactory = EventFactory::Get();
 	gameCommands = std::make_shared<GameCommands>();
+	inputManager = std::make_shared<InputManager>(gameCommands, 20, verbose);
 
 	eventManager->SubscribeToEvent(GenerateNewLevelEventId, this);
 	eventManager->SubscribeToEvent(InvalidMoveEventId, this);
@@ -55,12 +62,8 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(PlayerCollidedWithEnemyEventId, this);
 	eventManager->SubscribeToEvent(PlayerDiedEventId, this);
 	eventManager->SubscribeToEvent(PlayerCollidedWithPickupEventId, this);
-
-	verbose =  GetBoolSetting("global", "verbose");
-
-	GameData::Get()->IsNetworkGame = GetBoolSetting("global", "isNetworkGame");
-			
-	return true;
+	
+	return initialized = true;
 }
 
 ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event> evt, const unsigned long inDeltaMs)
@@ -77,6 +80,11 @@ ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event> evt, const u
 	if(evt->Id.PrimaryId == PlayerCollidedWithPickupEventId.PrimaryId) { OnPickupCollision(evt); }
 
 	return {};
+}
+
+std::shared_ptr<InputManager> LevelManager::GetInputManager()
+{
+	return inputManager;
 }
 
 void LevelManager::OnEnemyCollision(const std::shared_ptr<Event>& evt) 
@@ -195,44 +203,23 @@ void LevelManager::OnGameWon()
 	Logger::Get()->LogThis(msg);	
 }
 
-void LevelManager::GetKeyboardInput() const
+void LevelManager::GetKeyboardInput(const unsigned long deltaMs) const
 {
-	SDL_Event sdlEvent;
-	const auto keyState = SDL_GetKeyboardState(nullptr);
-
-	if (keyState[SDL_SCANCODE_UP] || keyState[SDL_SCANCODE_W]) { gameCommands->MoveUp(verbose); }
-	if (keyState[SDL_SCANCODE_DOWN] || keyState[SDL_SCANCODE_S]) { gameCommands->MoveDown(verbose); }
-	if (keyState[SDL_SCANCODE_LEFT] || keyState[SDL_SCANCODE_A]) { gameCommands->MoveLeft(verbose); }
-	if (keyState[SDL_SCANCODE_RIGHT] || keyState[SDL_SCANCODE_D]) { gameCommands->MoveRight(verbose); }
-		
-	while (SDL_PollEvent(&sdlEvent))
-	{		
-		if (sdlEvent.type == SDL_KEYDOWN)
-		{
-			switch (sdlEvent.key.keysym.sym)
-			{						
-				case SDLK_q: 
-				case SDLK_ESCAPE: gameCommands->Quit(verbose); break;
-				case SDLK_r: gameCommands->ReloadSettings(verbose); break;
-				case SDLK_p: gameCommands->PingGameServer(); break;
-				case SDLK_n: gameCommands->StartNetworkLevel(); break;
-				case SDLK_SPACE: gameCommands->Fire(verbose); break;
-				case SDLK_0: gameCommands->ToggleMusic(false); break;
-			default: /* Do nothing */;
-			}
-		}
-		
-		if (sdlEvent.type == SDL_QUIT)  { gameCommands->Quit(verbose); return; }
-	}
+	inputManager->Sample(deltaMs);
 }
 
 void LevelManager::CreatePlayer(const vector<shared_ptr<Room>> &rooms, const int resourceId) 
-{
+{	
 	const auto playerNickName = GameData::Get()->IsNetworkGame
 	?  GetSetting("networking", "nickname")
 	    : "Player1";
 
 	player = CharacterBuilder::BuildPlayer("Player1", rooms[GetRandomIndex(0, static_cast<int>(rooms.size()) - 1)], resourceId, playerNickName);
+
+	if(disableCharacters)
+	{
+		return;	
+	}
 
 	AddGameObjectToScene(player);
 }
@@ -247,6 +234,11 @@ void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms)
 {
 	const auto numPickups = GetIntSetting("global", "numPickups");
 	const auto part = numPickups / 3;
+
+	if(disableCharacters)
+	{
+		return;
+	}
 
 	for(auto i = 0; i < numPickups; i++)
 	{
@@ -278,6 +270,18 @@ void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms)
 	InitializeAutoPickups(pickups);
 }
 
+void LevelManager::AddScreenWidgets(const std::vector<std::shared_ptr<Room>>& rooms)
+{
+	// Add Hud
+	CreateHud(rooms, player);
+
+	// Add FrameRate to scene
+	CreateDrawableFrameRate();
+
+	// Add Player stats to scene
+	CreatePlayerStats();
+}
+
 void LevelManager::CreateLevel(const string& levelFilePath)
 {	
 	RemoveAllGameObjects();
@@ -293,19 +297,14 @@ void LevelManager::CreateLevel(const string& levelFilePath)
 	// Add player to room in level
 	CreatePlayer(rooms, GetAsset("edge_player")->Uid);
 
-	// Add Hud
-	CreateHud(rooms, player);
+	
 
 	if (level->IsAutoPopulatePickups())
 	{
 		CreateAutoPickups(rooms);
 	}
 
-	// Add FrameRate to scene
-	CreateDrawableFrameRate();
-
-	// Add Player stats to scene
-	CreatePlayerStats();
+	AddScreenWidgets(rooms);
 }
 
 void LevelManager::CreateDrawableFrameRate()
@@ -389,7 +388,8 @@ void LevelManager::CreateAutoLevel()
 	InitializeRooms(level->Rooms);
 	CreatePlayer(level->Rooms, GetAsset("edge_player")->Uid);
 	CreateAutoPickups(level->Rooms);
-	CreateHud(level->Rooms, player);
+
+	AddScreenWidgets(level->Rooms);
 }
 
 void LevelManager::InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<SpriteAsset>&spriteAsset) const
@@ -416,10 +416,7 @@ void LevelManager::InitializeRooms(const std::vector<std::shared_ptr<Room>>& roo
 {
 	for (const auto& room : rooms)
 	{
-		room->LoadSettings();
-		room->SubscribeToEvent(PlayerMovedEventTypeEventId);
-		room->SubscribeToEvent(SettingsReloadedEventId);
-
+		room->Initialize();
 		AddGameObjectToScene(room);
 	}
 }

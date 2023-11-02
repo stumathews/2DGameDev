@@ -40,8 +40,7 @@ namespace gamelib
 				{
 					generatedEvents.push_back(make_shared<Event>(FetchedPickupEventId));
 					generatedEvents.push_back(make_shared<PlayerCollidedWithPickupEvent>(player, shared_from_this()));
-					generatedEvents.push_back(make_shared<GameObjectEvent>(shared_from_this(),
-					                                                       GameObjectEventContext::Remove));
+					generatedEvents.push_back(make_shared<GameObjectEvent>(shared_from_this(), GameObjectEventContext::Remove));
 				}
 			}
 		}

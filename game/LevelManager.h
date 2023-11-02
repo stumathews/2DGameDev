@@ -12,6 +12,7 @@
 #include <processes/ProcessManager.h>
 #include <character/StaticSprite.h>
 #include "Enemy.h"
+#include "InputManager.h"
 #include "Pickup.h"
 #include "graphic/DrawableText.h"
 
@@ -33,7 +34,7 @@ public:
     bool Initialize();
     [[nodiscard]] bool ChangeLevel(int levelNum) const; // Raises change level event
     static bool GetBoolSetting(const std::string& section, const std::string& settingName);
-    void GetKeyboardInput() const;
+    void GetKeyboardInput(const unsigned long deltaMs) const;
     void OnFetchedPickup() const;
     void OnStartNetworkLevel(const std::shared_ptr<gamelib::Event>& evt);
     void OnNetworkPlayerJoined(const std::shared_ptr<gamelib::Event>& evt) const;
@@ -61,7 +62,7 @@ public:
     static void OnPlayerDied();
     void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
     gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long inDeltaMs) override;
-
+    std::shared_ptr<InputManager> GetInputManager();
 
 protected:
     static LevelManager* instance;
@@ -72,23 +73,27 @@ private:
     void CreatePlayer(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId);
     static std::shared_ptr<Room> GetRandomRoom(const std::vector<std::shared_ptr<Room>>& rooms);
     void CreateAutoPickups(const std::vector<std::shared_ptr<Room>>& rooms);
+    void AddScreenWidgets(const std::vector<std::shared_ptr<Room>>& rooms);
     static size_t GetRandomIndex(const int min, const int max) { return rand() % (max - min + 1) + min; }     // NOLINT(concurrency-mt-unsafe)
 
     bool verbose = false;
+    bool disableCharacters = false;
     unsigned int currentLevel = 1;
     gamelib::ProcessManager processManager;
     gamelib::EventManager* eventManager = nullptr;
     gamelib::EventFactory* eventFactory = nullptr;
+    std::shared_ptr<InputManager> inputManager;
     std::shared_ptr<gamelib::StaticSprite> hudItem;
     std::shared_ptr<Level> level = nullptr;
     std::shared_ptr<gamelib::DrawableFrameRate> drawableFrameRate;
     std::shared_ptr<gamelib::DrawableText> playerPoints;
     std::shared_ptr<gamelib::DrawableText> playerHealth;
-    std::shared_ptr<GameCommands> gameCommands;
+    std::shared_ptr<GameCommands> gameCommands;    
     std::shared_ptr<Player> player;
     std::shared_ptr<Enemy> enemy1;
     std::shared_ptr<Enemy> enemy2;
-    std::vector<std::shared_ptr<gamelib::Pickup>> pickups;    
+    std::vector<std::shared_ptr<gamelib::Pickup>> pickups;
+    bool initialized {};
 };
 
 

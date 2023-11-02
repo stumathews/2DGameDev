@@ -8,6 +8,9 @@
 #include "GameDataManager.h"
 #include "geometry/SideUtils.h"
 #include "file/SettingsManager.h"
+#include <utils/Utils.h>
+
+#include "EnemyMovedEvent.h"
 
 using namespace std;
 using namespace gamelib;
@@ -93,12 +96,24 @@ void Room::SetupWalls()
 	walls[0] = walls[1] = walls[2] = walls[3] = IsLeftWalled = IsTopWalled = IsRightWalled = IsBottomWalled = true;
 }
 
+void Room::UpdateEnemyRoom(const std::shared_ptr<Enemy>& enemy)
+{
+	const auto npcHotspot = enemy->Hotspot->GetBounds();
+	SDL_Rect _;
+
+	if (SDL_IntersectRect(&InnerBounds, &npcHotspot, &_))
+	{
+		enemy->CurrentRoom->SetCurrentRoom(shared_from_this());
+	}
+}
+
 ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, const unsigned long deltaMs)
 {
 	auto generatedEvents(GameObject::HandleEvent(event, deltaMs));
 
 	if (event->Id.PrimaryId == PlayerMovedEventTypeEventId.PrimaryId) { OnPlayerMoved(generatedEvents); }
 	else if (event->Id.PrimaryId == SettingsReloadedEventId.PrimaryId) { LoadSettings(); }
+	else if(event->Id.PrimaryId == EnemyMovedEventId.PrimaryId) { UpdateEnemyRoom(dynamic_pointer_cast<EnemyMovedEvent>(event)->Enemy); }
 	else
 	{
 		std::stringstream message("Unhandled subscribed event in Room class:");
@@ -110,9 +125,12 @@ ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, const unsigne
 
 ListOfEvents& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedEvents)
 {
+	if(!trackEnemies) return generatedEvents;
+
 	const auto player = dynamic_pointer_cast<Player>(GameData::Get()->player.lock());
 	const auto playerHotSpotBounds = player->Hotspot->GetBounds();
 	SDL_Rect result;
+
 	isPlayerWithinRoom = SDL_IntersectRect(&InnerBounds, &playerHotSpotBounds, &result);
 	if (isPlayerWithinRoom) { player->CurrentRoom->SetCurrentRoom(shared_from_this()); }
 
@@ -137,6 +155,14 @@ std::shared_ptr<Room> Room::GetSideRoom(Side side)
 	case Side::Left: return LeftRoom;
 	default: return TopRoom; // should never happen  // NOLINT(clang-diagnostic-covered-switch-default)
 	}
+}
+
+void Room::Initialize()
+{
+	LoadSettings();
+	SubscribeToEvent(PlayerMovedEventTypeEventId);
+	SubscribeToEvent(SettingsReloadedEventId);
+	SubscribeToEvent(EnemyMovedEventId);
 }
 
 void Room::DrawLine(SDL_Renderer* renderer, const Line& line)
@@ -206,7 +232,7 @@ void Room::LoadSettings()
 	printDebuggingTextNeighboursOnly = SettingsManager::Get()->
 		GetBool("global", "print_debugging_text_neighbours_only");
 	printDebuggingText = SettingsManager::Bool("global", "print_debugging_text");
-
+	trackEnemies = SettingsManager::Bool("room", "trackEnemies");
 	UpdateInnerBounds();
 }
 
@@ -223,21 +249,11 @@ bool Room::HasBottomWall() const { return IsWalled(Side::Bottom); }
 bool Room::HasLeftWall() const { return IsWalled(Side::Left); }
 bool Room::HasRightWall() const { return IsWalled(Side::Right); }
 
+
+
 void Room::Update(const unsigned long deltaMs)
 {
-	// are any of the NPCs in this room?
-	for (auto& npc : GameDataManager::Get()->GameData()->Enemies())
-	{
-		if (const auto enemy = npc.lock())
-		{
-			const auto npcHotspot = enemy->Hotspot->GetBounds();
-			SDL_Rect result;
-			if (SDL_IntersectRect(&InnerBounds, &npcHotspot, &result))
-			{
-				enemy->CurrentRoom->SetCurrentRoom(shared_from_this());
-			}
-		}
-	}
+	
 }
 
 AbcdRectangle& Room::GetABCDRectangle() { return abcd; }

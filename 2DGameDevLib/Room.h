@@ -8,6 +8,7 @@
 #include <geometry/Line.h>
 #include <common/aliases.h>
 
+#include "Enemy.h"
 #include "geometry/Side.h"
 
 class Room : public gamelib::DrawableGameObject, public std::enable_shared_from_this<Room>
@@ -25,6 +26,7 @@ public:
 
 	void UpdateInnerBounds();
 	void SetupWalls();
+
 	void SetSorroundingRooms(int top_index, int right_index, int bottom_index, int left_index,
 	                         std::vector<std::shared_ptr<
 		                         Room>> rooms);
@@ -37,6 +39,7 @@ public:
 	void ShouldRoomFill(bool fillMe = false);
 	void DrawWalls(SDL_Renderer* renderer) const;
 	std::shared_ptr<Room> GetSideRoom(gamelib::Side side);
+	void Initialize();
 	static void DrawLine(SDL_Renderer* renderer, const gamelib::Line& line);
 	void DrawDiagnostics(SDL_Renderer* renderer);
 	void LoadSettings() override;
@@ -91,6 +94,7 @@ protected:
 	int height;
 
 private:
+	void UpdateEnemyRoom(const std::shared_ptr<Enemy>& enemy);
 	bool isPlayerWithinRoom = false;
 	bool fill = false;
 	int innerBoundsOffset;
@@ -98,5 +102,6 @@ private:
 	bool drawInnerBounds{};
 	bool drawHotSpot{};
 	bool printDebuggingTextNeighboursOnly{};
-	bool printDebuggingText{};
+	bool printDebuggingText{};	
+	bool trackEnemies;
 };

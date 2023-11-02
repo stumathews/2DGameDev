@@ -83,7 +83,7 @@ protected:
 
 TEST_F(GameDataManagerTests, Initialize)
 {
-	subject->Initialize();
+	subject->Initialize(false);
 
 	EXPECT_TRUE(subject->SubscribesTo(gamelib::AddGameObjectToCurrentSceneEventId));
 	EXPECT_TRUE(subject->SubscribesTo(gamelib::GameObjectTypeEventId));
@@ -97,7 +97,7 @@ TEST_F(GameDataManagerTests, InitialState)
 
 TEST_F(GameDataManagerTests, Handles_Add_Game_Object_To_Scene_Correctly)
 {
-	subject->Initialize();
+	subject->Initialize(false);
 
 	const auto pickup = CharacterBuilder::BuildPickup("MyPickup", room, myResourceId);
 	const auto enemy = CharacterBuilder::BuildEnemy("MyEnemy", room, myResourceId, gamelib::Direction::Down, level);

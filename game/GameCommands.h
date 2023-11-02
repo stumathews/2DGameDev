@@ -25,6 +25,7 @@ public:
 	void MoveDown(bool verbose);
 	void MoveLeft(bool verbose);
 	void MoveRight(bool verbose);
+	void Move(gamelib::Direction direction);
 	void PlaySoundEffect(const std::shared_ptr<gamelib::AudioAsset>& effect) const;
 	void RaiseChangedLevel(bool verbose, short newLevel);
 	void ReloadSettings(bool verbose);

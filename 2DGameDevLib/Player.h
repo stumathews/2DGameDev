@@ -11,6 +11,7 @@
 #include <character/Hotspot.h>
 #include "RoomInfo.h"
 #include "character/IGameMoveStrategy.h"
+#include "file/SettingsManager.h"
 
 using ListOfEvents = std::vector<std::shared_ptr<gamelib::Event>>;
 using ListOfGameObjects = std::vector<std::weak_ptr<gamelib::GameObject>>;
@@ -73,7 +74,7 @@ private:
 	                      unsigned long deltaMs);
 	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event,
 	                                              gamelib::ListOfEvents& createdEvents, unsigned long deltaMs);
-
+	int speed;
 	int pixelsToMove = 0;
 	std::shared_ptr<gamelib::AnimatedSprite> sprite;
 	int width{};
@@ -87,4 +88,6 @@ private:
 	std::shared_ptr<gamelib::IGameObjectMoveStrategy> moveStrategy;
 	bool verbose{};
 	bool gameWon = false;
+	gamelib::PeriodicTimer moveTimer;
+	int moveRateMs;
 };
