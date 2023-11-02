@@ -8,13 +8,16 @@
 #include "Player.h"
 // ReSharper disable once CppUnusedIncludeDirective
 #include <events/ControllerMoveEvent.h>
+#include "EnemyMovedEvent.h"
 #include "events/GameObjectEvent.h"
 #include "character/Movement.h"
 #include "PlayerCollidedWithEnemyEvent.h"
 #include "EventNumber.h"
+#include "character/MovementAtSpeed.h"
 #include "geometry/SideUtils.h"
 #include "Room.h"
 #include "SDLCollisionDetection.h"
+#include "file/SettingsManager.h"
 
 namespace gamelib
 {
@@ -224,8 +227,12 @@ bool Enemy::IsPlayerInLineOfSight(const gamelib::Direction lookDirection) const
 
 void Enemy::Initialize()
 {
+	LoadSettings();
 	SubscribeToEvent(FireEventId);
 	SubscribeToEvent(gamelib::PlayerMovedEventTypeEventId);
+
+	// move every half a sec
+	moveTimer.SetFrequency(moveRateMs);
 
 	moveStrategy = moveStrategy == nullptr
 		               ? std::make_shared<GameObjectMoveStrategy>(shared_from_this(), CurrentRoom)
@@ -259,20 +266,44 @@ std::vector<std::shared_ptr<gamelib::Event>> Enemy::HandleEvent(const std::share
 	return {};
 }
 
+bool Enemy::Move(const unsigned long deltaMs)
+{
+	const std::shared_ptr<gamelib::IMovement> movementAtSpeed = std::make_shared<gamelib::MovementAtSpeed>(speed, currentFacingDirection, deltaMs);
+	const std::shared_ptr<gamelib::IMovement> constantPixelMovement = std::make_shared<gamelib::Movement>(currentFacingDirection);
+
+	isValidMove = moveStrategy->MoveGameObject(moveAtSpeed ? movementAtSpeed : constantPixelMovement);
+
+	// Update our bounds too
+	UpdateBounds(Dimensions);
+
+	// Tell the world I moved
+	if(isValidMove)
+	{
+		if(!emitMoveEvents) { return true; }		
+
+		RaiseEvent(std::make_shared<EnemyMovedEvent>(shared_from_this()));
+		
+		return true;
+	}
+
+	return false;
+}
+
 void Enemy::Update(const unsigned long deltaMs)
 {
 	// Is the game over?
 	if (GameData::Get()->IsGameWon()) return;
 
 	// Automatically move enemy in configured direction 
-	isValidMove = moveStrategy->MoveGameObject(std::make_shared<Movement>(currentFacingDirection));
+
+	moveTimer.DoIfReady([&]() { 	Move(deltaMs); });
 
 	// Update everything 
 	Npc::Update(deltaMs);
 	Hotspot->Update(Position);
 	Sprite->MoveSprite(Position);
 	Sprite->Update(deltaMs, gamelib::AnimatedSprite::GetStdDirectionAnimationFrameGroup(currentFacingDirection));
-
+		
 	// Update our bounds too
 	UpdateBounds(Dimensions);
 
@@ -281,4 +312,17 @@ void Enemy::Update(const unsigned long deltaMs)
 
 	// Do Behavior/React 
 	stateMachine.Update(deltaMs);
+
+	// we only want to move and emit move events periodically
+	moveTimer.Update(deltaMs);
+	
+}
+
+void Enemy::LoadSettings()
+{
+	// emitMoveEvents
+	emitMoveEvents = gamelib::SettingsManager::Bool("enemy", "emitMoveEvents");
+	moveAtSpeed = gamelib::SettingsManager::Bool("enemy", "moveAtSpeed");
+	speed = gamelib::SettingsManager::Int("enemy", "speed");
+	moveRateMs = gamelib::SettingsManager::Int("enemy", "moveRateMs");
 }
