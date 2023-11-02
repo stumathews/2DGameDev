@@ -10,7 +10,8 @@ enum EventNumber
 	GenerateNewLevel,
 	InvalidMove,
 	PLayerDied,
-	PlayerCollidedWithPickup
+	PlayerCollidedWithPickup,
+	EnemyMoved
 };
 
 const static EventId FireEventId(Fire, "Fire");
