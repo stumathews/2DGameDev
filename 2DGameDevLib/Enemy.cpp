@@ -302,7 +302,8 @@ void Enemy::Update(const unsigned long deltaMs)
 	Npc::Update(deltaMs);
 	Hotspot->Update(Position);
 	Sprite->MoveSprite(Position);
-	Sprite->Update(deltaMs, gamelib::AnimatedSprite::GetStdDirectionAnimationFrameGroup(currentFacingDirection));
+	if(animate)
+		Sprite->Update(deltaMs, gamelib::AnimatedSprite::GetStdDirectionAnimationFrameGroup(currentFacingDirection));
 		
 	// Update our bounds too
 	UpdateBounds(Dimensions);
@@ -325,4 +326,5 @@ void Enemy::LoadSettings()
 	moveAtSpeed = gamelib::SettingsManager::Bool("enemy", "moveAtSpeed");
 	speed = gamelib::SettingsManager::Int("enemy", "speed");
 	moveRateMs = gamelib::SettingsManager::Int("enemy", "moveRateMs");
+	animate = gamelib::SettingsManager::Bool("enemy", "animate");
 }

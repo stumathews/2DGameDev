@@ -132,8 +132,9 @@
   <enemy>
 		<setting name="emitMoveEvents" type="bool" description="Should emit EnemyMovedEvent or not">true</setting>
 		<setting name="moveAtSpeed" type="bool" description="Use Speed to move">true</setting>
-		<setting name="speed" type="int" description="move speed">4</setting>
-	  <setting name="moveRateMs" type="int" description="Move every n ms">30</setting>
+		<setting name="speed" type="int" description="move speed">1</setting>
+	  <setting name="moveRateMs" type="int" description="Move every n ms">1</setting>
+	  <setting name="animate" type="bool" description="animate character by changing key frames">true</setting>
   </enemy>
 
 </settings>

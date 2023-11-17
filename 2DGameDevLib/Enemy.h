@@ -47,4 +47,5 @@ private:
 	int speed;
 	gamelib::PeriodicTimer moveTimer;
 	int moveRateMs;
+	bool animate = true;
 };
