@@ -170,6 +170,8 @@ void Player::Move(const unsigned long deltaMs)
 
 void Player::Update(const unsigned long deltaMs)
 {
+	if (GameData::Get()->IsGameWon()) return;
+
 	moveTimer.Update(deltaMs);
 
 	moveTimer.DoIfReady([&](){ Move(deltaMs); });
