@@ -26,10 +26,13 @@ bool GameObjectMoveStrategy::MoveGameObject(const std::shared_ptr<gamelib::IMove
 	auto isMoveValid = false;
 	if (IsValidMove(movement))
 	{
-		// Only update the game Object's position, i.e move it if the move was valid
-		SetGameObjectPosition( movement->SupportsPositionalMovement() 
-			? movement->GetPosition(gameObject->Position)
-			: CalculateGameObjectMove(movement, movement->GetPixelsToMove()));
+		// Calculate move
+		const auto newPosition = movement->SupportsPositionalMovement() 
+			                         ? movement->GetPosition(gameObject->Position)
+			                         : CalculateGameObjectMove(movement, movement->GetPixelsToMove());
+
+		// Move
+		SetGameObjectPosition(newPosition);
 		isMoveValid = true;
 	}
 	return isMoveValid;
@@ -67,11 +70,12 @@ bool GameObjectMoveStrategy::IsValidMove(const std::shared_ptr<gamelib::IMovemen
 
 	switch (movement->GetDirection())
 	{
-	case gamelib::Direction::Down: return CanGameObjectMove(gamelib::Direction::Down);
-	case gamelib::Direction::Left: return CanGameObjectMove(gamelib::Direction::Left);
-	case gamelib::Direction::Right: return CanGameObjectMove(gamelib::Direction::Right);
-	case gamelib::Direction::Up: return CanGameObjectMove(gamelib::Direction::Up);
-	case gamelib::Direction::None: THROW(0, "Direction is None", "PlayerMoveStrategy")
+		case gamelib::Direction::Down: return CanGameObjectMove(gamelib::Direction::Down);
+		case gamelib::Direction::Left: return CanGameObjectMove(gamelib::Direction::Left);
+		case gamelib::Direction::Right: return CanGameObjectMove(gamelib::Direction::Right);
+		case gamelib::Direction::Up: return CanGameObjectMove(gamelib::Direction::Up);
+		case gamelib::Direction::None: 
+			return true; // moving in no direction is a valid move
 	}
 	return false;
 }
