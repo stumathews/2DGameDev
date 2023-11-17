@@ -19,7 +19,7 @@ void InputManager::Sample(const unsigned long deltaMs)
 			switch(e.key.keysym.sym)
 			{
 				case SDLK_w:
-			case SDLK_UP:
+				case SDLK_UP:
 					gameCommands->MoveUp(verbose, e.type == SDL_KEYDOWN 
 						? gamelib::ControllerMoveEvent::KeyState::Pressed
 						: gamelib::ControllerMoveEvent::KeyState::Released);
