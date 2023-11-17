@@ -112,25 +112,27 @@ void InitializeGameSubSystems(GameStructure& gameStructure)
 	}
 }
 
+void Update(const unsigned long deltaMs)
+{
+	EventManager::Get()->ProcessAllEvents(deltaMs);
+	EventManager::Get()->DispatchEventToSubscriber(make_shared<UpdateAllGameObjectsEvent>(), deltaMs);
+	EventManager::Get()->DispatchEventToSubscriber(make_shared<UpdateProcessesEvent>(), deltaMs);
+}
+
+void Draw()
+{
+	 // Time-sensitive, skip queue. Draws the current scene
+	EventManager::Get()->DispatchEventToSubscriber(std::make_shared<Event>(DrawCurrentSceneEventId), 0UL);
+}
+
+void GetInput(const unsigned long deltaMs)
+{
+	LevelManager::Get()->GetInputManager()->Sample(deltaMs);
+	NetworkManager::Get()->Listen();	                                           
+}
+
 shared_ptr<FixedStepGameLoop> CreateGameLoopStrategy()
 {
-	return std::make_shared<FixedStepGameLoop>(16,
-	                                           [](const unsigned long deltaMs)
-	                                           {
-		                                           EventManager::Get()->ProcessAllEvents(deltaMs);
-		                                           EventManager::Get()->DispatchEventToSubscriber(
-			                                           make_shared<UpdateAllGameObjectsEvent>(), deltaMs);
-		                                           EventManager::Get()->DispatchEventToSubscriber(
-			                                           make_shared<UpdateProcessesEvent>(), deltaMs);
-	                                           },
-	                                           []()
-	                                           {
-		                                           // Time-sensitive, skip queue. Draws the current scene
-		                                           EventManager::Get()->DispatchEventToSubscriber(
-			                                           std::make_shared<Event>(DrawCurrentSceneEventId), 0UL);
-	                                           }, [](const unsigned long deltaMs)
-	                                           {
-		                                           LevelManager::Get()->GetInputManager()->Sample(deltaMs);
-		                                           NetworkManager::Get()->Listen();
-	                                           });
+	return std::make_shared<FixedStepGameLoop>(16, Update, Draw, GetInput);
 }
+
