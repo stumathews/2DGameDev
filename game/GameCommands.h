@@ -8,6 +8,8 @@
 #include "GameWorld.h"
 #include <events/Event.h>
 
+#include "events/ControllerMoveEvent.h"
+
 class GameCommands final : public gamelib::EventSubscriber, public std::enable_shared_from_this<GameCommands>
 {
 public:	
@@ -21,11 +23,11 @@ public:
 	std::string GetSubscriberName() override { return "GameCommands"; }
 
 	void Fire(bool verbose);
-	void MoveUp(bool verbose);
-	void MoveDown(bool verbose);
-	void MoveLeft(bool verbose);
-	void MoveRight(bool verbose);
-	void Move(gamelib::Direction direction);
+	void MoveUp(const bool verbose, const gamelib::ControllerMoveEvent::KeyState keyState);
+	void MoveDown(const bool verbose, const gamelib::ControllerMoveEvent::KeyState keyState);
+	void MoveLeft(const bool verbose, const gamelib::ControllerMoveEvent::KeyState keyState);
+	void MoveRight(const bool verbose, const gamelib::ControllerMoveEvent::KeyState keyState);
+	void Move(const gamelib::Direction direction, gamelib::ControllerMoveEvent::KeyState keyState);
 	void PlaySoundEffect(const std::shared_ptr<gamelib::AudioAsset>& effect) const;
 	void RaiseChangedLevel(bool verbose, short newLevel);
 	void ReloadSettings(bool verbose);

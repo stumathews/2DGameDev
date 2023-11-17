@@ -39,57 +39,57 @@ void GameCommands::Fire(const bool verbose)
 	EventManager::Get()->RaiseEvent(std::make_shared<Event>(FireEventId), this);
 }
 
-void GameCommands::MoveUp(const bool verbose)
+void GameCommands::MoveUp(const bool verbose, const ControllerMoveEvent::KeyState keyState)
 {
 	// Log it
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: MoveUp", verbose); }
 
 	// Send even to do it
-	Move(Direction::Up);
+	Move(Direction::Up, keyState);
 }
 
-void GameCommands::MoveDown(const bool verbose)
+void GameCommands::MoveDown(const bool verbose, const ControllerMoveEvent::KeyState keyState)
 {
 	// Log it
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: MoveDown", verbose); }
 
 	// Send event to do it
-	Move(Direction::Down);
+	Move(Direction::Down, keyState);
 }
 
-void GameCommands::MoveLeft(const bool verbose)
+void GameCommands::MoveLeft(const bool verbose, const ControllerMoveEvent::KeyState keyState)
 {
 	// Log it
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: MoveLeft", verbose); }
 
 	// Send event to do it
-	Move(Direction::Left);
+	Move(Direction::Left, keyState);
 }
 
-void GameCommands::MoveRight(const bool verbose)
+void GameCommands::MoveRight(const bool verbose, const ControllerMoveEvent::KeyState keyState)
 {
 	// Log it
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: MoveRight", verbose); }
 
 	// Send event to do it
-	Move(Direction::Right);
+	Move(Direction::Right, keyState);
 }
 
-void GameCommands::Move(const Direction direction)
+void GameCommands::Move(const Direction direction, ControllerMoveEvent::KeyState keyState = ControllerMoveEvent::KeyState::Pressed)
 {
 	switch(direction)
 	{
 	case Direction::Up:
-		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Up), this);
+		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Up, keyState), this);
 		break;
 	case Direction::Down: 
-		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Down), this);
+		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Down, keyState), this);
 		break;
 	case Direction::Left: 
-		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Left), this);
+		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Left, keyState), this);
 		break;
 	case Direction::Right:
-		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Right), this);
+		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Right, keyState), this);
 		break;
 	case Direction::None:
 		THROW(12, "Unknown direction", "GameCommands")
