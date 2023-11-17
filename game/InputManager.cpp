@@ -9,26 +9,49 @@ void InputManager::Sample(const unsigned long deltaMs)
 		std::cout << "No game commands set on the input manager. No input will be sampled." << std::endl;
 		return;
 	}
-	/*if(accumulatedTimeMs < static_cast<unsigned int>(1000) / GetSampleRatePerSec())
-	{		
-		return;
-	}*/
-	SDL_Event sdlEvent;
-	while(SDL_PollEvent(&sdlEvent))
+
+	SDL_Event e;
+	while(SDL_PollEvent(&e))
 	{
-		if (sdlEvent.type == SDL_QUIT)  { gameCommands->Quit(verbose); return; }		
+		if (e.type == SDL_QUIT)  { gameCommands->Quit(verbose); return; }
+		if (e.key.repeat == 0) // we ignore key repeats
+		{
+			switch(e.key.keysym.sym)
+			{
+				case SDLK_w:
+			case SDLK_UP:
+					gameCommands->MoveUp(verbose, e.type == SDL_KEYDOWN 
+						? gamelib::ControllerMoveEvent::KeyState::Pressed
+						: gamelib::ControllerMoveEvent::KeyState::Released);
+	            break;
+		        case SDLK_s:
+		        case SDLK_DOWN:
+					gameCommands->MoveDown(verbose, e.type == SDL_KEYDOWN 
+						? gamelib::ControllerMoveEvent::KeyState::Pressed
+						: gamelib::ControllerMoveEvent::KeyState::Released);
+		            break;
+		        case SDLK_a:
+		        case SDLK_LEFT:
+					gameCommands->MoveLeft(verbose, e.type == SDL_KEYDOWN 
+						? gamelib::ControllerMoveEvent::KeyState::Pressed
+						: gamelib::ControllerMoveEvent::KeyState::Released);
+		            break;
+		        case SDLK_d:
+		        case SDLK_RIGHT:
+					gameCommands->MoveRight(verbose, e.type == SDL_KEYDOWN 
+						? gamelib::ControllerMoveEvent::KeyState::Pressed
+						: gamelib::ControllerMoveEvent::KeyState::Released);
+		            break;
+            default: ;
+			}
+		}
 	}
 
 	const auto keyState = SDL_GetKeyboardState(nullptr);
-			
-	if (keyState[SDL_SCANCODE_UP] || keyState[SDL_SCANCODE_W]) { gameCommands->MoveUp(verbose); }
-	if (keyState[SDL_SCANCODE_DOWN] || keyState[SDL_SCANCODE_S]) { gameCommands->MoveDown(verbose); }
-	if (keyState[SDL_SCANCODE_LEFT] || keyState[SDL_SCANCODE_A]) { gameCommands->MoveLeft(verbose); }
-	if (keyState[SDL_SCANCODE_RIGHT] || keyState[SDL_SCANCODE_D]) { gameCommands->MoveRight(verbose); }
 	if (keyState[SDL_SCANCODE_Q] || keyState[SDL_SCANCODE_ESCAPE]) { gameCommands->Quit(verbose); }
 	if (keyState[SDL_SCANCODE_R]) { gameCommands->ReloadSettings(verbose);  }
 	if (keyState[SDL_SCANCODE_P]) { gameCommands->PingGameServer();  }
-	if (keyState[SDL_SCANCODE_R]) { gameCommands->ReloadSettings(verbose);  }
+	if (keyState[SDL_SCANCODE_R]) { gameCommands->ReloadSettings(verbose); }
 	if (keyState[SDL_SCANCODE_R]) { gameCommands->ReloadSettings(verbose);  }
 	if (keyState[SDL_SCANCODE_N]) { gameCommands->StartNetworkLevel();  }
 	if (keyState[SDL_SCANCODE_SPACE]) { gameCommands->Fire(verbose);  }

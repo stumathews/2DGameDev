@@ -6,9 +6,15 @@ class InputManager final : public gamelib::IInputManager
 {
 public:
 	explicit InputManager(std::shared_ptr<GameCommands> gameCommands, const int sampleRatePerSec, const bool verbose)
-	: samplePerSec(sampleRatePerSec), gameCommands(std::move(gameCommands)), verbose(verbose) {  }
+	: samplePerSec(sampleRatePerSec), gameCommands(std::move(gameCommands)), verbose(verbose)
+	{
+		LoadSettings();
+	}
+
+	void LoadSettings();
 	void Sample(unsigned long deltaMs) override;
 	int GetSampleRatePerSec() override;
+
 private:
 
 	int samplePerSec;
