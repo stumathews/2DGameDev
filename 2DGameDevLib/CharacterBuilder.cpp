@@ -21,7 +21,7 @@ std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, c
 		name, "Player", spriteAsset, room->GetCenter(spriteAsset->Dimensions), true);
 
 	// Build player
-	auto player = std::make_shared<Player>(name, "Player", room, nickName);
+	auto player = std::make_shared<Player>(name, "Player", room, spriteAsset->Dimensions.GetWidth(), spriteAsset->Dimensions.GetHeight(), nickName);
 
 	// Initialize player
 	player->LoadSettings();
@@ -29,7 +29,6 @@ std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, c
 	player->SetTag(gamelib::constants::PlayerTag);
 	player->SetSprite(animatedSprite);
 	player->IntProperties["Health"] = 100;
-
 	// We keep a reference to track of the player globally
 	GameData::Get()->player = player;
 
