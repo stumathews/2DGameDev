@@ -26,6 +26,7 @@ typedef SettingsManager Settings;
 
 
 shared_ptr<FixedStepGameLoop> CreateGameLoopStrategy();
+void GetInput(const unsigned long deltaMs);
 
 int main(int argc, char *args[])
 {
