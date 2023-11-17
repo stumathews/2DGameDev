@@ -3,7 +3,7 @@
   <!-- Global Game Settings -->
   <global>
     <!-- 1 update very 20 ms = 50 times a second (1000 milliseconds) -->
-    <setting name="tick_time_ms" type="int">16</setting>
+    <setting name="tick_time_ms" type="int">50</setting>
     <setting name="square_width" type="int">150</setting>
     <setting name="sprite_width" type="int">50</setting>
     <setting name="max_loops" type="int">4</setting>
@@ -23,6 +23,7 @@
     <setting name="level3FileName" type="string">game\\Level3.xml</setting>
     <setting name="level4FileName" type="string">game\\Level4.xml</setting>
     <setting name="level5FileName" type="string">game\\Level5.xml</setting>
+    <setting name="disableCharacters" type="bool">false</setting>
   </global>
 
 	<gamecommands>
@@ -53,6 +54,7 @@
     <setting name="drawinnerBounds" type="bool">false</setting>	
     <setting name="innerBoundsOffset" type="int">2</setting>	
     <setting name="logWallRemovals" type="bool">true</setting>
+    <setting name="trackEnemies" type="bool">true</setting>
   </room>
   
   <pickup1>
@@ -86,21 +88,19 @@
     <setting name="g" type="int">0</setting>
     <setting name="b" type="int">0</setting>
     <setting name="a" type="int">0</setting> 
-    <setting name="verbose" type="bool">false</setting>
+    <setting name="verbose" type="bool">true</setting>
     <setting name="ignoreRestrictions" type="bool">false</setting>
-		<setting name="debugMovement" type="bool">false</setting>
-		<setting name="moveDurationMs" type="int">200</setting>
-		<setting name="pixelsToMove" type="int">3</setting>
+		<setting name="debugMovement" type="bool">true</setting>
+		<setting name="moveDurationMs" type="int">1</setting>
+		<setting name="pixelsToMove" type="int">1</setting>
+    <setting name="speed" type="int" description="move speed">3</setting>
+    <setting name="moveRateMs" type="int" description="Move every n ms">1</setting>
   </player>
 
 	<sprite>
 		<setting name="debug" type="bool">false</setting>
 	</sprite>
 	
-	<EventManager>
-		<setting name="logEvents" type="bool">false</setting>
-	</EventManager>
-  
   <!-- Room fill settings-->
   <room_fill>
     <setting name="r" type="int">255</setting>
@@ -117,5 +117,24 @@
     <setting name="b" type="int">0</setting>
     <setting name="a" type="int">0</setting>		
   </pickup>
+
+  <gameStructure>
+	  <setting name="printFrameRate" type="bool" description="printFrameRate">false</setting>
+	  <setting name="sampleInput" type="bool" description="sampleInput">true</setting>
+	  <setting name="sampleNetwork" type="bool" description="sampleNetwork">false</setting>
+  </gameStructure>
+
+  <eventManager>
+	  <setting name="logEvents" type="bool">false</setting>
+	  <setting name="sampleNetwork" type="bool" description="sampleNetwork">false</setting>
+  </eventManager>
+
+  <enemy>
+		<setting name="emitMoveEvents" type="bool" description="Should emit EnemyMovedEvent or not">true</setting>
+		<setting name="moveAtSpeed" type="bool" description="Use Speed to move">true</setting>
+		<setting name="speed" type="int" description="move speed">1</setting>
+	  <setting name="moveRateMs" type="int" description="Move every n ms">1</setting>
+	  <setting name="animate" type="bool" description="animate character by changing key frames">true</setting>
+  </enemy>
 
 </settings>
