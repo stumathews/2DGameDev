@@ -42,10 +42,11 @@ private:
 	std::function<void(unsigned long deltaMs)> DoLookForPlayer(); // returns a function taking a delta time
 	void ConfigureEnemyBehavior();
 	std::function<bool()> IfMovedIn(gamelib::Direction direction) const; // returns a function returning a bool	
-	bool emitMoveEvents;
+	bool emitMoveEvents{};
 	bool moveAtSpeed {};	
-	int speed;
+	int speed{};
 	gamelib::PeriodicTimer moveTimer;
-	int moveRateMs;
+	int moveRateMs{};
 	bool animate = true;
+	bool drawState = false;
 };

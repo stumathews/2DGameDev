@@ -135,6 +135,7 @@
 		<setting name="speed" type="int" description="move speed">2</setting>
 	  <setting name="moveRateMs" type="int" description="Move every n ms">1</setting>
 	  <setting name="animate" type="bool" description="animate character by changing key frames">true</setting>
+	  <setting name="drawState" type="bool" description="draw enemy state">false</setting>
   </enemy>
 
 </settings>

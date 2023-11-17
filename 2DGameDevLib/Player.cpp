@@ -10,7 +10,6 @@
 #include "GameData.h"
 #include <events/EventFactory.h>
 #include "EventNumber.h"
-#include "character/MovementAtSpeed.h"
 #include "character/StatefulMove.h"
 #include "file/SettingsManager.h"
 
@@ -121,15 +120,17 @@ void Player::OnGameWon()
 	gameWon = true;
 }
 
-const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, ListOfEvents& createdEvents,
-                                             const unsigned long deltaMs)
+const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, ListOfEvents& createdEvents, const unsigned long deltaMs)
 {
-	if (gameWon) { return createdEvents; }
+	if (gameWon) return createdEvents;
+
 	const auto moveEvent = dynamic_pointer_cast<ControllerMoveEvent>(event);
+	const auto moveDirection = moveEvent->Direction;
+
+	// Set acceleration in direction depending on if direction key is pressed or not
+	movementAcceleration[moveDirection] = moveEvent->GetKeyState();
 	
-	movementAcceleration[moveEvent->Direction] = moveEvent->GetKeyState();
-	
-	SetPlayerDirection(moveEvent->Direction);
+	SetPlayerDirection(moveDirection);
 
 	return createdEvents;
 }
@@ -174,6 +175,7 @@ void Player::Update(const unsigned long deltaMs)
 
 	moveTimer.Update(deltaMs);
 
+	// We don't move every single frame...
 	moveTimer.DoIfReady([&](){ Move(deltaMs); });
 	
 }
@@ -217,7 +219,6 @@ void Player::SetPlayerDirection(const Direction direction)
 
 void Player::Fire() const { RemovePlayerFacingWall(); }
 
-
 void Player::SetSprite(const std::shared_ptr<AnimatedSprite>& inSprite)
 {
 	sprite = inSprite;
@@ -233,19 +234,11 @@ void Player::RemovePlayerFacingWall() const
 {
 	switch (currentFacingDirection)
 	{
-	case Direction::Up:
-		RemoveTopWall();
-		break;
-	case Direction::Down:
-		RemoveBottomWall();
-		break;
-	case Direction::Left:
-		RemoveLeftWall();
-		break;
-	case Direction::Right:
-		RemoveRightWall();
-		break;
-	case Direction::None: break;
+		case Direction::Up: RemoveTopWall(); break;
+		case Direction::Down: RemoveBottomWall(); break;
+		case Direction::Left: RemoveLeftWall(); break;
+		case Direction::Right: RemoveRightWall(); break;
+		case Direction::None: break;
 	}
 }
 
@@ -287,7 +280,10 @@ void Player::RemoveTopWall() const
 
 void Player::BaseProcessEvent(const shared_ptr<Event>& event, ListOfEvents& createdEvents, const unsigned long deltaMs)
 {
-	for (auto& createdEvent : GameObject::HandleEvent(event, deltaMs)) { createdEvents.push_back(createdEvent); }
+	for (auto& createdEvent : GameObject::HandleEvent(event, deltaMs))
+	{
+		createdEvents.push_back(createdEvent);
+	}
 }
 
 void Player::CenterPlayerInRoom(const shared_ptr<Room>& targetRoom)

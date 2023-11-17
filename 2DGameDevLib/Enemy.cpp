@@ -230,6 +230,7 @@ void Enemy::Initialize()
 	LoadSettings();
 	SubscribeToEvent(FireEventId);
 	SubscribeToEvent(gamelib::PlayerMovedEventTypeEventId);
+	SubscribeToEvent(SettingsReloadedEventId);
 
 	// move every half a sec
 	moveTimer.SetFrequency(moveRateMs);
@@ -261,6 +262,10 @@ std::vector<std::shared_ptr<gamelib::Event>> Enemy::HandleEvent(const std::share
 	if (event->Id == gamelib::PlayerMovedEventTypeEventId)
 	{
 		CheckForPlayerCollision();
+	}
+	if(event->Id.PrimaryId == SettingsReloadedEventId.PrimaryId)
+	{
+		LoadSettings();
 	}
 
 	return {};
@@ -309,7 +314,10 @@ void Enemy::Update(const unsigned long deltaMs)
 	UpdateBounds(Dimensions);
 
 	// Set the enemy state text
-	Status->Text = stateMachine.ActiveState != nullptr ? stateMachine.ActiveState->GetName().substr(0, 1) : "";
+	Status->Text = stateMachine.ActiveState != nullptr
+		? drawState ? stateMachine.ActiveState->GetName().substr(0, 1) : ""
+			: "";
+	
 
 	// Do Behavior/React 
 	stateMachine.Update(deltaMs);
@@ -327,4 +335,5 @@ void Enemy::LoadSettings()
 	speed = gamelib::SettingsManager::Int("enemy", "speed");
 	moveRateMs = gamelib::SettingsManager::Int("enemy", "moveRateMs");
 	animate = gamelib::SettingsManager::Bool("enemy", "animate");
+	drawState = gamelib::SettingsManager::Bool("enemy", "drawState");
 }
