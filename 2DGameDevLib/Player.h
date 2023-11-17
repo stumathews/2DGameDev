@@ -11,6 +11,7 @@
 #include <character/Hotspot.h>
 #include "RoomInfo.h"
 #include "character/IGameMoveStrategy.h"
+#include "events/ControllerMoveEvent.h"
 #include "file/SettingsManager.h"
 
 using ListOfEvents = std::vector<std::shared_ptr<gamelib::Event>>;
@@ -74,6 +75,7 @@ private:
 	                      unsigned long deltaMs);
 	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event,
 	                                              gamelib::ListOfEvents& createdEvents, unsigned long deltaMs);
+	void Move(unsigned long deltaMs);
 	int speed;
 	int pixelsToMove = 0;
 	std::shared_ptr<gamelib::AnimatedSprite> sprite;
@@ -90,4 +92,5 @@ private:
 	bool gameWon = false;
 	gamelib::PeriodicTimer moveTimer;
 	int moveRateMs;
+	std::map<gamelib::Direction, gamelib::ControllerMoveEvent::KeyState> movementAcceleration {};
 };

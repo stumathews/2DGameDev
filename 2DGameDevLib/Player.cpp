@@ -11,6 +11,7 @@
 #include <events/EventFactory.h>
 #include "EventNumber.h"
 #include "character/MovementAtSpeed.h"
+#include "character/StatefulMove.h"
 #include "file/SettingsManager.h"
 
 using namespace std;
@@ -73,6 +74,13 @@ void Player::CommonInit(const int playerWidth, const int playerHeight, const std
 	currentFacingDirection = this->currentMovingDirection;
 	Identifier = identifier;
 
+	movementAcceleration = {
+		{ Direction::Up , ControllerMoveEvent::KeyState::Unknown },
+		{ Direction::Down , ControllerMoveEvent::KeyState::Unknown },
+		{ Direction::Left , ControllerMoveEvent::KeyState::Unknown },
+		{ Direction::Right , ControllerMoveEvent::KeyState::Unknown },
+	};
+
 	UpdateBounds(width, height);
 
 	SubscribeToEvent(ControllerMoveEventId); // player wants to know when the controller moves
@@ -118,12 +126,19 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 {
 	if (gameWon) { return createdEvents; }
 	const auto moveEvent = dynamic_pointer_cast<ControllerMoveEvent>(event);
-
+	
+	movementAcceleration[moveEvent->Direction] = moveEvent->GetKeyState();
+	
 	SetPlayerDirection(moveEvent->Direction);
 
+	return createdEvents;
+}
+
+void Player::Move(const unsigned long deltaMs)
+{
 	// This line actually moves the player by a 'movement':
-	const auto isValidMove = moveStrategy->MoveGameObject(std::make_shared<MovementAtSpeed>(speed, moveEvent->Direction, deltaMs));
-	//const auto isValidMove = moveStrategy->MoveGameObject(std::make_shared<gamelib::Movement>(moveEvent->Direction, pixelsToMove));
+	const auto movement = std::make_shared<StatefulMove>(speed, movementAcceleration, deltaMs);
+	const auto isValidMove = moveStrategy->MoveGameObject(movement);
 
 	if (!isValidMove)
 	{
@@ -132,7 +147,13 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 
 	if (sprite)
 	{
-		sprite->Update(deltaMs, AnimatedSprite::GetStdDirectionAnimationFrameGroup(currentFacingDirection));
+
+		// Animate only if moving in a certain direction (we don't have an animation for direction.None!)
+		if(movement->GetDirection() != Direction::None)
+		{
+			sprite->Update(deltaMs, AnimatedSprite::GetStdDirectionAnimationFrameGroup(movement->GetDirection()));
+		}
+
 		sprite->MoveSprite(Position.GetX(), Position.GetY());
 	}
 
@@ -140,17 +161,19 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 
 	UpdateBounds(width, height);
 
-	
-	// Tell subscribers player moved
-	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreatePlayerMovedEvent(moveEvent->Direction), this);
-
-
-	return createdEvents;
+	// Only register a move if there was a move in a known direction
+	if(movement->GetDirection() != Direction::None)
+	{
+		EventManager::Get()->RaiseEvent(EventFactory::Get()->CreatePlayerMovedEvent(movement->GetDirection()), this);
+	}
 }
 
 void Player::Update(const unsigned long deltaMs)
 {
 	moveTimer.Update(deltaMs);
+
+	moveTimer.DoIfReady([&](){ Move(deltaMs); });
+	
 }
 
 void Player::Draw(SDL_Renderer* renderer)
