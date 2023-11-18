@@ -64,10 +64,10 @@ void GameObjectMoveStrategy::SetGameObjectPosition(const gamelib::Coordinate<int
 	gameObject->Position.SetY(resultingMove.GetY());
 }
 
-bool GameObjectMoveStrategy::IsValidMove(const std::shared_ptr<gamelib::IMovement>& movement) const
+bool GameObjectMoveStrategy::IsValidMove(const std::shared_ptr<gamelib::IMovement>& movement)
 {
 	if (ignoreRestrictions) { return true; }
-
+	
 	switch (movement->GetDirection())
 	{
 		case gamelib::Direction::Down: return CanGameObjectMove(gamelib::Direction::Down);
@@ -75,12 +75,12 @@ bool GameObjectMoveStrategy::IsValidMove(const std::shared_ptr<gamelib::IMovemen
 		case gamelib::Direction::Right: return CanGameObjectMove(gamelib::Direction::Right);
 		case gamelib::Direction::Up: return CanGameObjectMove(gamelib::Direction::Up);
 		case gamelib::Direction::None: 
-			return true; // moving in no direction is a valid move
+			return false; // moving in no direction is a valid move
 	}
 	return false;
 }
 
-bool GameObjectMoveStrategy::CanGameObjectMove(const gamelib::Direction direction) const
+bool GameObjectMoveStrategy::CanGameObjectMove(const gamelib::Direction direction)
 {
 	std::shared_ptr<Room> targetRoom;
 	bool touchingBlockingWalls = false;
