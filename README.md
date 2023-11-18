@@ -1,13 +1,5 @@
 # 2DGameDev
 2D Game development project
 
-To run this project you need to download SDL2 and SDL2_Image "development libraries" for Windows:
-https://www.libsdl.org/download-2.0.php
-https://www.libsdl.org/projects/SDL_image/
+![image](https://github.com/stumathews/2DGameDev/assets/3195058/7b99a3e5-d146-423c-9df6-7e35fc91e6dd)
 
-Hook up the include and bin directories in Visual studio and you're good to go.
-BTW use the x86 versions of everything - even though it comes with x64 additionally
-
-## Contents
-So far this project has a game loop and skeletal structure for the rest of the game. 
-See main.cpp for gameloop mechanics and the handling of input via SDL in sense_player_input() function
