@@ -73,7 +73,7 @@ void Player::CommonInit(const int playerWidth, const int playerHeight, const std
 	currentFacingDirection = this->currentMovingDirection;
 	Identifier = identifier;
 
-	movementAcceleration = {
+	directionKeyStates = {
 		{ Direction::Up , ControllerMoveEvent::KeyState::Unknown },
 		{ Direction::Down , ControllerMoveEvent::KeyState::Unknown },
 		{ Direction::Left , ControllerMoveEvent::KeyState::Unknown },
@@ -128,7 +128,7 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 	const auto moveDirection = moveEvent->Direction;
 
 	// Set acceleration in direction depending on if direction key is pressed or not
-	movementAcceleration[moveDirection] = moveEvent->GetKeyState();
+	directionKeyStates[moveDirection] = moveEvent->GetKeyState();
 	
 	SetPlayerDirection(moveDirection);
 
@@ -138,8 +138,9 @@ const ListOfEvents& Player::OnControllerMove(const shared_ptr<Event>& event, Lis
 void Player::Move(const unsigned long deltaMs)
 {
 	// This line actually moves the player by a 'movement':
-	const auto movement = std::make_shared<StatefulMove>(speed, movementAcceleration, deltaMs);
+	const auto movement = std::make_shared<StatefulMove>(speed, directionKeyStates, deltaMs);
 	const auto isValidMove = moveStrategy->MoveGameObject(movement);
+	
 
 	if (!isValidMove)
 	{
@@ -169,14 +170,36 @@ void Player::Move(const unsigned long deltaMs)
 	}
 }
 
+void Player::CancelInvalidDirectionKeyPresses(std::map<Direction, ControllerMoveEvent::KeyState>& currentKeyStates)
+{
+	// If there are any directions that are invalid temporarily cancel the direction's keypress
+	for (const auto & [direction, keyState] : currentKeyStates)
+	{
+		if(keyState == ControllerMoveEvent::KeyState::Pressed && !moveStrategy->CanGameObjectMove(direction)) 
+		{
+			directionKeyStates[direction] = ControllerMoveEvent::KeyState::Released;				
+		}
+	}
+}
+
 void Player::Update(const unsigned long deltaMs)
 {
 	if (GameData::Get()->IsGameWon()) return;
 
-	moveTimer.Update(deltaMs);
+	moveTimer.Update(deltaMs);	
 
 	// We don't move every single frame...
-	moveTimer.DoIfReady([&](){ Move(deltaMs); });
+	moveTimer.DoIfReady([&]()
+	{
+		const auto keyStateBackup = directionKeyStates;
+				
+		CancelInvalidDirectionKeyPresses(directionKeyStates);
+
+		Move(deltaMs);
+
+		// restore original key states (eg. the temporarily cancelled keypress my now be acceptable)
+		directionKeyStates = keyStateBackup;
+	});
 	
 }
 

@@ -76,6 +76,7 @@ private:
 	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event,
 	                                              gamelib::ListOfEvents& createdEvents, unsigned long deltaMs);
 	void Move(unsigned long deltaMs);
+	void CancelInvalidDirectionKeyPresses(std::map<gamelib::Direction, gamelib::ControllerMoveEvent::KeyState>& currentKeyStates);
 	int speed{};
 	int pixelsToMove = 0;
 	std::shared_ptr<gamelib::AnimatedSprite> sprite;
@@ -92,5 +93,5 @@ private:
 	bool gameWon = false;
 	gamelib::PeriodicTimer moveTimer;
 	int moveRateMs{};
-	std::map<gamelib::Direction, gamelib::ControllerMoveEvent::KeyState> movementAcceleration {};
+	std::map<gamelib::Direction, gamelib::ControllerMoveEvent::KeyState> directionKeyStates {};
 };
