@@ -2,8 +2,6 @@
 #include <cppgamelib/net.h>
 #include "LevelManager.h"
 #include "structure/GameStructure.h"
-#include "game.h"
-//#include "Logging/ErrorLogManager.h"
 #include <GameDataManager.h>
 #include <events/UpdateProcessesEvent.h>
 #include <structure/VariableGameLoop.h>
@@ -25,7 +23,8 @@ typedef SettingsManager Settings;
   	##   ##  ###  ##  # ####   ### ###  #### ##           ######   ### ##
 */
 
-
+void InitializeGameSubSystems(GameStructure& gameStructure);
+void PrepareFirstLevel();
 shared_ptr<FixedStepGameLoop> CreateGameLoopStrategy();
 void GetInput(unsigned long deltaMs);
 

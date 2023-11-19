@@ -29,22 +29,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tinyxml2-master\tinyxml2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="game\LevelManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game\gameWorld.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="game\GameCommands.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="game\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\InputManager.h">
@@ -63,10 +51,5 @@
     <Xml Include="game\Level3.xml" />
     <Xml Include="game\Level4.xml" />
     <Xml Include="game\Level5.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="2DGameDev.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>

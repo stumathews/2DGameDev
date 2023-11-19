@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include "gameWorld.h"
 #include "audio/AudioManager.h"
 #include "graphic/SDLGraphicsManager.h"
 #include "resource/ResourceManager.h"

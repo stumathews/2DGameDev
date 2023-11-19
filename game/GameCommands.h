@@ -5,7 +5,6 @@
 #include <memory>
 #include "audio/AudioManager.h"
 #include <resource/ResourceManager.h>
-#include "GameWorld.h"
 #include <events/Event.h>
 
 #include "events/ControllerMoveEvent.h"

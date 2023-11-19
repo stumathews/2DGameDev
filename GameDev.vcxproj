@@ -25,13 +25,9 @@
     <ClCompile Include="game\InputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="game\game.h" />
     <ClInclude Include="game\GameCommands.h" />
-    <ClInclude Include="game\gameWorld.h" />
     <ClInclude Include="game\LevelManager.h" />
     <ClInclude Include="game\InputManager.h" />
-    <ClInclude Include="resource1.h" />
-    <ClInclude Include="tinyxml2-master\tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="game\Level1.xml" />
@@ -45,9 +41,6 @@
     <Xml Include="game\scene3.xml" />
     <Xml Include="game\scene4.xml" />
     <Xml Include="game\settings.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="2DGameDev.rc" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cppgamelib\cppgamelib.vcxproj">
