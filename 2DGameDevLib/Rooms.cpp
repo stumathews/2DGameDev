@@ -48,7 +48,7 @@ Coordinate<int> Rooms::CenterOfRoom(const std::shared_ptr<Room>& room, const int
 		const auto roomYMid = inRoom.GetY() + (inRoom.GetHeight() / 2);
 		const auto x = roomXMid - w / 2;
 		const auto y = roomYMid - h / 2;
-		return Coordinate<int>(x, y);
+		return Coordinate(x, y);
 	};
 
 	return centerPlayerFunc(*room, yourWidth, yourHeight);

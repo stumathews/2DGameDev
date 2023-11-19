@@ -6,9 +6,6 @@
 class Level;
 class Player;
 
-/**
- * \brief An Enemy is a NPC
- */
 class Enemy final : public gamelib::Npc, public std::enable_shared_from_this<Enemy>
 {
 public:

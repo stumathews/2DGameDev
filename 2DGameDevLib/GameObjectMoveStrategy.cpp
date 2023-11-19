@@ -50,8 +50,7 @@ gamelib::Coordinate<int> GameObjectMoveStrategy::CalculateGameObjectMove(
 		case gamelib::Direction::Up: resultingY -= pixelsToMove; 	break;
 		case gamelib::Direction::Left: resultingX -= pixelsToMove;  break;
 		case gamelib::Direction::Right: resultingX += pixelsToMove; break;
-		case gamelib::Direction::None: 
-			THROW(0, "Direction is NOne", "PlayerMoveStrategy");
+		case gamelib::Direction::None: THROW(0, "Direction is NOne", "PlayerMoveStrategy");
 	}
 
 	return {resultingX, resultingY};

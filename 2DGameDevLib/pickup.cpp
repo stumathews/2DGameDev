@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Pickup.h"
 #include "events/PlayerMovedEvent.h"
-#include <events/GameObjectEvent.h>
 #include <common/Common.h>
 #include <scene/SceneManager.h>
 #include "player.h"
@@ -10,7 +9,9 @@
 #include "EventNumber.h"
 #include "SDLCollisionDetection.h"
 #include "GameData.h"
+#include "GameObjectEventFactory.h"
 #include "PlayerCollidedWithPickupEvent.h"
+#include "utils/Utils.h"
 
 using namespace std;
 
@@ -21,7 +22,8 @@ namespace gamelib
 		SetBounds();
 
 		sprite = AnimatedSprite::Create(
-			Position, dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(Asset->Name)));
+			Position, 
+			To<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(Asset->Name)));
 		width = sprite->Dimensions.GetWidth();
 		height = sprite->Dimensions.GetHeight();
 	}
@@ -30,7 +32,7 @@ namespace gamelib
 	{
 		ListOfEvents generatedEvents;
 
-		if (event->Id.PrimaryId == PlayerMovedEventTypeEventId.PrimaryId) // NOLINT(clang-diagnostic-switch-enum)
+		if (event->Id.PrimaryId == PlayerMovedEventTypeEventId.PrimaryId)
 		{
 			const auto player = GameData::Get()->GetPlayer();
 
@@ -40,7 +42,7 @@ namespace gamelib
 				{
 					generatedEvents.push_back(make_shared<Event>(FetchedPickupEventId));
 					generatedEvents.push_back(make_shared<PlayerCollidedWithPickupEvent>(player, shared_from_this()));
-					generatedEvents.push_back(make_shared<GameObjectEvent>(shared_from_this(), GameObjectEventContext::Remove));
+					generatedEvents.push_back( GameObjectEventFactory::MakeRemoveObjectEvent(shared_from_this()));					
 				}
 			}
 		}
@@ -52,7 +54,10 @@ namespace gamelib
 		sprite->Draw(renderer);
 	}
 
-	void Pickup::SetBounds() { Bounds = CalculateBounds(Position, width, height); }
+	void Pickup::SetBounds()
+	{
+		Bounds = CalculateBounds(Position, width, height);
+	}
 
 	void Pickup::Update(const unsigned long deltaMs)
 	{

@@ -41,6 +41,15 @@ Player::Player(const std::string& name, const std::string& type,
 	CenterPlayerInRoom(playerRoom);
 }
 
+Player::Player(const std::string& name, const std::string& type, const std::shared_ptr<Room>& playerRoom,
+               const AbcdRectangle& dimensions, const std::string& identifier): currentMovingDirection(Direction::Down),
+                                                                         currentFacingDirection(Direction::Down)
+{
+	CommonInit(dimensions.GetWidth(), dimensions.GetWidth(), identifier);
+	CurrentRoom = make_shared<RoomInfo>(playerRoom);
+	CenterPlayerInRoom(playerRoom);
+}
+
 Player::Player(const std::string& name,
                const std::string& type,
                const std::shared_ptr<Room>& playerRoom,

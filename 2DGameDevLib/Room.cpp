@@ -17,7 +17,7 @@ using namespace gamelib;
 
 Room::Room(const string& name, const string& type, const int number, const int x, const int y, const int width,
            const int height, const bool fill)
-	: DrawableGameObject(name, type, Coordinate<int>(x, y), true)
+	: DrawableGameObject(name, type, Coordinate(x, y), true)
 {
 	this->Bounds = {x, y, width, height};
 	this->width = width;

@@ -1,6 +1,5 @@
 #pragma once
 #include <memory>
-
 #include "Enemy.h"
 #include "Pickup.h"
 #include "Player.h"

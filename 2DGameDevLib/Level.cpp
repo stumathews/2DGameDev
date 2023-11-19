@@ -16,8 +16,10 @@
 #include "character/DirectionUtils.h"
 #include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
+// ReSharper disable once CppUnusedIncludeDirective
 #include "events/AddGameObjectToCurrentSceneEvent.h"
 #include "events/EventFactory.h"
+#include <utils/Utils.h>
 
 using namespace tinyxml2;
 using namespace std;
@@ -107,14 +109,7 @@ void Level::Load()
 			auto setWall = [&](const std::string& sideVisibilityString, const Side side,
 			                   const std::shared_ptr<Room>& inRoom) -> void
 			{
-				if (sideVisibilityString == "True")
-				{
-					inRoom->AddWall(side);
-				}
-				else
-				{
-					inRoom->RemoveWall(side);
-				}
+				sideVisibilityString == "True" ? inRoom->AddWall(side) : inRoom->RemoveWall(side);
 			};
 
 			setWall(rightSideVisible, Side::Right, room);
@@ -139,19 +134,19 @@ void Level::Load()
 					// We store the player object
 					if (gameObject->Type == "Player")
 					{
-						Player1 = dynamic_pointer_cast<Player>(gameObject);
+						Player1 = To<Player>(gameObject);
 					}
 
 					// We collect pickup objects
 					if (gameObject->Type == "Pickup" && !IsAutoPopulatePickups())
 					{
-						Pickups.push_back(dynamic_pointer_cast<Pickup>(gameObject));
+						Pickups.push_back(To<Pickup>(gameObject));
 					}
 
 					// We collect Enemy objects
 					if (gameObject->Type == "Enemy")
 					{
-						Enemies.push_back(dynamic_pointer_cast<Enemy>(gameObject));
+						Enemies.push_back(To<Enemy>(gameObject));
 					}
 				}
 			}
@@ -211,8 +206,7 @@ void Level::InitializeEnemies()
 
 void Level::AddGameObjectToScene(const std::shared_ptr<GameObject>& object)
 {
-	EventManager::Get()->RaiseEvent(
-		std::dynamic_pointer_cast<Event>(EventFactory::Get()->CreateAddToSceneEvent(object)), this);
+	EventManager::Get()->RaiseEvent(To<Event>(EventFactory::CreateAddToSceneEvent(object)), this);
 }
 
 

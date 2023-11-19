@@ -33,6 +33,9 @@ public:
 	       int playerHeight,
 	       const std::string& identifier);
 
+	Player(const std::string& name, const std::string& type, const std::shared_ptr<Room>& playerRoom, const gamelib::AbcdRectangle& dimensions,
+	       const std::string& identifier);
+
 	Player(const std::string& name, const std::string& type, const std::shared_ptr<Room>& playerRoom,
 	       const std::string& identifier);
 

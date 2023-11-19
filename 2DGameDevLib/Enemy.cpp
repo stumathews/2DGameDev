@@ -6,18 +6,17 @@
 #include "GameDataManager.h"
 #include "GameObjectMoveStrategy.h"
 #include "Player.h"
-// ReSharper disable once CppUnusedIncludeDirective
-#include <events/ControllerMoveEvent.h>
 #include "EnemyMovedEvent.h"
-#include "events/GameObjectEvent.h"
 #include "character/Movement.h"
 #include "PlayerCollidedWithEnemyEvent.h"
 #include "EventNumber.h"
+#include "GameObjectEventFactory.h"
 #include "character/MovementAtSpeed.h"
 #include "geometry/SideUtils.h"
 #include "Room.h"
 #include "SDLCollisionDetection.h"
 #include "file/SettingsManager.h"
+#include "objects/GameObjectFactory.h"
 
 namespace gamelib
 {
@@ -36,13 +35,10 @@ Enemy::Enemy(const std::string& name,
 	: Npc(name, type, position, visible, std::move(sprite), std::move(enemyMoveStrategy)),
 	  CurrentLevel(std::move(level))
 {
-	// Make sure the NPC starts facing in the correct direction
 	SetNpcDirection(startingDirection);
 
-	// make sure the NPCs starts in the correct room room
 	CurrentRoom = std::make_shared<RoomInfo>(startRoom);
-
-	// Define the behavior of an enemy
+	
 	ConfigureEnemyBehavior();
 }
 
@@ -231,7 +227,7 @@ void Enemy::Initialize()
 	SubscribeToEvent(gamelib::PlayerMovedEventTypeEventId);
 	SubscribeToEvent(SettingsReloadedEventId);
 
-	// move every half a sec
+	// save some frames: don't move every frame
 	moveTimer.SetFrequency(moveRateMs);
 
 	moveStrategy = moveStrategy == nullptr
@@ -246,12 +242,8 @@ void Enemy::CheckForPlayerCollision()
 	if (CurrentRoom->RoomIndex == player->CurrentRoom->RoomIndex &&
 		SdlCollisionDetection::IsColliding(&player->Bounds, &Bounds))
 	{
-		// Raise event to indicate enemy collided with player
 		RaiseEvent(std::make_shared<PlayerCollidedWithEnemyEvent>(shared_from_this(), player));
-
-		// Raise event to remove enemy from game
-		RaiseEvent(std::make_shared<gamelib::GameObjectEvent>(shared_from_this(),
-		                                                      gamelib::GameObjectEventContext::Remove));
+		RaiseEvent(GameObjectEventFactory::MakeRemoveObjectEvent(shared_from_this()));		
 	}
 }
 
@@ -295,11 +287,9 @@ bool Enemy::Move(const unsigned long deltaMs)
 
 void Enemy::Update(const unsigned long deltaMs)
 {
-	// Is the game over?
 	if (GameData::Get()->IsGameWon()) return;
 
-	// Automatically move enemy in configured direction 
-
+	// Automatically move enemy in configured direction
 	moveTimer.DoIfReady([&]() { 	Move(deltaMs); });
 
 	// Update everything 
@@ -307,7 +297,9 @@ void Enemy::Update(const unsigned long deltaMs)
 	Hotspot->Update(Position);
 	Sprite->MoveSprite(Position);
 	if(animate)
+	{
 		Sprite->Update(deltaMs, gamelib::AnimatedSprite::GetStdDirectionAnimationFrameGroup(currentFacingDirection));
+	}
 		
 	// Update our bounds too
 	UpdateBounds(Dimensions);
@@ -317,7 +309,6 @@ void Enemy::Update(const unsigned long deltaMs)
 		? drawState ? stateMachine.ActiveState->GetName().substr(0, 1) : ""
 			: "";
 	
-
 	// Do Behavior/React 
 	stateMachine.Update(deltaMs);
 
@@ -328,7 +319,6 @@ void Enemy::Update(const unsigned long deltaMs)
 
 void Enemy::LoadSettings()
 {
-	// emitMoveEvents
 	emitMoveEvents = gamelib::SettingsManager::Bool("enemy", "emitMoveEvents");
 	moveAtSpeed = gamelib::SettingsManager::Bool("enemy", "moveAtSpeed");
 	speed = gamelib::SettingsManager::Int("enemy", "speed");

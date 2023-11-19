@@ -11,7 +11,6 @@ class Room;
 class GameObjectMoveStrategy final : public gamelib::IGameObjectMoveStrategy
 {
 public:
-	// Setup game object to move
 	GameObjectMoveStrategy(const std::shared_ptr<gamelib::GameObject>& gameObject,
 	                       const std::shared_ptr<RoomInfo>& roomInfo);
 
