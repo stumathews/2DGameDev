@@ -11,14 +11,13 @@
 #include "Enemy.h"
 #include "geometry/Side.h"
 
-class Room : public gamelib::DrawableGameObject, public std::enable_shared_from_this<Room>
+class Room final : public gamelib::DrawableGameObject, public std::enable_shared_from_this<Room>
 {
 public:
 	Room(const std::string& name, const std::string& type, int number, int x, int y, int width, int height,
 	     bool fill = false);
 
 	bool IsWalled(gamelib::Side wall) const;
-	// IsWalled (zero based). Does this room have a wall errected on specified side.
 	bool HasTopWall() const;
 	bool HasBottomWall() const;
 	bool HasLeftWall() const;
@@ -27,9 +26,9 @@ public:
 	void UpdateInnerBounds();
 	void SetupWalls();
 
-	void SetSorroundingRooms(int top_index, int right_index, int bottom_index, int left_index,
-	                         std::vector<std::shared_ptr<
-		                         Room>> rooms);
+	void SetSurroundingRooms(int top_index, int rightIndex, int bottomIndex, int leftIndex,
+	                         const std::vector<std::shared_ptr<
+		                         Room>>& rooms);
 	void RemoveWall(gamelib::Side wall);
 	void LogWallRemoval(gamelib::Side wall) const;
 	void SetNotWalled(gamelib::Side wall);
@@ -44,17 +43,16 @@ public:
 	void DrawDiagnostics(SDL_Renderer* renderer);
 	void LoadSettings() override;
 	void Draw(SDL_Renderer* renderer) override;
-	void Update(unsigned long deltaMs) override;
 
 	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
 	gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 	gamelib::ListOfEvents& OnPlayerMoved(std::vector<std::shared_ptr<gamelib::Event>>& generatedEvents);
 	gamelib::Coordinate<int> GetCenter(int width, int height) const;
 	gamelib::Coordinate<int> GetCenter() const;
-	gamelib::Coordinate<int> GetCenter(gamelib::AbcdRectangle rectangle) const;
+	gamelib::Coordinate<int> GetCenter(const gamelib::AbcdRectangle& rectangle) const;
 
 	gamelib::Coordinate<int> GetPosition();
-	int GetNeighbourIndex(gamelib::Side index) const;
+	int GetNeighborIndex(gamelib::Side index) const;
 	int GetX() const;
 	int GetY() const;
 	int GetWidth() const;
@@ -95,13 +93,18 @@ protected:
 
 private:
 	void UpdateEnemyRoom(const std::shared_ptr<Enemy>& enemy);
+
+public:
+	void Update(unsigned long deltaMs) override;
+
+private:
 	bool isPlayerWithinRoom = false;
 	bool fill = false;
 	int innerBoundsOffset;
 	bool logWallRemovals;
 	bool drawInnerBounds{};
 	bool drawHotSpot{};
-	bool printDebuggingTextNeighboursOnly{};
+	bool printDebuggingTextNeighborsOnly{};
 	bool printDebuggingText{};	
-	bool trackEnemies;
+	bool trackEnemies{};
 };

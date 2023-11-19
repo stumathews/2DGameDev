@@ -184,7 +184,7 @@ bool Enemy::IsPlayerInLineOfSight(const gamelib::Direction lookDirection) const
 
 	// Look for line-on-sight in rooms in the direction specified
 	// Evaluate each room in that direction to see if its traversable until you reach the end of the map (-1)
-	while ((nextRoomIndex = currentRoom->GetNeighbourIndex(gamelib::SideUtils::GetSideForDirection(lookDirection))) != -1)
+	while ((nextRoomIndex = currentRoom->GetNeighborIndex(gamelib::SideUtils::GetSideForDirection(lookDirection))) != -1)
 	{
 		const auto nextRoom = GameData::Get()->GetRoomByIndex(nextRoomIndex);
 		if (lookDirection == gamelib::Direction::Right)

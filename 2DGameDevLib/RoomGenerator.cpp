@@ -19,9 +19,6 @@ RoomGenerator::RoomGenerator(const int screenWidth, const int screenHeight, cons
 	this->removeRandomSides = removeRandomSides;
 }
 
-/// <summary>
-/// Generates the Rooms in the Level
-/// </summary>
 vector<shared_ptr<Room>> RoomGenerator::Generate() const
 {
 	vector<shared_ptr<Room>> rooms;
@@ -73,7 +70,7 @@ void RoomGenerator::ConfigureRooms(const std::vector<std::shared_ptr<Room>>& roo
 		auto& thisRoom = rooms[i];
 		auto& nextRoom = nextIndex == totalRooms ? rooms[i] : rooms[nextIndex];
 
-		thisRoom->SetSorroundingRooms(roomIndexAbove, roomIndexRight, roomIndexBelow, roomIndexLeft, rooms);
+		thisRoom->SetSurroundingRooms(roomIndexAbove, roomIndexRight, roomIndexBelow, roomIndexLeft, rooms);
 
 		ConfigureWalls(thisRoom, canRemoveTopWall, rooms, nextRoom, canRemoveRightWall, canRemoveBottomWall,
 		               canRemoveLeftWall, prevIndex);
@@ -116,41 +113,41 @@ void RoomGenerator::RemoveSidesRandomly(const bool& canRemoveAbove, const std::s
 		std::sample(begin(removableSides), end(removableSides), std::back_inserter(sidesToSample), 1,
 		            std::mt19937{std::random_device{}()});
 
-		const auto aSide = sidesToSample.front();
+		const auto randomSide = sidesToSample.front();
 
-		if (aSide == Side::Top && canRemoveAbove)
+		if (randomSide == Side::Top && canRemoveAbove)
 		{
 			currentRoom->RemoveWallZeroBased(Side::Top);
-			const auto& roomAbove = rooms[currentRoom->GetNeighbourIndex(Side::Top)];
+			const auto& roomAbove = rooms[currentRoom->GetNeighborIndex(Side::Top)];
 
 			roomAbove->RemoveWallZeroBased(Side::Bottom);
 			nextRoom->RemoveWallZeroBased(Side::Bottom);
 		}
 
-		if (aSide == Side::Right && canRemoveRight)
+		if (randomSide == Side::Right && canRemoveRight)
 		{
 			currentRoom->RemoveWallZeroBased(Side::Right);
-			const auto& roomToLeft = rooms[currentRoom->GetNeighbourIndex(Side::Right)];
+			const auto& roomToLeft = rooms[currentRoom->GetNeighborIndex(Side::Right)];
 
 			roomToLeft->RemoveWallZeroBased(Side::Left);
 			nextRoom->RemoveWallZeroBased(Side::Left);
 		}
 
-		if (aSide == Side::Bottom && canRemoveBelow)
+		if (randomSide == Side::Bottom && canRemoveBelow)
 		{
 			currentRoom->RemoveWallZeroBased(Side::Bottom);
-			const auto& roomBelow = rooms[currentRoom->GetNeighbourIndex(Side::Bottom)];
+			const auto& roomBelow = rooms[currentRoom->GetNeighborIndex(Side::Bottom)];
 
 			roomBelow->RemoveWallZeroBased(Side::Top);
 			nextRoom->RemoveWallZeroBased(Side::Top);
 		}
 
-		if (aSide == Side::Left && canRemoveLeft)
+		if (randomSide == Side::Left && canRemoveLeft)
 		{
 			currentRoom->RemoveWallZeroBased(Side::Left);
 			const auto& prev = rooms[prevIndex];
 
-			const auto& roomOnLeft = rooms[currentRoom->GetNeighbourIndex(Side::Left)];
+			const auto& roomOnLeft = rooms[currentRoom->GetNeighborIndex(Side::Left)];
 
 			roomOnLeft->RemoveWallZeroBased(Side::Right);
 			prev->RemoveWallZeroBased(Side::Right);

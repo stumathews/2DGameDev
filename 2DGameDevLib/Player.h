@@ -5,7 +5,6 @@
 #include <objects/DrawableGameObject.h>
 #include "events/Event.h"
 #include "Room.h"
-#include <ai/FSM.h>
 #include <character/AnimatedSprite.h>
 #include "geometry/Coordinate.h"
 #include <character/Hotspot.h>
@@ -42,7 +41,7 @@ public:
 	void LoadSettings() override;
 	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event,
 	                                                         unsigned long deltaMs) override;
-	std::string GetName() override { return Name; }
+	std::string GetName() override;
 	void Fire() const;
 	void OnGameWon();
 	void RemovePlayerFacingWall() const;
@@ -56,17 +55,15 @@ public:
 
 	void SetSprite(const std::shared_ptr<gamelib::AnimatedSprite>& inSprite);
 
-	void SetMoveStrategy(const std::shared_ptr<gamelib::IGameObjectMoveStrategy>& inMoveStrategy)
-	{
-		moveStrategy = inMoveStrategy;
-	}
+	void SetMoveStrategy(const std::shared_ptr<gamelib::IGameObjectMoveStrategy>& inMoveStrategy);
 
-	[[nodiscard]] int GetHotSpotLength() const { return hotspotSize; }
-	[[nodiscard]] int GetWidth() const { return width; }
-	[[nodiscard]] int GetHeight() const { return height; }
+	[[nodiscard]] int GetHotSpotLength() const;
+	[[nodiscard]] int GetWidth() const;
+	[[nodiscard]] int GetHeight() const;
 	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
 	int GetHealth();
 	int GetPoints();
+
 	std::shared_ptr<RoomInfo> CurrentRoom;
 	std::string Identifier;
 	std::shared_ptr<gamelib::Hotspot> Hotspot;

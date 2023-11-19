@@ -82,7 +82,8 @@ void Player::CommonInit(const int playerWidth, const int playerHeight, const std
 	currentFacingDirection = this->currentMovingDirection;
 	Identifier = identifier;
 
-	directionKeyStates = {
+	directionKeyStates = 
+	{
 		{ Direction::Up , ControllerMoveEvent::KeyState::Unknown },
 		{ Direction::Down , ControllerMoveEvent::KeyState::Unknown },
 		{ Direction::Left , ControllerMoveEvent::KeyState::Unknown },
@@ -109,19 +110,22 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event, const unsigned l
 
 	if (event->Id.PrimaryId == FireEventId.PrimaryId)
 	{
-		LogMessage("Fire!", verbose);
 		Fire();
 	}
 
 	if (event->Id.PrimaryId == SettingsReloadedEventId.PrimaryId)
 	{
-		LogMessage("Reloading player settings", verbose);
 		LoadSettings();
 	}
 	if (event->Id.PrimaryId == InvalidMoveEventId.PrimaryId) { LogMessage("Invalid move", verbose); }
 	if (event->Id.PrimaryId == GameWonEventId.PrimaryId) { OnGameWon(); }
 
 	return createdEvents;
+}
+
+std::string Player::GetName()
+{
+	return Name;
 }
 
 void Player::OnGameWon()
@@ -148,8 +152,7 @@ void Player::Move(const unsigned long deltaMs)
 {
 	// This line actually moves the player by a 'movement':
 	const auto movement = std::make_shared<StatefulMove>(speed, directionKeyStates, deltaMs);
-	const auto isValidMove = moveStrategy->MoveGameObject(movement);
-	
+	const auto isValidMove = moveStrategy->MoveGameObject(movement);	
 
 	if (!isValidMove)
 	{
@@ -158,8 +161,7 @@ void Player::Move(const unsigned long deltaMs)
 
 	if (sprite)
 	{
-
-		// Animate only if moving in a certain direction (we don't have an animation for direction.None!)
+		// Stop animating if there is no direction set
 		if(movement->GetDirection() != Direction::None)
 		{
 			sprite->Update(deltaMs, AnimatedSprite::GetStdDirectionAnimationFrameGroup(movement->GetDirection()));
@@ -260,6 +262,26 @@ void Player::SetSprite(const std::shared_ptr<AnimatedSprite>& inSprite)
 	Hotspot = std::make_shared<gamelib::Hotspot>(Position, width, height, hotspotSize);
 
 	CalculateBounds(Position, width, height);
+}
+
+void Player::SetMoveStrategy(const std::shared_ptr<gamelib::IGameObjectMoveStrategy>& inMoveStrategy)
+{
+	moveStrategy = inMoveStrategy;
+}
+
+inline int Player::GetHotSpotLength() const
+{
+	return hotspotSize;
+}
+
+int Player::GetWidth() const
+{
+	return width;
+}
+
+int Player::GetHeight() const
+{
+	return height;
 }
 
 void Player::RemovePlayerFacingWall() const

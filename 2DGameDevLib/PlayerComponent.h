@@ -1,7 +1,8 @@
 #pragma once
 #include <character/Component.h>
-#include "Player.h"
 #include "Room.h"
+
+class Player;
 
 class PlayerComponent : public gamelib::Component
 {

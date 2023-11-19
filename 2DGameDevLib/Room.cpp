@@ -33,6 +33,7 @@ Room::Room(const string& name, const string& type, const int number, const int x
 	this->leftRoomIndex = 0;
 	this->innerBoundsOffset = 0;
 	this->abcd = AbcdRectangle(x, y, width, height);
+
 	UpdateInnerBounds(); // We only need to update the bounds once, so do it in the constructor only
 	SetupWalls();
 }
@@ -107,13 +108,24 @@ void Room::UpdateEnemyRoom(const std::shared_ptr<Enemy>& enemy)
 	}
 }
 
+void Room::Update(const unsigned long deltaMs) { }
+
 ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, const unsigned long deltaMs)
 {
 	auto generatedEvents(GameObject::HandleEvent(event, deltaMs));
 
-	if (event->Id.PrimaryId == PlayerMovedEventTypeEventId.PrimaryId) { OnPlayerMoved(generatedEvents); }
-	else if (event->Id.PrimaryId == SettingsReloadedEventId.PrimaryId) { LoadSettings(); }
-	else if(event->Id.PrimaryId == EnemyMovedEventId.PrimaryId) { UpdateEnemyRoom(dynamic_pointer_cast<EnemyMovedEvent>(event)->Enemy); }
+	if (event->Id.PrimaryId == PlayerMovedEventTypeEventId.PrimaryId)
+	{
+		OnPlayerMoved(generatedEvents);
+	}
+	else if (event->Id.PrimaryId == SettingsReloadedEventId.PrimaryId)
+	{
+		LoadSettings();
+	}
+	else if(event->Id.PrimaryId == EnemyMovedEventId.PrimaryId)
+	{
+		UpdateEnemyRoom(To<EnemyMovedEvent>(event)->Enemy);
+	}
 	else
 	{
 		std::stringstream message("Unhandled subscribed event in Room class:");
@@ -127,7 +139,7 @@ ListOfEvents& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedEvents)
 {
 	if(!trackEnemies) return generatedEvents;
 
-	const auto player = dynamic_pointer_cast<Player>(GameData::Get()->player.lock());
+	const auto player = To<Player>(GameData::Get()->player.lock());
 	const auto playerHotSpotBounds = player->Hotspot->GetBounds();
 	SDL_Rect result;
 
@@ -145,7 +157,7 @@ void Room::DrawWalls(SDL_Renderer* renderer) const
 	if (HasLeftWall()) { DrawLine(renderer, LeftLine); }
 }
 
-std::shared_ptr<Room> Room::GetSideRoom(Side side)
+std::shared_ptr<Room> Room::GetSideRoom(const Side side)
 {
 	switch (side)
 	{
@@ -173,20 +185,20 @@ void Room::DrawLine(SDL_Renderer* renderer, const Line& line)
 void Room::DrawDiagnostics(SDL_Renderer* renderer)
 {
 	constexpr SDL_Color red = {255, 0, 0, 0};
-	constexpr SDL_Color Yellow = {255, 255, 0, 0};
+	constexpr SDL_Color yellow = {255, 255, 0, 0};
 	if (fill) { DrawFilledRect(renderer, &Bounds, {255, 0, 0, 0}); }
 
 	if (printDebuggingText)
 	{
 		const auto player = GameData::Get()->GetPlayer();
 
-		if (printDebuggingTextNeighboursOnly)
+		if (printDebuggingTextNeighborsOnly)
 		{
 			const auto playerRoom = player->CurrentRoom->GetCurrentRoom();
 			if (roomNumber == playerRoom->topRoomIndex || roomNumber == playerRoom->rightRoomIndex ||
 				roomNumber == playerRoom->bottomRoomIndex || roomNumber == playerRoom->leftRoomIndex)
 			{
-				RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, Yellow);
+				RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, yellow);
 			}
 
 			if (roomNumber == player->CurrentRoom->TheRoom->GetRoomNumber())
@@ -194,7 +206,10 @@ void Room::DrawDiagnostics(SDL_Renderer* renderer)
 				RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, red);
 			}
 		}
-		else { RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, Yellow); }
+		else
+		{
+			RectDebugging::PrintInRect(renderer, GetTag(), &Bounds, yellow);
+		}
 	}
 
 	if (drawHotSpot)
@@ -206,7 +221,7 @@ void Room::DrawDiagnostics(SDL_Renderer* renderer)
 
 	if (drawInnerBounds)
 	{
-		SDL_SetRenderDrawColor(renderer, Yellow.r, Yellow.g, Yellow.b, Yellow.a);
+		SDL_SetRenderDrawColor(renderer, yellow.r, yellow.g, yellow.b, yellow.a);
 		SDL_RenderDrawRect(renderer, &InnerBounds);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	}
@@ -229,8 +244,7 @@ void Room::LoadSettings()
 	logWallRemovals = SettingsManager::Bool("room", "logWallRemovals");
 	drawInnerBounds = SettingsManager::Bool("room", "drawinnerBounds");
 	drawHotSpot = SettingsManager::Bool("room", "drawHotSpot");
-	printDebuggingTextNeighboursOnly = SettingsManager::Get()->
-		GetBool("global", "print_debugging_text_neighbours_only");
+	printDebuggingTextNeighborsOnly = SettingsManager::Bool("global", "print_debugging_text_neighbours_only");
 	printDebuggingText = SettingsManager::Bool("global", "print_debugging_text");
 	trackEnemies = SettingsManager::Bool("room", "trackEnemies");
 	UpdateInnerBounds();
@@ -248,13 +262,6 @@ bool Room::HasTopWall() const { return IsWalled(Side::Top); }
 bool Room::HasBottomWall() const { return IsWalled(Side::Bottom); }
 bool Room::HasLeftWall() const { return IsWalled(Side::Left); }
 bool Room::HasRightWall() const { return IsWalled(Side::Right); }
-
-
-
-void Room::Update(const unsigned long deltaMs)
-{
-	
-}
 
 AbcdRectangle& Room::GetABCDRectangle() { return abcd; }
 Coordinate<int> Room::GetPosition() { return GetABCDRectangle().GetCenter(); }
@@ -283,19 +290,20 @@ int Room::GetColumnNumber(const int maxCols) const
 	return col;
 }
 
-void Room::SetSorroundingRooms(const int top_index, const int right_index, const int bottom_index, const int left_index,
-                               std::vector<shared_ptr<Room>> rooms)
+void Room::SetSurroundingRooms(const int top_index, const int rightIndex, const int bottomIndex, const int leftIndex,
+                               const std::vector<shared_ptr<Room>>& rooms)
 {
 	this->topRoomIndex = top_index;
 	this->TopRoom = rooms[topRoomIndex < 1 ? 0 : topRoomIndex];
-	this->rightRoomIndex = right_index;
+	this->rightRoomIndex = rightIndex;
 	this->RightRoom = rooms[rightRoomIndex < 1 ? 0 : rightRoomIndex];
-	this->bottomRoomIndex = bottom_index;
+	this->bottomRoomIndex = bottomIndex;
 	this->BottomRoom = rooms[bottomRoomIndex < 1 ? 0 : bottomRoomIndex];
-	this->leftRoomIndex = left_index;
+	this->leftRoomIndex = leftIndex;
 	this->LeftRoom = rooms[leftRoomIndex < 1 ? 0 : leftRoomIndex];
 }
 
+// ReSharper disable once CppParameterNamesMismatch
 Coordinate<int> Room::GetCenter(const int w, const int h) const
 {
 	const auto roomXMid = GetX() + (GetWidth() / 2);
@@ -310,7 +318,7 @@ Coordinate<int> Room::GetCenter() const
 	return GetCenter(GetWidth(), GetHeight());
 }
 
-Coordinate<int> Room::GetCenter(const AbcdRectangle rectangle) const
+Coordinate<int> Room::GetCenter(const AbcdRectangle& rectangle) const
 {
 	const auto roomXMid = GetX() + (GetWidth() / 2);
 	const auto roomYMid = GetY() + (GetHeight() / 2);
@@ -319,14 +327,14 @@ Coordinate<int> Room::GetCenter(const AbcdRectangle rectangle) const
 	return {x, y};
 }
 
-int Room::GetNeighbourIndex(const Side index) const
+int Room::GetNeighborIndex(const Side index) const
 {
 	switch (index)
 	{
-	case Side::Top: return topRoomIndex;
-	case Side::Right: return rightRoomIndex;
-	case Side::Bottom: return bottomRoomIndex;
-	case Side::Left: return leftRoomIndex;
+		case Side::Top: return topRoomIndex;
+		case Side::Right: return rightRoomIndex;
+		case Side::Bottom: return bottomRoomIndex;
+		case Side::Left: return leftRoomIndex;
 	}
 	return 0;
 }
@@ -352,14 +360,10 @@ void Room::SetNotWalled(const Side wall)
 {
 	switch (wall)
 	{
-	case Side::Top: IsTopWalled = false;
-		break;
-	case Side::Bottom: IsBottomWalled = false;
-		break;
-	case Side::Left: IsLeftWalled = false;
-		break;
-	case Side::Right: IsRightWalled = false;
-		break;
+		case Side::Top: IsTopWalled = false; break;
+		case Side::Bottom: IsBottomWalled = false; break;
+		case Side::Left: IsLeftWalled = false; break;
+		case Side::Right: IsRightWalled = false; break;
 	}
 }
 
@@ -367,13 +371,9 @@ void Room::SetWalled(const Side wall)
 {
 	switch (wall)
 	{
-	case Side::Top: { IsTopWalled = true; }
-		break;
-	case Side::Bottom: { IsBottomWalled = true; }
-		break;
-	case Side::Left: { IsLeftWalled = true; }
-		break;
-	case Side::Right: { IsRightWalled = true; }
-		break;
+		case Side::Top: { IsTopWalled = true; } break;
+		case Side::Bottom: { IsBottomWalled = true; } break;
+		case Side::Left: { IsLeftWalled = true; } break;
+		case Side::Right: { IsRightWalled = true; } break;
 	}
 }
