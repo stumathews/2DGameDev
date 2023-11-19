@@ -26,6 +26,7 @@
 #include "graphic/DrawableFrameRate.h"
 #include "graphic/DrawableText.h"
 #include "scene/SceneManager.h"
+#include "utils/Utils.h"
 
 using namespace gamelib;
 using namespace std;
@@ -87,26 +88,33 @@ std::shared_ptr<InputManager> LevelManager::GetInputManager()
 void LevelManager::OnEnemyCollision(const std::shared_ptr<Event>& evt) 
 {
 	gameCommands->FetchedPickup();
-	const auto collisionEvent = std::dynamic_pointer_cast<PlayerCollidedWithEnemyEvent>(evt);
+
+	const auto collisionEvent = To<PlayerCollidedWithEnemyEvent>(evt);
 	const auto& enemyHitPoints = collisionEvent->Enemy->StringProperties["HitPoint"];
+	const auto msg = to_string(collisionEvent->Player->GetHealth());
+
 	collisionEvent->Player->IntProperties["Health"] -= strtol(enemyHitPoints.c_str(), nullptr, 0);
-	auto msg = to_string(collisionEvent->Player->GetHealth());
+
 	Logger::Get()->LogThis(msg);
+
 	playerHealth->Text = msg;
+
 	if(collisionEvent->Player->GetHealth() <= 0)
-	{
-		
-		eventManager->RaiseEvent(std::dynamic_pointer_cast<Event>(eventFactory->CreateGenericEvent(PlayerDiedEventId)), this);
+	{		
+		eventManager->RaiseEvent(To<Event>(eventFactory->CreateGenericEvent(PlayerDiedEventId)), this);
 	}
 }
 
 void LevelManager::OnPickupCollision(const std::shared_ptr<Event>& evt) const
 {
-	const auto collisionEvent = std::dynamic_pointer_cast<PlayerCollidedWithPickupEvent>(evt);
+	const auto collisionEvent = To<PlayerCollidedWithPickupEvent>(evt);
 	const auto& pickupValue = collisionEvent->Pickup->StringProperties["value"];
-	collisionEvent->Player->IntProperties["Points"] += strtol(pickupValue.c_str(), nullptr, 0);
 	const auto msg = to_string(collisionEvent->Player->GetPoints());
+
+	collisionEvent->Player->IntProperties["Points"] += strtol(pickupValue.c_str(), nullptr, 0);
+	
 	playerPoints->Text = msg;
+
 	Logger::Get()->LogThis(msg);
 }
 
@@ -126,8 +134,7 @@ void LevelManager::OnPlayerDied()
 void LevelManager::OnStartNetworkLevel(const std::shared_ptr<Event>& evt)
 {
 	// read the start level event and create the level
-	// ReSharper disable once CppNoDiscardExpression
-	auto _ = ChangeLevel(1);  // NOLINT(clang-diagnostic-unused-result)
+	auto _ = ChangeLevel(1);
 
 	// Network games all start on level 1 for now
 	CreateLevel(GetSetting("global", "level1FileName"));
@@ -155,7 +162,7 @@ void LevelManager::RemoveAllGameObjects()
 
 void LevelManager::OnLevelChanged(const std::shared_ptr<Event>& evt) const
 {
-	switch(dynamic_pointer_cast<SceneChangedEvent>(evt)->SceneId)
+	switch(To<SceneChangedEvent>(evt)->SceneId)
 	{
 		case 1: PlayLevelMusic("LevelMusic1"); break;
 		case 2: PlayLevelMusic("LevelMusic2"); break;
@@ -179,7 +186,7 @@ void LevelManager::OnGameWon()
 		std::make_shared<Action>([&]() { gameCommands->ToggleMusic(verbose); }));
 	const auto b = std::static_pointer_cast<Process>(std::make_shared<Action>([&]()
 	{
-		AudioManager::Get()->Play(ResourceManager::Get()->GetAssetInfo(SettingsManager::String("audio", "win_music")));
+		AudioManager::Play(ResourceManager::Get()->GetAssetInfo(SettingsManager::String("audio", "win_music")));
 	}));
 	
 	const auto c = std::static_pointer_cast<Process>(std::make_shared<DelayProcess>(5000));
@@ -211,7 +218,7 @@ void LevelManager::CreatePlayer(const vector<shared_ptr<Room>> &rooms, const int
 	?  GetSetting("networking", "nickname")
 	    : "Player1";
 
-	player = CharacterBuilder::BuildPlayer("Player1", rooms[GetRandomIndex(0, static_cast<int>(rooms.size()) - 1)], resourceId, playerNickName);
+	player = CharacterBuilder::BuildPlayer(playerNickName, GetRandomRoom(rooms), resourceId, playerNickName);
 
 	if(disableCharacters)
 	{
@@ -239,7 +246,7 @@ void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms)
 
 	for(auto i = 0; i < numPickups; i++)
 	{
-		const auto& randomRoom = rooms[GetRandomIndex(0, static_cast<int>(rooms.size())-1)];
+		const auto& randomRoom = GetRandomRoom(rooms);
 		const auto pickupName = string("RoomPickup") + std::to_string(randomRoom->GetRoomNumber());
 		
 		std::shared_ptr<SpriteAsset> spriteAssert;
@@ -247,15 +254,15 @@ void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms)
 		// Place 3 sets evenly of each type of pickup	
 		if(i < 1 * part)
 		{
-			spriteAssert = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(GetSetting("pickup1", "assetName")));
+			spriteAssert = To<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(GetSetting("pickup1", "assetName")));
 		}
 		else if(i >= 1 * part && i < 2 * part)
 		{
-			spriteAssert = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(GetSetting("pickup2", "assetName")));
+			spriteAssert = To<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(GetSetting("pickup2", "assetName")));
 		}
 		else if(i >= 2 * part)
 		{
-			spriteAssert = dynamic_pointer_cast<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(GetSetting("pickup3", "assetName")));
+			spriteAssert = To<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(GetSetting("pickup3", "assetName")));
 		}
 
 		auto pickup = CharacterBuilder::BuildPickup(pickupName, randomRoom, spriteAssert->Uid);
@@ -269,14 +276,14 @@ void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms)
 
 void LevelManager::AddScreenWidgets(const std::vector<std::shared_ptr<Room>>& rooms)
 {
-	// Add Hud
-	CreateHud(rooms, player);
+	AddGameObjectToScene(CreateHud(rooms, player));	
+	AddGameObjectToScene(CreateDrawableFrameRate());
 
-	// Add FrameRate to scene
-	CreateDrawableFrameRate();
-
-	// Add Player stats to scene
-	CreatePlayerStats();
+	playerHealth = CreateDrawablePlayerHealth();
+	playerPoints = CreateDrawablePlayerPoints();	
+	
+	AddGameObjectToScene(playerHealth);
+	AddGameObjectToScene(playerPoints);
 }
 
 void LevelManager::CreateLevel(const string& levelFilePath)
@@ -293,9 +300,7 @@ void LevelManager::CreateLevel(const string& levelFilePath)
 
 	// Add player to room in level
 	CreatePlayer(rooms, GetAsset("edge_player")->Uid);
-
 	
-
 	if (level->IsAutoPopulatePickups())
 	{
 		CreateAutoPickups(rooms);
@@ -304,7 +309,7 @@ void LevelManager::CreateLevel(const string& levelFilePath)
 	AddScreenWidgets(rooms);
 }
 
-void LevelManager::CreateDrawableFrameRate()
+std::shared_ptr<DrawableFrameRate> LevelManager::CreateDrawableFrameRate()
 {
 	const int lastColumn = level->NumCols;
 
@@ -313,41 +318,39 @@ void LevelManager::CreateDrawableFrameRate()
 
 	// Add frame rate
 	drawableFrameRate = std::make_shared<DrawableFrameRate>(widgetArea);
-	AddGameObjectToScene(drawableFrameRate);	
+	return drawableFrameRate;
 }
 
-void LevelManager::CreatePlayerStats()
+std::shared_ptr<DrawableText> LevelManager::CreateDrawablePlayerHealth() const
+{
+	const auto lastRow = level->NumRows;
+	const auto healthRoom = level->GetRoom(lastRow,1);
+	const auto amount = healthRoom->InnerBounds.h / 2;	
+	auto colour = SDL_Color {255,0,0,0}; // Red
+
+	healthRoom->InnerBounds.h /= 2;
+	healthRoom->InnerBounds.y += amount/2;
+
+	return make_shared<DrawableText>(healthRoom->InnerBounds, std::to_string(player->GetHealth()), colour);
+
+}
+
+std::shared_ptr<DrawableText> LevelManager::CreateDrawablePlayerPoints() const
 {
 	const auto lastRow = level->NumRows;
 	const int lastColumn = level->NumCols;
-	auto joinRects = [=](const bool vertically, std::initializer_list<SDL_Rect> rects)-> SDL_Rect
-	{
-		SDL_Rect result {};
-		result.x = rects.begin()->x;
-		result.y = rects.begin()->y;
-		for(const auto& [x, y, w, h] : rects)
-		{			
-			!vertically ? result.w += w : result.w = w;
-			vertically ? result.h += h : result.h = h;	
-		}
-		return result;
-	};
-	
 	const auto pointsRoom = level->GetRoom(lastRow,lastColumn);
-	const auto healthRoom = level->GetRoom(lastRow,1);
-	const auto amount = pointsRoom->InnerBounds.h / 2;
-	pointsRoom->InnerBounds.h /= 2;
-	healthRoom->InnerBounds.h /= 2;
-	pointsRoom->InnerBounds.y += amount/2;
-	healthRoom->InnerBounds.y += amount/2;
+	const auto amount = pointsRoom->InnerBounds.h / 2;	
+	auto colour = SDL_Color {0,0,255,0}; // Blue
 
-	playerHealth = make_shared<DrawableText>(joinRects(false, {healthRoom->InnerBounds}), std::to_string(player->GetHealth()), SDL_Color {255,0,0,0});
-	playerPoints = make_shared<DrawableText>(joinRects(false, {pointsRoom->InnerBounds}), std::to_string(player->GetPoints()), SDL_Color {0,0,255,0});
-	AddGameObjectToScene(playerHealth);
-	AddGameObjectToScene(playerPoints);
+	pointsRoom->InnerBounds.h /= 2;
+	pointsRoom->InnerBounds.y += amount/2;
+
+	return make_shared<DrawableText>(pointsRoom->InnerBounds, std::to_string(player->GetPoints()), colour);
 }
 
-void LevelManager::CreateHud(const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Player>& inPlayer)
+std::shared_ptr<StaticSprite> LevelManager::CreateHud(const std::vector<std::shared_ptr<Room>>& rooms,
+                                                      const std::shared_ptr<Player>& inPlayer)
 {
 	constexpr auto firstRow = 1;
 	constexpr auto firstCol = 1;
@@ -361,7 +364,7 @@ void LevelManager::CreateHud(const std::vector<std::shared_ptr<Room>>& rooms, co
 
 	// add to scene
 	InitializeHudItem(hudItem);
-	AddGameObjectToScene(hudItem);
+	return hudItem;
 }
 
 void LevelManager::InitializeHudItem(const std::shared_ptr<StaticSprite>& hudItem)
@@ -370,7 +373,10 @@ void LevelManager::InitializeHudItem(const std::shared_ptr<StaticSprite>& hudIte
 	hudItem->SubscribeToEvent(PlayerMovedEventTypeEventId);
 }
 
-void LevelManager::AddGameObjectToScene(const std::shared_ptr<GameObject>& gameObject) { eventManager->RaiseEvent(std::dynamic_pointer_cast<Event>(eventFactory->CreateAddToSceneEvent(gameObject)), this); }
+void LevelManager::AddGameObjectToScene(const std::shared_ptr<GameObject>& gameObject)
+{
+	eventManager->RaiseEvent(To<Event>(eventFactory->CreateAddToSceneEvent(gameObject)), this);
+}
 
 void LevelManager::CreateAutoLevel()
 {
@@ -438,7 +444,7 @@ bool LevelManager::ChangeLevel(const int levelNum) const
 void LevelManager::OnNetworkPlayerJoined(const std::shared_ptr<Event>& evt) const
 {
 	// We know a player has joined the game server.
-	const auto networkPlayerJoinedEvent = dynamic_pointer_cast<NetworkPlayerJoinedEvent>(evt);
+	const auto networkPlayerJoinedEvent = To<NetworkPlayerJoinedEvent>(evt);
 	
 	// Add the player to our level... find a suitable position for it
 }

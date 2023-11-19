@@ -45,10 +45,12 @@ public:
     std::shared_ptr<Level> GetLevel();
     std::string GetSubscriberName() override;
     void CreateAutoLevel(); // Raises level creation events
-    void CreateDrawableFrameRate();
-    void CreateHud(const std::vector<std::shared_ptr<Room>>& rooms, const std::shared_ptr<Player>& inPlayer);
+    std::shared_ptr<gamelib::DrawableFrameRate> CreateDrawableFrameRate();
+    std::shared_ptr<gamelib::StaticSprite> CreateHud(const std::vector<std::shared_ptr<Room>>& rooms,
+                                                     const std::shared_ptr<Player>& inPlayer);
     void CreateLevel(const std::string& levelFilePath); // Raises level creation events
-    void CreatePlayerStats();
+    [[nodiscard]] std::shared_ptr<gamelib::DrawableText> CreateDrawablePlayerHealth() const;
+    [[nodiscard]] std::shared_ptr<gamelib::DrawableText> CreateDrawablePlayerPoints() const;
     void GetKeyboardInput(const unsigned long deltaMs) const;
     void InitializeAutoPickups(const std::vector<std::shared_ptr<gamelib::Pickup>>& inPickups);
     void InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<gamelib::SpriteAsset>& spriteAsset) const;
