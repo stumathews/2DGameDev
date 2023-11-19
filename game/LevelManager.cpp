@@ -15,11 +15,8 @@
 #include <processes/Action.h>
 #include <functional>
 #include <cppgamelib/events.h>
-
-// ReSharper disable once CppUnusedIncludeDirective
 #include <random>
 #include <events/UpdateProcessesEvent.h>
-
 #include "CharacterBuilder.h"
 #include "EventNumber.h"
 #include "GameObjectMoveStrategy.h"
@@ -39,8 +36,8 @@ bool LevelManager::Initialize()
 
 	verbose =  GetBoolSetting("global", "verbose");
 	disableCharacters = GetBoolSetting("global", "disableCharacters");
-	GameData::Get()->IsNetworkGame = GetBoolSetting("global", "isNetworkGame");
 
+	GameData::Get()->IsNetworkGame = GetBoolSetting("global", "isNetworkGame");
 	GameData::Get()->IsGameDone = false;
 	GameData::Get()->IsNetworkGame = false;
 	GameData::Get()->CanDraw = true;
@@ -48,7 +45,7 @@ bool LevelManager::Initialize()
 	eventManager = EventManager::Get();
 	eventFactory = EventFactory::Get();
 	gameCommands = std::make_shared<GameCommands>();
-	inputManager = std::make_shared<InputManager>(gameCommands, 20, verbose);
+	inputManager = std::make_shared<InputManager>(gameCommands, verbose);
 
 	eventManager->SubscribeToEvent(GenerateNewLevelEventId, this);
 	eventManager->SubscribeToEvent(InvalidMoveEventId, this);

@@ -1,13 +1,11 @@
 #include "InputManager.h"
+#include <exceptions/EngineException.h>
 
 void InputManager::Sample(const unsigned long deltaMs)
 {
-	accumulatedTimeMs += deltaMs;
-
 	if(gameCommands == nullptr)
 	{
-		std::cout << "No game commands set on the input manager. No input will be sampled." << std::endl;
-		return;
+		THROW(12, "No game commands set on the input manager. No input will be sampled.", "InputManager");
 	}
 
 	SDL_Event e;
@@ -47,6 +45,8 @@ void InputManager::Sample(const unsigned long deltaMs)
 		}
 	}
 
+	// Input -> Game Commands
+
 	const auto keyState = SDL_GetKeyboardState(nullptr);
 	if (keyState[SDL_SCANCODE_Q] || keyState[SDL_SCANCODE_ESCAPE]) { gameCommands->Quit(verbose); }
 	if (keyState[SDL_SCANCODE_R]) { gameCommands->ReloadSettings(verbose);  }
@@ -55,15 +55,5 @@ void InputManager::Sample(const unsigned long deltaMs)
 	if (keyState[SDL_SCANCODE_R]) { gameCommands->ReloadSettings(verbose);  }
 	if (keyState[SDL_SCANCODE_N]) { gameCommands->StartNetworkLevel();  }
 	if (keyState[SDL_SCANCODE_SPACE]) { gameCommands->Fire(verbose);  }
-	if (keyState[SDL_SCANCODE_0]) { gameCommands->ToggleMusic(false);  }
-	
-	
-	accumulatedTimeMs = 0;
-	sampleCount++;
-
-}
-
-int InputManager::GetSampleRatePerSec() 
-{
-	return samplePerSec;
+	if (keyState[SDL_SCANCODE_0]) { gameCommands->ToggleMusic(false);  }	
 }

@@ -51,7 +51,7 @@ gamelib::Coordinate<int> GameObjectMoveStrategy::CalculateGameObjectMove(
 		case gamelib::Direction::Left: resultingX -= pixelsToMove;  break;
 		case gamelib::Direction::Right: resultingX += pixelsToMove; break;
 		case gamelib::Direction::None: 
-			THROW(0, "Direction is NOne", "PlayerMoveStrategy")
+			THROW(0, "Direction is NOne", "PlayerMoveStrategy");
 	}
 
 	return {resultingX, resultingY};
@@ -74,8 +74,7 @@ bool GameObjectMoveStrategy::IsValidMove(const std::shared_ptr<gamelib::IMovemen
 		case gamelib::Direction::Left: return CanGameObjectMove(gamelib::Direction::Left);
 		case gamelib::Direction::Right: return CanGameObjectMove(gamelib::Direction::Right);
 		case gamelib::Direction::Up: return CanGameObjectMove(gamelib::Direction::Up);
-		case gamelib::Direction::None: 
-			return false; // moving in no direction is a valid move
+		case gamelib::Direction::None: return false; // moving in no direction is a valid move
 	}
 	return false;
 }

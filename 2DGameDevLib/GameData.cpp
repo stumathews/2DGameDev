@@ -10,9 +10,7 @@
 using namespace gamelib;
 using namespace std;
 
-GameData::GameData(): isGameWon(false)
-{
-}
+GameData::GameData(): isGameWon(false) { }
 
 void GameData::Clear()
 {
@@ -44,6 +42,7 @@ void GameData::RemovePickup(const std::shared_ptr<Pickup>& pickup)
 	{
 		return IsSameId(obj, pickup);
 	}), pickups.end());
+
 	RemoveGameObject(pickup);
 }
 

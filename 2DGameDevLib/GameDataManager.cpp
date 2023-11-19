@@ -31,55 +31,62 @@ GameDataManager::GameDataManager()
 	eventFactory = EventFactory::Get();
 }
 
-std::vector<std::shared_ptr<Event>> GameDataManager::HandleEvent(const std::shared_ptr<Event> evt,
-                                                                 unsigned long deltaMs)
+GameDataManager* GameDataManager::Get()
 {
-	if (evt->Id == AddGameObjectToCurrentSceneEventId)
+	if (instance == nullptr) { instance = new GameDataManager(); }
+	return instance;
+}
+
+ListOfEvents GameDataManager::HandleEvent(const std::shared_ptr<Event> event, unsigned long deltaMs)
+{
+	if (event->Id == AddGameObjectToCurrentSceneEventId)
 	{
-		AddToGameData(evt);
+		AddToGameData(dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(event));
 	}
 
-	if (evt->Id == GameObjectTypeEventId)
+	if (event->Id == GameObjectTypeEventId)
 	{
-		RemoveFromGameData(evt);
+		RemoveFromGameData(dynamic_pointer_cast<GameObjectEvent>(event));
 	}
 	return {};
 }
 
-void GameDataManager::AddToGameData(const std::shared_ptr<Event>& evt) const
+inline std::string GameDataManager::GetSubscriberName()
 {
-	const auto object = dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(evt)->GetGameObject();
+	return "GameDataManager";
+}
 
-	if (object->GetGameObjectType() == GameObjectType::GameDefined)
+void GameDataManager::AddToGameData(const shared_ptr<AddGameObjectToCurrentSceneEvent>& event) const
+{
+	const auto gameObject = dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(event)->GetGameObject();
+
+	if (gameObject->GetGameObjectType() == GameObjectType::GameDefined)
 	{
-		if (object->Type == "Room")
+		if (gameObject->Type == "Room")
 		{
-			GameData()->AddRoom(std::dynamic_pointer_cast<Room>(object));
+			GameData()->AddRoom(std::dynamic_pointer_cast<Room>(gameObject));
 		}
-		if (object->Type == "Enemy")
+		if (gameObject->Type == "Enemy")
 		{
-			GameData()->AddEnemy(std::dynamic_pointer_cast<Enemy>(object));
+			GameData()->AddEnemy(std::dynamic_pointer_cast<Enemy>(gameObject));
 		}
 	}
 	else
 	{
-		if (object->GetGameObjectType() == GameObjectType::Pickup)
+		if (gameObject->GetGameObjectType() == GameObjectType::Pickup)
 		{
-			GameData()->AddPickup(std::dynamic_pointer_cast<Pickup>(object));
+			GameData()->AddPickup(std::dynamic_pointer_cast<Pickup>(gameObject));
 		}
 	}
 
-	GameData()->AddGameObject(object);
+	GameData()->AddGameObject(gameObject);
 }
 
-void GameDataManager::RemoveFromGameData(const std::shared_ptr<Event>& evt)
+void GameDataManager::RemoveFromGameData(const std::shared_ptr<GameObjectEvent>& event)
 {
-	const auto gameObjectEvent = dynamic_pointer_cast<GameObjectEvent>(evt);
-	switch (gameObjectEvent->Context) // NOLINT(clang-diagnostic-switch-enum)
+	if(event->Context == GameObjectEventContext::Remove)
 	{
-	case GameObjectEventContext::Remove: RemoveGameObject(gameObjectEvent->Object);
-		break;
-	default: /* Do Nothing */;
+		RemoveGameObject(event->Object);
 	}
 
 	if (GameData::Get()->CountPickups() == 0 && !GameData::Get()->IsGameWon())

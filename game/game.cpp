@@ -14,6 +14,7 @@
 using namespace std;
 using namespace gamelib;
 typedef SettingsManager Settings;
+
 /*
   	##   ##    ##     ### ##   ### ###  ### ##            ## ##    ### ##
   	## ##      ##    ##  ##    ##  ##   ##  ##           ##  ##    ##  ##
@@ -26,9 +27,9 @@ typedef SettingsManager Settings;
 
 
 shared_ptr<FixedStepGameLoop> CreateGameLoopStrategy();
-void GetInput(const unsigned long deltaMs);
+void GetInput(unsigned long deltaMs);
 
-int main(int argc, char *args[])
+int main(int, char *[])
 {
 	GameDataManager::Get()->Initialize(false);
 	ErrorLogManager::GetErrorLogManager()->Create("GameErrors.txt");
@@ -97,7 +98,8 @@ void InitializeGameSubSystems(GameStructure& gameStructure)
 	constexpr auto gameSettingsFilePath = "game/settings.xml";
 
 	
-	const auto initialized1 = gameStructure.Initialize(screenWidth, screenHeight, windowTitle, resourcesFilePath, gameSettingsFilePath);
+	const auto initialized1 = gameStructure.Initialize(screenWidth, screenHeight, windowTitle, resourcesFilePath,
+	                                                   gameSettingsFilePath);
 	const auto initialized2 = LevelManager::Get()->Initialize();
 
 	const auto someInitFailed = !IsSuccess(initialized1, "Successfully initialized game structure.") || 
@@ -109,7 +111,7 @@ void InitializeGameSubSystems(GameStructure& gameStructure)
 
 		LogMessage("Game subsystem initialization failed.", verboseLoggingEnabled, true);
 
-		THROW(12, "There was a problem initializing the game subsystems", "Initialize Subsystems")
+		THROW(12, "There was a problem initializing the game subsystems", "Initialize Subsystems");
 	}
 }
 

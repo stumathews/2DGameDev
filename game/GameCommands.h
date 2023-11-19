@@ -22,20 +22,20 @@ public:
 
 	std::string GetSubscriberName() override { return "GameCommands"; }
 
-	void Fire(bool verbose);
-	void MoveUp(const bool verbose, const gamelib::ControllerMoveEvent::KeyState keyState);
-	void MoveDown(const bool verbose, const gamelib::ControllerMoveEvent::KeyState keyState);
-	void MoveLeft(const bool verbose, const gamelib::ControllerMoveEvent::KeyState keyState);
-	void MoveRight(const bool verbose, const gamelib::ControllerMoveEvent::KeyState keyState);
+	void Fire(bool beVerbose);
+	void MoveUp(const bool beVerbose, const gamelib::ControllerMoveEvent::KeyState keyState);
+	void MoveDown(const bool beVerbose, const gamelib::ControllerMoveEvent::KeyState keyState);
+	void MoveLeft(const bool beVerbose, const gamelib::ControllerMoveEvent::KeyState keyState);
+	void MoveRight(const bool beVerbose, const gamelib::ControllerMoveEvent::KeyState keyState);
 	void Move(const gamelib::Direction direction, gamelib::ControllerMoveEvent::KeyState keyState);
 	void PlaySoundEffect(const std::shared_ptr<gamelib::AudioAsset>& effect) const;
-	void RaiseChangedLevel(bool verbose, short newLevel);
-	void ReloadSettings(bool verbose);
+	void RaiseChangedLevel(bool beVerbose, short newLevel);
+	void ReloadSettings(bool beVerbose);
 	void LoadNewLevel(int level);
-	void ToggleMusic(bool verbose) const;
-	void Quit(bool verbose) const;
-	void InvalidMove(bool verbose = false) const;
-	void FetchedPickup(bool verbose = false) const;
+	void ToggleMusic(bool beVerbose) const;
+	void Quit(bool beVerbose) const;
+	void InvalidMove(bool beVerbose = false) const;
+	void FetchedPickup(bool beVerbose = false) const;
 	void StartNetworkLevel();
 	static void PingGameServer();
 private:
