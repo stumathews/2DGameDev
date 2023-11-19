@@ -447,6 +447,12 @@ Mix_Chunk* LevelManager::GetSoundEffect(const std::string& name) { return AudioM
 std::shared_ptr<Asset> LevelManager::GetAsset(const std::string& name) { return ResourceManager::Get()->GetAssetInfo(name); }
 
 shared_ptr<Level> LevelManager::GetLevel() { return level; }
+
+inline std::string LevelManager::GetSubscriberName()
+{
+	return "level_manager";
+}
+
 LevelManager* LevelManager::Get() { if (instance == nullptr) { instance = new LevelManager(); } return instance; }
 LevelManager::~LevelManager() { instance = nullptr; }
 LevelManager* LevelManager::instance = nullptr;
