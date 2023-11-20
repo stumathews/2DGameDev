@@ -6,7 +6,6 @@
 #include "audio/AudioManager.h"
 #include <resource/ResourceManager.h>
 #include <events/Event.h>
-
 #include "events/ControllerMoveEvent.h"
 
 class GameCommands final : public gamelib::EventSubscriber, public std::enable_shared_from_this<GameCommands>
@@ -19,7 +18,7 @@ public:
 	GameCommands& operator=(const GameCommands& other) = delete;
 	GameCommands& operator=(const GameCommands&& other) = delete;
 
-	std::string GetSubscriberName() override { return "GameCommands"; }
+	std::string GetSubscriberName() override;
 
 	void Fire(bool beVerbose);
 	void MoveUp(const bool beVerbose, const gamelib::ControllerMoveEvent::KeyState keyState);
@@ -42,7 +41,7 @@ private:
 	bool logCommands;
 
 	// Inherited via EventSubscriber
-	virtual std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long deltaMs) override;
+	virtual gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long deltaMs) override;
 };
 
 

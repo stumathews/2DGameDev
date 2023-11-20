@@ -27,6 +27,11 @@ GameCommands::GameCommands()
 	EventManager::Get()->SubscribeToEvent(PlayerMovedEventTypeEventId, this);
 }
 
+std::string GameCommands::GetSubscriberName()
+{
+	return "GameCommands";
+}
+
 void GameCommands::Fire(const bool beVerbose)
 {
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: Fire", beVerbose); }
@@ -163,7 +168,7 @@ void GameCommands::StartNetworkLevel()
 
 void GameCommands::PingGameServer() { NetworkManager::Get()->PingGameServer(); }
 
-std::vector<std::shared_ptr<Event>> GameCommands::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
+ListOfEvents GameCommands::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
 {
 	if(evt->Id.PrimaryId == NetworkPlayerJoinedEventId.PrimaryId) { Logger::Get()->LogThis("--------------------------- Network Player joined");}
 	if(evt->Id.PrimaryId == NetworkTrafficReceivedEventId.PrimaryId)
