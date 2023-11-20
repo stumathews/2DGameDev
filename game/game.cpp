@@ -3,11 +3,7 @@
 #include "LevelManager.h"
 #include "structure/GameStructure.h"
 #include <GameDataManager.h>
-#include <events/UpdateProcessesEvent.h>
-#include <structure/VariableGameLoop.h>
-
 #include "structure/FixedStepGameLoop.h"
-#include "events/UpdateAllGameObjectsEvent.h"
 
 using namespace std;
 using namespace gamelib;
@@ -116,15 +112,16 @@ void InitializeGameSubSystems(GameStructure& gameStructure)
 
 void Update(const unsigned long deltaMs)
 {
+	
 	EventManager::Get()->ProcessAllEvents(deltaMs);
-	EventManager::Get()->DispatchEventToSubscriber(make_shared<UpdateAllGameObjectsEvent>(), deltaMs);
-	EventManager::Get()->DispatchEventToSubscriber(make_shared<UpdateProcessesEvent>(), deltaMs);
+	EventManager::Get()->DispatchEventToSubscriber(EventFactory::Get()->CreateUpdateAllGameObjectsEvent(), deltaMs);
+	EventManager::Get()->DispatchEventToSubscriber(EventFactory::Get()->CreateUpdateProcessesEvent(), deltaMs);
 }
 
 void Draw()
 {
 	 // Time-sensitive, skip queue. Draws the current scene
-	EventManager::Get()->DispatchEventToSubscriber(std::make_shared<Event>(DrawCurrentSceneEventId), 0UL);
+	EventManager::Get()->DispatchEventToSubscriber(EventFactory::Get()->CreateGenericEvent(DrawCurrentSceneEventId), 0UL);
 }
 
 void GetInput(const unsigned long deltaMs)

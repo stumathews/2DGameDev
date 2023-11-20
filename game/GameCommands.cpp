@@ -12,6 +12,7 @@
 #include <GameData.h>
 #include "EventNumber.h"
 #include "events/NetworkPlayerJoinedEvent.h"
+#include "utils/Utils.h"
 
 using namespace gamelib;
 using namespace std;
@@ -20,8 +21,7 @@ GameCommands::GameCommands()
 {
 	verbose = SettingsManager::Bool("global", "verbose");
 	logCommands = SettingsManager::Bool("global", "verbose");
-
-	// The Game Commands subscribe to certain event too
+	
 	EventManager::Get()->SubscribeToEvent(NetworkPlayerJoinedEventId, this);
 	EventManager::Get()->SubscribeToEvent(NetworkTrafficReceivedEventId, this);
 	EventManager::Get()->SubscribeToEvent(PlayerMovedEventTypeEventId, this);
@@ -33,7 +33,7 @@ void GameCommands::Fire(const bool beVerbose)
 	
 	PlaySoundEffect(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("scratch.wav")));
 	
-	EventManager::Get()->RaiseEvent(std::make_shared<Event>(FireEventId), this);
+	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(FireEventId), this);
 }
 
 void GameCommands::MoveUp(const bool beVerbose, const ControllerMoveEvent::KeyState keyState)
@@ -66,22 +66,14 @@ void GameCommands::MoveRight(const bool beVerbose, const ControllerMoveEvent::Ke
 
 void GameCommands::Move(const Direction direction, ControllerMoveEvent::KeyState keyState = ControllerMoveEvent::KeyState::Pressed)
 {
+	
 	switch(direction)
 	{
-	case Direction::Up:
-		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Up, keyState), this);
-		break;
-	case Direction::Down: 
-		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Down, keyState), this);
-		break;
-	case Direction::Left: 
-		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Left, keyState), this);
-		break;
-	case Direction::Right:
-		EventManager::Get()->RaiseEvent(std::make_unique<ControllerMoveEvent>(Direction::Right, keyState), this);
-		break;
-	case Direction::None:
-		THROW(12, "Unknown direction", "GameCommands");
+		case Direction::Up: EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateControllerMoveEvent(Direction::Up, keyState), this); 	break;
+		case Direction::Down: EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateControllerMoveEvent(Direction::Down, keyState), this); break;
+		case Direction::Left: EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateControllerMoveEvent(Direction::Left, keyState), this); 	break;
+		case Direction::Right: EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateControllerMoveEvent(Direction::Right, keyState), this); break;
+		case Direction::None: THROW(12, "Unknown direction", "GameCommands");
 	}
 }
 
@@ -92,11 +84,11 @@ void GameCommands::PlaySoundEffect(const shared_ptr<AudioAsset>& effect) const
 	AudioManager::Get()->Play(effect);
 }
 
-void GameCommands::RaiseChangedLevel(const bool beVerbose, short newLevel)
+void GameCommands::RaiseChangedLevel(const bool beVerbose, const short newLevel)
 {
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: ChangeLevel", beVerbose); }
 
-	EventManager::Get()->RaiseEvent(std::make_unique<SceneChangedEvent>(newLevel), this);
+	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateSceneChangedEventEvent(newLevel), this);
 }
 
 void GameCommands::ReloadSettings(const bool beVerbose)
@@ -105,7 +97,7 @@ void GameCommands::ReloadSettings(const bool beVerbose)
 
 	SettingsManager::Get()->Reload();
 
-	EventManager::Get()->RaiseEvent(make_shared<Event>(SettingsReloadedEventId), this);
+	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(SettingsReloadedEventId), this);
 }
 
 void GameCommands::LoadNewLevel(const int level)
@@ -166,7 +158,7 @@ void GameCommands::StartNetworkLevel()
 	// Ask the LevelManager to prepare a level description and pass that to StartNetworkLevelEvent
 	// and let that propagate to all players
 
-	EventManager::Get()->RaiseEvent(std::make_unique<StartNetworkLevelEvent>(1), this);
+	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateStartNetworkLevelEvent(1), this);
 }
 
 void GameCommands::PingGameServer() { NetworkManager::Get()->PingGameServer(); }
@@ -176,7 +168,7 @@ std::vector<std::shared_ptr<Event>> GameCommands::HandleEvent(const std::shared_
 	if(evt->Id.PrimaryId == NetworkPlayerJoinedEventId.PrimaryId) { Logger::Get()->LogThis("--------------------------- Network Player joined");}
 	if(evt->Id.PrimaryId == NetworkTrafficReceivedEventId.PrimaryId)
 	{
-		const auto networkPlayerTrafficReceivedEvent = dynamic_pointer_cast<NetworkTrafficReceivedEvent>(evt);
+		const auto networkPlayerTrafficReceivedEvent = To<NetworkTrafficReceivedEvent>(evt);
 		std::stringstream message;
 		message << "--------------------------- Network traffic received: " 
 			    << networkPlayerTrafficReceivedEvent->Identifier << " Bytes received: "

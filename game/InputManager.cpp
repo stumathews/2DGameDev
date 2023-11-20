@@ -1,6 +1,13 @@
 #include "InputManager.h"
 #include <exceptions/EngineException.h>
 
+gamelib::ControllerMoveEvent::KeyState GetKeyState(const SDL_Event& e)
+{
+	return e.type == SDL_KEYDOWN 
+						? gamelib::ControllerMoveEvent::KeyState::Pressed
+						: gamelib::ControllerMoveEvent::KeyState::Released;
+}
+
 void InputManager::Sample(const unsigned long deltaMs)
 {
 	if(gameCommands == nullptr)
@@ -18,27 +25,19 @@ void InputManager::Sample(const unsigned long deltaMs)
 			{
 				case SDLK_w:
 				case SDLK_UP:
-					gameCommands->MoveUp(verbose, e.type == SDL_KEYDOWN 
-						? gamelib::ControllerMoveEvent::KeyState::Pressed
-						: gamelib::ControllerMoveEvent::KeyState::Released);
-	            break;
+					gameCommands->MoveUp(verbose, GetKeyState(e));
+					break;
 		        case SDLK_s:
 		        case SDLK_DOWN:
-					gameCommands->MoveDown(verbose, e.type == SDL_KEYDOWN 
-						? gamelib::ControllerMoveEvent::KeyState::Pressed
-						: gamelib::ControllerMoveEvent::KeyState::Released);
+					gameCommands->MoveDown(verbose, GetKeyState(e));
 		            break;
 		        case SDLK_a:
 		        case SDLK_LEFT:
-					gameCommands->MoveLeft(verbose, e.type == SDL_KEYDOWN 
-						? gamelib::ControllerMoveEvent::KeyState::Pressed
-						: gamelib::ControllerMoveEvent::KeyState::Released);
+					gameCommands->MoveLeft(verbose, GetKeyState(e));
 		            break;
 		        case SDLK_d:
 		        case SDLK_RIGHT:
-					gameCommands->MoveRight(verbose, e.type == SDL_KEYDOWN 
-						? gamelib::ControllerMoveEvent::KeyState::Pressed
-						: gamelib::ControllerMoveEvent::KeyState::Released);
+					gameCommands->MoveRight(verbose, GetKeyState(e));
 		            break;
             default: ;
 			}
@@ -48,6 +47,7 @@ void InputManager::Sample(const unsigned long deltaMs)
 	// Input -> Game Commands
 
 	const auto keyState = SDL_GetKeyboardState(nullptr);
+
 	if (keyState[SDL_SCANCODE_Q] || keyState[SDL_SCANCODE_ESCAPE]) { gameCommands->Quit(verbose); }
 	if (keyState[SDL_SCANCODE_R]) { gameCommands->ReloadSettings(verbose);  }
 	if (keyState[SDL_SCANCODE_P]) { gameCommands->PingGameServer();  }

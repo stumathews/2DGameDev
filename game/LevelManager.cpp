@@ -1,7 +1,6 @@
 #include "LevelManager.h"
 #include "common/Common.h"
 #include "common/constants.h"
-#include "objects/game_world_component.h"
 #include "Player.h"
 #include <memory>
 #include <events/SceneChangedEvent.h>
