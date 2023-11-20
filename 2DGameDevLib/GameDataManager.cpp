@@ -8,6 +8,7 @@
 
 #include "EventNumber.h"
 #include "pickup.h"
+#include "utils/Utils.h"
 
 using namespace std;
 using namespace gamelib;
@@ -37,16 +38,21 @@ GameDataManager* GameDataManager::Get()
 	return instance;
 }
 
+GameDataManager::~GameDataManager()
+{
+	instance = nullptr;
+}
+
 ListOfEvents GameDataManager::HandleEvent(const std::shared_ptr<Event> event, unsigned long deltaMs)
 {
 	if (event->Id == AddGameObjectToCurrentSceneEventId)
 	{
-		AddToGameData(dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(event));
+		AddToGameData(To<AddGameObjectToCurrentSceneEvent>(event));
 	}
 
 	if (event->Id == GameObjectTypeEventId)
 	{
-		RemoveFromGameData(dynamic_pointer_cast<GameObjectEvent>(event));
+		RemoveFromGameData(To<GameObjectEvent>(event));
 	}
 	return {};
 }
@@ -58,24 +64,24 @@ inline std::string GameDataManager::GetSubscriberName()
 
 void GameDataManager::AddToGameData(const shared_ptr<AddGameObjectToCurrentSceneEvent>& event) const
 {
-	const auto gameObject = dynamic_pointer_cast<AddGameObjectToCurrentSceneEvent>(event)->GetGameObject();
+	const auto gameObject = To<AddGameObjectToCurrentSceneEvent>(event)->GetGameObject();
 
 	if (gameObject->GetGameObjectType() == GameObjectType::GameDefined)
 	{
 		if (gameObject->Type == "Room")
 		{
-			GameData()->AddRoom(std::dynamic_pointer_cast<Room>(gameObject));
+			GameData()->AddRoom(To<Room>(gameObject));
 		}
 		if (gameObject->Type == "Enemy")
 		{
-			GameData()->AddEnemy(std::dynamic_pointer_cast<Enemy>(gameObject));
+			GameData()->AddEnemy(To<Enemy>(gameObject));
 		}
 	}
 	else
 	{
 		if (gameObject->GetGameObjectType() == GameObjectType::Pickup)
 		{
-			GameData()->AddPickup(std::dynamic_pointer_cast<Pickup>(gameObject));
+			GameData()->AddPickup(To<Pickup>(gameObject));
 		}
 	}
 
@@ -92,7 +98,7 @@ void GameDataManager::RemoveFromGameData(const std::shared_ptr<GameObjectEvent>&
 	if (GameData::Get()->CountPickups() == 0 && !GameData::Get()->IsGameWon())
 	{
 		GameData::Get()->SetGameWon(true);
-		eventManager->RaiseEvent(std::make_shared<Event>(GameWonEventId), this);
+		eventManager->RaiseEvent(EventFactory::Get()->CreateGenericEvent(GameWonEventId), this);
 	}
 }
 
@@ -100,17 +106,17 @@ void GameDataManager::RemoveGameObject(const std::shared_ptr<GameObject>& gameOb
 {
 	if (gameObject->Type == "Room")
 	{
-		GameData::Get()->RemoveRoom(dynamic_pointer_cast<Room>(gameObject));
+		GameData::Get()->RemoveRoom(To<Room>(gameObject));
 	}
 
 	if (gameObject->Type == "Pickup")
 	{
-		GameData::Get()->RemovePickup(dynamic_pointer_cast<Pickup>(gameObject));
+		GameData::Get()->RemovePickup(To<Pickup>(gameObject));
 	}
 
 	if (gameObject->Type == "Enemy")
 	{
-		GameData::Get()->RemoveEnemy(dynamic_pointer_cast<Enemy>(gameObject));
+		GameData::Get()->RemoveEnemy(To<Enemy>(gameObject));
 	}
 
 	GameData::Get()->RemoveGameObject(gameObject);

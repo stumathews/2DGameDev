@@ -19,13 +19,15 @@ public:
 	[[nodiscard]] bool CanGameObjectMove(gamelib::Direction direction) override;
 
 private:
-	std::shared_ptr<gamelib::GameObject> gameObject;
-	bool debug;
-	std::shared_ptr<RoomInfo> roomInfo;
-	void SetGameObjectPosition(gamelib::Coordinate<int> resultingMove) const;
-	
+
+
+	void SetGameObjectPosition(gamelib::Coordinate<int> resultingMove) const;	
 	[[nodiscard]] gamelib::Coordinate<int> CalculateGameObjectMove(const std::shared_ptr<gamelib::IMovement>& movement,
 	                                                               int pixelsToMove) const;
 	[[nodiscard]] bool IsValidMove(const std::shared_ptr<gamelib::IMovement>& movement) override;
+
+	std::shared_ptr<gamelib::GameObject> gameObject;
+	std::shared_ptr<RoomInfo> roomInfo;
 	bool ignoreRestrictions;
+	bool debug;
 };

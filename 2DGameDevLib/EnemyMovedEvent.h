@@ -8,8 +8,8 @@ const EventId EnemyMovedEventId(EnemyMoved, "EnemyMovedEvent");
 class EnemyMovedEvent final : public gamelib::Event
 {
 public:
-	explicit EnemyMovedEvent(std::shared_ptr<Enemy> enemy):
-		Event(EnemyMovedEventId), Enemy(std::move(enemy))
+	explicit EnemyMovedEvent(std::shared_ptr<Enemy> enemy)
+	: Event(EnemyMovedEventId), Enemy(std::move(enemy))
 	{
 	}
 

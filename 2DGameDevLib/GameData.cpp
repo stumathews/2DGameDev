@@ -88,8 +88,15 @@ bool GameData::IsSameId(const weak_ptr<GameObject>& obj, const std::shared_ptr<G
 	return !obj.expired() && obj.lock()->Id == other->Id;
 }
 
-std::shared_ptr<Room> GameData::GetRoomByIndex(const int roomNumber) { return rooms[roomNumber].lock(); }
-std::shared_ptr<Player> GameData::GetPlayer() const { return dynamic_pointer_cast<Player>(player.lock()); }
+std::shared_ptr<Room> GameData::GetRoomByIndex(const int roomNumber)
+{
+	return rooms[roomNumber].lock();
+}
+
+std::shared_ptr<Player> GameData::GetPlayer() const
+{
+	return dynamic_pointer_cast<Player>(player.lock());
+}
 
 GameData* GameData::Get()
 {

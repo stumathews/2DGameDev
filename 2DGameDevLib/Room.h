@@ -61,7 +61,7 @@ public:
 	int GetRowNumber(int maxCols) const;
 	int GetColumnNumber(int maxCols) const;
 
-	std::string GetName() override { return "Room"; }
+	std::string GetName() override;
 
 	SDL_Rect InnerBounds{};
 
@@ -79,12 +79,12 @@ protected:
 	int roomNumber;
 	bool walls[4]{};
 	gamelib::AbcdRectangle abcd{};
-	gamelib::AbcdRectangle& GetABCDRectangle();
+	gamelib::AbcdRectangle& GetAbcdRectangle();
 	int topRoomIndex;
-	std::shared_ptr<Room> RightRoom;
-	std::shared_ptr<Room> LeftRoom;
-	std::shared_ptr<Room> TopRoom;
-	std::shared_ptr<Room> BottomRoom;
+	std::shared_ptr<Room> rightRoom;
+	std::shared_ptr<Room> leftRoom;
+	std::shared_ptr<Room> topRoom;
+	std::shared_ptr<Room> bottomRoom;
 	int rightRoomIndex;
 	int bottomRoomIndex;
 	int leftRoomIndex;

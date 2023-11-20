@@ -7,6 +7,7 @@ class RoomInfo
 {
 public:
 	explicit RoomInfo(const std::shared_ptr<Room>& room);
+
 	[[nodiscard]] std::shared_ptr<Room> GetTopRoom() const;
 	[[nodiscard]] std::shared_ptr<Room> GetBottomRoom() const;
 	[[nodiscard]] std::shared_ptr<Room> GetRightRoom() const;

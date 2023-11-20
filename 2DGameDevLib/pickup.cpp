@@ -11,6 +11,7 @@
 #include "GameData.h"
 #include "GameObjectEventFactory.h"
 #include "PlayerCollidedWithPickupEvent.h"
+#include "events/EventFactory.h"
 #include "utils/Utils.h"
 
 using namespace std;
@@ -28,6 +29,51 @@ namespace gamelib
 		height = sprite->Dimensions.GetHeight();
 	}
 
+	Pickup::Pickup(const std::string name, const std::string type, const int x, const int y, const int width,
+		const int height, const bool visible, const int inRoomNumber)
+		: DrawableGameObject(name, type, Coordinate(x, y), visible)
+	{
+		this->IsVisible = visible;
+		this->width = width;
+		this->height = height;
+		this->RoomNumber = inRoomNumber;
+	}
+
+	Pickup::Pickup(const std::string name, const std::string type, const Coordinate<int> startingPoint,
+	               const bool visible, const int inRoomNumber, const std::shared_ptr<SpriteAsset> asset)
+		: DrawableGameObject(name, type, Coordinate(startingPoint.GetX(), startingPoint.GetY()),
+	                                                                                                                         visible)
+	{
+		this->IsVisible = visible;
+		this->Asset = asset;
+		this->width = asset->Dimensions.GetWidth();
+		this->height = asset->Dimensions.GetHeight();
+		this->RoomNumber = inRoomNumber;
+	}
+
+	Pickup::Pickup(const bool visible): DrawableGameObject(0, 0, visible)
+	{
+		this->IsVisible = visible;
+		this->width = 0;
+		this->height = 0;
+		this->RoomNumber = 0;
+	}
+
+	GameObjectType Pickup::GetGameObjectType()
+	{
+		return GameObjectType::Pickup;
+	}
+
+	std::string Pickup::GetSubscriberName()
+	{
+		return Name;
+	}
+
+	std::string Pickup::GetName()
+	{
+		return Name;
+	}
+
 	ListOfEvents Pickup::HandleEvent(const shared_ptr<Event> event, unsigned long deltaMs)
 	{
 		ListOfEvents generatedEvents;
@@ -40,7 +86,7 @@ namespace gamelib
 			{
 				if (SdlCollisionDetection::IsColliding(&player->Bounds, &Bounds))
 				{
-					generatedEvents.push_back(make_shared<Event>(FetchedPickupEventId));
+					generatedEvents.push_back(EventFactory::Get()->CreateGenericEvent(FetchedPickupEventId));
 					generatedEvents.push_back(make_shared<PlayerCollidedWithPickupEvent>(player, shared_from_this()));
 					generatedEvents.push_back( GameObjectEventFactory::MakeRemoveObjectEvent(shared_from_this()));					
 				}

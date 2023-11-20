@@ -296,6 +296,7 @@ void Enemy::Update(const unsigned long deltaMs)
 	Npc::Update(deltaMs);
 	Hotspot->Update(Position);
 	Sprite->MoveSprite(Position);
+
 	if(animate)
 	{
 		Sprite->Update(deltaMs, gamelib::AnimatedSprite::GetStdDirectionAnimationFrameGroup(currentFacingDirection));
@@ -313,8 +314,7 @@ void Enemy::Update(const unsigned long deltaMs)
 	stateMachine.Update(deltaMs);
 
 	// we only want to move and emit move events periodically
-	moveTimer.Update(deltaMs);
-	
+	moveTimer.Update(deltaMs);	
 }
 
 void Enemy::LoadSettings()

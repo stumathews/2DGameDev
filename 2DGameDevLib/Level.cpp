@@ -161,7 +161,7 @@ void Level::Load()
 	}
 }
 
-std::vector<std::shared_ptr<Event>> Level::HandleEvent(std::shared_ptr<Event> evt, unsigned long deltaMs)
+ListOfEvents Level::HandleEvent(std::shared_ptr<Event> evt, unsigned long deltaMs)
 {
 	// Level itself does not handle any events
 	return {};

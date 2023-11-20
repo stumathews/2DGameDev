@@ -9,7 +9,6 @@
 #include "geometry/SideUtils.h"
 #include "file/SettingsManager.h"
 #include <utils/Utils.h>
-
 #include "EnemyMovedEvent.h"
 
 using namespace std;
@@ -108,7 +107,7 @@ void Room::UpdateEnemyRoom(const std::shared_ptr<Enemy>& enemy)
 	}
 }
 
-void Room::Update(const unsigned long deltaMs) { }
+void Room::Update(const unsigned long deltaMs) { /* Not need to update */ }
 
 ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, const unsigned long deltaMs)
 {
@@ -135,7 +134,7 @@ ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, const unsigne
 	return generatedEvents;
 }
 
-ListOfEvents& Room::OnPlayerMoved(vector<shared_ptr<Event>>& generatedEvents)
+ListOfEvents& Room::OnPlayerMoved(ListOfEvents& generatedEvents)
 {
 	if(!trackEnemies) return generatedEvents;
 
@@ -161,11 +160,11 @@ std::shared_ptr<Room> Room::GetSideRoom(const Side side)
 {
 	switch (side)
 	{
-	case Side::Top: return TopRoom;
-	case Side::Right: return RightRoom;
-	case Side::Bottom: return BottomRoom;
-	case Side::Left: return LeftRoom;
-	default: return TopRoom; // should never happen  // NOLINT(clang-diagnostic-covered-switch-default)
+		case Side::Top: return topRoom;
+		case Side::Right: return rightRoom;
+		case Side::Bottom: return bottomRoom;
+		case Side::Left: return leftRoom;
+		default: return topRoom; // should never happen  // NOLINT(clang-diagnostic-covered-switch-default)
 	}
 }
 
@@ -247,6 +246,7 @@ void Room::LoadSettings()
 	printDebuggingTextNeighborsOnly = SettingsManager::Bool("global", "print_debugging_text_neighbours_only");
 	printDebuggingText = SettingsManager::Bool("global", "print_debugging_text");
 	trackEnemies = SettingsManager::Bool("room", "trackEnemies");
+
 	UpdateInnerBounds();
 }
 
@@ -263,8 +263,8 @@ bool Room::HasBottomWall() const { return IsWalled(Side::Bottom); }
 bool Room::HasLeftWall() const { return IsWalled(Side::Left); }
 bool Room::HasRightWall() const { return IsWalled(Side::Right); }
 
-AbcdRectangle& Room::GetABCDRectangle() { return abcd; }
-Coordinate<int> Room::GetPosition() { return GetABCDRectangle().GetCenter(); }
+AbcdRectangle& Room::GetAbcdRectangle() { return abcd; }
+Coordinate<int> Room::GetPosition() { return GetAbcdRectangle().GetCenter(); }
 int Room::GetRoomNumber() const { return roomNumber; }
 int Room::GetRowNumber(const int maxCols) const { return GetRoomNumber() / maxCols; }
 
@@ -290,17 +290,22 @@ int Room::GetColumnNumber(const int maxCols) const
 	return col;
 }
 
+std::string Room::GetName()
+{ 
+	return "Room";
+}
+
 void Room::SetSurroundingRooms(const int top_index, const int rightIndex, const int bottomIndex, const int leftIndex,
                                const std::vector<shared_ptr<Room>>& rooms)
 {
 	this->topRoomIndex = top_index;
-	this->TopRoom = rooms[topRoomIndex < 1 ? 0 : topRoomIndex];
+	this->topRoom = rooms[topRoomIndex < 1 ? 0 : topRoomIndex];
 	this->rightRoomIndex = rightIndex;
-	this->RightRoom = rooms[rightRoomIndex < 1 ? 0 : rightRoomIndex];
+	this->rightRoom = rooms[rightRoomIndex < 1 ? 0 : rightRoomIndex];
 	this->bottomRoomIndex = bottomIndex;
-	this->BottomRoom = rooms[bottomRoomIndex < 1 ? 0 : bottomRoomIndex];
+	this->bottomRoom = rooms[bottomRoomIndex < 1 ? 0 : bottomRoomIndex];
 	this->leftRoomIndex = leftIndex;
-	this->LeftRoom = rooms[leftRoomIndex < 1 ? 0 : leftRoomIndex];
+	this->leftRoom = rooms[leftRoomIndex < 1 ? 0 : leftRoomIndex];
 }
 
 // ReSharper disable once CppParameterNamesMismatch

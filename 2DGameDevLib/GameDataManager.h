@@ -21,7 +21,7 @@ public:
 	GameDataManager& operator=(const GameDataManager& other) = delete;
 	GameDataManager& operator=(const GameDataManager&& other) = delete;
 
-	~GameDataManager() override { instance = nullptr; }
+	~GameDataManager() override;
 
 	gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> event, unsigned long deltaMs) override;
 	std::string GetSubscriberName() override;

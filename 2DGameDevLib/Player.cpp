@@ -42,8 +42,9 @@ Player::Player(const std::string& name, const std::string& type,
 }
 
 Player::Player(const std::string& name, const std::string& type, const std::shared_ptr<Room>& playerRoom,
-               const AbcdRectangle& dimensions, const std::string& identifier): currentMovingDirection(Direction::Down),
-                                                                         currentFacingDirection(Direction::Down)
+               const AbcdRectangle& dimensions, const std::string& identifier)
+	: DrawableGameObject(name, type, playerRoom->GetCenter(dimensions.GetWidth(), dimensions.GetHeight()), true),
+		currentMovingDirection(Direction::Down), currentFacingDirection(Direction::Down)
 {
 	CommonInit(dimensions.GetWidth(), dimensions.GetWidth(), identifier);
 	CurrentRoom = make_shared<RoomInfo>(playerRoom);
@@ -54,8 +55,8 @@ Player::Player(const std::string& name,
                const std::string& type,
                const std::shared_ptr<Room>& playerRoom,
                const std::string& identifier)
-	: DrawableGameObject(name, type, playerRoom->GetCenter(0, 0), true), currentMovingDirection(Direction::Down),
-	  currentFacingDirection(Direction::Down)
+	: DrawableGameObject(name, type, playerRoom->GetCenter(0, 0), true),
+		currentMovingDirection(Direction::Down), currentFacingDirection(Direction::Down)
 {
 	CommonInit(0, 0, identifier); // Height / Width set by setting the asset
 	CurrentRoom = make_shared<RoomInfo>(playerRoom);
@@ -71,7 +72,6 @@ int Player::GetPoints()
 {
 	return IntProperties["Points"];
 }
-
 
 void Player::CommonInit(const int playerWidth, const int playerHeight, const std::string& identifier)
 {
@@ -210,8 +210,7 @@ void Player::Update(const unsigned long deltaMs)
 
 		// restore original key states (eg. the temporarily cancelled keypress my now be acceptable)
 		directionKeyStates = keyStateBackup;
-	});
-	
+	});	
 }
 
 void Player::Draw(SDL_Renderer* renderer)
@@ -251,7 +250,10 @@ void Player::SetPlayerDirection(const Direction direction)
 	currentFacingDirection = direction;
 }
 
-void Player::Fire() const { RemovePlayerFacingWall(); }
+void Player::Fire() const
+{
+	RemovePlayerFacingWall();
+}
 
 void Player::SetSprite(const std::shared_ptr<AnimatedSprite>& inSprite)
 {
