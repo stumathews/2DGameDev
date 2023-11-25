@@ -28,8 +28,7 @@
        <Grid.RowDefinitions>
            <RowDefinition />
        </Grid.RowDefinitions>
-        <ListBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Assets}" IsSynchronizedWithCurrentItem="True"
-                 Margin="0,22,0,-22">
+        <ListBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Assets}" IsSynchronizedWithCurrentItem="True" Margin="0,22,0,-22">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical">

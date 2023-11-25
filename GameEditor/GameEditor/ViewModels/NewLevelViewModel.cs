@@ -10,7 +10,7 @@ namespace GameEditor.ViewModels
         private int numRows;
         public int NumRows
         {
-            get { return numRows; }
+            get => numRows;
             set { numRows = value; OnPropertyChanged(nameof(NumRows)); }
         }
 
@@ -18,7 +18,7 @@ namespace GameEditor.ViewModels
 
         public int NumCols
         {
-            get { return numCols; }
+            get => numCols;
             set { numCols = value; OnPropertyChanged(nameof(NumCols)); }
         }
 
@@ -26,7 +26,7 @@ namespace GameEditor.ViewModels
 
         public int WallHeight
         {
-            get { return wallHeight; }
+            get => wallHeight;
             set { wallHeight = value; OnPropertyChanged(nameof(WallHeight)); }
         }
 
@@ -35,7 +35,7 @@ namespace GameEditor.ViewModels
 
         public int WallWidth
         {
-            get { return wallWidth; }
+            get => wallWidth;
             set { wallWidth = value; OnPropertyChanged(nameof(WallWidth));}
         }
 
@@ -70,10 +70,7 @@ namespace GameEditor.ViewModels
         private void Cancel()
         {
             MessageBox.Show("Roger that, Cancelling.");
-            if(Parent != null)
-            {
-                Parent.Close();
-            }
+            Parent?.Close();
         }
     }
 }

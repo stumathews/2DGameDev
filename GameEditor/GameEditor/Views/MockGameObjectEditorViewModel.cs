@@ -1,7 +1,6 @@
 ﻿using GameEditor.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace GameEditor.Views

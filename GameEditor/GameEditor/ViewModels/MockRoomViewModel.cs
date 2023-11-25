@@ -5,7 +5,7 @@ namespace GameEditor.Views
 {
     public class MockRoomViewModel : RoomViewModel
     {
-        public MockRoomViewModel() 
+        public MockRoomViewModel() : base(100)
         {
             TopWallVisibility = BottomWallVisibility = LeftWallVisibility = RightWallVisibility =  System.Windows.Visibility.Visible;
             ResidentGameObjectType = new GameObjectType 
@@ -15,7 +15,6 @@ namespace GameEditor.Views
                 Properties = new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<string, string>>(),
                 AssetPath = "Assets/Platformer/Base pack/Player/p1_front.png"
             };
-            RoomNumber = 100;
         }
     }
 }

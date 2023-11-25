@@ -1,13 +1,16 @@
-﻿using GameEditor.Models;
+﻿using System;
+using GameEditor.Models;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 using System.Xml;
 
 namespace GameEditor.Utils
 {
     public class GameObjectTypeManager
     {
-        public static List<GameObjectType> LoadGameObjectTypesActual(string filename)
+        // Parse GameObject Types xml file
+        public static List<GameObjectType> GetGameObjectTypes(string filename)
         {
             var gameObjectTypes = new List<GameObjectType>();
             if (!File.Exists(filename))
@@ -58,31 +61,40 @@ namespace GameEditor.Utils
 
         public static void SaveGameObjectTypes(List<GameObjectType> gameObjectTypes)
         {
-            // Write all Game Types created to file.
-            using (var writer = XmlWriter.Create("GameObjectTypes.xml", new XmlWriterSettings { Indent = true }))
+            try
             {
-                writer.WriteStartDocument();
-                writer.WriteStartElement("GameObjectTypes");
-
-                foreach (var gameObjectType in gameObjectTypes)
+                // Write all Game Types created to file.
+                using (var writer = XmlWriter.Create("GameObjectTypes.xml", new XmlWriterSettings { Indent = true }))
                 {
-                    writer.WriteStartElement("GameObjectType");
-                    writer.WriteAttributeString("Name", gameObjectType.Name);
-                    writer.WriteAttributeString("Type", gameObjectType.Type);
-                    writer.WriteAttributeString("ResourceId", gameObjectType.ResourceId.ToString());
-                    writer.WriteAttributeString("AssetPath", gameObjectType.AssetPath);
-                    foreach (var property in gameObjectType.Properties)
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("GameObjectTypes");
+
+                    foreach (var gameObjectType in gameObjectTypes)
                     {
-                        writer.WriteStartElement("Property");
-                        writer.WriteAttributeString(property.Key, property.Value);
+                        writer.WriteStartElement("GameObjectType");
+                        writer.WriteAttributeString("Name", gameObjectType.Name);
+                        writer.WriteAttributeString("Type", gameObjectType.Type);
+                        writer.WriteAttributeString("ResourceId", gameObjectType.ResourceId.ToString());
+                        writer.WriteAttributeString("AssetPath", gameObjectType.AssetPath);
+                        foreach (var property in gameObjectType.Properties)
+                        {
+                            writer.WriteStartElement("Property");
+                            writer.WriteAttributeString(property.Key, property.Value);
+                            writer.WriteEndElement();
+                        }
+
                         writer.WriteEndElement();
                     }
+
                     writer.WriteEndElement();
+
+                    writer.WriteEndDocument();
+
                 }
-                writer.WriteEndElement();
-
-                writer.WriteEndDocument();
-
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Error Saving the Game Object Types: {e.Message}");
             }
         }
     }

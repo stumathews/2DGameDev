@@ -4,9 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:viewmodels="clr-namespace:GameEditor.ViewModels"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         mc:Ignorable="d"
-        Title="2D GameDev Game Editor" Height="450" Width="800" WindowStartupLocation="CenterScreen">
-
+        Title="2D GameDev Game Editor" 
+        Height="450" 
+        Width="800" 
+        WindowStartupLocation="CenterScreen">
     <Grid x:Name="Grid" MouseUp="grid_MouseUp">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="MenuBarRow" Height="Auto" /> <!-- Note how Auto fits the the content, and ignores being equal to other rows (which is the default)-->
@@ -23,8 +27,8 @@
         <Menu Name="MainMenu" Grid.Row="0" Grid.ColumnSpan="2">
             <!-- File Menu -->
             <MenuItem Header="File" Name="FileMenuItem" >
-                <MenuItem Name="NewMenuItem" Header="New level..." Click="newMenuItem_Click" ></MenuItem>
-                <MenuItem Name="OpenMenuItem" Header="Open level..." Click="openMenuItem_Click"></MenuItem>
+                <MenuItem Name="NewMenuItem" Header="New level..." Command="{Binding CreateNewLevelCommand}" ></MenuItem>
+                <MenuItem Name="OpenMenuItem" Header="Open level..." Command="{Binding LoadLevelFileCommand}"></MenuItem>
                 <MenuItem Name="ContentManagerMenuItem" Header="Content Manager..." Command="{Binding ShowContentManagerCommand}" />
                 <MenuItem Name="SaveAsMenuItem" Header="Save level as..." Click="saveAsMenuItem_Click"></MenuItem>
                 <MenuItem Name="CloseMenuItem" Header="Close" Command="{Binding CloseCommand}"></MenuItem>
@@ -94,7 +98,7 @@
             </Grid.RowDefinitions>
             <xctk:PropertyGrid Grid.Row="0" Name="PropertyGrid"  SelectedObject="{Binding}"/>
             <StackPanel Grid.Row="1">
-                <CheckBox x:Name="AutoPopulatePickupsCheckBox" IsChecked="{Binding AutoPopulateLevelPickups}">Allow game to populate Pickups automatically</CheckBox>
+                <CheckBox x:Name="AutoPopulatePickupsCheckBox" IsChecked="{Binding AutoPopulatePickups, Mode=TwoWay }">Allow game to populate Pickups automatically</CheckBox>
             </StackPanel>
         </Grid>
         

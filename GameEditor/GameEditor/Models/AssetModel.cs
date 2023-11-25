@@ -1,7 +1,4 @@
-﻿using GameEditor.ViewModels;
-using System.ComponentModel;
-
-namespace GameEditor.Views
+﻿namespace GameEditor.Views
 {
     public class AssetModel
     {

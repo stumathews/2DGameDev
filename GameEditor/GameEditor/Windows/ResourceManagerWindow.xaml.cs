@@ -1,19 +1,7 @@
 ﻿using GameEditor.Utils;
 using GameEditor.Views;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Xml;
 
 namespace GameEditor.Windows
 {
@@ -22,11 +10,13 @@ namespace GameEditor.Windows
     /// </summary>
     public partial class ContentManagerWindow : Window
     {
-        private readonly string _basePath;
-        List<AssetModel> assets = new List<AssetModel>();
+        // Base path for looking for resources.xml
+        private readonly string basePath;
+
         public ContentManagerWindow(Window parent, string basePath = "C:\\repos\\2DGameDev\\")
         {
-            _basePath = basePath;
+            this.basePath = basePath;
+
             Owner = parent;
 
             ParseResources();
@@ -35,11 +25,13 @@ namespace GameEditor.Windows
                       
         }
 
-        public List<AssetModel> Assets { get => assets; set => assets = value; }
+        // List of assets that this screen will load up from loading the resources file
+        public List<AssetModel> Assets { get; set; } = new List<AssetModel>();
 
         private void ParseResources()
         {
-            Assets = ResourceManager.ParseResources(_basePath);
+            // The resource manager will deserialize the resources for us in the resources.xml files
+            Assets = ResourceManager.ParseResources(basePath);
         }
     }
 }

@@ -11,8 +11,9 @@ namespace GameEditor.Windows
         public CreateNewLevelWindow(NewLevelViewModel newLevelViewModel)
         {            
             InitializeComponent();
+            DataContext = newLevelViewModel;    
+            
             newLevelViewModel.Parent = this;
-            DataContext = newLevelViewModel;           
         }
     }
 }

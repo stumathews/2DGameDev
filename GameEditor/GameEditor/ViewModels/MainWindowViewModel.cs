@@ -9,20 +9,39 @@ namespace GameEditor.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        private readonly Window window;      
-
-        private GameObjectEditorWindow gameObjectEditorWindow;
-
-        private readonly NewLevelViewModel newLevelViewModel;
-
-        private readonly LevelManager levelManager;
         public ICommand ShowAboutCommand {get;set;}
         public ICommand CloseCommand {get;set;}
         public ICommand ShowContentManagerCommand { get;set;}
         public ICommand AddPickupCommand { get;set; }
         public ICommand RemovePickupCommand { get; set; }
-        public NewLevelViewModel NewLevelViewModel { get => newLevelViewModel; }
-        public LevelManager LevelManager { get => levelManager; }
+        public ICommand LoadLevelFileCommand { get; set; }
+        public ICommand SaveLevelCommand { get; set;}
+        public ICommand CreateNewLevelCommand { get; set; }
+
+        public NewLevelViewModel NewLevelViewModel { get; }
+        public LevelManager LevelManager { get; }
+
+        public bool AutoPopulatePickups
+        {
+            get => autoPopulatePickups;
+            set
+            {
+                if (value == autoPopulatePickups) return;
+                autoPopulatePickups = value;
+                OnPropertyChanged(nameof(AutoPopulatePickups));
+            }
+        }
+
+        public Level Level
+        {
+            get => level;
+            set
+            {
+                level = value;
+                OnPropertyChanged(nameof(Level));
+            }
+        }
+
         public RoomViewModel SelectedRoom
         {
             get => selectedRoom; set
@@ -32,78 +51,139 @@ namespace GameEditor.ViewModels
             }
         }
 
-        public bool AutoPopulateLevelPickups
+        public void CreateEmptyLevel()
         {
-            get => autoPopulateLevelPickups; set
-            {
-                autoPopulateLevelPickups = value;
-                OnPropertyChanged(nameof(AutoPopulateLevelPickups));
-            }
+            const int rows = 10;
+            const int cols = 10;
+
+            // Create room view models
+            var rooms = CreateEmptyRooms(rows, cols);
+
+            // Create level from rooms
+            Level = new Level(rows, cols, rooms, AutoPopulatePickups);
         }
-
-        private RoomViewModel selectedRoom;
-        private bool autoPopulateLevelPickups;
-
-        public bool IsRoomSelected() => SelectedRoom != null;
-
-        public Level LoadLevelFile()
-        {
-            var level = levelManager.LoadLevelFile();
-
-            newLevelViewModel.NumCols = level.NumCols;
-            newLevelViewModel.NumRows = level.NumRows;
-            AutoPopulateLevelPickups = level.AutoPopulatePickups;
-            return level;
-        }
-
-        private void ShowAboutWindow() => new About(window).Show();
 
         public MainWindowViewModel(Window parent)
         {
-            levelManager = new LevelManager();
-            newLevelViewModel = new NewLevelViewModel();
-            ShowAboutCommand = new RelayCommand((o) => ShowAboutWindow());
-            CloseCommand = new RelayCommand((o) => parent.Close());
-            ShowContentManagerCommand = new RelayCommand((o) => ShowContentManagerWindow());
-            AddPickupCommand = new RelayCommand((o) => SelectGameObjectType());
-            RemovePickupCommand = new RelayCommand((o) => 
-            {                
-                if (IsRoomSelected())
-                {
-                    SelectedRoom.ResidentGameObjectType = null;
-                }
-            });
+            // We keep track of the parent window
             window = parent;
-            AutoPopulateLevelPickups = true;
+
+            // Our level manager
+            LevelManager = new LevelManager();
+
+            // New level view model
+            NewLevelViewModel = new NewLevelViewModel();
+
+            // The ViewModel's behaviors that the View can bind to
+            ShowAboutCommand = new RelayCommand((o) => new About(window).Show());
+            CloseCommand = new RelayCommand((o) => parent.Close());
+            ShowContentManagerCommand = new RelayCommand((o) => new ContentManagerWindow(window).Show());
+            AddPickupCommand = new RelayCommand((o) => AssociateSelectedGameObjectWithRoom());
+            RemovePickupCommand = new RelayCommand((o) => RemovePickupFromSelectedRoom(), canExecute: o => IsRoomSelected());
+            LoadLevelFileCommand = new RelayCommand(LoadLevelFile);
+            SaveLevelCommand = new RelayCommand((rooms => SaveLevel(rooms as List<RoomViewModel>)));
+            CreateNewLevelCommand = new RelayCommand(o => CreateNewLevel());
         }
 
-        private void SelectGameObjectType()
+        private void RemovePickupFromSelectedRoom()
         {
+            SelectedRoom.ResidentGameObjectType = null;
+        }
+
+        private void LoadLevelFile(object o)
+        {
+            Level = LevelManager.LoadLevelFile();
+            if (Level == null) return;
+
+            // Ensure we extract the value so we can bind it in the UI
+            AutoPopulatePickups = Level.AutoPopulatePickups;
+        }
+
+        private void CreateNewLevel()
+        {
+            // Show create new level window
+            new CreateNewLevelWindow(NewLevelViewModel).ShowDialog();
+
+            var rows = NewLevelViewModel.NumRows;
+            var cols = NewLevelViewModel.NumCols;
+
+            var rooms = CreateEmptyRooms(rows, cols);
+
+            // Create room
+            Level = new Level(rows, cols, rooms, AutoPopulatePickups);
+        }
+
+        private static List<RoomViewModel> CreateEmptyRooms(int numRow, int numCols)
+        {
+            // Create a list of Rooms represented by a RoomViewModel object
+            var rooms = new List<RoomViewModel>();
+
+            // Lets make as many as the view model says we can depending on the number of Rows x Cols
+            for(var i = 0; i < numRow * numCols; i++)
+            {
+                // Add new room
+                rooms.Add(new RoomViewModel(i));
+            }
+
+            return rooms;
+        }
+        
+        // Used when you want to add a Pickup to the room
+        private void AssociateSelectedGameObjectWithRoom()
+        {
+            // Select a Game Object Type eg Pickup, Enemy, Player etc..
             gameObjectEditorWindow = new GameObjectEditorWindow(window);
             gameObjectEditorWindow.ShowDialog();
+
+            // What did the user select...
             if(!gameObjectEditorWindow.ViewModel.IsSelected())
             {
-                MessageBox.Show("No Pickup Selected");
+                MessageBox.Show("No game object selected");
                 return;
             }
+
             if(IsRoomSelected())
             { 
+                // Associate the GameObject Type with the room its been selected for
                 SelectedRoom.ResidentGameObjectType = new Models.GameObjectType
-                {
-                  AssetPath = gameObjectEditorWindow.ViewModel.SelectedItem.AssetPath,
-                  Name = gameObjectEditorWindow.ViewModel.SelectedItem.Name,
-                  Properties = gameObjectEditorWindow.ViewModel.SelectedItem.Properties,
-                  Type = gameObjectEditorWindow.ViewModel.SelectedItem.Type,
-                  ResourceId = gameObjectEditorWindow.ViewModel.SelectedItem.ResourceId
+                { 
+                    // Where the path of this asset is
+                    AssetPath = gameObjectEditorWindow.ViewModel.SelectedItem.AssetPath,
+                    
+                    // Name of the asset for this game object
+                    Name = gameObjectEditorWindow.ViewModel.SelectedItem.Name,
+                    
+                    // Properties for this game object
+                    Properties = gameObjectEditorWindow.ViewModel.SelectedItem.Properties,
+                    
+                    // The type of game object, eg. Enemy, Player, Pickup etc..
+                    Type = gameObjectEditorWindow.ViewModel.SelectedItem.Type,
+
+                    // The resource Id from the resources.xml
+                    ResourceId = gameObjectEditorWindow.ViewModel.SelectedItem.ResourceId
                 };
             }
         }
 
-        private void ShowContentManagerWindow() => new ContentManagerWindow(window).Show();
+        private bool IsRoomSelected() => SelectedRoom != null;
 
-        internal void SaveLevel(List<RoomViewModel> rooms)
+        private void SaveLevel(List<RoomViewModel> rooms)
         {
-            levelManager.SaveLevelFile(new Level(newLevelViewModel.NumCols, newLevelViewModel.NumRows, rooms, AutoPopulateLevelPickups), GameObjectTypeManager.LoadGameObjectTypesActual("GameObjectTypes.xml"));
+            // Out level is defined as rooms in a Row x Col configuration.
+            // It also can be set to have its pickups loaded randomly by the game or not.
+            var levelToSave = new Level(NewLevelViewModel.NumCols, NewLevelViewModel.NumRows, rooms, AutoPopulatePickups);
+
+            // Game Object Types eg. Pickup, Player, Enemy
+            var knownGameObjectTypes = GameObjectTypeManager.GetGameObjectTypes("GameObjectTypes.xml");
+
+            // Save the level to XML
+            LevelManager.SaveLevelFile(levelToSave, knownGameObjectTypes);
         }
+
+        private RoomViewModel selectedRoom;
+        private Level level;
+        private readonly Window window;
+        private GameObjectEditorWindow gameObjectEditorWindow;
+        private bool autoPopulatePickups;
     }
 }

@@ -1,21 +1,6 @@
 ﻿using GameEditor.ViewModels;
-using GameEditor.Views;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Xml.Xsl;
-using System.Xml;
 
 namespace GameEditor.Windows
 {
@@ -33,13 +18,16 @@ namespace GameEditor.Windows
             InitializeComponent();
 
             ViewModel = new GameObjectEditorViewModel(this);
+            ViewModel.Initialize();
+
             DataContext = ViewModel;
 
             CloseWindowCommand = new RelayCommand((o) =>
             {
                 ViewModel.SaveGameObjectTypes();
                 Close();
-            });
+                
+            }, (o)=> ViewModel.IsInitialized);
         }
     }
 }

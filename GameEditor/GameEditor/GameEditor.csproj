@@ -124,8 +124,8 @@
     <Compile Include="Windows\GameObjectEditorWindow.xaml.cs">
       <DependentUpon>GameObjectEditorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\ContentManagerWindow.xaml.cs">
-      <DependentUpon>ContentManagerWindow.xaml</DependentUpon>
+    <Compile Include="Windows\ResourceManagerWindow.xaml.cs">
+      <DependentUpon>ResourceManagerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\CreateNewLevelWindow.xaml.cs">
       <DependentUpon>CreateNewLevelWindow.xaml</DependentUpon>
@@ -138,7 +138,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\ContentManagerWindow.xaml">
+    <Page Include="Windows\ResourceManagerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

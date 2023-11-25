@@ -5,6 +5,10 @@ namespace GameEditor.ViewModels
 {
     public class RoomViewModel : ViewModelBase, INotifyPropertyChanged
     {
+        public RoomViewModel(int roomNumber)
+        {
+            this.roomNumber = roomNumber;
+        }
         private int roomNumber;
         private System.Windows.Visibility topWallVisibility;
         private System.Windows.Visibility rightWallVisibility;

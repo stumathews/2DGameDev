@@ -13,11 +13,12 @@ namespace GameEditor.ViewModels
         {
             Rooms = new List<RoomViewModel>();
         }
-        public Level(int NumCols, int NumRows , List<RoomViewModel> Rooms, bool autoPopulatePickups)
+
+        public Level(int numCols, int numRows , List<RoomViewModel> rooms, bool autoPopulatePickups)
         {
-            this.NumCols = NumCols;
-            this.NumRows = NumRows;
-            this.Rooms = Rooms;
+            this.NumCols = numCols;
+            this.NumRows = numRows;
+            this.Rooms = rooms;
             AutoPopulatePickups = autoPopulatePickups;
         }
     }

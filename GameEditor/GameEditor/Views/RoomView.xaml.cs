@@ -10,10 +10,10 @@ namespace GameEditor
     /// </summary>
     public partial class RoomView : UserControl
     {
-        public RoomViewModel ViewModel = new RoomViewModel();
+        public RoomViewModel ViewModel;
         public RoomView(int roomNumber)
         {
-            ViewModel.RoomNumber = roomNumber;
+            ViewModel= new RoomViewModel(roomNumber);
             DataContext = ViewModel;
             InitializeComponent();
             
