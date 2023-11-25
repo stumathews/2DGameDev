@@ -1,5 +1,4 @@
-﻿using GameEditor.Utils;
-using GameEditor.Windows;
+﻿using GameEditor.Windows;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;

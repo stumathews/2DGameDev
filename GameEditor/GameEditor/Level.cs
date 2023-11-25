@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using GameEditor.ViewModels;
 
-namespace GameEditor.ViewModels
+namespace GameEditor
 {
     public class Level
     {

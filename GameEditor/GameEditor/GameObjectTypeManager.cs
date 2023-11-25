@@ -1,11 +1,11 @@
 ﻿using System;
-using GameEditor.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Xml;
+using GameEditor.Models;
 
-namespace GameEditor.Utils
+namespace GameEditor
 {
     public class GameObjectTypeManager
     {

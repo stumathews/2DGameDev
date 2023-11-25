@@ -98,18 +98,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Models\Pickup.cs" />
-    <Compile Include="Utils\ResourceManager.cs" />
-    <Compile Include="Utils\RoomCreationParameters.cs" />
+    <Compile Include="ResourceManager.cs" />
     <Compile Include="Utils\FilenameConverter.cs" />
     <Compile Include="Utils\Utils.cs" />
     <Compile Include="ViewModels\GameObjectEditorViewModel.cs" />
-    <Compile Include="ViewModels\GameObjectTypeManager.cs" />
-    <Compile Include="ViewModels\Level.cs" />
-    <Compile Include="ViewModels\LevelManager.cs" />
+    <Compile Include="GameObjectTypeManager.cs" />
+    <Compile Include="Level.cs" />
+    <Compile Include="LevelManager.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Models\GameObjectType.cs" />
-    <Compile Include="ViewModels\MockRoomViewModel.cs" />
     <Compile Include="Views\IGameObjectEditorViewModel.cs" />
     <Compile Include="Views\MockAssetView.cs" />
     <Compile Include="Models\AssetModel.cs" />
@@ -120,7 +117,7 @@
     <Compile Include="ViewModels\NewLevelViewModel.cs" />
     <Compile Include="images\RelayCommand.cs" />
     <Compile Include="ViewModels\RoomViewModel.cs" />
-    <Compile Include="Utils\ViewModelBase.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Windows\GameObjectEditorWindow.xaml.cs">
       <DependentUpon>GameObjectEditorWindow.xaml</DependentUpon>
     </Compile>

@@ -1,8 +1,9 @@
-﻿using GameEditor.Views;
+﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using GameEditor.Views;
 
-namespace GameEditor.Utils
+namespace GameEditor
 {
     public static class ResourceManager
     {
@@ -13,17 +14,25 @@ namespace GameEditor.Utils
 
             doc.Load(basePath + "game\\Resources.xml");
 
-            foreach (XmlNode assetNode in doc.DocumentElement.SelectSingleNode("/Assets").ChildNodes)
+            if (doc.DocumentElement == null) throw new Exception("Could not load resources");
+
+            var xmlNodeList = doc.DocumentElement.SelectSingleNode("/Assets")?.ChildNodes;
+            
+            if (xmlNodeList == null) throw new Exception("Could not load resources");
+
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (XmlNode assetNode in xmlNodeList)
             {
                 assets.Add(new AssetModel
                 {
-                    Name = assetNode.Attributes["name"].Value,
-                    Uid = int.Parse(assetNode.Attributes["uid"].Value),
+                    Name = assetNode.Attributes?["name"].Value,
+                    Uid = int.Parse(assetNode.Attributes?["uid"].Value ?? throw new NullReferenceException("uid")),
                     Type = assetNode.Attributes["type"].Value,
                     Path = assetNode.Attributes["filename"].Value,
                     InnerXml = assetNode.InnerXml
                 });
             }
+
             return assets;
         }
     }

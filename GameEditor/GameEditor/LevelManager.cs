@@ -6,9 +6,10 @@ using System.Xml;
 using System.Xml.Linq;
 using GameEditor.Models;
 using GameEditor.Utils;
+using GameEditor.ViewModels;
 using Microsoft.Win32;
 
-namespace GameEditor.ViewModels
+namespace GameEditor
 {
     public class LevelManager 
     {

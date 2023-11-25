@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 namespace GameEditor.Models
 {
     public class GameObjectType
@@ -8,6 +9,7 @@ namespace GameEditor.Models
         public string Type { get;set; }
         public int ResourceId { get;set; }
 
+        // Like health = 50
         public List<KeyValuePair<string, string>> Properties { get;set;} = new List<KeyValuePair<string, string>>();
     }
 }

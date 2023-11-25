@@ -4,13 +4,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using GameEditor.Views;
 
 namespace GameEditor.Windows
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private readonly MainWindowViewModel mainWindowViewModel;        
         
@@ -40,14 +41,13 @@ namespace GameEditor.Windows
 
             // Start with empty level
             mainWindowViewModel.CreateEmptyLevel();
-            
         }
         
         public void UpdateMazeGrid(MainWindowViewModel windowViewModel)
         {
             if (windowViewModel.Level == null) return;
 
-            // We can create the main content now, which is a uniform grid representing our maze of rooms
+            // We can create the main content now, which is a uniform grid representing our maze of rooms...
            
             // Clear out the previous level
             if(Grid.Children.Contains(MazeGrid))
@@ -59,8 +59,8 @@ namespace GameEditor.Windows
             // Make an empty new level
             MazeGrid = new UniformGrid
             {
-                Rows = mainWindowViewModel.NewLevelViewModel.NumRows,
-                Columns = mainWindowViewModel.NewLevelViewModel.NumCols,
+                Rows = 10,
+                Columns = 10,
                 Background = Brushes.WhiteSmoke
             };
             
@@ -68,7 +68,7 @@ namespace GameEditor.Windows
             MazeGrid.SetValue(Grid.RowProperty, 2);
             MazeGrid.SetValue(Grid.ColumnProperty, 0);
 
-            // Add it to grid manually
+            // Add maze to grid manually
             Grid.Children.Add(MazeGrid);
             
             // Construct the level UI elements from the provided rooms view models
@@ -85,7 +85,7 @@ namespace GameEditor.Windows
                 }
             });
 
-            // Add to UI
+            // Populate/add to UI
             foreach (var roomView in roomViews)
             {
                 MazeGrid.Children.Add(roomView);
@@ -95,7 +95,6 @@ namespace GameEditor.Windows
             mainWindowViewModel.SelectedRoom = mainWindowViewModel.Level.Rooms.First();
             ViewSelectedRoomProperties();
         }
-
 
         private void grid_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {

@@ -11,22 +11,20 @@ namespace GameEditor.ViewModels
             VerifyPropertyName(propertyName);
 
             var handler = PropertyChanged;
-            if(handler != null)
-            {
-                var e = new PropertyChangedEventArgs(propertyName);
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }            
+            if (handler == null) return;
+
+            var e = new PropertyChangedEventArgs(propertyName);
+            handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void VerifyPropertyName(string propertyName)
         {
             // Verify that the property name matches a real, public instance property of this object
-            if(TypeDescriptor.GetProperties(this)[propertyName] == null)
-            {
-                var msg = "Invalid property name: " + propertyName;
+            if (TypeDescriptor.GetProperties(this)[propertyName] != null) return;
 
-                throw new Exception(msg);
-            }
+            var msg = "Invalid property name: " + propertyName;
+
+            throw new Exception(msg);
         }
     }
 }

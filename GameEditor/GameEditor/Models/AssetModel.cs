@@ -2,16 +2,14 @@
 {
     public class AssetModel
     {
-        private string _name;
-        private string _path;
-        private string _type;
-        private int uid;
-        private string _innerXml;
+        public string Name { get; set; }
 
-        public string Name { get => _name; set => _name = value; }
-        public string Path { get => _path; set => _path = value; }
-        public string Type { get => _type; set => _type = value; }
-        public int Uid { get => uid; set => uid = value; }
-        public string InnerXml { get => _innerXml; set => _innerXml = value; }
+        public string Path { get; set; }
+
+        public string Type { get; set; }
+
+        public int Uid { get; set; }
+
+        public string InnerXml { get; set; }
     }
 }
