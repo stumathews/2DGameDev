@@ -49,7 +49,7 @@ namespace GameEditor
                                 new XAttribute("resourceId", gameObject.ResourceId),
                                 new XAttribute("assetPath", gameObject.AssetPath), 
                                 // <property>
-                                from property in gameObjectTypes.Single(x=>x.Type == gameObject.Type).Properties // save any new props
+                                from property in gameObjectTypes.Single(x=>x.Type == gameObject.Type && x.Name == gameObject.Name).Properties // save any new props
                                 let key = new XAttribute("name", property.Key)
                                 let value = new XAttribute("value", property.Value)
                                 select new XElement("property", key, value)) 

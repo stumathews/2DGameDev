@@ -99,6 +99,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ResourceManager.cs" />
+    <Compile Include="Utils\BoolToVisibilityConverter.cs" />
     <Compile Include="Utils\FilenameConverter.cs" />
     <Compile Include="Utils\Utils.cs" />
     <Compile Include="ViewModels\GameObjectEditorViewModel.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="LevelManager.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Models\GameObjectType.cs" />
+    <Compile Include="ViewModels\MockRoomViewModel.cs" />
     <Compile Include="Views\IGameObjectEditorViewModel.cs" />
     <Compile Include="Views\MockAssetView.cs" />
     <Compile Include="Models\AssetModel.cs" />

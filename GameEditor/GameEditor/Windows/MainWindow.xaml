@@ -10,7 +10,7 @@
         Title="2D GameDev Game Editor" 
         Height="450" 
         Width="800" 
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" WindowState="Maximized">
     <Grid x:Name="Grid" MouseUp="grid_MouseUp">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="MenuBarRow" Height="Auto" /> <!-- Note how Auto fits the the content, and ignores being equal to other rows (which is the default)-->
@@ -76,16 +76,17 @@
                 </Button>
                 
                 <!-- Remove Object-->
+
                 <Button Command="{Binding RemovePickupCommand}">
-                <StackPanel >
-                    <Image>
-                        <Image.Source>
-                            <BitmapImage UriSource="pack://application:,,,/images/Delete.png"/>
-                        </Image.Source>
-                    </Image>   
-                    <TextBlock>Delete Game Object</TextBlock>
-                </StackPanel>
-            </Button>
+                    <StackPanel >
+                        <Image>
+                            <Image.Source>
+                                <BitmapImage UriSource="pack://application:,,,/images/Delete.png"/>
+                            </Image.Source>
+                        </Image>   
+                        <TextBlock>Delete Game Object</TextBlock>
+                    </StackPanel>
+                </Button>
             </ToolBar>
         </ToolBarTray>
         
@@ -96,7 +97,7 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <xctk:PropertyGrid Grid.Row="0" Name="PropertyGrid"  SelectedObject="{Binding}"/>
+            <xctk:PropertyGrid Grid.Row="0" Name="PropertyGrid"  SelectedObject="{Binding SelectedRoom, Mode=TwoWay}"/>
             <StackPanel Grid.Row="1">
                 <CheckBox x:Name="AutoPopulatePickupsCheckBox" IsChecked="{Binding AutoPopulatePickups, Mode=TwoWay }">Allow game to populate Pickups automatically</CheckBox>
             </StackPanel>

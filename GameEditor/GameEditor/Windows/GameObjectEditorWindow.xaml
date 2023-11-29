@@ -6,7 +6,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:utils="clr-namespace:GameEditor.Utils"
         mc:Ignorable="d"
-        d:DataContext="{StaticResource ResourceKey=myMockGameObjectEditorViewModel}"
+        d:DataContext="{StaticResource ResourceKey=MyMockGameObjectEditorViewModel}"
         Title="Add New Game Object" Height="450" Width="800">
     <Window.Resources>
         <Style TargetType="TextBlock" x:Key="Header">

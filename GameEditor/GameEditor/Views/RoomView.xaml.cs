@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using GameEditor.ViewModels;
@@ -11,12 +12,11 @@ namespace GameEditor.Views
 
         public RoomView(int roomNumber)
         {
+            InitializeComponent();
             ViewModel= new RoomViewModel(roomNumber);
             DataContext = ViewModel;
-            InitializeComponent();
-            
         }
-
+        
         private void DockPanel_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (!(e.Source is Rectangle rectangle)) return;

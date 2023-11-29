@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Media;
 using GameEditor.Views;
 
@@ -19,15 +20,14 @@ namespace GameEditor.Windows
         
         public MainWindow()
         {
+            // Construct the Objects defined in the XAML
+            InitializeComponent();
+            
             // View model to drive behavior and store data for view
             mainWindowViewModel = new MainWindowViewModel(this);
-            
 
             // Set the data context for XAML elements to the view model
             DataContext = mainWindowViewModel; // Hook up UI to view model
-
-            // Construct the Objects defined in the XAML
-            InitializeComponent();
             
             // Let us know when the Level is changed. i.e new level or loaded an existing level etc.
             mainWindowViewModel.PropertyChanged += (sender, args) =>
@@ -38,7 +38,7 @@ namespace GameEditor.Windows
                     UpdateMazeGrid(mainWindowViewModel);
                 }
             };
-
+            
             // Start with empty level
             mainWindowViewModel.CreateEmptyLevel();
         }
@@ -88,11 +88,14 @@ namespace GameEditor.Windows
             // Populate/add to UI
             foreach (var roomView in roomViews)
             {
+                if (roomView.ViewModel.RoomNumber == 0)
+                {
+                    SetSelectedRoom(roomView.ViewModel);
+                }
+
                 MazeGrid.Children.Add(roomView);
             }
             
-            // On start, show the first room in the property explorer
-            mainWindowViewModel.SelectedRoom = mainWindowViewModel.Level.Rooms.First();
             ViewSelectedRoomProperties();
         }
 
@@ -103,11 +106,23 @@ namespace GameEditor.Windows
             // You clicked on a Room...
             var room = (RoomView)e.Source;
 
-            // The main window keeps track of the select room
-            mainWindowViewModel.SelectedRoom = room.ViewModel;
+            SetSelectedRoom(room.ViewModel);
+
 
             // Let the property grid show the selected room
             ViewSelectedRoomProperties();
+        }
+
+        private void SetSelectedRoom(RoomViewModel room)
+        {
+            if (mainWindowViewModel.SelectedRoom != null)
+            {
+                mainWindowViewModel.SelectedRoom.IsSelected = false;
+            }
+
+            // The main window keeps track of the select room
+            mainWindowViewModel.SelectedRoom = room;
+            mainWindowViewModel.SelectedRoom.IsSelected = true;
         }
 
         private void ViewSelectedRoomProperties()

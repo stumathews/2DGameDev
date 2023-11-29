@@ -19,7 +19,6 @@ namespace GameEditor.ViewModels
 
         public NewLevelViewModel NewLevelViewModel { get; }
         public LevelManager LevelManager { get; }
-
         public bool AutoPopulatePickups
         {
             get => autoPopulatePickups;
@@ -30,7 +29,6 @@ namespace GameEditor.ViewModels
                 OnPropertyChanged(nameof(AutoPopulatePickups));
             }
         }
-
         public Level Level
         {
             get => level;
@@ -40,7 +38,6 @@ namespace GameEditor.ViewModels
                 OnPropertyChanged(nameof(Level));
             }
         }
-
         public RoomViewModel SelectedRoom
         {
             get => selectedRoom; set
@@ -77,8 +74,8 @@ namespace GameEditor.ViewModels
             ShowAboutCommand = new RelayCommand((o) => new About(window).Show());
             CloseCommand = new RelayCommand((o) => parent.Close());
             ShowContentManagerCommand = new RelayCommand((o) => new ContentManagerWindow(window).Show());
-            AddPickupCommand = new RelayCommand((o) => AssociateSelectedGameObjectWithRoom());
-            RemovePickupCommand = new RelayCommand((o) => RemovePickupFromSelectedRoom(), canExecute: o => IsRoomSelected());
+            AddPickupCommand = new RelayCommand((o) => AssociateSelectedGameObjectWithRoom(), canExecute: o => IsRoomSelected() && SelectedRoom.ResidentGameObjectType == null);
+            RemovePickupCommand = new RelayCommand((o) => RemovePickupFromSelectedRoom(), canExecute: o => IsRoomSelected() && SelectedRoom.ResidentGameObjectType != null);
             LoadLevelFileCommand = new RelayCommand(LoadLevelFile);
             SaveLevelCommand = new RelayCommand((rooms => SaveLevel(rooms as List<RoomViewModel>)));
             CreateNewLevelCommand = new RelayCommand(o => CreateNewLevel());
@@ -164,7 +161,7 @@ namespace GameEditor.ViewModels
             }
         }
 
-        private bool IsRoomSelected() => SelectedRoom != null;
+        private bool IsRoomSelected() => SelectedRoom != null && SelectedRoom.IsSelected;
 
         private void SaveLevel(List<RoomViewModel> rooms)
         {

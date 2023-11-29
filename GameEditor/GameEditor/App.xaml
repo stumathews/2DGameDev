@@ -5,8 +5,8 @@
              xmlns:views="clr-namespace:GameEditor.Views"
              StartupUri="Windows/MainWindow.xaml">
     <Application.Resources>
-         
         <views:MockAssetView x:Key="MyMockAssetView"/>
-        <views:MockGameObjectEditorViewModel x:Key="myMockGameObjectEditorViewModel" />
+        <views:MockGameObjectEditorViewModel x:Key="MyMockGameObjectEditorViewModel" />
+        <views:MockRoomViewModel x:Key="MyMockRoomViewModel" />
     </Application.Resources>
 </Application>
