@@ -70,6 +70,15 @@
                             <Image.Source>
                                 <BitmapImage UriSource="pack://application:,,,/images/Add.png"/>
                             </Image.Source>
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled" Value="False"> <!-- We inherit IsEnabled from Parent -->
+                                            <Setter Property="Opacity" Value="0.5" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
                         </Image>    
                         <TextBlock>Add Game Object</TextBlock>
                     </StackPanel>
@@ -78,14 +87,23 @@
                 <!-- Remove Object-->
 
                 <Button Command="{Binding RemovePickupCommand}">
-                    <StackPanel >
-                        <Image>
-                            <Image.Source>
-                                <BitmapImage UriSource="pack://application:,,,/images/Delete.png"/>
-                            </Image.Source>
-                        </Image>   
-                        <TextBlock>Delete Game Object</TextBlock>
-                    </StackPanel>
+                <StackPanel >
+                    <Image>
+                        <Image.Source>
+                            <BitmapImage UriSource="pack://application:,,,/images/Delete.png"/>
+                        </Image.Source>
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False"> <!-- We inherit IsEnabled from Parent -->
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>   
+                    <TextBlock>Delete Game Object</TextBlock>
+                </StackPanel>
                 </Button>
             </ToolBar>
         </ToolBarTray>
