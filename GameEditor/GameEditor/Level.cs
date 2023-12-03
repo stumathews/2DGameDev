@@ -17,9 +17,9 @@ namespace GameEditor
 
         public Level(int numCols, int numRows , List<RoomViewModel> rooms, bool autoPopulatePickups)
         {
-            this.NumCols = numCols;
-            this.NumRows = numRows;
-            this.Rooms = rooms;
+            NumCols = numCols;
+            NumRows = numRows;
+            Rooms = rooms;
             AutoPopulatePickups = autoPopulatePickups;
         }
     }
