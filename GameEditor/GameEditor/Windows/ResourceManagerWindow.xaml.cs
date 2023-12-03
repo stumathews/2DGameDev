@@ -2,6 +2,8 @@
 using GameEditor.Views;
 using System.Collections.Generic;
 using System.Windows;
+using GameEditor.Models;
+using GameEditor.ViewModels;
 
 namespace GameEditor.Windows
 {
@@ -16,22 +18,10 @@ namespace GameEditor.Windows
         public ContentManagerWindow(Window parent, string basePath = "C:\\repos\\2DGameDev\\")
         {
             this.basePath = basePath;
-
             Owner = parent;
-
-            ParseResources();
             InitializeComponent();
-            DataContext = this;
-                      
+            DataContext = new ResourcesViewModel(basePath);
         }
 
-        // List of assets that this screen will load up from loading the resources file
-        public List<AssetModel> Assets { get; set; } = new List<AssetModel>();
-
-        private void ParseResources()
-        {
-            // The resource manager will deserialize the resources for us in the resources.xml files
-            Assets = ResourceManager.ParseResources(basePath);
-        }
     }
 }

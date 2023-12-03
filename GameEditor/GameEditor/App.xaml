@@ -3,10 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:GameEditor"
              xmlns:views="clr-namespace:GameEditor.Views"
+             xmlns:viewModels="clr-namespace:GameEditor.ViewModels"
              StartupUri="Windows/MainWindow.xaml">
     <Application.Resources>
-        <views:MockAssetView x:Key="MyMockAssetView"/>
+        <viewModels:MockResourcesViewModel x:Key="MyMockAssetView"/>
+        <viewModels:MockSpriteAssetViewModel x:Key="MockSpriteMockAssetView"/>
         <views:MockGameObjectEditorViewModel x:Key="MyMockGameObjectEditorViewModel" />
         <views:MockRoomViewModel x:Key="MyMockRoomViewModel" />
+        <BitmapImage x:Key="AddImage" UriSource="pack://application:,,,/images/Add.png"/>
+        <BitmapImage x:Key="RemoveImage" UriSource="pack://application:,,,/images/Delete.png"/>
+        <BitmapImage x:Key="NewImage" UriSource="pack://application:,,,/images/New.png"/>
+        <BitmapImage x:Key="OpenImage" UriSource="pack://application:,,,/images/Open.png"/>
+        <BitmapImage x:Key="SaveAsImage" UriSource="pack://application:,,,/images/SaveAs.png"/>
+        <BitmapImage x:Key="ExitImage" UriSource="pack://application:,,,/images/Exit.png"/>
+        <BitmapImage x:Key="ResourcesImage" UriSource="pack://application:,,,/images/Resources.png"/>
     </Application.Resources>
 </Application>

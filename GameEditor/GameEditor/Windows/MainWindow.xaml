@@ -11,6 +11,16 @@
         Height="450" 
         Width="800" 
         WindowStartupLocation="CenterScreen" WindowState="Maximized">
+    <Window.Resources>
+        <Style TargetType="Image" x:Key="ToolBarImageStyle">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False"> <!-- We inherit IsEnabled from Parent -->
+                    <Setter Property="Opacity" Value="0.5" />
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="Height" Value="16"></Setter>
+        </Style>
+    </Window.Resources>
     <Grid x:Name="Grid" MouseUp="grid_MouseUp">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="MenuBarRow" Height="Auto" /> <!-- Note how Auto fits the the content, and ignores being equal to other rows (which is the default)-->
@@ -26,32 +36,46 @@
         <!-- Menu -->
         <Menu Name="MainMenu" Grid.Row="0" Grid.ColumnSpan="2">
             <!-- File Menu -->
-            <MenuItem Header="File" Name="FileMenuItem" >
-                <MenuItem Name="NewMenuItem" Header="New level..." Command="{Binding CreateNewLevelCommand}" ></MenuItem>
-                <MenuItem Name="OpenMenuItem" Header="Open level..." Command="{Binding LoadLevelFileCommand}"></MenuItem>
-                <MenuItem Name="ContentManagerMenuItem" Header="Content Manager..." Command="{Binding ShowContentManagerCommand}" />
-                <MenuItem Name="SaveAsMenuItem" Header="Save level as..." Click="saveAsMenuItem_Click"></MenuItem>
-                <MenuItem Name="CloseMenuItem" Header="Close" Command="{Binding CloseCommand}"></MenuItem>
-            </MenuItem>
-            
-            <!-- Edit Menu -->
-            <MenuItem Header="Edit" Name="EditMenuItem">
+            <MenuItem Header="Level" Name="FileMenuItem" >
+                <MenuItem Name="NewMenuItem" Header="New level..." Command="{Binding CreateNewLevelCommand}" >
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource NewImage}"/>                
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Name="OpenMenuItem" Header="Load level..." Command="{Binding LoadLevelFileCommand}">
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource OpenImage}"/>                
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem Header="Add object" Command="{Binding AddPickupCommand}">
                     <MenuItem.Icon>
-                        <Image>
-                            <Image.Source>
-                                <BitmapImage UriSource="pack://application:,,,/images/Add.png"/>
-                            </Image.Source>
-                        </Image>                
+                        <Image Source="{StaticResource AddImage}"/>                
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Header="Remove object" Command="{Binding RemovePickupCommand}">
                     <MenuItem.Icon>
-                        <Image>
-                            <Image.Source>
-                                <BitmapImage UriSource="pack://application:,,,/images/Delete.png"/>
-                            </Image.Source>
-                        </Image>                
+                        <Image Source="{StaticResource RemoveImage}"/>  
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+
+                <MenuItem Name="SaveAsMenuItem" Header="Save level as..." Click="saveAsMenuItem_Click">
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource SaveAsImage}"/>                
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Name="CloseMenuItem" Header="Exit" Command="{Binding CloseCommand}">
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource ExitImage}"/>                
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+               
+            <!-- Tools Menu -->
+            <MenuItem Header="Tools">
+                <MenuItem Name="ContentManagerMenuItem" Header="Resource Manager..." Command="{Binding ShowContentManagerCommand}" >
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource ResourcesImage}"/>                
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
@@ -66,20 +90,7 @@
                 <!-- Add Object -->
                 <Button Command="{Binding AddPickupCommand}">
                     <StackPanel>
-                        <Image>
-                            <Image.Source>
-                                <BitmapImage UriSource="pack://application:,,,/images/Add.png"/>
-                            </Image.Source>
-                            <Image.Style>
-                                <Style TargetType="Image">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsEnabled" Value="False"> <!-- We inherit IsEnabled from Parent -->
-                                            <Setter Property="Opacity" Value="0.5" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Image.Style>
-                        </Image>    
+                        <Image Source="{StaticResource AddImage}" Style="{StaticResource ToolBarImageStyle}"/> 
                         <TextBlock>Add Game Object</TextBlock>
                     </StackPanel>
                 </Button>
@@ -88,33 +99,43 @@
 
                 <Button Command="{Binding RemovePickupCommand}">
                 <StackPanel >
-                    <Image>
-                        <Image.Source>
-                            <BitmapImage UriSource="pack://application:,,,/images/Delete.png"/>
-                        </Image.Source>
-                        <Image.Style>
-                            <Style TargetType="Image">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False"> <!-- We inherit IsEnabled from Parent -->
-                                        <Setter Property="Opacity" Value="0.5" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>   
+                    <Image Source="{StaticResource RemoveImage}" Style="{StaticResource ToolBarImageStyle}"/>
                     <TextBlock>Delete Game Object</TextBlock>
                 </StackPanel>
+                </Button>
+                <Button Command="{Binding ShowContentManagerCommand}">
+                    <StackPanel >
+                        <Image Source="{StaticResource ResourcesImage}" Style="{StaticResource ToolBarImageStyle}"/>
+                        <TextBlock>Resource Manager</TextBlock>
+                    </StackPanel>
                 </Button>
             </ToolBar>
         </ToolBarTray>
         
         <!-- Note: The main content will be dynamically populated -->
-        
+        <UniformGrid Name="MazeGrid" Grid.Row="2" Grid.Column="0" Columns="10" Rows="10" Background="WhiteSmoke">
+            <UniformGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Add Game Object..." Command="{Binding AddPickupCommand}">
+                        <MenuItem.Icon>
+                            <Image Source="{StaticResource AddImage}"/>                
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="Remove Game Object" Command="{Binding RemovePickupCommand}">
+                        <MenuItem.Icon>
+                            <Image Source="{StaticResource RemoveImage}"/>                
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </UniformGrid.ContextMenu>
+        </UniformGrid>
+
         <Grid Grid.Row="2" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+            
             <xctk:PropertyGrid Grid.Row="0" Name="PropertyGrid"  SelectedObject="{Binding SelectedRoom, Mode=TwoWay}"/>
             <StackPanel Grid.Row="1">
                 <CheckBox x:Name="AutoPopulatePickupsCheckBox" IsChecked="{Binding AutoPopulatePickups, Mode=TwoWay }">Allow game to populate Pickups automatically</CheckBox>

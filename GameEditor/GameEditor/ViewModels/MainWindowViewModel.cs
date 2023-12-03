@@ -134,7 +134,6 @@ namespace GameEditor.ViewModels
             // What did the user select...
             if(!gameObjectEditorWindow.ViewModel.IsSelected())
             {
-                MessageBox.Show("No game object selected");
                 return;
             }
 

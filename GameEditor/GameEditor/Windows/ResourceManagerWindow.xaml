@@ -6,60 +6,103 @@
         xmlns:utils="clr-namespace:GameEditor.Utils"
         mc:Ignorable="d"
         d:DataContext="{StaticResource ResourceKey=MyMockAssetView}"
-        Title="ContentManager" Height="450" Width="800" 
+        Title="ContentManager"
+        Height="450"
+        Width="800"
+        WindowState="Maximized"
         d:DesignWidth="523.5">
     <Window.Resources>
         <utils:FilenameConverter x:Key="FilenameConverter" />
-         <Style TargetType="TextBlock" x:Key="Item">
-            <Setter Property="Margin" Value="5 5 5 5"/>
+        <Style TargetType="TextBlock"
+               x:Key="Item">
+            <Setter Property="Margin"
+                    Value="5 5 5 5" />
         </Style>
-        <Style TargetType="TextBlock" x:Key="Header">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="Margin" Value="5 5 5 5"/>
-            <Setter Property="FontWeight" Value="Bold"/>
+        <Style TargetType="TextBlock"
+               x:Key="Header">
+            <Setter Property="HorizontalAlignment"
+                    Value="Left" />
+            <Setter Property="Margin"
+                    Value="5 5 5 5" />
+            <Setter Property="FontWeight"
+                    Value="Bold" />
         </Style>
     </Window.Resources>
-    
+
     <Grid>
-       <!--  <Asset uid="11" scene="3" name="p3.png" type="graphic" filename="Assets/Platformer/Base pack/Player/p3_walk/p3_walk.png" width="256" height="512"> -->
-       <Grid.ColumnDefinitions>
-           <ColumnDefinition/> 
-       </Grid.ColumnDefinitions>
-       <Grid.RowDefinitions>
-           <RowDefinition />
-       </Grid.RowDefinitions>
-        <ListBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Assets}" IsSynchronizedWithCurrentItem="True" Margin="0,22,0,-22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Menu Name="MainMenu"
+              Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="Add Resource" Command="{Binding AddResourceCommand}">
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource AddImage}"/>                
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Delete Resource" Command="{Binding RemoveResourceCommand}">
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource RemoveImage}"/>                
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Save resources as..." Command="{Binding SaveResourcesAsCommand}">
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource SaveAsImage}"/>                
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+
+        <ListView Grid.Row="1"
+                  ItemsSource="{Binding Assets}"
+                  IsSynchronizedWithCurrentItem="True" >
+            <ListView.Template>
+                <ControlTemplate>
+                    <ScrollViewer>
+                        <ItemsPresenter></ItemsPresenter>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ListView.Template>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical">
-                        <Border BorderBrush="Black" BorderThickness="1">
+                        <StackPanel Orientation="Horizontal">
                             <StackPanel Orientation="Horizontal">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Uid:" Style="{StaticResource Header}"/>
-                                    <TextBlock Text="{Binding Path=Uid}" Style="{StaticResource Item}"/>
-                                </StackPanel>                        
-                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Type:" Style="{StaticResource Header}"/>
-                                    <TextBlock Text="{Binding Path=Type}" Style="{StaticResource Item}"/>
-                                 </StackPanel>
-                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Name:" Style="{StaticResource Header}"/>
-                                    <TextBlock Text="{Binding Path=Name}" Style="{StaticResource Item}"/>
-                                </StackPanel>
-                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Path:" Style="{StaticResource Header}"/>
-                                    <TextBlock Text="{Binding Path=Path}" Style="{StaticResource Item}"/>
-                                </StackPanel>
-                                
-                            </StackPanel> 
-                        </Border>
-                        <StackPanel Orientation="Horizontal" Background="LightGray">
-                            <TextBlock Text="Image:" Style="{StaticResource Header}"/>
-                            <Image Source="{Binding Path=Path, Converter={StaticResource FilenameConverter}}"/>
+                                <TextBlock Text="Uid:"
+                                           Style="{StaticResource Header}" />
+                                <TextBlock Text="{Binding Path=Uid}"
+                                           Style="{StaticResource Item}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Type:"
+                                           Style="{StaticResource Header}" />
+                                <TextBlock Text="{Binding Path=Type}"
+                                           Style="{StaticResource Item}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Name:"
+                                           Style="{StaticResource Header}" />
+                                <TextBlock Text="{Binding Path=Name}"
+                                           Style="{StaticResource Item}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Path:"
+                                           Style="{StaticResource Header}" />
+                                <TextBlock Text="{Binding Path=Path}"
+                                           Style="{StaticResource Item}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Image:"
+                                           Style="{StaticResource Header}" />
+                                <Image Source="{Binding Path=Path, Converter={StaticResource FilenameConverter}}" />
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>                        
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListBox>
+        </ListView>
     </Grid>
 </Window>

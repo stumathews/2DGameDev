@@ -54,7 +54,7 @@ namespace GameEditor
                     gameObjectTypes.Add(gameObjectType);
                 }
             }
-
+            reader.Close();
 
             return gameObjectTypes;
         }

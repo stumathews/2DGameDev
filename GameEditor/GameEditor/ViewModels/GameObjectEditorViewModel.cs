@@ -19,23 +19,36 @@ namespace GameEditor.ViewModels
         public string NewName { get => newName; set { newName = value; OnPropertyChanged(nameof(NewName)); } }
         public string NewType { get => newType; set { newType = value; OnPropertyChanged(nameof(NewType)); } }
         public GameObjectType SelectedItem { get => selectedItem; set { selectedItem = value; OnPropertyChanged(nameof(SelectedItem)); } }
-        public AssetModel NewAsset { get => newAsset; set { newAsset = value; OnPropertyChanged(nameof(NewAsset)); } }
+        public Asset NewAsset { get => newAsset; set { newAsset = value; OnPropertyChanged(nameof(NewAsset)); } }
         public ObservableCollection<GameObjectType> GameObjectTypes { get; set; } = new ObservableCollection<GameObjectType>();
-        public ObservableCollection<AssetModel> Assets { get; } = new ObservableCollection<AssetModel>();
+        public ObservableCollection<Asset> Assets { get; } = new ObservableCollection<Asset>();
         public bool IsSelected() => selectedItem != null;
         public void SaveGameObjectTypes() => GameObjectTypeManager.SaveGameObjectTypes(GameObjectTypes.ToList());
-
+        
         public GameObjectEditorViewModel(Window window)
         {
             Window = window;
 
-            window.Closing += (sender, args) => SaveGameObjectTypes();
+            window.Closing += (sender, args) =>
+            {
+                if (!selectButtonPresse)
+                {
+                    selectedItem = null;
+                }
+
+                SaveGameObjectTypes();
+            };
             
             AddGameObjectTypeCommand = new RelayCommand((o) => { AddGameObjectType(); }, (o) => CanExecuteAddGameObject());
             RemoveGameObjectTypeCommand = new RelayCommand((o) => { GameObjectTypes.Remove(SelectedItem); }, (o)=> IsSelected());
-            SelectCommand = new RelayCommand(o => { OnSubmit(); }, (o) => IsSelected());
+            SelectCommand = new RelayCommand(SelectGameObjectPressed, (o) => IsSelected());
             NewName = NewType = null;
             NewAsset = null;
+        }
+
+        private void SelectGameObjectPressed(object o)
+        {
+            OnSelect();
         }
 
         public bool Initialize()
@@ -73,14 +86,9 @@ namespace GameEditor.ViewModels
             return !string.IsNullOrEmpty(NewType) && !string.IsNullOrEmpty(NewName) && newAsset != null;
         }
 
-        private void OnSubmit()
+        private void OnSelect()
         {
-            if (SelectCommand == null)
-            {
-                MessageBox.Show("No Game type selected");
-                return;
-            }
-
+            selectButtonPresse = true;
             Window.Close();
         }
 
@@ -101,8 +109,9 @@ namespace GameEditor.ViewModels
         
         private string newName;
         private string newType;
-        private AssetModel newAsset;
+        private Asset newAsset;
         private GameObjectType selectedItem;
         private Window Window { get; }
+        private bool selectButtonPresse = false;
     }
 }

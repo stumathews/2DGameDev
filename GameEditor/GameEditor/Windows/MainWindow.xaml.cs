@@ -16,7 +16,7 @@ namespace GameEditor.Windows
     {
         private readonly MainWindowViewModel mainWindowViewModel;        
         
-        public UniformGrid MazeGrid;
+        //public UniformGrid MazeGrid;
         
         public MainWindow()
         {
@@ -57,12 +57,12 @@ namespace GameEditor.Windows
             }
 
             // Make an empty new level
-            MazeGrid = new UniformGrid
-            {
-                Rows = 10,
-                Columns = 10,
-                Background = Brushes.WhiteSmoke
-            };
+            //MazeGrid = new UniformGrid
+            //{
+            //    Rows = 10,
+            //    Columns = 10,
+            //    Background = Brushes.WhiteSmoke
+            //};
             
             // Set attached properties that we'd normally set in XAML
             MazeGrid.SetValue(Grid.RowProperty, 2);

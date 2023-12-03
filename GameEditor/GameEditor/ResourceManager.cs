@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using GameEditor.Models;
 using GameEditor.Views;
 
 namespace GameEditor
 {
     public static class ResourceManager
     {
-        public static List<AssetModel> ParseResources(string basePath = "C:\\repos\\2DGameDev\\")
+        public static List<Asset> ParseResources(string basePath = "C:\\repos\\2DGameDev\\")
         { 
-            var assets = new List<AssetModel>();
+            var assets = new List<Asset>();
             var doc = new XmlDocument();
 
             doc.Load(basePath + "game\\Resources.xml");
@@ -23,7 +24,7 @@ namespace GameEditor
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (XmlNode assetNode in xmlNodeList)
             {
-                assets.Add(new AssetModel
+                assets.Add(new Asset
                 {
                     Name = assetNode.Attributes?["name"].Value,
                     Uid = int.Parse(assetNode.Attributes?["uid"].Value ?? throw new NullReferenceException("uid")),

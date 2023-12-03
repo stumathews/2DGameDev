@@ -98,6 +98,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\AudioAsset.cs" />
+    <Compile Include="Models\ColorKey.cs" />
+    <Compile Include="Models\FontAsset.cs" />
+    <Compile Include="Models\GraphicAsset.cs" />
+    <Compile Include="Models\KeyFrame.cs" />
+    <Compile Include="Models\KeyFrameCollection.cs" />
+    <Compile Include="Models\SpriteAsset.cs" />
     <Compile Include="ResourceManager.cs" />
     <Compile Include="Utils\BoolToVisibilityConverter.cs" />
     <Compile Include="Utils\FilenameConverter.cs" />
@@ -109,9 +116,12 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Models\GameObjectType.cs" />
     <Compile Include="ViewModels\MockRoomViewModel.cs" />
+    <Compile Include="ViewModels\MockSpriteAssetViewModel.cs" />
+    <Compile Include="ViewModels\ResourcesViewModel.cs" />
+    <Compile Include="ViewModels\SpriteAssetViewModel.cs" />
     <Compile Include="Views\IGameObjectEditorViewModel.cs" />
-    <Compile Include="Views\MockAssetView.cs" />
-    <Compile Include="Models\AssetModel.cs" />
+    <Compile Include="ViewModels\MockResourcesViewModel.cs" />
+    <Compile Include="Models\Asset.cs" />
     <Compile Include="Views\MockGameObjectEditorViewModel.cs" />
     <Compile Include="Views\RoomView.xaml.cs">
       <DependentUpon>RoomView.xaml</DependentUpon>
@@ -120,6 +130,9 @@
     <Compile Include="images\RelayCommand.cs" />
     <Compile Include="ViewModels\RoomViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\SpriteAssetView.xaml.cs">
+      <DependentUpon>SpriteAssetView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\GameObjectEditorWindow.xaml.cs">
       <DependentUpon>GameObjectEditorWindow.xaml</DependentUpon>
     </Compile>
@@ -129,6 +142,10 @@
     <Compile Include="Windows\CreateNewLevelWindow.xaml.cs">
       <DependentUpon>CreateNewLevelWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\SpriteAssetView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -196,6 +213,11 @@
     <Content Include="GameObjectTypes.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="images\Resources.png" />
+    <Resource Include="images\Exit.png" />
+    <Resource Include="images\SaveAs.png" />
+    <Resource Include="images\Open.png" />
+    <Resource Include="images\New.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="images\Add.png" />

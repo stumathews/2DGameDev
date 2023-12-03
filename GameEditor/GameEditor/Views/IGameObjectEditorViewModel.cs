@@ -8,10 +8,10 @@ namespace GameEditor.Views
     {
         ICommand AddGameObjectTypeCommand { get;set;}
         ICommand RemoveGameObjectTypeCommand { get;set;}
-        ObservableCollection<AssetModel> Assets { get; }
+        ObservableCollection<Asset> Assets { get; }
         ObservableCollection<GameObjectType> GameObjectTypes { get; set; }
         string NewName { get; set; }
-        AssetModel NewAsset { get; set; }
+        Asset NewAsset { get; set; }
         string NewType { get; set; }
         GameObjectType SelectedItem { get; set; }
         ICommand SelectCommand { get; set; }
