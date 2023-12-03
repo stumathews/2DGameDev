@@ -28,34 +28,7 @@ namespace GameEditor
 
                 OnAboutToSaveFile?.Invoke(this, $"Saving File '{saveFileDialog.FileName}'...");
                 
-                var levelNode = new XElement("level",
-                    new XAttribute("cols", level.NumCols),
-                    new XAttribute("rows", level.NumRows),
-                    new XAttribute("autoPopulatePickups", level.AutoPopulatePickups.ToString()),
-                    from room in level.Rooms             
-                    // <room>
-                        let gameObject = room.ResidentGameObjectType
-                        let roomEl = new XElement("room",
-                            new XAttribute("number", room.RoomNumber),
-                            new XAttribute("top", room.TopWallVisibility.ToBoolString()),
-                            new XAttribute("right", room.RightWallVisibility.ToBoolString()),
-                            new XAttribute("bottom", room.BottomWallVisibility.ToBoolString()),
-                            new XAttribute("left", room.LeftWallVisibility.ToBoolString()),
-                            // <object>
-                            gameObject != null 
-                                ? new XElement("object",
-                                new XAttribute("name", gameObject.Name),
-                                new XAttribute("type", gameObject.Type),
-                                new XAttribute("resourceId", gameObject.ResourceId),
-                                new XAttribute("assetPath", gameObject.AssetPath), 
-                                // <property>
-                                from property in gameObjectTypes.Single(x=>x.Type == gameObject.Type && x.Name == gameObject.Name).Properties // save any new props
-                                let key = new XAttribute("name", property.Key)
-                                let value = new XAttribute("value", property.Value)
-                                select new XElement("property", key, value)) 
-                                : null) 
-                        select roomEl);
-
+                var levelNode = GenerateLevelXml(level, gameObjectTypes);
 
                 // Write the level to file
                 using (var writer = XmlWriter.Create(saveFileDialog.FileName, GetXmlWriterSettings()))
@@ -71,21 +44,45 @@ namespace GameEditor
             }   
         }
 
-        private SaveFileDialog GetSaveFileDialog()
+        private static XElement GenerateLevelXml(Level level, IReadOnlyCollection<GameObjectType> gameObjectTypes)
         {
-            return new SaveFileDialog
-            {
-                Filter = "XML Files (*.xml)|*.xml;"
-            };
+            var levelNode = new XElement("level",
+                new XAttribute("cols", level.NumCols),
+                new XAttribute("rows", level.NumRows),
+                new XAttribute("autoPopulatePickups", level.AutoPopulatePickups.ToString()),
+                from room in level.Rooms
+                // <room>
+                let gameObject = room.ResidentGameObjectType
+                let roomEl = new XElement("room",
+                    new XAttribute("number", room.RoomNumber),
+                    new XAttribute("top", room.TopWallVisibility.ToBoolString()),
+                    new XAttribute("right", room.RightWallVisibility.ToBoolString()),
+                    new XAttribute("bottom", room.BottomWallVisibility.ToBoolString()),
+                    new XAttribute("left", room.LeftWallVisibility.ToBoolString()),
+                    // <object>
+                    gameObject != null
+                        ? new XElement("object",
+                            new XAttribute("name", gameObject.Name),
+                            new XAttribute("type", gameObject.Type),
+                            new XAttribute("resourceId", gameObject.ResourceId),
+                            // <property>
+                            from property in gameObjectTypes.Single(x => x.Type == gameObject.Type && x.Name == gameObject.Name)
+                                .Properties // save any new props
+                            let key = new XAttribute("name", property.Key)
+                            let value = new XAttribute("value", property.Value)
+                            select new XElement("property", key, value))
+                        : null)
+                select roomEl);
+            return levelNode;
+        }
+        
+        public static string GetLevelXml(Level level, List<GameObjectType> gameObjectTypes)
+        {
+            return GenerateLevelXml(level, gameObjectTypes).ToString();
         }
 
-        private static XmlWriterSettings GetXmlWriterSettings()
-        {
-            return new XmlWriterSettings
-            {
-                Indent = true,
-            };
-        }
+        private SaveFileDialog GetSaveFileDialog() => new SaveFileDialog { Filter = "XML Files (*.xml)|*.xml;" };
+        private static XmlWriterSettings GetXmlWriterSettings() => new XmlWriterSettings { Indent = true, };
 
         public Level LoadLevelFile()
         {
@@ -94,7 +91,6 @@ namespace GameEditor
 
             try
             {
-
                 if(openFileDialog.ShowDialog() is true)
                 {
                     level = (from levels in XElement.Load(openFileDialog.FileName).AncestorsAndSelf()
@@ -139,9 +135,6 @@ namespace GameEditor
 
         private static string GetAsString(XElement o, string attributeName) 
             => (o.Attribute(attributeName) ?? throw new NullReferenceException(attributeName)).Value;
-
-        private static Visibility GetAsVisibility(XElement r, string attributeName) 
-            => GetAsString(r, attributeName).ToVisibility();
 
         private static Visibility GetAsVisibilityFromTruthString(XElement r, string attributeName) 
             => GetAsString(r, attributeName).VisibilityFromTruthString();
