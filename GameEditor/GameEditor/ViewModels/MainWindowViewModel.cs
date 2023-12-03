@@ -1,8 +1,10 @@
-﻿using GameEditor.Windows;
+﻿using System;
+using GameEditor.Windows;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using GameEditor.Models;
 
 namespace GameEditor.ViewModels
 {
@@ -16,6 +18,7 @@ namespace GameEditor.ViewModels
         public ICommand LoadLevelFileCommand { get; set; }
         public ICommand SaveLevelCommand { get; set;}
         public ICommand CreateNewLevelCommand { get; set; }
+        public ICommand UpdateLevelXmlCommand { get; set; }
 
         public NewLevelViewModel NewLevelViewModel { get; }
         public LevelManager LevelManager { get; }
@@ -44,6 +47,17 @@ namespace GameEditor.ViewModels
             {
                 selectedRoom = value;
                 OnPropertyChanged(nameof(SelectedRoom));
+            }
+        }
+
+        public string LevelXml
+        {
+            get => levelXml1;
+            set
+            {
+                if (value == levelXml1) return;
+                levelXml1 = value;
+                OnPropertyChanged(nameof(LevelXml));
             }
         }
 
@@ -79,6 +93,19 @@ namespace GameEditor.ViewModels
             LoadLevelFileCommand = new RelayCommand(LoadLevelFile);
             SaveLevelCommand = new RelayCommand((rooms => SaveLevel(rooms as List<RoomViewModel>)));
             CreateNewLevelCommand = new RelayCommand(o => CreateNewLevel());
+            UpdateLevelXmlCommand = new RelayCommand((o) => LevelXml = LevelManager.GetLevelXml(Level, knownGameObjectTypes));
+
+            PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == nameof(Level))
+                {
+                    UpdateLevelXmlCommand.Execute(null);
+                }
+            };
+
+            
+            // Game Object Types eg. Pickup, Player, Enemy
+            knownGameObjectTypes = GameObjectTypeManager.GetGameObjectTypes("GameObjectTypes.xml");
         }
 
         private void RemovePickupFromSelectedRoom()
@@ -167,18 +194,18 @@ namespace GameEditor.ViewModels
             // Out level is defined as rooms in a Row x Col configuration.
             // It also can be set to have its pickups loaded randomly by the game or not.
             var levelToSave = new Level(NewLevelViewModel.NumCols, NewLevelViewModel.NumRows, rooms, AutoPopulatePickups);
-
-            // Game Object Types eg. Pickup, Player, Enemy
-            var knownGameObjectTypes = GameObjectTypeManager.GetGameObjectTypes("GameObjectTypes.xml");
-
+            
             // Save the level to XML
             LevelManager.SaveLevelFile(levelToSave, knownGameObjectTypes);
         }
 
+        private List<GameObjectType> knownGameObjectTypes = new List<GameObjectType>();
         private RoomViewModel selectedRoom;
         private Level level;
         private readonly Window window;
         private GameObjectEditorWindow gameObjectEditorWindow;
         private bool autoPopulatePickups;
+        private string levelXml;
+        private string levelXml1;
     }
 }

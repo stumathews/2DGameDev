@@ -21,7 +21,9 @@
             <Setter Property="Height" Value="16"></Setter>
         </Style>
     </Window.Resources>
-    <Grid x:Name="Grid" MouseUp="grid_MouseUp">
+    <TabControl>
+        <TabItem Header="Level">
+            <Grid x:Name="Grid" MouseUp="grid_MouseUp">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="MenuBarRow" Height="Auto" /> <!-- Note how Auto fits the the content, and ignores being equal to other rows (which is the default)-->
             <RowDefinition x:Name="ToolBarRow" Height="Auto" />
@@ -150,4 +152,11 @@
             </StatusBarItem>
         </StatusBar>
     </Grid>
+        </TabItem>
+        <TabItem Header="Source">
+            <ScrollViewer>
+                <TextBlock Text="{Binding LevelXml}"></TextBlock>
+            </ScrollViewer>
+        </TabItem>
+    </TabControl>
 </Window>

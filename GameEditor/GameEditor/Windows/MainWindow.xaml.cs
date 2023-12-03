@@ -55,14 +55,6 @@ namespace GameEditor.Windows
                 MazeGrid.Children.Clear();
                 Grid.Children.Remove(MazeGrid);
             }
-
-            // Make an empty new level
-            //MazeGrid = new UniformGrid
-            //{
-            //    Rows = 10,
-            //    Columns = 10,
-            //    Background = Brushes.WhiteSmoke
-            //};
             
             // Set attached properties that we'd normally set in XAML
             MazeGrid.SetValue(Grid.RowProperty, 2);
@@ -93,8 +85,15 @@ namespace GameEditor.Windows
                     SetSelectedRoom(roomView.ViewModel);
                 }
 
+                roomView.ViewModel.PropertyChanged += (sender, args) =>
+                {
+                    mainWindowViewModel.UpdateLevelXmlCommand.Execute(null);
+                };
+
                 MazeGrid.Children.Add(roomView);
             }
+
+            mainWindowViewModel.Level.Rooms = MazeGrid.Children.OfType<RoomView>().Select(x => x.ViewModel).ToList();
             
             ViewSelectedRoomProperties();
         }
