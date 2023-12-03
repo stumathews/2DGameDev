@@ -14,11 +14,23 @@ namespace GameEditor.ViewModels
     public class ResourcesViewModel : ViewModelBase, INotifyPropertyChanged
     {
         private readonly string basePath;
+        private string resourcesXml;
         public ObservableCollection<Asset> Assets { get; set; }
         
         public ICommand AddResourceCommand { get; }
         public ICommand RemoveResourceCommand { get; }
         public ICommand SaveResourcesAsCommand { get; }
+
+        public string ResourcesXml
+        {
+            get => resourcesXml;
+            set
+            {
+                if (value == resourcesXml) return;
+                resourcesXml = value;
+                OnPropertyChanged(nameof(ResourcesXml));
+            }
+        }
 
         public ResourcesViewModel(string basePath = "C:\\repos\\2DGameDev\\")
         {
@@ -28,6 +40,7 @@ namespace GameEditor.ViewModels
             RemoveResourceCommand = new RelayCommand((o) => { MessageBox.Show("Remove Resource"); });
             SaveResourcesAsCommand = new RelayCommand(SaveResourcesToFile);
             ParseResources();
+            ResourcesXml = GetResourcesXml();
         }
 
         private void SaveResourcesToFile(object o)
@@ -39,36 +52,46 @@ namespace GameEditor.ViewModels
                 return;
             }
 
-            IEnumerable<XElement> GetInnerXmlDocumentFragment(Asset asset)
-            {
-                if (string.IsNullOrEmpty(asset.InnerXml)) return null;
-
-                var myRootedXml = "<root>" + asset.InnerXml + "</root>";
-                var doc = new XmlDocument();
-                doc.LoadXml(myRootedXml);
-                var el = XElement.Parse(doc.InnerXml);
-                var list = el.Elements();
-                return list;
-
-            }
-
-            var assetsNode = new XElement("Assets",
-                from asset in Assets
-                let anAsset =  
-                    new XElement("Asset", 
-                        new XAttribute("uid", asset.Uid), 
-                        new XAttribute("name", asset.Name), 
-                        new XAttribute("type", asset.Type),
-                        new XAttribute("filename", asset.Path), 
-                        GetInnerXmlDocumentFragment(asset))
-                select anAsset);
-
-
-            // Write the level to file
+            // Create the xml nodes
+            var assetsNode = CreateResourcesXml();
+            
+            // Write the xml nodes to file
             using (var writer = XmlWriter.Create(saveFileDialog.FileName, GetXmlWriterSettings()))
             {
                 assetsNode.WriteTo(writer);
             }
+        }
+
+        private string GetResourcesXml()
+        {
+            return CreateResourcesXml().ToString();
+        }
+
+        private XElement CreateResourcesXml()
+        {
+            var assetsNode = new XElement("Assets",
+                from asset in Assets
+                let anAsset =
+                    new XElement("Asset",
+                        new XAttribute("uid", asset.Uid),
+                        new XAttribute("name", asset.Name),
+                        new XAttribute("type", asset.Type),
+                        new XAttribute("filename", asset.Path),
+                        GetInnerXmlAsElements(asset))
+                select anAsset);
+            return assetsNode;
+        }
+
+        private static IEnumerable<XElement> GetInnerXmlAsElements(Asset asset)
+        {
+            if (string.IsNullOrEmpty(asset.InnerXml)) return null;
+
+            var doc = new XmlDocument();
+            var myRootedXml = "<root>" + asset.InnerXml + "</root>"; // need to use a fake root for our inner xml in order to parse it
+                
+            doc.LoadXml(myRootedXml);
+
+            return XElement.Parse(doc.InnerXml).Elements();
         }
 
         private static SaveFileDialog GetSaveFileDialog()

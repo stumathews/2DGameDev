@@ -28,8 +28,9 @@
                     Value="Bold" />
         </Style>
     </Window.Resources>
-
-    <Grid>
+    <TabControl>
+        <TabItem Header="Resources">
+            <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition />
@@ -105,4 +106,11 @@
             </ListBox.ItemTemplate>
         </ListView>
     </Grid>
+        </TabItem>
+        <TabItem Header="Source">
+            <ScrollViewer>
+                <TextBlock Text="{Binding ResourcesXml}"></TextBlock>
+            </ScrollViewer>
+        </TabItem>
+    </TabControl>
 </Window>
