@@ -1,6 +1,4 @@
-﻿using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using System.Windows.Shapes;
 using GameEditor.ViewModels;
 
@@ -17,19 +15,6 @@ namespace GameEditor.Views
             DataContext = ViewModel;
         }
         
-        private void DockPanel_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (!(e.Source is Rectangle rectangle)) return;
-
-            switch (rectangle.Name)
-            {
-                case "topWall": ToggleTopWallVisibility(e); break;
-                case "rightWall": ToggleRightWallVisibility(e); break;
-                case "bottomWall": ToggleBottomWallVisibility(e); break;
-                case "leftWall": ToggleLeftWallVisibility(e); break;
-            }
-        }
-
         private static Rectangle GetRectangle(MouseEventArgs e) => (Rectangle)e.Source;
 
         private static void ToggleVisibility(Rectangle rectangle)
