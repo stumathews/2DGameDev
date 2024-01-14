@@ -10,8 +10,11 @@
 #include "graphic/DrawableFrameRate.h"
 #include <processes/ProcessManager.h>
 #include <character/StaticSprite.h>
+
+#include "CausalityTracker.h"
 #include "Enemy.h"
 #include "InputManager.h"
+#include "Observer.h"
 #include "Pickup.h"
 #include "graphic/DrawableText.h"
 
@@ -56,7 +59,7 @@ public:
     void InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<gamelib::SpriteAsset>& spriteAsset) const;
     void InitializeRooms(const std::vector<std::shared_ptr<Room>>& rooms);
     void OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt);
-    void OnFetchedPickup() const;
+    void OnFetchedPickup(const std::shared_ptr<gamelib::Event>& evt);
     void OnLevelChanged(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnNetworkPlayerJoined(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
@@ -66,8 +69,7 @@ public:
 protected:
     static LevelManager* instance;
     
-private:
-
+private:    
     bool disableCharacters = false;
     bool initialized {};
     bool verbose = false;
@@ -87,6 +89,7 @@ private:
     std::shared_ptr<Level> level = nullptr;
     std::shared_ptr<Player> player;
     std::vector<std::shared_ptr<gamelib::Pickup>> pickups;
+    libcausality::CausalityTracker causalityTracker;
     unsigned int currentLevel = 1;
     void AddGameObjectToScene(const std::shared_ptr<gamelib::GameObject>& gameObject);
     void AddScreenWidgets(const std::vector<std::shared_ptr<Room>>& rooms);
