@@ -98,7 +98,7 @@ void GameDataManager::RemoveFromGameData(const std::shared_ptr<GameObjectEvent>&
 	if (GameData::Get()->CountPickups() == 0 && !GameData::Get()->IsGameWon())
 	{
 		GameData::Get()->SetGameWon(true);
-		eventManager->RaiseEvent(EventFactory::Get()->CreateGenericEvent(GameWonEventId), this);
+		eventManager->RaiseEvent(EventFactory::Get()->CreateGenericEvent(GameWonEventId, GetSubscriberName()), this);
 	}
 }
 

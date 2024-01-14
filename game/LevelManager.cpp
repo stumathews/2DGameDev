@@ -29,6 +29,7 @@
 
 using namespace gamelib;
 using namespace std;
+using namespace ExpectationLib;
 
 bool LevelManager::Initialize()
 {
@@ -59,7 +60,6 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(PlayerCollidedWithEnemyEventId, this);
 	eventManager->SubscribeToEvent(PlayerDiedEventId, this);
 	eventManager->SubscribeToEvent(PlayerCollidedWithPickupEventId, this);
-	
 	return initialized = true;
 }
 
@@ -70,12 +70,12 @@ ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event> evt, const u
 	if(evt->Id.PrimaryId == InvalidMoveEventId.PrimaryId) { gameCommands->InvalidMove();}
 	if(evt->Id.PrimaryId == NetworkPlayerJoinedEventId.PrimaryId) { OnNetworkPlayerJoined(evt);}
 	if(evt->Id.PrimaryId == StartNetworkLevelEventId.PrimaryId) { OnStartNetworkLevel(evt); }
-	if(evt->Id.PrimaryId == FetchedPickupEventId.PrimaryId) { OnFetchedPickup();}
+	if(evt->Id.PrimaryId == FetchedPickupEventId.PrimaryId) { OnFetchedPickup(evt); }
 	if(evt->Id.PrimaryId == GameWonEventId.PrimaryId) { OnGameWon();}
 	if(evt->Id.PrimaryId == PlayerCollidedWithEnemyEventId.PrimaryId) { OnEnemyCollision(evt);}
 	if(evt->Id.PrimaryId == PlayerDiedEventId.PrimaryId) { OnPlayerDied(); }
 	if(evt->Id.PrimaryId == PlayerCollidedWithPickupEventId.PrimaryId) { OnPickupCollision(evt); }
-
+		
 	return {};
 }
 
@@ -100,7 +100,7 @@ void LevelManager::OnEnemyCollision(const std::shared_ptr<Event>& evt)
 
 	if(collisionEvent->Player->GetHealth() <= 0)
 	{		
-		eventManager->RaiseEvent(To<Event>(eventFactory->CreateGenericEvent(PlayerDiedEventId)), this);
+		eventManager->RaiseEvent(To<Event>(eventFactory->CreateGenericEvent(PlayerDiedEventId, GetSubscriberName())), this);
 	}
 }
 
@@ -118,8 +118,9 @@ void LevelManager::OnPickupCollision(const std::shared_ptr<Event>& evt) const
 }
 
 
-void LevelManager::OnFetchedPickup() const
+void LevelManager::OnFetchedPickup(const std::shared_ptr<Event>& evt)
 {
+	causalityTracker.TrackEvent(evt, player->GetName());
 	gameCommands->FetchedPickup();
 	hudItem->AdvanceFrame();	
 }

@@ -156,7 +156,7 @@ void Player::Move(const unsigned long deltaMs)
 
 	if (!isValidMove)
 	{
-		EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(InvalidMoveEventId), this);
+		EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(InvalidMoveEventId, GetName()), this);
 	}
 
 	if (sprite)

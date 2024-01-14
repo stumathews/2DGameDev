@@ -38,7 +38,7 @@ void GameCommands::Fire(const bool beVerbose)
 	
 	PlaySoundEffect(AudioManager::ToAudioAsset(ResourceManager::Get()->GetAssetInfo("scratch.wav")));
 	
-	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(FireEventId), this);
+	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(FireEventId, GetSubscriberName()), this);
 }
 
 void GameCommands::MoveUp(const bool beVerbose, const ControllerMoveEvent::KeyState keyState)
@@ -102,7 +102,7 @@ void GameCommands::ReloadSettings(const bool beVerbose)
 
 	SettingsManager::Get()->Reload();
 
-	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(SettingsReloadedEventId), this);
+	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateGenericEvent(SettingsReloadedEventId, {}), this);
 }
 
 void GameCommands::LoadNewLevel(const int level)

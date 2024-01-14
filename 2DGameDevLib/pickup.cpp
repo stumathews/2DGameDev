@@ -86,7 +86,7 @@ namespace gamelib
 			{
 				if (SdlCollisionDetection::IsColliding(&player->Bounds, &Bounds))
 				{
-					generatedEvents.push_back(EventFactory::Get()->CreateGenericEvent(FetchedPickupEventId));
+					generatedEvents.push_back(EventFactory::Get()->CreateGenericEvent(FetchedPickupEventId, GetSubscriberName()));
 					generatedEvents.push_back(make_shared<PlayerCollidedWithPickupEvent>(player, shared_from_this()));
 					generatedEvents.push_back( GameObjectEventFactory::MakeRemoveObjectEvent(shared_from_this()));					
 				}
