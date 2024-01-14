@@ -174,7 +174,6 @@
   <ItemGroup>
     <ClInclude Include="CharacterBuilder.h" />
     <ClInclude Include="EnemyMovedEvent.h" />
-    <ClInclude Include="EventTap.h" />
     <ClInclude Include="PlayerCollidedWithEnemyEvent.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EventNumber.h" />
@@ -198,7 +197,6 @@
     <ClCompile Include="CharacterBuilder.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyMovedEvent.cpp" />
-    <ClCompile Include="EventTap.cpp" />
     <ClCompile Include="GameDataManager.cpp" />
     <ClCompile Include="PlayerCollidedWithPickupEvent.cpp" />
     <ClCompile Include="RoomInfo.cpp" />
