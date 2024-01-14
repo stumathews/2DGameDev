@@ -46,6 +46,15 @@
     <ProjectReference Include="..\cppgamelib\cppgamelib.vcxproj">
       <Project>{478a3ef4-5780-4567-be58-56beccd9d215}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\expectationlib\Src\CppLibExpectation\CppLibExpectation.vcxproj">
+      <Project>{8521a984-c70c-47b2-b24a-451d8a747f64}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\libcausality\libcausality.vcxproj">
+      <Project>{ea98bb93-a71f-4ba6-ac63-f30d7d48b417}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\libmonad\lib\lib.vcxproj">
+      <Project>{a63d4542-48ca-4d12-acae-f35a729c40d0}</Project>
+    </ProjectReference>
     <ProjectReference Include="2DGameDevLib\2DGameDevLib.vcxproj">
       <Project>{825d337d-0f78-428c-9590-fdb39f79c6e9}</Project>
     </ProjectReference>
@@ -103,8 +112,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\repos\2DGameDev\2DGameDevLib;c:\repos\cppgamelib;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\repos\cppgamelib\$(platform)\$(configuration);C:\repos\2DGameDev\2DGameDevLib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\repos\2DGameDev\2DGameDevLib;c:\repos\cppgamelib;C:\repos\expectationlib\Src\CppLibExpectation;C:\repos\libcausality\src;C:\repos\libmonad\lib;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\repos\cppgamelib\$(platform)\$(configuration);C:\repos\2DGameDev\2DGameDevLib\$(Configuration);C:\repos\2DGameDev\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)$(platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <ReferencePath>$(ReferencePath)</ReferencePath>
@@ -153,11 +162,11 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\SDL\SDL2\include;C:\SDL\SDL2_image-2.0.4\include;C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\include;C:\SDL\SDL2_ttf-2.0.15\include;C:\Users\Stuart\git\cppgamelib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\SDL\SDL2\lib\$(platform);C:\SDL\SDL2_image-2.0.4\lib\$(platform);C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\$(platform);C:\SDL\SDL2_ttf-2.0.15\lib\$(platform);C:\repos\2DGameDev\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Winmm.lib;SDL2_mixer.lib;SDL2_ttf.lib;CppGameLib.lib;2DGameDevLib.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;Winmm.lib;SDL2_mixer.lib;SDL2_ttf.lib;CppGameLib.lib;2DGameDevLib.lib;Ws2_32.lib;CppLibExpectation.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <CustomBuildStep>

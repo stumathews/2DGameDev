@@ -46,7 +46,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)$(platform)\$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
-    <IncludePath>C:\repos\2DGameDev\2DGameDevLib;c:\sdl\SDL2\include;C:\repos\cppgamelib;$(IncludePath)</IncludePath>
+    <IncludePath>C:\repos\2DGameDev\2DGameDevLib;c:\sdl\SDL2\include;C:\repos\cppgamelib;c:\repos\libcausality\src\;$(IncludePath)</IncludePath>
     <LibraryPath>C:\SDL\SDL2\lib\$(platform);C:\SDL\SDL2_image-2.0.4\lib\$(platform);C:\SDL\SDL2_mixer-devel-2.0.4-VC\SDL2_mixer-2.0.4\lib\$(platform);C:\SDL\SDL2_ttf-2.0.15\lib\$(platform);C:\repos\2DGameDev\Debug;C:\repos\cppgamelib\Debug;C:\repos\2DGameDev\2DGameDevLib\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemGroup>
