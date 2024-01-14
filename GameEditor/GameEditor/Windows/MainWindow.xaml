@@ -21,7 +21,87 @@
             <Setter Property="Height" Value="16"></Setter>
         </Style>
     </Window.Resources>
-    <TabControl>
+    <DockPanel>
+         <!-- Menu -->
+    <Menu DockPanel.Dock="Top" Name="MainMenu" Grid.Row="0" Grid.ColumnSpan="2">
+     <!-- File Menu -->
+     <MenuItem Header="Level" Name="FileMenuItem" >
+         <MenuItem Name="NewMenuItem" Header="New level..." Command="{Binding CreateNewLevelCommand}" >
+             <MenuItem.Icon>
+                 <Image Source="{StaticResource NewImage}"/>                
+             </MenuItem.Icon>
+         </MenuItem>
+         <MenuItem Name="OpenMenuItem" Header="Load level..." Command="{Binding LoadLevelFileCommand}">
+             <MenuItem.Icon>
+                 <Image Source="{StaticResource OpenImage}"/>                
+             </MenuItem.Icon>
+         </MenuItem>
+         <MenuItem Header="Add object" Command="{Binding AddPickupCommand}">
+             <MenuItem.Icon>
+                 <Image Source="{StaticResource AddImage}"/>                
+             </MenuItem.Icon>
+         </MenuItem>
+         <MenuItem Header="Remove object" Command="{Binding RemovePickupCommand}">
+             <MenuItem.Icon>
+                 <Image Source="{StaticResource RemoveImage}"/>  
+             </MenuItem.Icon>
+         </MenuItem>
+         <Separator />
+
+         <MenuItem Name="SaveAsMenuItem" Header="Save level as..." Click="saveAsMenuItem_Click">
+             <MenuItem.Icon>
+                 <Image Source="{StaticResource SaveAsImage}"/>                
+             </MenuItem.Icon>
+         </MenuItem>
+         <MenuItem Name="CloseMenuItem" Header="Exit" Command="{Binding CloseCommand}">
+             <MenuItem.Icon>
+                 <Image Source="{StaticResource ExitImage}"/>                
+             </MenuItem.Icon>
+         </MenuItem>
+     </MenuItem>
+        
+     <!-- Tools Menu -->
+     <MenuItem Header="Tools">
+         <MenuItem Name="ContentManagerMenuItem" Header="Resource Manager..." Command="{Binding ShowContentManagerCommand}" >
+             <MenuItem.Icon>
+                 <Image Source="{StaticResource ResourcesImage}"/>                
+             </MenuItem.Icon>
+         </MenuItem>
+     </MenuItem>
+     
+     <!-- About Menu -->
+     <MenuItem Header="About" Name="AboutMenuItem" Command="{Binding ShowAboutCommand}"></MenuItem>
+ </Menu>
+
+        <!-- ToolBar -->
+    <ToolBarTray DockPanel.Dock="Top"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+     <ToolBar Band="1" BandIndex="1">
+         <!-- Add Object -->
+         <Button Command="{Binding AddPickupCommand}">
+             <StackPanel>
+                 <Image Source="{StaticResource AddImage}" Style="{StaticResource ToolBarImageStyle}"/> 
+                 <TextBlock>Add Game Object</TextBlock>
+             </StackPanel>
+         </Button>
+         
+         <!-- Remove Object-->
+
+         <Button Command="{Binding RemovePickupCommand}">
+         <StackPanel >
+             <Image Source="{StaticResource RemoveImage}" Style="{StaticResource ToolBarImageStyle}"/>
+             <TextBlock>Delete Game Object</TextBlock>
+         </StackPanel>
+         </Button>
+         <Button Command="{Binding ShowContentManagerCommand}">
+             <StackPanel >
+                 <Image Source="{StaticResource ResourcesImage}" Style="{StaticResource ToolBarImageStyle}"/>
+                 <TextBlock>Resource Manager</TextBlock>
+             </StackPanel>
+         </Button>
+     </ToolBar>
+ </ToolBarTray>
+         
+        <TabControl>
         <TabItem Header="Level">
             <Grid x:Name="Grid" MouseUp="grid_MouseUp">
         <Grid.RowDefinitions>
@@ -35,87 +115,10 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         
-        <!-- Menu -->
-        <Menu Name="MainMenu" Grid.Row="0" Grid.ColumnSpan="2">
-            <!-- File Menu -->
-            <MenuItem Header="Level" Name="FileMenuItem" >
-                <MenuItem Name="NewMenuItem" Header="New level..." Command="{Binding CreateNewLevelCommand}" >
-                    <MenuItem.Icon>
-                        <Image Source="{StaticResource NewImage}"/>                
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Name="OpenMenuItem" Header="Load level..." Command="{Binding LoadLevelFileCommand}">
-                    <MenuItem.Icon>
-                        <Image Source="{StaticResource OpenImage}"/>                
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Header="Add object" Command="{Binding AddPickupCommand}">
-                    <MenuItem.Icon>
-                        <Image Source="{StaticResource AddImage}"/>                
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Header="Remove object" Command="{Binding RemovePickupCommand}">
-                    <MenuItem.Icon>
-                        <Image Source="{StaticResource RemoveImage}"/>  
-                    </MenuItem.Icon>
-                </MenuItem>
-                <Separator />
-
-                <MenuItem Name="SaveAsMenuItem" Header="Save level as..." Click="saveAsMenuItem_Click">
-                    <MenuItem.Icon>
-                        <Image Source="{StaticResource SaveAsImage}"/>                
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Name="CloseMenuItem" Header="Exit" Command="{Binding CloseCommand}">
-                    <MenuItem.Icon>
-                        <Image Source="{StaticResource ExitImage}"/>                
-                    </MenuItem.Icon>
-                </MenuItem>
-            </MenuItem>
-               
-            <!-- Tools Menu -->
-            <MenuItem Header="Tools">
-                <MenuItem Name="ContentManagerMenuItem" Header="Resource Manager..." Command="{Binding ShowContentManagerCommand}" >
-                    <MenuItem.Icon>
-                        <Image Source="{StaticResource ResourcesImage}"/>                
-                    </MenuItem.Icon>
-                </MenuItem>
-            </MenuItem>
-            
-            <!-- About Menu -->
-            <MenuItem Header="About" Name="AboutMenuItem" Command="{Binding ShowAboutCommand}"></MenuItem>
-        </Menu>
        
-        <!-- ToolBar -->
-        <ToolBarTray  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-            <ToolBar Band="1" BandIndex="1">
-                <!-- Add Object -->
-                <Button Command="{Binding AddPickupCommand}">
-                    <StackPanel>
-                        <Image Source="{StaticResource AddImage}" Style="{StaticResource ToolBarImageStyle}"/> 
-                        <TextBlock>Add Game Object</TextBlock>
-                    </StackPanel>
-                </Button>
-                
-                <!-- Remove Object-->
-
-                <Button Command="{Binding RemovePickupCommand}">
-                <StackPanel >
-                    <Image Source="{StaticResource RemoveImage}" Style="{StaticResource ToolBarImageStyle}"/>
-                    <TextBlock>Delete Game Object</TextBlock>
-                </StackPanel>
-                </Button>
-                <Button Command="{Binding ShowContentManagerCommand}">
-                    <StackPanel >
-                        <Image Source="{StaticResource ResourcesImage}" Style="{StaticResource ToolBarImageStyle}"/>
-                        <TextBlock>Resource Manager</TextBlock>
-                    </StackPanel>
-                </Button>
-            </ToolBar>
-        </ToolBarTray>
         
         <!-- Note: The main content will be dynamically populated -->
-        <UniformGrid Name="MazeGrid" Grid.Row="2" Grid.Column="0" Columns="10" Rows="10" Background="WhiteSmoke">
+        <UniformGrid Name="MazeGrid" Grid.Row="2" Grid.Column="0" Background="WhiteSmoke">
             <UniformGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Add Game Object..." Command="{Binding AddPickupCommand}">
@@ -159,4 +162,5 @@
             </ScrollViewer>
         </TabItem>
     </TabControl>
+    </DockPanel>
 </Window>
