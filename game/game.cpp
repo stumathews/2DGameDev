@@ -3,6 +3,8 @@
 #include "LevelManager.h"
 #include "structure/GameStructure.h"
 #include <GameDataManager.h>
+
+#include "graphic/Subscribable.h"
 #include "structure/FixedStepGameLoop.h"
 
 using namespace std;
@@ -24,6 +26,40 @@ void PrepareFirstLevel();
 shared_ptr<FixedStepGameLoop> CreateGameLoopStrategy();
 void GetInput(unsigned long deltaMs);
 
+class ToolWindow final : public Subscribable<Window>
+{
+public:
+	ToolWindow(const char* windowName, uint width = 800, uint height = 600, const char* windowTitle = nullptr)
+	: Subscribable(std::make_shared<Window>(windowName, width, height, windowTitle), windowName)
+	{
+		GetItem()->Initialize();
+	}
+
+	std::vector<std::shared_ptr<Event>> HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs) override
+	{		
+		if(evt->Id.PrimaryId == DrawCurrentSceneEventId.PrimaryId) 
+		{
+			const auto window = GetItem();
+
+			if(!IsDirty) 
+			{
+				window->PresentOnly();
+			}
+			else
+			{
+				window->ClearAndDraw([&](SDL_Renderer* renderer)
+				{				
+					SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); // Black
+					SDL_RenderDrawLine(renderer, 0,0, static_cast<int>(window->Width()), static_cast<int>(window->Height()));
+					IsDirty = false;
+				});
+			}
+		}
+		return {};
+	}
+	bool IsDirty = true;
+};
+
 int main(int, char *[])
 {
 	GameDataManager::Get()->Initialize(false);
@@ -34,6 +70,10 @@ int main(int, char *[])
 		GameStructure infrastructure(CreateGameLoopStrategy());
 		
 		InitializeGameSubSystems(infrastructure);
+
+		auto toolWindow = ToolWindow("ToolWindow1", 340,340, "This is a Tool Window Title");
+		toolWindow.SubscribeToEvent(DrawCurrentSceneEventId);
+		
 
 		// Load level and create/add game objects
 		PrepareFirstLevel();
@@ -121,7 +161,7 @@ void Update(const unsigned long deltaMs)
 void Draw()
 {
 	 // Time-sensitive, skip queue. Draws the current scene
-	EventManager::Get()->DispatchEventToSubscriber(EventFactory::Get()->CreateGenericEvent(DrawCurrentSceneEventId), 0UL);
+	EventManager::Get()->DispatchEventToSubscriber(EventFactory::Get()->CreateGenericEvent(DrawCurrentSceneEventId, "Game"), 0UL);
 }
 
 void GetInput(const unsigned long deltaMs)
