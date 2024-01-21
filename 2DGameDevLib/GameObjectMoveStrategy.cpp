@@ -73,7 +73,7 @@ bool GameObjectMoveStrategy::IsValidMove(const std::shared_ptr<gamelib::IMovemen
 		case gamelib::Direction::Left: return CanGameObjectMove(gamelib::Direction::Left);
 		case gamelib::Direction::Right: return CanGameObjectMove(gamelib::Direction::Right);
 		case gamelib::Direction::Up: return CanGameObjectMove(gamelib::Direction::Up);
-		case gamelib::Direction::None: return false; // moving in no direction is a valid move
+		case gamelib::Direction::None: return true; // moving in no direction is a valid move
 	}
 	return false;
 }

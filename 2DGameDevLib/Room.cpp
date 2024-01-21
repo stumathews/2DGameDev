@@ -109,7 +109,7 @@ void Room::UpdateEnemyRoom(const std::shared_ptr<Enemy>& enemy)
 
 void Room::Update(const unsigned long deltaMs) { /* Not need to update */ }
 
-ListOfEvents Room::HandleEvent(const std::shared_ptr<Event> event, const unsigned long deltaMs)
+ListOfEvents Room::HandleEvent(const std::shared_ptr<Event>& event, const unsigned long deltaMs)
 {
 	auto generatedEvents(GameObject::HandleEvent(event, deltaMs));
 

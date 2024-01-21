@@ -74,7 +74,7 @@ namespace gamelib
 		return Name;
 	}
 
-	ListOfEvents Pickup::HandleEvent(const shared_ptr<Event> event, unsigned long deltaMs)
+	ListOfEvents Pickup::HandleEvent(const std::shared_ptr<gamelib::Event>& event, const unsigned long deltaMs)
 	{
 		ListOfEvents generatedEvents;
 

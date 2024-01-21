@@ -24,7 +24,7 @@ namespace gamelib
 
 		std::string GetSubscriberName() override;
 		std::string GetName() override;
-		ListOfEvents HandleEvent(std::shared_ptr<Event> event, unsigned long deltaMs) override;
+		ListOfEvents HandleEvent(const std::shared_ptr<gamelib::Event>& event, const unsigned long deltaMs) override;
 
 		void Initialize();
 		void Draw(SDL_Renderer* renderer) override;

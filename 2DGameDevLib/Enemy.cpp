@@ -247,8 +247,8 @@ void Enemy::CheckForPlayerCollision()
 	}
 }
 
-std::vector<std::shared_ptr<gamelib::Event>> Enemy::HandleEvent(const std::shared_ptr<gamelib::Event> event,
-                                                                unsigned long deltaMs)
+std::vector<std::shared_ptr<gamelib::Event>> Enemy::HandleEvent(const std::shared_ptr<gamelib::Event>& event,
+                                                                const unsigned long deltaMs)
 {
 	if (event->Id == gamelib::PlayerMovedEventTypeEventId)
 	{

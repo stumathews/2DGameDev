@@ -21,8 +21,8 @@ public:
 
 	std::shared_ptr<RoomInfo> CurrentRoom;
 	std::shared_ptr<const Level> CurrentLevel;
-	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event,
-	                                                         unsigned long deltaMs) override;
+	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(const std::shared_ptr<gamelib::Event>& event,
+	                                                         const unsigned long deltaMs) override;
 	bool Move(const unsigned long deltaMs); // true if moved
 	void Update(unsigned long deltaMs) override;
 	void LoadSettings() override;

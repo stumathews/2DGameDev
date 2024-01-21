@@ -98,7 +98,7 @@ void Player::CommonInit(const int playerWidth, const int playerHeight, const std
 	SubscribeToEvent(GameWonEventId); // want to know when the game is won
 }
 
-ListOfEvents Player::HandleEvent(const shared_ptr<Event> event, const unsigned long deltaMs)
+ListOfEvents Player::HandleEvent(const std::shared_ptr<Event>& event, const unsigned long deltaMs)
 {
 	ListOfEvents createdEvents;
 	BaseProcessEvent(event, createdEvents, deltaMs);
@@ -119,7 +119,7 @@ ListOfEvents Player::HandleEvent(const shared_ptr<Event> event, const unsigned l
 	}
 	if (event->Id.PrimaryId == InvalidMoveEventId.PrimaryId) { LogMessage("Invalid move", verbose); }
 	if (event->Id.PrimaryId == GameWonEventId.PrimaryId) { OnGameWon(); }
-
+	
 	return createdEvents;
 }
 

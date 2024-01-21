@@ -39,8 +39,8 @@ public:
 	       const std::string& identifier);
 
 	void LoadSettings() override;
-	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(std::shared_ptr<gamelib::Event> event,
-	                                                         unsigned long deltaMs) override;
+	std::vector<std::shared_ptr<gamelib::Event>> HandleEvent(const std::shared_ptr<gamelib::Event>& event,
+	                                                         const unsigned long deltaMs) override;
 	std::string GetName() override;
 	void Fire() const;
 	void OnGameWon();
