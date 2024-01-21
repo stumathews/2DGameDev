@@ -168,7 +168,7 @@ void GameCommands::StartNetworkLevel()
 
 void GameCommands::PingGameServer() { NetworkManager::Get()->PingGameServer(); }
 
-ListOfEvents GameCommands::HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs)
+ListOfEvents GameCommands::HandleEvent(const std::shared_ptr<Event>& evt, const unsigned long deltaMs)
 {
 	if(evt->Id.PrimaryId == NetworkPlayerJoinedEventId.PrimaryId) { Logger::Get()->LogThis("--------------------------- Network Player joined");}
 	if(evt->Id.PrimaryId == NetworkTrafficReceivedEventId.PrimaryId)

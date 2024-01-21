@@ -34,7 +34,7 @@ public:
 
     bool Initialize();
     [[nodiscard]] bool ChangeLevel(int levelNum) const; // Raises change level event
-    gamelib::ListOfEvents HandleEvent(std::shared_ptr<gamelib::Event> evt, unsigned long inDeltaMs) override;
+    gamelib::ListOfEvents HandleEvent(const std::shared_ptr<gamelib::Event>& evt, const unsigned long inDeltaMs) override;
     static bool GetBoolSetting(const std::string& section, const std::string& settingName);
     static int GetIntSetting(const std::string& section, const std::string& settingName);
     static LevelManager* Get();
@@ -59,7 +59,7 @@ public:
     void InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<gamelib::SpriteAsset>& spriteAsset) const;
     void InitializeRooms(const std::vector<std::shared_ptr<Room>>& rooms);
     void OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt);
-    void OnFetchedPickup(const std::shared_ptr<gamelib::Event>& evt);
+    void OnFetchedPickup(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnLevelChanged(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnNetworkPlayerJoined(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
@@ -89,7 +89,6 @@ private:
     std::shared_ptr<Level> level = nullptr;
     std::shared_ptr<Player> player;
     std::vector<std::shared_ptr<gamelib::Pickup>> pickups;
-    libcausality::CausalityTracker causalityTracker;
     unsigned int currentLevel = 1;
     void AddGameObjectToScene(const std::shared_ptr<gamelib::GameObject>& gameObject);
     void AddScreenWidgets(const std::vector<std::shared_ptr<Room>>& rooms);
