@@ -4,8 +4,14 @@
 #include "structure/GameStructure.h"
 #include <GameDataManager.h>
 
+#include "EnemyMovedEvent.h"
+#include "EventNumber.h"
+#include "ToolWindow.h"
 #include "graphic/Subscribable.h"
 #include "structure/FixedStepGameLoop.h"
+#include "EventTap.h"
+#include "events/AddGameObjectToCurrentSceneEvent.h"
+#include "events/SubscriberHandledEvent.h"
 
 using namespace std;
 using namespace gamelib;
@@ -26,39 +32,7 @@ void PrepareFirstLevel();
 shared_ptr<FixedStepGameLoop> CreateGameLoopStrategy();
 void GetInput(unsigned long deltaMs);
 
-class ToolWindow final : public Subscribable<Window>
-{
-public:
-	ToolWindow(const char* windowName, uint width = 800, uint height = 600, const char* windowTitle = nullptr)
-	: Subscribable(std::make_shared<Window>(windowName, width, height, windowTitle), windowName)
-	{
-		GetItem()->Initialize();
-	}
 
-	std::vector<std::shared_ptr<Event>> HandleEvent(const std::shared_ptr<Event> evt, unsigned long deltaMs) override
-	{		
-		if(evt->Id.PrimaryId == DrawCurrentSceneEventId.PrimaryId) 
-		{
-			const auto window = GetItem();
-
-			if(!IsDirty) 
-			{
-				window->PresentOnly();
-			}
-			else
-			{
-				window->ClearAndDraw([&](SDL_Renderer* renderer)
-				{				
-					SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0); // Black
-					SDL_RenderDrawLine(renderer, 0,0, static_cast<int>(window->Width()), static_cast<int>(window->Height()));
-					IsDirty = false;
-				});
-			}
-		}
-		return {};
-	}
-	bool IsDirty = true;
-};
 
 int main(int, char *[])
 {
@@ -71,15 +45,28 @@ int main(int, char *[])
 		
 		InitializeGameSubSystems(infrastructure);
 
-		auto toolWindow = ToolWindow("ToolWindow1", 340,340, "This is a Tool Window Title");
-		toolWindow.SubscribeToEvent(DrawCurrentSceneEventId);
-		
+		// Register a Window to show causal relationships and events
+		auto toolWindow = libcausality::ToolWindow("ToolWindow1", 340,340, "This is a Tool Window Title");
+
+		// Tap into the fetchPickupEvent to track relationships between player and pickups
+		EventManager::Get()->SetEventTap([](const shared_ptr<Event>& event, const IEventSubscriber* subscriber)
+		{
+			if(event->Id == PlayerMovedEventTypeEventId) return;
+			if(event->Id == AddGameObjectToCurrentSceneEventId) return;
+			if(event->Id == EnemyMovedEventId) return;
+			if(event->Id == DrawCurrentSceneEventId) return;
+			if(event->Id == UpdateAllGameObjectsEventTypeEventId) return;
+			if(event->Id == UpdateProcessesEventId) return;
+			if(event->Id == ControllerMoveEventId) return;
+
+			libcausality::EventTap::Get()->Tap(event, const_cast<IEventSubscriber*>(subscriber)->GetSubscriberName(), GameDataManager::Get()->GameWorldData.ElapsedGameTime);
+		});
 
 		// Load level and create/add game objects
 		PrepareFirstLevel();
 
 		// Start the game loop which will pump update/draw events onto the event system, which level objects subscribe to
-		infrastructure.DoGameLoop(GameData::Get());
+		infrastructure.DoGameLoop(&GameDataManager::Get()->GameWorldData);
 
 		return IsSuccess(infrastructure.Unload(), "Unloading game subsystems successful.");	
 	}
@@ -151,8 +138,7 @@ void InitializeGameSubSystems(GameStructure& gameStructure)
 }
 
 void Update(const unsigned long deltaMs)
-{
-	
+{	
 	EventManager::Get()->ProcessAllEvents(deltaMs);
 	EventManager::Get()->DispatchEventToSubscriber(EventFactory::Get()->CreateUpdateAllGameObjectsEvent(), deltaMs);
 	EventManager::Get()->DispatchEventToSubscriber(EventFactory::Get()->CreateUpdateProcessesEvent(), deltaMs);
