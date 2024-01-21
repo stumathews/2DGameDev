@@ -266,7 +266,7 @@ void Player::SetSprite(const std::shared_ptr<AnimatedSprite>& inSprite)
 	CalculateBounds(Position, width, height);
 }
 
-void Player::SetMoveStrategy(const std::shared_ptr<gamelib::IGameObjectMoveStrategy>& inMoveStrategy)
+void Player::SetMoveStrategy(const std::shared_ptr<IGameObjectMoveStrategy>& inMoveStrategy)
 {
 	moveStrategy = inMoveStrategy;
 }

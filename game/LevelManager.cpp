@@ -63,7 +63,7 @@ bool LevelManager::Initialize()
 	return initialized = true;
 }
 
-ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<gamelib::Event>& evt, const unsigned long inDeltaMs)
+ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event>& evt, const unsigned long inDeltaMs)
 {
 	if(evt->Id.PrimaryId == LevelChangedEventTypeEventId.PrimaryId) { OnLevelChanged(evt); }
 	if(evt->Id.PrimaryId == UpdateProcessesEventId.PrimaryId) { processManager.UpdateProcesses(inDeltaMs); }

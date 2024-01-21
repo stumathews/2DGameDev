@@ -43,7 +43,7 @@ GameDataManager::~GameDataManager()
 	instance = nullptr;
 }
 
-ListOfEvents GameDataManager::HandleEvent(const std::shared_ptr<gamelib::Event>& event, const unsigned long deltaMs)
+ListOfEvents GameDataManager::HandleEvent(const std::shared_ptr<Event>& event, const unsigned long deltaMs)
 {
 	if (event->Id == AddGameObjectToCurrentSceneEventId)
 	{

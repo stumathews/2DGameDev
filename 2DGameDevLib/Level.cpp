@@ -161,7 +161,7 @@ void Level::Load()
 	}
 }
 
-ListOfEvents Level::HandleEvent(const std::shared_ptr<gamelib::Event>& evt, const unsigned long deltaMs)
+ListOfEvents Level::HandleEvent(const std::shared_ptr<Event>& evt, const unsigned long deltaMs)
 {
 	// Level itself does not handle any events
 	return {};
