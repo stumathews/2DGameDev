@@ -1,3 +1,5 @@
+#define NOMINMAX
+// ^^ https://stackoverflow.com/questions/7035023/stdmax-expected-an-identifier
 #include <SDL.h>
 #include <cppgamelib/net.h>
 #include "LevelManager.h"

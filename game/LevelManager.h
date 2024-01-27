@@ -11,7 +11,6 @@
 #include <processes/ProcessManager.h>
 #include <character/StaticSprite.h>
 
-#include "CausalityTracker.h"
 #include "Enemy.h"
 #include "InputManager.h"
 #include "Observer.h"

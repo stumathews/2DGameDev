@@ -112,7 +112,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\repos\2DGameDev\2DGameDevLib;c:\repos\cppgamelib;C:\repos\expectationlib\Src\CppLibExpectation;C:\repos\libcausality\src\;C:\repos\libmonad\lib;$(IncludePath)</IncludePath>
+    <IncludePath>C:\repos\2DGameDev\2DGameDevLib;c:\repos\cppgamelib;C:\repos\expectationlib\Src\CppLibExpectation;C:\repos\libcausality\src\;C:\repos\libmonad\lib;c:\repos\tglib\tglib_cpp\src;$(IncludePath)</IncludePath>
     <LibraryPath>C:\repos\cppgamelib\$(platform)\$(configuration);C:\repos\2DGameDev\2DGameDevLib\$(Configuration);C:\repos\2DGameDev\$(Platform)\$(Configuration);c:\repos\libcausality\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)$(platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
