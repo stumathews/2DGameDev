@@ -29,6 +29,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CppLibExpectationTests", "..\expectationlib\Tests\CppUnitTests\CppUnitTests.vcxproj", "{8DD9792C-42D2-4D3E-8CE1-A378C3A739DB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibCausalityTests", "..\libcausality\test\LibCausalityTests\LibCausalityTests.vcxproj", "{653B5907-8CF2-4181-BB08-8E68BB3D4725}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EA98BB93-A71F-4BA6-AC63-F30D7D48B417} = {EA98BB93-A71F-4BA6-AC63-F30D7D48B417}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcausality", "..\libcausality\libcausality.vcxproj", "{EA98BB93-A71F-4BA6-AC63-F30D7D48B417}"
 EndProject
