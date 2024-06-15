@@ -7,7 +7,7 @@
 #include <file/Logger.h>
 #include <exceptions/EngineException.h>
 #include <file/SettingsManager.h>
-#include "../game/LevelManager.h"
+#include "../data/LevelManager.h"
 #include "character/IMovement.h"
 
 GameObjectMoveStrategy::GameObjectMoveStrategy(const std::shared_ptr<gamelib::GameObject>& gameObject,

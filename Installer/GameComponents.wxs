@@ -1,0 +1,160 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+
+	  <!-- this component group is already associate with the INSTALLFolder directory, so all the files will be put down there -->
+    <!-- This component group is referenced in package.wxs -->
+	  <ComponentGroup Id="GameComponents" Directory="INSTALLFOLDER">
+		  <Component>
+				<!-- Wix automatically builds 'bind paths' from all referenced project's output paths. These are searched by default, meaning we
+				can just reference the files that would be found in those output paths! -->
+			  <File Source="2DGameDev.exe" />
+				<RemoveFile Id='LogFile' On='uninstall' Name='GameErrors.txt' />
+      </Component>
+		  
+	  </ComponentGroup>
+
+	  <ComponentGroup Id="ThirdPartyComponents" Directory="INSTALLFOLDER">
+		  <Component>
+			  <File Source ="..\SDL2.dll"/>
+		  </Component> 
+		  <Component>
+			  <File Source ="..\SDL2_mixer.dll"/>
+		  </Component>
+		  <Component>
+			  <File Source ="..\SDL2_ttf.dll"/>
+		  </Component>
+		  <Component>
+			  <File Source ="..\SDL2_image.dll"/>
+		  </Component>
+		  <Component>
+			  <File Source ="..\libfreetype-6.dll"/>
+		  </Component>
+		  <Component>
+			  <File Source ="..\zlib1.dll"/>
+		  </Component>
+		  <Component>
+			  <File Source ="..\libpng16-16.dll"/>
+		  </Component>
+	  </ComponentGroup>
+		
+		<ComponentGroup Id="GameConfigComponents" Directory="GameConfig">
+		  <Component>
+			  <File Source="..\data\settings.xml"/>
+		  </Component>
+		  <Component>
+			  <File Source="..\data\Level1.xml"/>
+		  </Component>
+		  <Component>
+			  <File Source="..\data\Level2.xml"/>
+		  </Component>
+		  <Component>
+			  <File Source="..\data\Level3.xml"/>
+		  </Component>
+		  <Component>
+			  <File Source="..\data\Level4.xml"/>
+		  </Component>
+		  <Component>
+			  <File Source="..\data\Level5.xml"/>
+		  </Component>
+		  <Component>
+			  <File Source="..\data\Resources.xml"/>
+		  </Component>
+		  <Component>
+			  <File Source="..\data\Scene1.xml"/>
+		  </Component>
+		  <Component>
+			  <File Source="..\data\Scene2.xml"/>
+		  </Component>
+		  <Component>
+			  <File Source="..\data\Scene3.xml"/>
+		  </Component>
+		  <Component>
+			  <File Source="..\data\Scene4.xml"/>
+		  </Component>
+	  </ComponentGroup>
+
+		<ComponentGroup Id="GameAssetsComponents" Directory="GameAssets">
+
+			<Component>
+				<File Source="..\data\assets\character1.png"/>
+			</Component>
+			<Component>
+				<File Source="..\data\assets\character2.png"/>
+			</Component>
+			<Component>
+				<File Source="..\data\assets\coin_gold.png"/>
+			</Component>
+			<Component>
+				<File Source="..\data\assets\coin_silver.png"/>
+			</Component>
+			<Component>
+				<File Source="..\data\assets\coin_copper.png"/>
+			</Component>
+			<Component>
+				<File Source="..\data\assets\hud_spritesheet.png"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\Music\MainTheme.wav"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\scratch.wav"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\high.wav"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\medium.wav"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\low.wav"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\win.wav"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\Music\SubduedTheme.wav"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\fonts\kenvector_future2.ttf"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\Platformer\Base pack\Player\p1_front.png"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\Platformer\Base pack\Player\p2_front.png"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\Platformer\Base pack\Player\p3_front.png"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\Platformer\Base pack\Player\p1_walk\p1_walk.png"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\Platformer\Base pack\Player\p2_walk\p2_walk.png"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\Platformer\Base pack\Player\p3_walk\p3_walk.png"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\fonts\arial.ttf"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\boop.wav"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\beep.wav"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\Music\8BitMetal.wav"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\Music\FranticLevel.wav"/>
+			</Component>
+			<Component>
+				<File Source="..\assets\Music\HappyLevel.wav"/>
+			</Component>
+		</ComponentGroup>
+
+
+  </Fragment>
+</Wix>

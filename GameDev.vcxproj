@@ -19,28 +19,28 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="game\GameCommands.cpp" />
-    <ClCompile Include="game\LevelManager.cpp" />
-    <ClCompile Include="game\game.cpp" />
-    <ClCompile Include="game\InputManager.cpp" />
+    <ClCompile Include="data\GameCommands.cpp" />
+    <ClCompile Include="data\LevelManager.cpp" />
+    <ClCompile Include="data\game.cpp" />
+    <ClCompile Include="data\InputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="game\GameCommands.h" />
-    <ClInclude Include="game\LevelManager.h" />
-    <ClInclude Include="game\InputManager.h" />
+    <ClInclude Include="data\GameCommands.h" />
+    <ClInclude Include="data\LevelManager.h" />
+    <ClInclude Include="data\InputManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="game\Level1.xml" />
-    <Xml Include="game\Level2.xml" />
-    <Xml Include="game\Level3.xml" />
-    <Xml Include="game\Level4.xml" />
-    <Xml Include="game\Level5.xml" />
-    <Xml Include="game\Resources.xml" />
-    <Xml Include="game\scene1.xml" />
-    <Xml Include="game\scene2.xml" />
-    <Xml Include="game\scene3.xml" />
-    <Xml Include="game\scene4.xml" />
-    <Xml Include="game\settings.xml" />
+    <Xml Include="data\Level1.xml" />
+    <Xml Include="data\Level2.xml" />
+    <Xml Include="data\Level3.xml" />
+    <Xml Include="data\Level4.xml" />
+    <Xml Include="data\Level5.xml" />
+    <Xml Include="data\Resources.xml" />
+    <Xml Include="data\scene1.xml" />
+    <Xml Include="data\scene2.xml" />
+    <Xml Include="data\scene3.xml" />
+    <Xml Include="data\scene4.xml" />
+    <Xml Include="data\settings.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cppgamelib\cppgamelib.vcxproj">
@@ -147,7 +147,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(ProjectDir)game\*.xml $(ProjectDir)$(Configuration)
+      <Command>copy $(ProjectDir)data\*.xml $(ProjectDir)$(Configuration)
 </Command>
     </PostBuildEvent>
     <CustomBuildStep>

@@ -1,0 +1,23 @@
+﻿
+	
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  
+	<!-- msi package-->
+	<Package Name="2D Game"
+	         Manufacturer="StuOrg" 
+	         Version="1.0.0.0" 
+	         UpgradeCode="5fcf57b9-f5de-4c99-be07-a3d75e2b8711">
+		
+		<!-- what to show if the user tries to install this package when its lower than the currently installed version of the same upgrade code -->
+		<MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" /> <!-- downgrades are blocked -->
+		
+    <Feature Id="Main">
+			<!-- components that make up the default feature: -->
+	    <ComponentGroupRef Id="GameComponents" />
+	    <ComponentGroupRef Id="ThirdPartyComponents" />
+	    <ComponentGroupRef Id="GameConfigComponents" />
+	    <ComponentGroupRef Id="GameAssetsComponents" />
+    </Feature>
+	  
+  </Package>
+</Wix>

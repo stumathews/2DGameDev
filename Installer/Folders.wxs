@@ -1,0 +1,17 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  
+	<Fragment>
+    <!-- Oh new since Wix 3, 'standard directories -->
+		<StandardDirectory Id="ProgramFiles6432Folder">
+
+			<!-- Indicates the install directory where resources are put down under the standard directory above. -->
+			<!-- Note how its now possible to refer to the package element through the bind syntax. -->
+			<Directory Id="INSTALLFOLDER" Name="!(bind.Property.Manufacturer) !(bind.Property.ProductName)">
+				<Directory Id="GameConfig" Name="data">
+					<Directory Id="GameAssets" Name="assets"/>
+				</Directory>
+			</Directory>
+    </StandardDirectory>
+  </Fragment>
+
+</Wix>

@@ -1,0 +1,7 @@
+﻿<Project Sdk="WixToolset.Sdk/5.0.0">
+  <ItemGroup>
+    <ProjectReference Include="..\..\cppgamelib\cppgamelib.vcxproj" />
+    <ProjectReference Include="..\2DGameDevLib\2DGameDevLib.vcxproj" />
+    <ProjectReference Include="..\GameDev.vcxproj" />
+  </ItemGroup>
+</Project>
