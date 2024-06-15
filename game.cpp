@@ -121,10 +121,11 @@ void InitializeGameSubSystems(GameStructure& gameStructure)
 	constexpr auto windowTitle = "Mazer2D!";
 	constexpr auto resourcesFilePath = "data\\Resources.xml";
 	constexpr auto gameSettingsFilePath = "data/settings.xml";
+	constexpr auto sceneFolderPath = "data\\";
 
 	
 	const auto initialized1 = gameStructure.Initialize(screenWidth, screenHeight, windowTitle, resourcesFilePath,
-	                                                   gameSettingsFilePath);
+	                                                   gameSettingsFilePath, sceneFolderPath);
 	const auto initialized2 = LevelManager::Get()->Initialize();
 
 	const auto someInitFailed = !IsSuccess(initialized1, "Successfully initialized game structure.") || 

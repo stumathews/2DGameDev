@@ -19,15 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="data\GameCommands.cpp" />
-    <ClCompile Include="data\LevelManager.cpp" />
-    <ClCompile Include="data\game.cpp" />
-    <ClCompile Include="data\InputManager.cpp" />
+    <ClCompile Include="GameCommands.cpp" />
+    <ClCompile Include="LevelManager.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="InputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="data\GameCommands.h" />
-    <ClInclude Include="data\LevelManager.h" />
-    <ClInclude Include="data\InputManager.h" />
+    <ClInclude Include="GameCommands.h" />
+    <ClInclude Include="LevelManager.h" />
+    <ClInclude Include="InputManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="data\Level1.xml" />
