@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmls="https//schemas.micorsoft.com/develop/msbuild/2003">
+
+    <!-- Can call a target directly when invoking this project file: msbuild.exe doSomething.proj /t:TargetC -->
+  
+  <Import Project="common.targets"/> <!-- Pull in TargetA -->
+  <Import Project="common.tasks" />  <!-- Pull out custom tasks -->
+
+  <Target Name="EnterHere" DependsOnTargets="TargetA">
+    <Message Text="Entry Point"/>
+  </Target>
+  
+  <!-- Can run this with: msbuild doSomething.proj /t:Math -->
+  <Target Name="Math">
+    <AddTwoNumbers Number1="1" Number2="2">
+      <Output TaskParameter="Result" PropertyName="TheResult"/>
+    </AddTwoNumbers>
+    
+    <Message Text="The result is $(TheResult)"/>
+  </Target>
+  
+  <PropertyGroup>
+    <Number1>10</Number1>
+    <Number2>3</Number2>
+  </PropertyGroup>
+  
+  <Target Name="Math2">
+    <MultiplyTwoNumbers Number1="$(Number1)" Number2="$(Number2)">
+      <Output TaskParameter="Result" PropertyName="TheProduct"/>
+    </MultiplyTwoNumbers>
+    
+    <Message Text="The result is $(TheProduct)"/>
+  </Target>
+  
+  <Target Name="Math3">
+    <DivideTwoNumbers Number1="$(Number1)" Number2="$(Number2)">
+      <Output TaskParameter="Result" PropertyName="TheProduct"/>
+    </DivideTwoNumbers>
+    
+    <Message Text="The quotient is $(TheProduct)"/>
+  </Target>
+  
+  <!-- Build My App -->
+  
+  <Target Name="CleanDir">
+    <RemoveDir Directories="$(OutputPath)" Condition="Exists($(OutputPath))"/>
+  </Target>
+  
+  
+  <Target Name="BuildSolution" DependsOnTargets="CleanDir"> <!-- run clean dir each and every time before building solution -->
+    <!-- This will actually build the solution, See we need to pass in some configuration for the build -->
+    <MSBuild Projects="$(SolutionFileName)" Properties="Configuration=Release; OutputPath=$(OutputPath)"/>
+  </Target>
+  
+  <Target Name="RunTests" DependsOnTargets="BuildSolution">  
+    <ItemGroup>
+      <TestDlls Include="$(OutputPath)\*.Tests.dll" />
+    </ItemGroup>
+  
+    <!-- note that @(TestDlls->'%(FullPath)' means for each time in TestDlls, use the FullPath property of that item which would be a path -->
+    <Exec Command="vstest.console.exe @(TestDlls->'%(FullPath)')" IgnoreExitCode="false" WorkingDirectory="$(OutputPath)" />    
+  </Target>
+  
+  <!-- Target to make a deploy folder and copy to output files to it-->
+  <Target Name="Deploy" DependsOnTargets="RunTests">
+    <ItemGroup>
+      <SourceFiles Include="$(OutputPath)\**\*.*"/>
+    </ItemGroup>
+    <MakeDir Directories="$(DeployDir)" Condition="!Exists($(DeployDir))"/>
+    <Copy SourceFiles="@(SourceFiles)" DestinationFolder="$(DeployDir)" />
+  </Target>
+    
+</Project>

@@ -15,25 +15,25 @@
 
 	  <ComponentGroup Id="ThirdPartyComponents" Directory="INSTALLFOLDER">
 		  <Component>
-			  <File Source ="..\SDL2.dll"/>
+			  <File Source ="..\ThirdParty\SDL2.dll"/>
 		  </Component> 
 		  <Component>
-			  <File Source ="..\SDL2_mixer.dll"/>
+			  <File Source ="..\ThirdParty\SDL2_mixer.dll"/>
 		  </Component>
 		  <Component>
-			  <File Source ="..\SDL2_ttf.dll"/>
+			  <File Source ="..\ThirdParty\SDL2_ttf.dll"/>
 		  </Component>
 		  <Component>
-			  <File Source ="..\SDL2_image.dll"/>
+			  <File Source ="..\ThirdParty\SDL2_image.dll"/>
 		  </Component>
 		  <Component>
-			  <File Source ="..\libfreetype-6.dll"/>
+			  <File Source ="..\ThirdParty\libfreetype-6.dll"/>
 		  </Component>
 		  <Component>
-			  <File Source ="..\zlib1.dll"/>
+			  <File Source ="..\ThirdParty\zlib1.dll"/>
 		  </Component>
 		  <Component>
-			  <File Source ="..\libpng16-16.dll"/>
+			  <File Source ="..\ThirdParty\libpng16-16.dll"/>
 		  </Component>
 	  </ComponentGroup>
 		

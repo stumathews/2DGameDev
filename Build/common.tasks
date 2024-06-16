@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmls="https//schemas.micorsoft.com/develop/msbuild/2003" ToolsVersion="4.0">
+
+<UsingTask AssemblyFile="..\MyMSBuildTasks\MyTasks\bin\Debug\MyTasks.dll" 
+            TaskName="AddTwoNumbers" />
+
+<UsingTask AssemblyFile="..\MyMSBuildTasks\MyTasks\bin\Debug\MyTasks.dll" 
+TaskName="MultiplyTwoNumbers" />
+
+<!-- use an inline tasks instead of using it from a dll -->
+<UsingTask TaskName="DivideTwoNumbers" 
+           TaskFactory="CodeTaskFactory"
+           AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+
+           <ParameterGroup>
+            <Number1 ParameterType="System.Double" Required="true"/>
+            <Number2 ParameterType="System.Double" Required="true"/>
+            <Result ParameterType="" Output="true"/>
+           </ParameterGroup>
+
+           <Task>
+            <Code Type="Fragment" Language="cs">
+                Result = (Number1 / Number2).ToString();
+                Log.LogMessage(MessageImportance.High, "Divided two numbers", null);
+            </Code>
+           </Task>
+
+</UsingTask>
+    
+</Project>
