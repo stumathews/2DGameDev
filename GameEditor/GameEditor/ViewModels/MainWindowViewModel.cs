@@ -205,7 +205,6 @@ namespace GameEditor.ViewModels
         private readonly Window window;
         private GameObjectEditorWindow gameObjectEditorWindow;
         private bool autoPopulatePickups;
-        private string levelXml;
         private string levelXml1;
     }
 }
