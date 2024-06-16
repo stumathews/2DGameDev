@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmls="https//schemas.micorsoft.com/develop/msbuild/2003">
+
+    <!-- Can call a target directly when invoking this project file: msbuild.exe doSomething.proj /t:TargetC -->
+  
+  <Import Project="common.targets"/> <!-- Pull in TargetA -->
+  <Import Project="common.tasks" />  <!-- Pull out custom tasks -->
+ 
+  <!-- Build -->
+  
+  <Target Name="BuildSolution"> <!-- run clean dir each and every time before building solution -->
+
+    <!-- This will actually build the solution, See we need to pass in some configuration for the build -->
+    <MSBuild Projects="$(SolutionFileName)" Properties="Configuration=Debug; Platform=x64"/>
+  </Target>
+    
+</Project>

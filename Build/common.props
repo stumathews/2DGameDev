@@ -8,8 +8,10 @@
 	<!-- 2DGameDev -->
   <PropertyGroup>
     <GameDevRoot>$(ReposRoot)\2DGameDev</GameDevRoot>
+	  <SolutionFileName>$(GameDevRoot)\2dGameDev.sln</SolutionFileName>
     <ThirdPartyDir>$(GameDevRoot)\ThirdParty</ThirdPartyDir>
    <GameDev_BinDir>$(GameDevRoot)\$(Platform)\$(Configuration)</GameDev_BinDir>
+
   </PropertyGroup>
 	
 	<!-- 2DGameDevLib -->
