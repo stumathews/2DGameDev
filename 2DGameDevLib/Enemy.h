@@ -1,4 +1,6 @@
 #pragma once
+#ifndef ENEMY_H
+#define ENEMY_H
 #include "Level.h"
 #include "character/Npc.h"
 #include "time/PeriodicTimer.h"
@@ -47,3 +49,5 @@ private:
 	bool animate = true;
 	bool drawState = false;
 };
+
+#endif

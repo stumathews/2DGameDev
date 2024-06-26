@@ -3,7 +3,7 @@
 #include "EventNumber.h"
 #include "events/EventId.h"
 
-const EventId EnemyMovedEventId(EnemyMoved, "EnemyMovedEvent");
+const gamelib::EventId EnemyMovedEventId(EnemyMoved, "EnemyMovedEvent");
 
 class EnemyMovedEvent final : public gamelib::Event
 {

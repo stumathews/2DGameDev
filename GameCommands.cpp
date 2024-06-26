@@ -13,6 +13,7 @@
 #include "EventNumber.h"
 #include "events/NetworkPlayerJoinedEvent.h"
 #include "utils/Utils.h"
+#include "2DGameDevLib/GameDataManager.h"
 
 using namespace gamelib;
 using namespace std;
@@ -138,7 +139,7 @@ void GameCommands::Quit(const bool beVerbose) const
 {
 	if (logCommands) { Logger::Get()->LogThis("GameCommand: Quitting", beVerbose); }
 
-	GameData::Get()->IsGameDone = true;
+	GameDataManager::Get()->GameWorldData.IsGameDone = true;
 }
 
 void GameCommands::InvalidMove(const bool beVerbose) const

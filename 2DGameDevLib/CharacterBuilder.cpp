@@ -36,7 +36,7 @@ std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, c
 	// Initialize player
 	player->LoadSettings();
 	player->SetMoveStrategy(std::make_shared<GameObjectMoveStrategy>(player, player->CurrentRoom));
-	player->SetTag(constants::PlayerTag);
+	player->SetTag(gamelib::PlayerTag);
 	player->SetSprite(animatedSprite);
 	player->IntProperties["Health"] = 100;
 

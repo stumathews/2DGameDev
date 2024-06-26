@@ -397,7 +397,7 @@ void LevelManager::CreateAutoLevel()
 void LevelManager::InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<SpriteAsset>&spriteAsset) const
 {
 	inPlayer->SetMoveStrategy(std::make_shared<GameObjectMoveStrategy>(inPlayer, inPlayer->CurrentRoom));
-	inPlayer->SetTag(constants::PlayerTag);
+	inPlayer->SetTag(gamelib::PlayerTag);
 	inPlayer->LoadSettings();
 	inPlayer->SetSprite(AnimatedSprite::Create(inPlayer->Position, spriteAsset));
 

@@ -18,7 +18,10 @@ void InputManager::Sample(const unsigned long deltaMs)
 	SDL_Event e;
 	while(SDL_PollEvent(&e))
 	{
-		if (e.type == SDL_QUIT)  { gameCommands->Quit(verbose); return; }
+		if (e.type == SDL_QUIT) 
+		{ 
+			gameCommands->Quit(verbose); return;
+		}
 		if (e.key.repeat == 0) // we ignore key repeats
 		{
 			switch(e.key.keysym.sym)

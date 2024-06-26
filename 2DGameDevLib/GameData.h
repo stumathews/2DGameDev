@@ -1,4 +1,7 @@
 #pragma once
+#ifndef GAMEDATA_H
+#define GAMEDATA_H
+
 #include <memory>
 #include <map>
 #include <vector>
@@ -63,3 +66,5 @@ private:
 	std::vector<std::weak_ptr<gamelib::Pickup>> pickups;
 	std::vector<std::weak_ptr<Enemy>> enemies;
 };
+
+#endif
