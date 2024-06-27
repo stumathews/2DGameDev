@@ -5,7 +5,7 @@
 tinyxml2-master/*
 Assets/*
 *.exe
-vcpkg_installed/*
+vcpkg_installed/
 # User-specific files
 *.rsuser
 *.suo
