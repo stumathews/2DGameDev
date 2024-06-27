@@ -89,12 +89,13 @@
     <IncludePath>$(CommonIncludePath);$(VC_IncludePath_x64);$(WindowsSdk_IncludePath);$(IncludePath)</IncludePath>
     <LibraryPath>$(CommonLibraryPath);$(WindowsSdk_LibraryPath_x64);$(VC_LibraryPath_x64);$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)$(platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(CommonIncludePath);$(VC_IncludePath_x64);$(WindowsSdk_IncludePath);$(IncludePath)</IncludePath>
     <LibraryPath>$(CommonLibraryPath);$(WindowsSdk_LibraryPath_x64);$(VC_LibraryPath_x64);$(LibraryPath)</LibraryPath>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
