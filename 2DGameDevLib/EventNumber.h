@@ -1,4 +1,5 @@
 #pragma once
+#include <events/EventId.h>
 
 enum EventNumber
 {
@@ -14,9 +15,9 @@ enum EventNumber
 	EnemyMoved
 };
 
-const static EventId FireEventId(Fire, "Fire");
-const static EventId FetchedPickupEventId(FetchedPickup, "FetchedPickup");
-const static EventId GameWonEventId(GameWon, "GameWon");
-const static EventId PlayerDiedEventId(PLayerDied, "PLayerDied");
-const static EventId SettingsReloadedEventId(SettingsReloaded, "SettingsReloaded");
-const static EventId InvalidMoveEventId(InvalidMove, "InvalidMove");
+const static gamelib::EventId FireEventId(Fire, "Fire");
+const static gamelib::EventId FetchedPickupEventId(FetchedPickup, "FetchedPickup");
+const static gamelib::EventId GameWonEventId(GameWon, "GameWon");
+const static gamelib::EventId PlayerDiedEventId(PLayerDied, "PLayerDied");
+const static gamelib::EventId SettingsReloadedEventId(SettingsReloaded, "SettingsReloaded");
+const static gamelib::EventId InvalidMoveEventId(InvalidMove, "InvalidMove");

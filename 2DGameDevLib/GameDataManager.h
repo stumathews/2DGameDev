@@ -1,4 +1,7 @@
 #pragma once
+#ifndef GAMEDATAMANAGER_H
+#define GAMEDATAMANAGER_H
+
 #include <events/EventSubscriber.h>
 #include "GameData.h"
 #include <events/EventManager.h>
@@ -41,3 +44,5 @@ private:
 	gamelib::EventFactory* eventFactory;
 
 };
+
+#endif 

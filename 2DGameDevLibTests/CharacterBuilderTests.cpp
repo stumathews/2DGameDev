@@ -98,7 +98,7 @@ TEST_F(CharacterBuilderTests, BuildPlayerWorks)
 	EXPECT_TRUE(player->Identifier == expectedPlayerNick);
 	EXPECT_TRUE(player->Type == "Player");
 	//EXPECT_TRUE(player->Position == room->GetCenter(expectedAssetDimensions));
-	EXPECT_TRUE(player->GetTag() == gamelib::constants::PlayerTag);
+	EXPECT_TRUE(player->GetTag() == gamelib::PlayerTag);
 	EXPECT_TRUE(player->IntProperties["Health"] == 100);
 	EXPECT_TRUE(GameData::Get()->player.lock()->Id == player->Id);
 }

@@ -69,8 +69,7 @@ void Level::Load()
 		NumRows = std::strtol(scene->ToElement()->Attribute("rows"), nullptr, 0);
 
 		// Check if the level file specifies that we should automatically create pickups for the level
-		if (auto autoPopulatePickups = scene->ToElement()->Attribute("autoPopulatePickups"); autoPopulatePickups !=
-			nullptr)
+		if (auto autoPopulatePickups = scene->ToElement()->Attribute("autoPopulatePickups"))
 		{
 			auto strToTransform = string(autoPopulatePickups);
 			std::transform(strToTransform.begin(), strToTransform.end(), strToTransform.begin(), ::toupper);
@@ -251,7 +250,7 @@ void Level::InitializePlayer(const std::shared_ptr<Player>& inPlayer,
                              const std::shared_ptr<SpriteAsset>& spriteAsset) const
 {
 	inPlayer->SetMoveStrategy(std::make_shared<GameObjectMoveStrategy>(inPlayer, inPlayer->CurrentRoom));
-	inPlayer->SetTag(constants::PlayerTag);
+	inPlayer->SetTag(gamelib::PlayerTag);
 	inPlayer->LoadSettings();
 	inPlayer->SetSprite(AnimatedSprite::Create(inPlayer->Position, spriteAsset));
 

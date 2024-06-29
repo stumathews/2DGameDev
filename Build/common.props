@@ -11,8 +11,15 @@
 	  <SolutionFileName>$(GameDevRoot)\2dGameDev.sln</SolutionFileName>
     <ThirdPartyDir>$(GameDevRoot)\ThirdParty</ThirdPartyDir>
    <GameDev_BinDir>$(GameDevRoot)\$(Platform)\$(Configuration)</GameDev_BinDir>
-
   </PropertyGroup>
+
+	<ItemGroup>
+		<ThirdpartyDlls Include="$(ThirdPartyDir)\*.dll"/>
+	</ItemGroup>
+
+	<PropertyGroup>
+		<SolutionNugetPackages>$(GameDevRoot)\packages</SolutionNugetPackages>
+	</PropertyGroup>
 	
 	<!-- 2DGameDevLib -->
 	<PropertyGroup>
@@ -108,28 +115,28 @@
 
 	<!-- SDL2 -->
   	<PropertyGroup>
-	  <SDL2_RootDir>$(ThirdPartyDir)\SDL2</SDL2_RootDir>
+	  <SDL2_RootDir>$(ThirdPartyDir)\SDL23</SDL2_RootDir>
 	  <SDL2_LibDir>$(SDL2_RootDir)\lib\$(Platform)</SDL2_LibDir>
 	  <SDL2_IncludeDir>$(SDL2_RootDir)\include</SDL2_IncludeDir>
   	</PropertyGroup>
 
 	<!-- SDL2_Image -->
 	<PropertyGroup>
-		<SDL2_Image_RootDir>$(ThirdPartyDir)\SDL2_image-2.0.4</SDL2_Image_RootDir>
+		<SDL2_Image_RootDir>$(ThirdPartyDir)\SDL2_image-2.8.2</SDL2_Image_RootDir>
 		<SDL2_Image_LibDir>$(SDL2_Image_RootDir)\lib\$(Platform)</SDL2_Image_LibDir>
 		<SDL2_Image_IncludeDir>$(SDL2_Image_RootDir)\include</SDL2_Image_IncludeDir>
 	</PropertyGroup>
 
 	<!-- SDL2_Mixer -->
 	<PropertyGroup>
-		<SDL2_Mixer_RootDir>$(ThirdPartyDir)\SDL2_mixer-2.6.2</SDL2_Mixer_RootDir>
+		<SDL2_Mixer_RootDir>$(ThirdPartyDir)\SDL2_mixer-2.8.0</SDL2_Mixer_RootDir>
 		<SDL2_Mixer_LibDir>$(SDL2_Mixer_RootDir)\lib\$(Platform)</SDL2_Mixer_LibDir>
 		<SDL2_Mixer_IncludeDir>$(SDL2_Mixer_RootDir)\include</SDL2_Mixer_IncludeDir>
 	</PropertyGroup>
 
 	<!-- SDL2_TTF -->
 	<PropertyGroup>
-		<SDL2_TTF_RootDir>$(ThirdPartyDir)\SDL2_ttf-2.0.15</SDL2_TTF_RootDir>
+		<SDL2_TTF_RootDir>$(ThirdPartyDir)\SDL2_ttf-2.22.0</SDL2_TTF_RootDir>
 		<SDL2_TTF_LibDir>$(SDL2_TTF_RootDir)\lib\$(Platform)</SDL2_TTF_LibDir>
 		<SDL2_TTF_IncludeDir>$(SDL2_TTF_RootDir)\include</SDL2_TTF_IncludeDir>
 	</PropertyGroup>
@@ -149,5 +156,6 @@
 		<CommonIncludePath>$(GameDevLib_IncludeDir);$(GameLib_IncludeDir);$(LibExpectation_IncludeDir);$(LibCausality_IncludeDir);$(LibMonad_IncludeDir);$(tglib_IncludeDir);$(SDL2_Mixer_IncludeDir);$(SDL2_Image_IncludeDir);$(SDL2_IncludeDir);$(SDL2_TTF_IncludeDir);</CommonIncludePath>
 		<CommonLibraryPath>$(GameDevLib_OutputDir);$(SDL2_TTF_LibDir);$(SDL2_Mixer_LibDir);$(SDL2_Image_LibDir);$(SDL2_LibDir);$(GameLib_BinDir);$(GameDevLib_BinDir);$(GameDev_BinDir);$(LibCausality_BinDir);</CommonLibraryPath>
 	</PropertyGroup>
-  
+
+
 </Project>

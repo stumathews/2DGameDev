@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(SolutionDir)Build\common.targets" />
+	<Import Project="$(SolutionDir)Build\common.targets" Condition="Exists('$(SolutionDir)Build\common.targets')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -89,12 +89,13 @@
     <IncludePath>$(CommonIncludePath);$(VC_IncludePath_x64);$(WindowsSdk_IncludePath);$(IncludePath)</IncludePath>
     <LibraryPath>$(CommonLibraryPath);$(WindowsSdk_LibraryPath_x64);$(VC_LibraryPath_x64);$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)$(platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(CommonIncludePath);$(VC_IncludePath_x64);$(WindowsSdk_IncludePath);$(IncludePath)</IncludePath>
     <LibraryPath>$(CommonLibraryPath);$(WindowsSdk_LibraryPath_x64);$(VC_LibraryPath_x64);$(LibraryPath)</LibraryPath>
+    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -123,6 +124,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -136,6 +138,7 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="@(ThirdpartyDlls)" DestinationFolder="$(OutputPath)" ContinueOnError="true" />
+  </Target>
 </Project>

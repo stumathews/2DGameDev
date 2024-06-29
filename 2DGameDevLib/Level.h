@@ -1,4 +1,6 @@
 #pragma once
+#ifndef LEVEL_H
+#define LEVEL_H
 #include <string>
 #include <vector>
 #include <memory>
@@ -54,3 +56,5 @@ private:
 	bool isAutoLevel;
 	bool isAutoPopulatePickups;
 };
+
+#endif

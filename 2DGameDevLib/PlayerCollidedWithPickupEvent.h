@@ -7,7 +7,7 @@
 #include "Pickup.h"
 #include "Player.h"
 
-const EventId PlayerCollidedWithPickupEventId(PlayerCollidedWithPickup, "CollidedWithEnemyEvent");
+const gamelib::EventId PlayerCollidedWithPickupEventId(PlayerCollidedWithPickup, "CollidedWithEnemyEvent");
 
 class PlayerCollidedWithPickupEvent final : public gamelib::Event
 {

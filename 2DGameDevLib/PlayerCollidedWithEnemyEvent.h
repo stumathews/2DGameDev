@@ -4,7 +4,7 @@
 #include "Player.h"
 #include "events/Event.h"
 
-const EventId PlayerCollidedWithEnemyEventId(CollidedWithEnemy, "CollidedWithEnemyEvent");
+const gamelib::EventId PlayerCollidedWithEnemyEventId(CollidedWithEnemy, "CollidedWithEnemyEvent");
 
 class PlayerCollidedWithEnemyEvent final : public gamelib::Event
 {
