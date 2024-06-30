@@ -35,6 +35,7 @@ shared_ptr<FixedStepGameLoop> CreateGameLoopStrategy();
 void GetInput(unsigned long deltaMs);
 
 
+void SetupEventTap();
 
 int main(int, char *[])
 {
@@ -48,22 +49,8 @@ int main(int, char *[])
 		
 		InitializeGameSubSystems(infrastructure);
 
-		// Register a Window to show causal relationships and events
-		//auto toolWindow = libcausality::ToolWindow("ToolWindow1", 340,340, "This is a Tool Window Title");
-
-		// Tap into the fetchPickupEvent to track relationships between player and pickups
-		EventManager::Get()->SetEventTap([](const shared_ptr<Event>& event, const IEventSubscriber* subscriber)
-		{
-			if(event->Id == PlayerMovedEventTypeEventId) return;
-			if(event->Id == AddGameObjectToCurrentSceneEventId) return;
-			if(event->Id == EnemyMovedEventId) return;
-			if(event->Id == DrawCurrentSceneEventId) return;
-			if(event->Id == UpdateAllGameObjectsEventTypeEventId) return;
-			if(event->Id == UpdateProcessesEventId) return;
-			if(event->Id == ControllerMoveEventId) return;
-
-			libcausality::EventTap::Get()->Tap(event, const_cast<IEventSubscriber*>(subscriber)->GetSubscriberName(), GameDataManager::Get()->GameWorldData.ElapsedGameTime);
-		});
+		// Allow tapping into all events diagnostic purposes
+		SetupEventTap();
 
 		// Load level and create/add game objects
 		PrepareFirstLevel();
@@ -165,3 +152,23 @@ shared_ptr<FixedStepGameLoop> CreateGameLoopStrategy()
 	return std::make_shared<FixedStepGameLoop>(16, Update, Draw, GetInput);
 }
 
+void SetupEventTap()
+{
+	// Register a Window to show causal relationships and events
+	//auto toolWindow = libcausality::ToolWindow("ToolWindow1", 340,340, "This is a Tool Window Title");
+
+	// Tap into the fetchPickupEvent to track relationships between player and pickups
+	EventManager::Get()->SetEventTap([](const shared_ptr<Event>& event, const IEventSubscriber* subscriber)
+	{
+		if(event->Id == PlayerMovedEventTypeEventId) return;
+		if(event->Id == AddGameObjectToCurrentSceneEventId) return;
+		if(event->Id == EnemyMovedEventId) return;
+		if(event->Id == DrawCurrentSceneEventId) return;
+		if(event->Id == UpdateAllGameObjectsEventTypeEventId) return;
+		if(event->Id == UpdateProcessesEventId) return;
+		if(event->Id == ControllerMoveEventId) return;
+
+		// Generate causality data
+		// libcausality::EventTap::Get()->Tap(event, const_cast<IEventSubscriber*>(subscriber)->GetSubscriberName(), GameDataManager::Get()->GameWorldData.ElapsedGameTime);
+	});
+}
