@@ -59,9 +59,14 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(GameWonEventId, this);
 	eventManager->SubscribeToEvent(PlayerCollidedWithEnemyEventId, this);
 	eventManager->SubscribeToEvent(PlayerDiedEventId, this);
-	eventManager->SubscribeToEvent(PlayerCollidedWithPickupEventId, this);
+	eventManager->SubscribeToEvent(PlayerCollidedWithPickupEventId, this);	
+	eventManager->SubscribeToEvent(NetworkTrafficReceivedEventId, this);
+	eventManager->SubscribeToEvent(ReliableUdpPacketReceivedEventId, this);
+	eventManager->SubscribeToEvent(ReliableUdpCheckSumFailedEventId, this);
+
 	return initialized = true;
 }
+
 
 ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event>& evt, const unsigned long inDeltaMs)
 {
@@ -75,6 +80,10 @@ ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event>& evt, const 
 	if(evt->Id.PrimaryId == PlayerCollidedWithEnemyEventId.PrimaryId) { OnEnemyCollision(evt);}
 	if(evt->Id.PrimaryId == PlayerDiedEventId.PrimaryId) { OnPlayerDied(); }
 	if(evt->Id.PrimaryId == PlayerCollidedWithPickupEventId.PrimaryId) { OnPickupCollision(evt); }
+	if(evt->Id.PrimaryId == NetworkPlayerJoinedEventId.PrimaryId) { OnNetworkPlayerJoinedEvent(evt); }
+	if(evt->Id.PrimaryId == NetworkTrafficReceivedEventId.PrimaryId) { OnNetworkTrafficReceivedEvent(evt); }
+	if(evt->Id.PrimaryId == ReliableUdpPacketReceivedEventId.PrimaryId) { OnReliableUdpPacketReceivedEvent(evt); }
+	if(evt->Id.PrimaryId == ReliableUdpCheckSumFailedEventId.PrimaryId) { OnReliableUdpCheckSumFailedEvent(evt); }
 		
 	return {};
 }
@@ -117,13 +126,11 @@ void LevelManager::OnPickupCollision(const std::shared_ptr<Event>& evt) const
 	Logger::Get()->LogThis(msg);
 }
 
-
 void LevelManager::OnFetchedPickup(const std::shared_ptr<Event>& evt) const
 {
 	gameCommands->FetchedPickup();
 	hudItem->AdvanceFrame();	
 }
-
 
 void LevelManager::OnPlayerDied()
 {
@@ -139,9 +146,20 @@ void LevelManager::OnStartNetworkLevel(const std::shared_ptr<Event>& evt)
 	CreateLevel(GetSetting("global", "level1FileName"));
 }
 
-string LevelManager::GetSetting(const std::string& section, const std::string& settingName) { return SettingsManager::Get()->GetString(section, settingName); }
-int LevelManager::GetIntSetting(const std::string& section, const std::string& settingName) { return SettingsManager::Get()->GetInt(section, settingName); }
-bool LevelManager::GetBoolSetting(const std::string& section, const std::string& settingName) { return SettingsManager::Get()->GetBool(section, settingName); }
+string LevelManager::GetSetting(const std::string& section, const std::string& settingName)
+{
+	return SettingsManager::Get()->GetString(section, settingName);
+}
+
+int LevelManager::GetIntSetting(const std::string& section, const std::string& settingName)
+{
+	return SettingsManager::Get()->GetInt(section, settingName);
+}
+
+bool LevelManager::GetBoolSetting(const std::string& section, const std::string& settingName)
+{
+	return SettingsManager::Get()->GetBool(section, settingName);
+}
 
 void LevelManager::RemoveAllGameObjects()
 {
@@ -231,7 +249,6 @@ shared_ptr<Room> LevelManager::GetRandomRoom(const std::vector<std::shared_ptr<R
 {
 	return rooms[GetRandomIndex(0, static_cast<int>(rooms.size()) - 1)];
 }
-
 
 void LevelManager::CreateAutoPickups(const vector<shared_ptr<Room>>& rooms)
 {
@@ -448,14 +465,80 @@ void LevelManager::OnNetworkPlayerJoined(const std::shared_ptr<Event>& evt) cons
 	// Add the player to our level... find a suitable position for it
 }
 
-Mix_Chunk* LevelManager::GetSoundEffect(const std::string& name) { return AudioManager::ToAudioAsset(GetAsset(name))->AsSoundEffect(); }
-std::shared_ptr<Asset> LevelManager::GetAsset(const std::string& name) { return ResourceManager::Get()->GetAssetInfo(name); }
+Mix_Chunk* LevelManager::GetSoundEffect(const std::string& name)
+{
+	return AudioManager::ToAudioAsset(GetAsset(name))->AsSoundEffect();
+}
+
+std::shared_ptr<Asset> LevelManager::GetAsset(const std::string& name)
+{
+	return ResourceManager::Get()->GetAssetInfo(name);
+}
 
 shared_ptr<Level> LevelManager::GetLevel() { return level; }
 
 inline std::string LevelManager::GetSubscriberName()
 {
 	return "level_manager";
+}
+
+
+void LevelManager::OnNetworkPlayerJoinedEvent(const std::shared_ptr<Event>& evt) const
+{
+	const auto joinEvent =  To<NetworkPlayerJoinedEvent>(evt);
+	stringstream message;
+	message << joinEvent->Player.GetNickName() << " joined." << std::endl;
+	Logger::Get()->LogThis(message.str());
+}
+
+void LevelManager::OnNetworkTrafficReceivedEvent(const std::shared_ptr<Event>& evt) const
+{
+	const auto networkPlayerTrafficReceivedEvent = To<NetworkTrafficReceivedEvent>(evt);
+	std::stringstream message;
+	message << "-------" << std::endl
+		<< networkPlayerTrafficReceivedEvent->BytesReceived << " bytes received from " << networkPlayerTrafficReceivedEvent->Identifier  
+		<< " Message: " << networkPlayerTrafficReceivedEvent->Message << std::endl
+		<< "-------" << std::endl;
+		    
+	Logger::Get()->LogThis(message.str());
+}
+
+void LevelManager::OnReliableUdpPacketReceivedEvent(const std::shared_ptr<Event>& evt) const
+{
+	const auto rudpEvent = To<ReliableUdpPacketReceivedEvent>(evt);
+	const auto rudpMessage = rudpEvent->ReceivedMessage;
+	stringstream bundledSeqs;
+
+	bundledSeqs << "(";
+	for(int i = 0; i < rudpMessage->DataCount();i++)
+	{
+			
+		bundledSeqs << rudpMessage->Data()[i].Sequence;
+		if(i < rudpMessage->DataCount()-1)
+		{
+			bundledSeqs << ",";
+		}
+	}		
+	bundledSeqs << ")";
+
+	std::stringstream message;
+	message << "-------" << std::endl
+		<< "ReliableUdp: Seq:" << rudpMessage->Header.Sequence << " Bundled unack'd messages: " << rudpMessage->DataCount() << ":"
+		<< bundledSeqs.str() << " Sender known acks: " << BitFiddler<uint32_t>::ToString(rudpMessage->Header.LastAckedSequence)
+		<< " " << std::endl
+		<< "-------" << std::endl;
+	Logger::Get()->LogThis(message.str());
+}
+
+void LevelManager::OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<gamelib::Event>& evt)
+{
+	const auto failedChecksumEvent = To<ReliableUdpCheckSumFailedEvent>(evt);
+	const auto failedMessage = failedChecksumEvent->failedMessage;
+	std::stringstream message;
+
+	message << "Checksum failed for sequence " << failedMessage->Header.Sequence
+			<< ". Dropping packet" << std::endl;
+
 }
 
 LevelManager* LevelManager::Get() { if (instance == nullptr) { instance = new LevelManager(); } return instance; }

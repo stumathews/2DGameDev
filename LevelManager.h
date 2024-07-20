@@ -32,7 +32,11 @@ public:
     ~LevelManager() override;
 
     bool Initialize();
+    void OnNetworkPlayerJoinedEvent(const std::shared_ptr<gamelib::Event>& evt) const;
+    void OnNetworkTrafficReceivedEvent(const std::shared_ptr<gamelib::Event>& evt) const;
+    void OnReliableUdpPacketReceivedEvent(const std::shared_ptr<gamelib::Event>& evt) const;
     [[nodiscard]] bool ChangeLevel(int levelNum) const; // Raises change level event
+
     gamelib::ListOfEvents HandleEvent(const std::shared_ptr<gamelib::Event>& evt, const unsigned long inDeltaMs) override;
     static bool GetBoolSetting(const std::string& section, const std::string& settingName);
     static int GetIntSetting(const std::string& section, const std::string& settingName);
@@ -57,12 +61,7 @@ public:
     void InitializeAutoPickups(const std::vector<std::shared_ptr<gamelib::Pickup>>& inPickups);
     void InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<gamelib::SpriteAsset>& spriteAsset) const;
     void InitializeRooms(const std::vector<std::shared_ptr<Room>>& rooms);
-    void OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt);
-    void OnFetchedPickup(const std::shared_ptr<gamelib::Event>& evt) const;
-    void OnLevelChanged(const std::shared_ptr<gamelib::Event>& evt) const;
-    void OnNetworkPlayerJoined(const std::shared_ptr<gamelib::Event>& evt) const;
-    void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
-    void OnStartNetworkLevel(const std::shared_ptr<gamelib::Event>& evt);
+
     void RemoveAllGameObjects();
 
 protected:
@@ -94,6 +93,13 @@ private:
     void CreateAutoPickups(const std::vector<std::shared_ptr<Room>>& rooms);
     void CreatePlayer(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId);
     void OnGameWon();
+    void OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<gamelib::Event>& evt);
+    void OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt);
+    void OnFetchedPickup(const std::shared_ptr<gamelib::Event>& evt) const;
+    void OnLevelChanged(const std::shared_ptr<gamelib::Event>& evt) const;
+    void OnNetworkPlayerJoined(const std::shared_ptr<gamelib::Event>& evt) const;
+    void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
+    void OnStartNetworkLevel(const std::shared_ptr<gamelib::Event>& evt);
 };
 
 

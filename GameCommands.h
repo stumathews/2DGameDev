@@ -21,11 +21,11 @@ public:
 	std::string GetSubscriberName() override;
 
 	void Fire(bool beVerbose);
-	void MoveUp(const bool beVerbose, const gamelib::ControllerMoveEvent::KeyState keyState);
-	void MoveDown(const bool beVerbose, const gamelib::ControllerMoveEvent::KeyState keyState);
-	void MoveLeft(const bool beVerbose, const gamelib::ControllerMoveEvent::KeyState keyState);
-	void MoveRight(const bool beVerbose, const gamelib::ControllerMoveEvent::KeyState keyState);
-	void Move(const gamelib::Direction direction, gamelib::ControllerMoveEvent::KeyState keyState);
+	void MoveUp(bool beVerbose, gamelib::ControllerMoveEvent::KeyState keyState);
+	void MoveDown(bool beVerbose, gamelib::ControllerMoveEvent::KeyState keyState);
+	void MoveLeft(bool beVerbose, gamelib::ControllerMoveEvent::KeyState keyState);
+	void MoveRight(bool beVerbose, gamelib::ControllerMoveEvent::KeyState keyState);
+	void Move(gamelib::Direction direction, gamelib::ControllerMoveEvent::KeyState keyState);
 	void PlaySoundEffect(const std::shared_ptr<gamelib::AudioAsset>& effect) const;
 	void RaiseChangedLevel(bool beVerbose, short newLevel);
 	void ReloadSettings(bool beVerbose);
@@ -41,7 +41,7 @@ private:
 	bool logCommands;
 
 	// Inherited via EventSubscriber
-	gamelib::ListOfEvents HandleEvent(const std::shared_ptr<gamelib::Event>& evt, const unsigned long deltaMs) override;
+	gamelib::ListOfEvents HandleEvent(const std::shared_ptr<gamelib::Event>& evt, unsigned long deltaMs) override;
 };
 
 
