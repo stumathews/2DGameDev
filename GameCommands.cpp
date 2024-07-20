@@ -26,6 +26,7 @@ GameCommands::GameCommands()
 	EventManager::Get()->SubscribeToEvent(NetworkPlayerJoinedEventId, this);
 	EventManager::Get()->SubscribeToEvent(NetworkTrafficReceivedEventId, this);
 	EventManager::Get()->SubscribeToEvent(PlayerMovedEventTypeEventId, this);
+	EventManager::Get()->SubscribeToEvent(ReliableUdpPacketReceivedEventId, this);
 }
 
 std::string GameCommands::GetSubscriberName()
@@ -168,19 +169,54 @@ void GameCommands::StartNetworkLevel()
 }
 
 void GameCommands::PingGameServer() { NetworkManager::Get()->PingGameServer(); }
+	
 
 ListOfEvents GameCommands::HandleEvent(const std::shared_ptr<Event>& evt, const unsigned long deltaMs)
 {
-	if(evt->Id.PrimaryId == NetworkPlayerJoinedEventId.PrimaryId) { Logger::Get()->LogThis("--------------------------- Network Player joined");}
+	if(evt->Id.PrimaryId == NetworkPlayerJoinedEventId.PrimaryId)
+	{
+		auto joinEvent =  To<NetworkPlayerJoinedEvent>(evt);
+		stringstream message;
+		message << joinEvent->Player.GetNickName() << " joined." << std::endl;
+		Logger::Get()->LogThis(message.str());
+	}
 	if(evt->Id.PrimaryId == NetworkTrafficReceivedEventId.PrimaryId)
 	{
 		const auto networkPlayerTrafficReceivedEvent = To<NetworkTrafficReceivedEvent>(evt);
 		std::stringstream message;
-		message << "--------------------------- Network traffic received: " 
-			    << networkPlayerTrafficReceivedEvent->Identifier << " Bytes received: "
-			    << networkPlayerTrafficReceivedEvent->BytesReceived << " Message: " << networkPlayerTrafficReceivedEvent->Message;
+		message << "-------" << std::endl
+			    << networkPlayerTrafficReceivedEvent->BytesReceived << " bytes received from " << networkPlayerTrafficReceivedEvent->Identifier  
+			    << " Message: " << networkPlayerTrafficReceivedEvent->Message << std::endl
+				<< "-------" << std::endl;
 		    
 		Logger::Get()->LogThis(message.str());
+	}
+	if(evt->Id.PrimaryId == ReliableUdpPacketReceivedEventId.PrimaryId)
+	{
+		const auto rudpEvent = To<ReliableUdpPacketReceivedEvent>(evt);
+		const auto rudpMessage = rudpEvent->ReceivedMessage;
+		stringstream bundledSeqs;
+
+		bundledSeqs << "(";
+		for(int i = 0; i < rudpMessage->DataCount();i++)
+		{
+			
+			bundledSeqs << rudpMessage->Data()[i].Sequence;
+			if(i < rudpMessage->DataCount()-1)
+			{
+				bundledSeqs << ",";
+			}
+		}		
+		bundledSeqs << ")";
+
+		std::stringstream message;
+		message << "-------" << std::endl
+				<< "ReliableUdp: Seq:" << rudpMessage->Header.Sequence << " Bundled unack'd messages: " << rudpMessage->DataCount() << ":"
+					<< bundledSeqs.str() << " Sender known acks: " << BitFiddler<uint32_t>::ToString(rudpMessage->Header.LastAckedSequence)
+					<< " " << std::endl
+				<< "-------" << std::endl;
+		Logger::Get()->LogThis(message.str());
+
 	}
 
 	// Don't currently handle any events yet
