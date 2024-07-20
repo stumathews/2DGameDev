@@ -498,10 +498,10 @@ void LevelManager::OnNetworkTrafficReceivedEvent(const std::shared_ptr<Event>& e
 {
 	const auto networkPlayerTrafficReceivedEvent = To<NetworkTrafficReceivedEvent>(evt);
 	std::stringstream message;
-	message << "-------" << std::endl
-		<< networkPlayerTrafficReceivedEvent->BytesReceived << " bytes received from " << networkPlayerTrafficReceivedEvent->Identifier  
-		<< " Message: " << networkPlayerTrafficReceivedEvent->Message << std::endl
-		<< "-------" << std::endl;
+	message << "---data----" << std::endl
+		    << networkPlayerTrafficReceivedEvent->BytesReceived << " bytes received from " << networkPlayerTrafficReceivedEvent->Identifier  
+		    << " Message: " << networkPlayerTrafficReceivedEvent->Message << std::endl
+		    << "---data----" << std::endl;
 		    
 	Logger::Get()->LogThis(message.str());
 }
@@ -514,8 +514,7 @@ void LevelManager::OnReliableUdpPacketReceivedEvent(const std::shared_ptr<Event>
 
 	bundledSeqs << "(";
 	for(int i = 0; i < rudpMessage->DataCount();i++)
-	{
-			
+	{			
 		bundledSeqs << rudpMessage->Data()[i].Sequence;
 		if(i < rudpMessage->DataCount()-1)
 		{
@@ -525,11 +524,14 @@ void LevelManager::OnReliableUdpPacketReceivedEvent(const std::shared_ptr<Event>
 	bundledSeqs << ")";
 
 	std::stringstream message;
-	message << "-------" << std::endl
-		<< "ReliableUdp: Seq:" << rudpMessage->Header.Sequence << " Bundled unack'd messages: " << rudpMessage->DataCount() << ":"
-		<< bundledSeqs.str() << " Sender known acks: " << BitFiddler<uint32_t>::ToString(rudpMessage->Header.LastAckedSequence)
+	message << "---info----" << std::endl
+		<< "Sender Seq:" << rudpMessage->Header.Sequence << " received containing " << rudpMessage->DataCount()
+	    << " unack'd message(s): "
+		<< bundledSeqs.str()
+	    << " sender acks previous packets sent by this box: "
+		<< BitFiddler<uint32_t>::ToString(rudpMessage->Header.LastAckedSequence)
 		<< " " << std::endl
-		<< "-------" << std::endl;
+		<< "---info----" << std::endl;
 	Logger::Get()->LogThis(message.str());
 }
 
