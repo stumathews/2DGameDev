@@ -16,7 +16,7 @@
     <setting name="print_debugging_text" type="bool">false</setting>
     <setting name="print_debugging_text_neighbours_only" type="bool">true</setting>
 		<setting name="numPickups" type="int">20</setting>
-		<setting name="isNetworkGame" type="bool">false</setting>
+		<setting name="isNetworkGame" type="bool">true</setting>
 		<setting name="createAutoLevel" type="bool">false</setting>
 		<setting name="level1FileName" type="string">data\\Level5.xml</setting>
 		<setting name="level2FileName" type="string">data\\Level2.xml</setting>
@@ -32,12 +32,13 @@
 	
 	<networking>
 		<setting name="isGameServer" type="bool">true</setting>
-		<setting name="gameServerAddress" type="string">Surface</setting>
-		<setting name="gameServerPort" type="string">8080</setting>
+		<setting name="gameServerAddress" type="string">192.168.1.203</setting>
+		<setting name="gameServerPort" type="string">9090</setting>
 		<setting name="maxPlayers" type="int">4</setting>
-		<setting name="nickname" type="string">Charlie</setting>
+		<setting name="nickname" type="string">Surface</setting>
 		<!-- If its not TCP, we're using 'connected' udp -->
 		<setting name="isTcp" type="bool">false</setting>
+    <setting name="useReliableUdp" type="bool">true</setting>
 	</networking>
       
   <!-- Maze Settings -->
