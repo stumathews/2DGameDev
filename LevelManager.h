@@ -93,13 +93,14 @@ private:
     void CreateAutoPickups(const std::vector<std::shared_ptr<Room>>& rooms);
     void CreatePlayer(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId);
     void OnGameWon();
-    void OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<gamelib::Event>& evt);
+    void OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt);
     void OnFetchedPickup(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnLevelChanged(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnNetworkPlayerJoined(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
-    void OnStartNetworkLevel(const std::shared_ptr<gamelib::Event>& evt);
+    void OnStartNetworkLevel(const std::shared_ptr<gamelib::Event>& evt);    
+    void OnReliableUdpPacketLossDetectedEvent(const std::shared_ptr<gamelib::Event>& evt) const;
 };
 
 

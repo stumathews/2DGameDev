@@ -26,6 +26,7 @@
 #include "graphic/DrawableText.h"
 #include "scene/SceneManager.h"
 #include "utils/Utils.h"
+#include <events/ReliableUdpPacketLossDetectedEvent.h>
 
 using namespace gamelib;
 using namespace std;
@@ -63,6 +64,7 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(NetworkTrafficReceivedEventId, this);
 	eventManager->SubscribeToEvent(ReliableUdpPacketReceivedEventId, this);
 	eventManager->SubscribeToEvent(ReliableUdpCheckSumFailedEventId, this);
+	eventManager->SubscribeToEvent(ReliableUdpPacketLossDetectedEventId, this);
 
 	return initialized = true;
 }
@@ -84,6 +86,7 @@ ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event>& evt, const 
 	if(evt->Id.PrimaryId == NetworkTrafficReceivedEventId.PrimaryId) { OnNetworkTrafficReceivedEvent(evt); }
 	if(evt->Id.PrimaryId == ReliableUdpPacketReceivedEventId.PrimaryId) { OnReliableUdpPacketReceivedEvent(evt); }
 	if(evt->Id.PrimaryId == ReliableUdpCheckSumFailedEventId.PrimaryId) { OnReliableUdpCheckSumFailedEvent(evt); }
+	if(evt->Id.PrimaryId == ReliableUdpPacketLossDetectedEventId.PrimaryId) { OnReliableUdpPacketLossDetectedEvent(evt); }
 		
 	return {};
 }
@@ -530,7 +533,7 @@ void LevelManager::OnReliableUdpPacketReceivedEvent(const std::shared_ptr<Event>
 	Logger::Get()->LogThis(message.str());
 }
 
-void LevelManager::OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<gamelib::Event>& evt)
+void LevelManager::OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<gamelib::Event>& evt) const
 {
 	const auto failedChecksumEvent = To<ReliableUdpCheckSumFailedEvent>(evt);
 	const auto failedMessage = failedChecksumEvent->failedMessage;
@@ -539,7 +542,36 @@ void LevelManager::OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<gameli
 	message << "Checksum failed for sequence " << failedMessage->Header.Sequence
 			<< ". Dropping packet" << std::endl;
 
+	Logger::Get()->LogThis(message.str());
+
 }
+
+
+void LevelManager::OnReliableUdpPacketLossDetectedEvent(const std::shared_ptr<Event>& evt) const
+{
+	const auto reliableUdpPacketLossDetectedEvent = To<ReliableUdpPacketLossDetectedEvent>(evt);
+	const auto resendingMessage = reliableUdpPacketLossDetectedEvent->messageBundle;
+
+	stringstream bundledSeqs;
+	std::stringstream message;
+	
+	for(int i = 1; i < resendingMessage->DataCount();i++)
+	{
+			
+		bundledSeqs << resendingMessage->Data()[i].Sequence;
+		if(i < resendingMessage->DataCount()-1)
+		{
+			bundledSeqs << ",";
+		}
+	}		
+
+	message << "Packet loss detected. Sequences "
+	<< bundledSeqs.str() << " were not acknowledged by receiver and will be resent with sending sequence #"
+	<< resendingMessage->Header.Sequence  << std::endl;
+
+	Logger::Get()->LogThis(message.str());
+}
+
 
 LevelManager* LevelManager::Get() { if (instance == nullptr) { instance = new LevelManager(); } return instance; }
 LevelManager::~LevelManager() { instance = nullptr; }
