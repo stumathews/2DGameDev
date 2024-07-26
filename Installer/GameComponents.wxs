@@ -10,6 +10,10 @@
 			  <File Source="2DGameDev.exe" />
 				<RemoveFile Id='LogFile' On='uninstall' Name='GameErrors.txt' />
       </Component>
+		  <Component Id="libsodium.dll" Directory="INSTALLFOLDER">
+			  <File Source="libsodium.dll" />
+		  </Component>
+			
 		  
 	  </ComponentGroup>
 
