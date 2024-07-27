@@ -65,6 +65,7 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(ReliableUdpPacketReceivedEventId, this);
 	eventManager->SubscribeToEvent(ReliableUdpCheckSumFailedEventId, this);
 	eventManager->SubscribeToEvent(ReliableUdpPacketLossDetectedEventId, this);
+	eventManager->SubscribeToEvent(ReliableUdpAckPacketEventId, this);
 
 	return initialized = true;
 }
@@ -87,6 +88,7 @@ ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event>& evt, const 
 	if(evt->Id.PrimaryId == ReliableUdpPacketReceivedEventId.PrimaryId) { OnReliableUdpPacketReceivedEvent(evt); }
 	if(evt->Id.PrimaryId == ReliableUdpCheckSumFailedEventId.PrimaryId) { OnReliableUdpCheckSumFailedEvent(evt); }
 	if(evt->Id.PrimaryId == ReliableUdpPacketLossDetectedEventId.PrimaryId) { OnReliableUdpPacketLossDetectedEvent(evt); }
+	if(evt->Id.PrimaryId == ReliableUdpAckPacketEventId.PrimaryId) { OnReliableUdpAckPacketEvent(evt); }
 		
 	return {};
 }
@@ -490,7 +492,7 @@ void LevelManager::OnNetworkPlayerJoinedEvent(const std::shared_ptr<Event>& evt)
 {
 	const auto joinEvent =  To<NetworkPlayerJoinedEvent>(evt);
 	stringstream message;
-	message << joinEvent->Player.GetNickName() << " joined." << std::endl;
+	message << joinEvent->Player.GetNickName() << " joined.";
 	Logger::Get()->LogThis(message.str());
 }
 
@@ -498,11 +500,10 @@ void LevelManager::OnNetworkTrafficReceivedEvent(const std::shared_ptr<Event>& e
 {
 	const auto networkPlayerTrafficReceivedEvent = To<NetworkTrafficReceivedEvent>(evt);
 	std::stringstream message;
-	message << "---data----" << std::endl
-		    << networkPlayerTrafficReceivedEvent->BytesReceived << " bytes received from " << networkPlayerTrafficReceivedEvent->Identifier  
-		    << " Message: " << networkPlayerTrafficReceivedEvent->Message << std::endl
-		    << "---data----" << std::endl;
-		    
+	message 
+		    << networkPlayerTrafficReceivedEvent->BytesReceived << " bytes of data received from " << networkPlayerTrafficReceivedEvent->Identifier  
+		    << ". Message: \"" << networkPlayerTrafficReceivedEvent->Message << "\"";
+			    
 	Logger::Get()->LogThis(message.str());
 }
 
@@ -524,28 +525,23 @@ void LevelManager::OnReliableUdpPacketReceivedEvent(const std::shared_ptr<Event>
 	bundledSeqs << ")";
 
 	std::stringstream message;
-	message << "---info----" << std::endl
-		<< "Sender Seq:" << rudpMessage->Header.Sequence << " received containing " << rudpMessage->DataCount()
-	    << " unack'd message(s): "
-		<< bundledSeqs.str()
-	    << " sender acks previous packets sent by this box: "
-		<< BitFiddler<uint32_t>::ToString(rudpMessage->Header.LastAckedSequence)
-		<< " " << std::endl
-		<< "---info----" << std::endl;
+	message 
+		<< "Received " << rudpMessage->Header.Sequence << ". Playload: " << bundledSeqs.str()
+	    << " Sender acks: "
+		<< BitFiddler<uint32_t>::ToString(rudpMessage->Header.LastAckedSequence);
+
 	Logger::Get()->LogThis(message.str());
 }
 
-void LevelManager::OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<gamelib::Event>& evt) const
+void LevelManager::OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<Event>& evt) const
 {
 	const auto failedChecksumEvent = To<ReliableUdpCheckSumFailedEvent>(evt);
 	const auto failedMessage = failedChecksumEvent->failedMessage;
 	std::stringstream message;
 
-	message << "Checksum failed for sequence " << failedMessage->Header.Sequence
-			<< ". Dropping packet" << std::endl;
+	message << "Checksum failed for sequence " << failedMessage->Header.Sequence << ". Dropping packet.";
 
 	Logger::Get()->LogThis(message.str());
-
 }
 
 
@@ -556,10 +552,9 @@ void LevelManager::OnReliableUdpPacketLossDetectedEvent(const std::shared_ptr<Ev
 
 	stringstream bundledSeqs;
 	std::stringstream message;
-	
-	for(int i = 1; i < resendingMessage->DataCount();i++)
-	{
-			
+
+	for(int i = static_cast<int>(resendingMessage->Data().size()) -1 ; i >= 0 ; i--)
+	{			
 		bundledSeqs << resendingMessage->Data()[i].Sequence;
 		if(i < resendingMessage->DataCount()-1)
 		{
@@ -567,11 +562,23 @@ void LevelManager::OnReliableUdpPacketLossDetectedEvent(const std::shared_ptr<Ev
 		}
 	}		
 
-	message << "Packet loss detected. Sequences "
-	<< bundledSeqs.str() << " were not acknowledged by receiver and will be resent with sending sequence #"
-	<< resendingMessage->Header.Sequence  << std::endl;
+	message << "Packet loss detected. Sequences " << bundledSeqs.str() << " were not acknowledged by receiver and will be resent with sending sequence "
+		    << resendingMessage->Header.Sequence;
 
 	Logger::Get()->LogThis(message.str());
+}
+
+void LevelManager::OnReliableUdpAckPacketEvent(const std::shared_ptr<Event>& evt) const
+{
+	const auto reliableUdpPacketLossDetectedEvent = To<ReliableUdpAckPacketEvent>(evt);
+	const auto ackMessage = reliableUdpPacketLossDetectedEvent->ReceivedMessage;
+
+	std::stringstream message;
+
+	message << "Acknowledgement " << (reliableUdpPacketLossDetectedEvent->Sent ? "sent: " : " received: ") << ackMessage->Header.Sequence;
+
+	Logger::Get()->LogThis(message.str());
+
 }
 
 

@@ -101,6 +101,8 @@ private:
     void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnStartNetworkLevel(const std::shared_ptr<gamelib::Event>& evt);    
     void OnReliableUdpPacketLossDetectedEvent(const std::shared_ptr<gamelib::Event>& evt) const;
+    
+    void OnReliableUdpAckPacketEvent(const std::shared_ptr<gamelib::Event>& evt) const;
 };
 
 
