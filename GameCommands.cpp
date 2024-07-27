@@ -165,7 +165,7 @@ void GameCommands::StartNetworkLevel()
 	EventManager::Get()->RaiseEvent(EventFactory::Get()->CreateStartNetworkLevelEvent(1), this);
 }
 
-void GameCommands::PingGameServer() { NetworkManager::Get()->PingGameServer(); }	
+void GameCommands::PingGameServer() { NetworkManager::Get()->PingGameServer(0); }	
 
 ListOfEvents GameCommands::HandleEvent(const std::shared_ptr<Event>& evt, const unsigned long deltaMs)
 {	
