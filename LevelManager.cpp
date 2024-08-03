@@ -28,6 +28,8 @@
 #include "utils/Utils.h"
 #include <events/ReliableUdpPacketLossDetectedEvent.h>
 
+#include "GameDataManager.h"
+
 using namespace gamelib;
 using namespace std;
 using namespace ExpectationLib;
@@ -66,6 +68,38 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(ReliableUdpCheckSumFailedEventId, this);
 	eventManager->SubscribeToEvent(ReliableUdpPacketLossDetectedEventId, this);
 	eventManager->SubscribeToEvent(ReliableUdpAckPacketEventId, this);
+
+	// Organize to write accumulated statistics that have occurred within the statistics interval to file
+	statisticsIntervalTimer.SetFrequency(1000); // every second
+	statisticsFile = make_shared<TextFile>("statistics.txt");
+
+	// Create a process that will Write statistics every second
+	const auto writeStatsProcess = std::static_pointer_cast<Process>(std::make_shared<Action>([&](const unsigned long deltaMs)
+		{
+			statisticsIntervalTimer.Update(deltaMs);
+			statisticsIntervalTimer.DoIfReady([&]()
+			{
+				// Write the statistics to file
+				const auto tSeconds = GameDataManager::Get()->GameWorldData.ElapsedGameTime / 1000;
+
+				std::stringstream message;
+
+				// CountPacketsLost, BandwidthUsed
+				message << tSeconds << " " << networkingStatistics.BandwidthUsed
+									<< "," << networkingStatistics.CountPacketsLost
+									<< "," << networkingStatistics.CountPacketsReceived
+									<< "," << networkingStatistics.AverageLatency
+									<< "," << networkingStatistics.CountAcks
+									<< "," << networkingStatistics.VerificationFailedCount << std::endl;
+
+				// Write to file
+				statisticsFile->Append(message.str());
+
+				// Reset statistics to zero.
+				networkingStatistics.Reset();
+			});
+		}, false)); // we'll not mark ourselves as succeeded so the process manager will not remove it (emulates long running)
+	processManager.AttachProcess(writeStatsProcess);
 
 	return initialized = true;
 }
@@ -205,23 +239,23 @@ void LevelManager::PlayLevelMusic(const std::string& levelMusicAssetName)
 void LevelManager::OnGameWon()
 {
 	const auto a = std::static_pointer_cast<Process>(
-		std::make_shared<Action>([&]() { gameCommands->ToggleMusic(verbose); }));
-	const auto b = std::static_pointer_cast<Process>(std::make_shared<Action>([&]()
+		std::make_shared<Action>([&](unsigned long deltaMs) { gameCommands->ToggleMusic(verbose); }));
+	const auto b = std::static_pointer_cast<Process>(std::make_shared<Action>([&](unsigned long deltaMs)
 	{
 		AudioManager::Play(ResourceManager::Get()->GetAssetInfo(SettingsManager::String("audio", "win_music")));
 	}));
 	
 	const auto c = std::static_pointer_cast<Process>(std::make_shared<DelayProcess>(5000));
 
-	const auto d = std::static_pointer_cast<Process>(std::make_shared<Action>([&]()
+	const auto d = std::static_pointer_cast<Process>(std::make_shared<Action>([&](unsigned long deltaMs)
 	{
 		gameCommands->LoadNewLevel(static_cast<int>(++currentLevel));
 	}));
 
 	// Chain a set of subsequent processes
 	a->AttachChild(b); 
-		b->AttachChild(c); 
-			c->AttachChild(d);
+	b->AttachChild(c); 
+	c->AttachChild(d);
 
 	processManager.AttachProcess(a);
 
@@ -496,18 +530,21 @@ void LevelManager::OnNetworkPlayerJoinedEvent(const std::shared_ptr<Event>& evt)
 	Logger::Get()->LogThis(message.str());
 }
 
-void LevelManager::OnNetworkTrafficReceivedEvent(const std::shared_ptr<Event>& evt) const
+void LevelManager::OnNetworkTrafficReceivedEvent(const std::shared_ptr<Event>& evt)
 {
 	const auto networkPlayerTrafficReceivedEvent = To<NetworkTrafficReceivedEvent>(evt);
 	std::stringstream message;
 	message 
 		    << networkPlayerTrafficReceivedEvent->BytesReceived << " bytes of data received from " << networkPlayerTrafficReceivedEvent->Identifier  
 		    << ". Message: \"" << networkPlayerTrafficReceivedEvent->Message << "\"";
+
+	// how much data did we receie in this second?
+	networkingStatistics.BandwidthUsed += networkPlayerTrafficReceivedEvent->BytesReceived;
 			    
 	Logger::Get()->LogThis(message.str());
 }
 
-void LevelManager::OnReliableUdpPacketReceivedEvent(const std::shared_ptr<Event>& evt) const
+void LevelManager::OnReliableUdpPacketReceivedEvent(const std::shared_ptr<Event>& evt)
 {
 	const auto rudpEvent = To<ReliableUdpPacketReceivedEvent>(evt);
 	const auto rudpMessage = rudpEvent->ReceivedMessage;
@@ -530,10 +567,13 @@ void LevelManager::OnReliableUdpPacketReceivedEvent(const std::shared_ptr<Event>
 	    << " Sender acks: "
 		<< BitFiddler<uint32_t>::ToString(rudpMessage->Header.LastAckedSequence);
 
+	// write stats
+	networkingStatistics.CountPacketsReceived++;
+	
 	Logger::Get()->LogThis(message.str());
 }
 
-void LevelManager::OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<Event>& evt) const
+void LevelManager::OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<Event>& evt)
 {
 	const auto failedChecksumEvent = To<ReliableUdpCheckSumFailedEvent>(evt);
 	const auto failedMessage = failedChecksumEvent->failedMessage;
@@ -541,11 +581,14 @@ void LevelManager::OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<Event>
 
 	message << "Checksum failed for sequence " << failedMessage->Header.Sequence << ". Dropping packet.";
 
+	// write stats
+	networkingStatistics.VerificationFailedCount++;
+
 	Logger::Get()->LogThis(message.str());
 }
 
 
-void LevelManager::OnReliableUdpPacketLossDetectedEvent(const std::shared_ptr<Event>& evt) const
+void LevelManager::OnReliableUdpPacketLossDetectedEvent(const std::shared_ptr<Event>& evt)
 {
 	const auto reliableUdpPacketLossDetectedEvent = To<ReliableUdpPacketLossDetectedEvent>(evt);
 	const auto resendingMessage = reliableUdpPacketLossDetectedEvent->messageBundle;
@@ -565,10 +608,13 @@ void LevelManager::OnReliableUdpPacketLossDetectedEvent(const std::shared_ptr<Ev
 	message << "Packet loss detected. Sequences " << bundledSeqs.str() << " were not acknowledged by receiver and will be resent with sending sequence "
 		    << resendingMessage->Header.Sequence;
 
+	// Track statistics
+	networkingStatistics.CountPacketsLost++;
+
 	Logger::Get()->LogThis(message.str());
 }
 
-void LevelManager::OnReliableUdpAckPacketEvent(const std::shared_ptr<Event>& evt) const
+void LevelManager::OnReliableUdpAckPacketEvent(const std::shared_ptr<Event>& evt)
 {
 	const auto reliableUdpPacketLossDetectedEvent = To<ReliableUdpAckPacketEvent>(evt);
 	const auto ackMessage = reliableUdpPacketLossDetectedEvent->ReceivedMessage;
@@ -577,11 +623,17 @@ void LevelManager::OnReliableUdpAckPacketEvent(const std::shared_ptr<Event>& evt
 
 	message << "Acknowledgement " << (reliableUdpPacketLossDetectedEvent->Sent ? "sent: " : " received: ") << ackMessage->Header.Sequence;
 
+	// how many acks did we receive
+	networkingStatistics.CountAcks++;
+
 	Logger::Get()->LogThis(message.str());
 
 }
 
 
 LevelManager* LevelManager::Get() { if (instance == nullptr) { instance = new LevelManager(); } return instance; }
-LevelManager::~LevelManager() { instance = nullptr; }
+LevelManager::~LevelManager()
+{
+	instance = nullptr;
+}
 LevelManager* LevelManager::instance = nullptr;

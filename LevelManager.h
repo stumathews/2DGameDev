@@ -15,7 +15,9 @@
 #include "InputManager.h"
 #include "Observer.h"
 #include "Pickup.h"
+#include "file/TextFile.h"
 #include "graphic/DrawableText.h"
+#include "net/NetworkingStatistics.h"
 
 typedef std::vector<std::weak_ptr<gamelib::GameObject>> ListOfGameObjects;
 
@@ -33,8 +35,8 @@ public:
 
     bool Initialize();
     void OnNetworkPlayerJoinedEvent(const std::shared_ptr<gamelib::Event>& evt) const;
-    void OnNetworkTrafficReceivedEvent(const std::shared_ptr<gamelib::Event>& evt) const;
-    void OnReliableUdpPacketReceivedEvent(const std::shared_ptr<gamelib::Event>& evt) const;
+    void OnNetworkTrafficReceivedEvent(const std::shared_ptr<gamelib::Event>& evt);
+    void OnReliableUdpPacketReceivedEvent(const std::shared_ptr<gamelib::Event>& evt);
     [[nodiscard]] bool ChangeLevel(int levelNum) const; // Raises change level event
 
     gamelib::ListOfEvents HandleEvent(const std::shared_ptr<gamelib::Event>& evt, const unsigned long inDeltaMs) override;
@@ -93,16 +95,19 @@ private:
     void CreateAutoPickups(const std::vector<std::shared_ptr<Room>>& rooms);
     void CreatePlayer(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId);
     void OnGameWon();
-    void OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<gamelib::Event>& evt) const;
+    void OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<gamelib::Event>& evt);
     void OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt);
     void OnFetchedPickup(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnLevelChanged(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnNetworkPlayerJoined(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnStartNetworkLevel(const std::shared_ptr<gamelib::Event>& evt);    
-    void OnReliableUdpPacketLossDetectedEvent(const std::shared_ptr<gamelib::Event>& evt) const;
+    void OnReliableUdpPacketLossDetectedEvent(const std::shared_ptr<gamelib::Event>& evt);
     
-    void OnReliableUdpAckPacketEvent(const std::shared_ptr<gamelib::Event>& evt) const;
+    void OnReliableUdpAckPacketEvent(const std::shared_ptr<gamelib::Event>& evt);
+    gamelib::PeriodicTimer statisticsIntervalTimer;
+    std::shared_ptr<gamelib::TextFile> statisticsFile;
+    gamelib::NetworkingStatistics networkingStatistics;
 };
 
 
