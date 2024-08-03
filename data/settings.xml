@@ -42,7 +42,7 @@
 	</networking>
 
   <gameStatePusher>
-    <setting name="sendRateMs" type="int">1000</setting>
+    <setting name="sendRateMs" type="int">500</setting>
   </gameStatePusher>
       
   <!-- Maze Settings -->
