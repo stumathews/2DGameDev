@@ -617,7 +617,17 @@ void LevelManager::InitializeStatisticsCapturing()
 {
 	statisticsIntervalTimer.SetFrequency(1000); // every second
 	statisticsFile = make_shared<TextFile>("statistics.txt");
-	statisticsFile->Append("BytesReceived, CountPacketsLost, CountPacketsReceived, AverageLatencyMsSma3, CountAcks, VerificationFailedCount, CountAggregateMessagesReceived\n");
+	std::stringstream header;
+	header << "TimeSecs" << "\t"
+	       << "BytesReceived" << "\t"
+	       << "CountPacketsLost" << "\t"
+	       << "CountPacketsReceived" << "\t"
+	       << "AverageLatencyMsSma3" << "\t"
+	       << "CountAcks" << "\t" 
+	       << "VerificationFailedCount" << "\t" 
+	       << "CountAggregateMessagesReceived";
+
+	statisticsFile->Append(header.str(), false);
 
 	// Create a process that will Write statistics every second
 	const auto writeStatsProcess = std::static_pointer_cast<Process>(std::make_shared<Action>([&](const unsigned long deltaMs)
@@ -631,14 +641,15 @@ void LevelManager::InitializeStatisticsCapturing()
 			std::stringstream message;
 
 			// CountPacketsLost, BandwidthUsed
-			message << tSeconds << " "
-				<< networkingStatistics.BytesReceived
-				<< "," << networkingStatistics.CountPacketsLost
-				<< "," << networkingStatistics.CountPacketsReceived
-				<< "," << networkingStatistics.AverageLatency
-				<< "," << networkingStatistics.CountAcks
-				<< "," << networkingStatistics.VerificationFailedCount
-				<< "," << networkingStatistics.CountAggregateMessagesReceived
+			message
+				// << tSeconds << "\t"
+				<< networkingStatistics.BytesReceived  << "\t"
+				<< networkingStatistics.CountPacketsLost  << "\t"
+				<< networkingStatistics.CountPacketsReceived  << "\t"
+				<< networkingStatistics.AverageLatency  << "\t"
+				<< networkingStatistics.CountAcks  << "\t"
+				<< networkingStatistics.VerificationFailedCount  << "\t"
+				<< networkingStatistics.CountAggregateMessagesReceived
 				<< std::endl;
 
 			// Write to file
