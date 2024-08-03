@@ -542,6 +542,7 @@ void LevelManager::OnReliableUdpPacketReceivedEvent(const std::shared_ptr<Event>
 
 	// write stats
 	networkingStatistics.CountPacketsReceived++;
+	networkingStatistics.CountAggregateMessagesReceived += rudpMessage->DataCount();
 	
 	Logger::Get()->LogThis(message.str());
 }
@@ -616,7 +617,7 @@ void LevelManager::InitializeStatisticsCapturing()
 {
 	statisticsIntervalTimer.SetFrequency(1000); // every second
 	statisticsFile = make_shared<TextFile>("statistics.txt");
-	statisticsFile->Append("BytesReceived, CountPacketsLost, CountPacketsReceived, AverageLatencyMsSma3, CountAcks, VerificationFailedCount\n");
+	statisticsFile->Append("BytesReceived, CountPacketsLost, CountPacketsReceived, AverageLatencyMsSma3, CountAcks, VerificationFailedCount, CountAggregateMessagesReceived\n");
 
 	// Create a process that will Write statistics every second
 	const auto writeStatsProcess = std::static_pointer_cast<Process>(std::make_shared<Action>([&](const unsigned long deltaMs)
@@ -637,6 +638,7 @@ void LevelManager::InitializeStatisticsCapturing()
 				<< "," << networkingStatistics.AverageLatency
 				<< "," << networkingStatistics.CountAcks
 				<< "," << networkingStatistics.VerificationFailedCount
+				<< "," << networkingStatistics.CountAggregateMessagesReceived
 				<< std::endl;
 
 			// Write to file
