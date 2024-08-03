@@ -625,7 +625,7 @@ void LevelManager::InitializeStatisticsCapturing()
 	       << "AverageLatencyMsSma3" << "\t"
 	       << "CountAcks" << "\t" 
 	       << "VerificationFailedCount" << "\t" 
-	       << "CountAggregateMessagesReceived";
+	       << "CountAggregateMessagesReceived" << std::endl;
 
 	statisticsFile->Append(header.str(), false);
 
@@ -642,7 +642,7 @@ void LevelManager::InitializeStatisticsCapturing()
 
 			// CountPacketsLost, BandwidthUsed
 			message
-				// << tSeconds << "\t"
+				<< tSeconds << "\t"
 				<< networkingStatistics.BytesReceived  << "\t"
 				<< networkingStatistics.CountPacketsLost  << "\t"
 				<< networkingStatistics.CountPacketsReceived  << "\t"
@@ -653,7 +653,7 @@ void LevelManager::InitializeStatisticsCapturing()
 				<< std::endl;
 
 			// Write to file
-			statisticsFile->Append(message.str());
+			statisticsFile->Append(message.str(), false);
 
 			// Reset statistics to zero.
 			networkingStatistics.Reset();
