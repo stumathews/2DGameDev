@@ -33,12 +33,15 @@ public:
     LevelManager() = default;
     ~LevelManager() override;
 
+    void InitializeStatisticsCapturing();
+    void InitializeClientGameStatePusher();
     bool Initialize();
     void OnNetworkPlayerJoinedEvent(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnNetworkTrafficReceivedEvent(const std::shared_ptr<gamelib::Event>& evt);
     void OnReliableUdpPacketReceivedEvent(const std::shared_ptr<gamelib::Event>& evt);
     [[nodiscard]] bool ChangeLevel(int levelNum) const; // Raises change level event
 
+    
     gamelib::ListOfEvents HandleEvent(const std::shared_ptr<gamelib::Event>& evt, const unsigned long inDeltaMs) override;
     static bool GetBoolSetting(const std::string& section, const std::string& settingName);
     static int GetIntSetting(const std::string& section, const std::string& settingName);
@@ -103,11 +106,16 @@ private:
     void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnStartNetworkLevel(const std::shared_ptr<gamelib::Event>& evt);    
     void OnReliableUdpPacketLossDetectedEvent(const std::shared_ptr<gamelib::Event>& evt);
+    void OnReliableUdpPacketRttCalculatedEvent(const std::shared_ptr<gamelib::Event>& evt);
     
     void OnReliableUdpAckPacketEvent(const std::shared_ptr<gamelib::Event>& evt);
     gamelib::PeriodicTimer statisticsIntervalTimer;
+
+    gamelib::PeriodicTimer periodicTimer;
     std::shared_ptr<gamelib::TextFile> statisticsFile;
     gamelib::NetworkingStatistics networkingStatistics;
 };
+
+
 
 

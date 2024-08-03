@@ -31,8 +31,8 @@
 	</gamecommands>
 	
 	<networking>
-		<setting name="isGameServer" type="bool">true</setting>
-		<setting name="gameServerAddress" type="string">192.168.1.203</setting>
+		<setting name="isGameServer" type="bool">false</setting>
+		<setting name="gameServerAddress" type="string">192.168.1.171</setting>
 		<setting name="gameServerPort" type="string">9090</setting>
 		<setting name="maxPlayers" type="int">4</setting>
 		<setting name="nickname" type="string">Surface</setting>
@@ -40,6 +40,10 @@
 		<setting name="isTcp" type="bool">false</setting>
     <setting name="useReliableUdp" type="bool">true</setting>
 	</networking>
+
+  <gameStatePusher>
+    <setting name="sendRateMs" type="int">1000</setting>
+  </gameStatePusher>
       
   <!-- Maze Settings -->
   <grid>

@@ -68,38 +68,10 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(ReliableUdpCheckSumFailedEventId, this);
 	eventManager->SubscribeToEvent(ReliableUdpPacketLossDetectedEventId, this);
 	eventManager->SubscribeToEvent(ReliableUdpAckPacketEventId, this);
+	eventManager->SubscribeToEvent(ReliableUdpPacketRttCalculatedEventId, this);
 
-	// Organize to write accumulated statistics that have occurred within the statistics interval to file
-	statisticsIntervalTimer.SetFrequency(1000); // every second
-	statisticsFile = make_shared<TextFile>("statistics.txt");
-
-	// Create a process that will Write statistics every second
-	const auto writeStatsProcess = std::static_pointer_cast<Process>(std::make_shared<Action>([&](const unsigned long deltaMs)
-		{
-			statisticsIntervalTimer.Update(deltaMs);
-			statisticsIntervalTimer.DoIfReady([&]()
-			{
-				// Write the statistics to file
-				const auto tSeconds = GameDataManager::Get()->GameWorldData.ElapsedGameTime / 1000;
-
-				std::stringstream message;
-
-				// CountPacketsLost, BandwidthUsed
-				message << tSeconds << " " << networkingStatistics.BandwidthUsed
-									<< "," << networkingStatistics.CountPacketsLost
-									<< "," << networkingStatistics.CountPacketsReceived
-									<< "," << networkingStatistics.AverageLatency
-									<< "," << networkingStatistics.CountAcks
-									<< "," << networkingStatistics.VerificationFailedCount << std::endl;
-
-				// Write to file
-				statisticsFile->Append(message.str());
-
-				// Reset statistics to zero.
-				networkingStatistics.Reset();
-			});
-		}, false)); // we'll not mark ourselves as succeeded so the process manager will not remove it (emulates long running)
-	processManager.AttachProcess(writeStatsProcess);
+	InitializeClientGameStatePusher();
+	InitializeStatisticsCapturing();
 
 	return initialized = true;
 }
@@ -123,6 +95,7 @@ ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event>& evt, const 
 	if(evt->Id.PrimaryId == ReliableUdpCheckSumFailedEventId.PrimaryId) { OnReliableUdpCheckSumFailedEvent(evt); }
 	if(evt->Id.PrimaryId == ReliableUdpPacketLossDetectedEventId.PrimaryId) { OnReliableUdpPacketLossDetectedEvent(evt); }
 	if(evt->Id.PrimaryId == ReliableUdpAckPacketEventId.PrimaryId) { OnReliableUdpAckPacketEvent(evt); }
+	if(evt->Id.PrimaryId == ReliableUdpPacketRttCalculatedEventId.PrimaryId) { OnReliableUdpPacketRttCalculatedEvent(evt); }
 		
 	return {};
 }
@@ -539,7 +512,7 @@ void LevelManager::OnNetworkTrafficReceivedEvent(const std::shared_ptr<Event>& e
 		    << ". Message: \"" << networkPlayerTrafficReceivedEvent->Message << "\"";
 
 	// how much data did we receie in this second?
-	networkingStatistics.BandwidthUsed += networkPlayerTrafficReceivedEvent->BytesReceived;
+	networkingStatistics.BytesReceived += networkPlayerTrafficReceivedEvent->BytesReceived;
 			    
 	Logger::Get()->LogThis(message.str());
 }
@@ -628,6 +601,77 @@ void LevelManager::OnReliableUdpAckPacketEvent(const std::shared_ptr<Event>& evt
 
 	Logger::Get()->LogThis(message.str());
 
+}
+
+void LevelManager::OnReliableUdpPacketRttCalculatedEvent(const std::shared_ptr<gamelib::Event>& evt)
+{
+	const auto rttEvent = To<ReliableUdpPacketRttCalculatedEvent>(evt);
+
+	// The last latency recorded is a smooth moving average considering last 3 packets
+	networkingStatistics.AverageLatency = rttEvent->Rtt.Sma3;
+}
+
+
+void LevelManager::InitializeStatisticsCapturing()
+{
+	statisticsIntervalTimer.SetFrequency(1000); // every second
+	statisticsFile = make_shared<TextFile>("statistics.txt");
+	statisticsFile->Append("BytesReceived, CountPacketsLost, CountPacketsReceived, AverageLatencyMsSma3, CountAcks, VerificationFailedCount\n");
+
+	// Create a process that will Write statistics every second
+	const auto writeStatsProcess = std::static_pointer_cast<Process>(std::make_shared<Action>([&](const unsigned long deltaMs)
+	{
+		statisticsIntervalTimer.Update(deltaMs);
+		statisticsIntervalTimer.DoIfReady([&]()
+		{
+			// Write the statistics to file
+			const auto tSeconds = GameDataManager::Get()->GameWorldData.ElapsedGameTime / 1000;
+
+			std::stringstream message;
+
+			// CountPacketsLost, BandwidthUsed
+			message << tSeconds << " "
+				<< networkingStatistics.BytesReceived
+				<< "," << networkingStatistics.CountPacketsLost
+				<< "," << networkingStatistics.CountPacketsReceived
+				<< "," << networkingStatistics.AverageLatency
+				<< "," << networkingStatistics.CountAcks
+				<< "," << networkingStatistics.VerificationFailedCount
+				<< std::endl;
+
+			// Write to file
+			statisticsFile->Append(message.str());
+
+			// Reset statistics to zero.
+			networkingStatistics.Reset();
+		});
+	}, false)); // we'll not mark ourselves as succeeded so the process manager will not remove it (emulates long running)
+	processManager.AttachProcess(writeStatsProcess);
+}
+
+void LevelManager::InitializeClientGameStatePusher()
+{
+	const bool isGameServer = SettingsManager::Get()->GetBool("networking", "isGameServer");
+	if(isGameServer) 
+	{
+		// We won't send out periodic pings to the game server if we are the game server
+		return;
+	}
+
+	// Periodically ping the game server
+	const auto sendRateMs = SettingsManager::Get()->GetInt("gameStatePusher", "sendRateMs");
+
+	periodicTimer.SetFrequency(sendRateMs);
+	const auto sendGameStateProcess = std::static_pointer_cast<Process>(std::make_shared<Action>([&](const unsigned long deltaMs)
+	{
+		periodicTimer.Update(deltaMs);
+		periodicTimer.DoIfReady([=]()
+		{
+			GameCommands::PingGameServer();
+		});
+	}, false));
+
+	processManager.AttachProcess(sendGameStateProcess);
 }
 
 
