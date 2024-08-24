@@ -31,7 +31,7 @@
 	</gamecommands>
 	
 	<networking>
-		<setting name="isGameServer" type="bool">true</setting>
+		<setting name="isGameServer" type="bool">false</setting>
 		<setting name="gameServerAddress" type="string">192.168.1.203</setting>
 		<setting name="gameServerPort" type="string">9090</setting>
 		<setting name="maxPlayers" type="int">4</setting>
@@ -40,6 +40,7 @@
 		<setting name="isTcp" type="bool">false</setting>
     <setting name="useReliableUdp" type="bool">true</setting>
     <setting name="useEncryption" type="bool">true</setting>
+    <setting name="encoding" type="int">3</setting> <!-- 1=Json, 2=Xml, 3=BitPacked -->
 	</networking>
 
   <gameStatePusher>
