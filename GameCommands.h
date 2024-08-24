@@ -35,7 +35,7 @@ public:
 	void InvalidMove(bool beVerbose = false) const;
 	void FetchedPickup(bool beVerbose = false) const;
 	void StartNetworkLevel();
-	static void PingGameServer();
+	static void PingGameServer(unsigned long deltaMs);
 private:
 	bool verbose;
 	bool logCommands;

@@ -53,7 +53,7 @@ void InputManager::Sample(const unsigned long deltaMs)
 
 	if (keyState[SDL_SCANCODE_Q] || keyState[SDL_SCANCODE_ESCAPE]) { gameCommands->Quit(verbose); }
 	if (keyState[SDL_SCANCODE_R]) { gameCommands->ReloadSettings(verbose);  }
-	if (keyState[SDL_SCANCODE_P]) { gameCommands->PingGameServer();  }
+	if (keyState[SDL_SCANCODE_P]) { gameCommands->PingGameServer(0);  }
 	if (keyState[SDL_SCANCODE_R]) { gameCommands->ReloadSettings(verbose); }
 	if (keyState[SDL_SCANCODE_R]) { gameCommands->ReloadSettings(verbose);  }
 	if (keyState[SDL_SCANCODE_N]) { gameCommands->StartNetworkLevel();  }

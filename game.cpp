@@ -144,7 +144,7 @@ void Draw()
 void GetInput(const unsigned long deltaMs)
 {
 	LevelManager::Get()->GetInputManager()->Sample(deltaMs);
-	NetworkManager::Get()->Listen(deltaMs);	                                           
+	NetworkManager::Get()->Listen(GameDataManager::Get()->GameWorldData.ElapsedGameTime);	                                           
 }
 
 shared_ptr<FixedStepGameLoop> CreateGameLoopStrategy()

@@ -625,7 +625,10 @@ void LevelManager::InitializeStatisticsCapturing()
 	       << "AverageLatencyMsSma3" << "\t"
 	       << "CountAcks" << "\t" 
 	       << "VerificationFailedCount" << "\t" 
-	       << "CountAggregateMessagesReceived" << std::endl;
+	       << "CountAggregateMessagesReceived" << "\t"
+	       << "SendingRateMs"  << "\t"
+	       << "SendingRatePs"
+	       << std::endl;
 
 	statisticsFile->Append(header.str(), false);
 
@@ -649,7 +652,9 @@ void LevelManager::InitializeStatisticsCapturing()
 				<< networkingStatistics.AverageLatency  << "\t"
 				<< networkingStatistics.CountAcks  << "\t"
 				<< networkingStatistics.VerificationFailedCount  << "\t"
-				<< networkingStatistics.CountAggregateMessagesReceived
+				<< networkingStatistics.CountAggregateMessagesReceived << "\t"
+				<< networkingStatistics.SendRateMs << "\t"
+				<< networkingStatistics.SendRatePs
 				<< std::endl;
 
 			// Write to file
@@ -672,15 +677,39 @@ void LevelManager::InitializeClientGameStatePusher()
 	}
 
 	// Periodically ping the game server
-	const auto sendRateMs = SettingsManager::Get()->GetInt("gameStatePusher", "sendRateMs");
+	sendRateMs = SettingsManager::Get()->GetInt("gameStatePusher", "sendRateMs");
+	increaseSendingRateEveryMs = SettingsManager::Get()->GetInt("gameStatePusher", "increaseSendingRateEveryMs");
+	increaseSendingRateIncrementMs =  SettingsManager::Get()->GetInt("gameStatePusher", "increaseSendingRateIncrementMs"); 
+	pingRateTimer.SetFrequency(sendRateMs);
+	increasePingRateTimer.SetFrequency(increaseSendingRateEveryMs);
 
-	periodicTimer.SetFrequency(sendRateMs);
+	networkingStatistics.SendRateMs = sendRateMs;
+
 	const auto sendGameStateProcess = std::static_pointer_cast<Process>(std::make_shared<Action>([&](const unsigned long deltaMs)
 	{
-		periodicTimer.Update(deltaMs);
-		periodicTimer.DoIfReady([=]()
+		pingRateTimer.Update(deltaMs);
+		increasePingRateTimer.Update(deltaMs);
+
+		// increase ping rate frequency
+		increasePingRateTimer.DoIfReady([&]()
 		{
-			GameCommands::PingGameServer();
+			// only increase rate if we can (can't reduce sending interval by an amount greater than what it is now)
+			if(sendRateMs > increaseSendingRateIncrementMs)
+			{
+				// increase sending rate by decreasing intervals between sends
+				sendRateMs -= increaseSendingRateIncrementMs;
+
+				// update sending rate to be written to statistics
+				networkingStatistics.SendRateMs = sendRateMs;
+				networkingStatistics.SendRatePs = 1000 / sendRateMs;
+			}
+			pingRateTimer.SetFrequency(sendRateMs);
+		});
+
+		// ping
+		pingRateTimer.DoIfReady([=]()
+		{
+			GameCommands::PingGameServer(GameDataManager::Get()->GameWorldData.ElapsedGameTime);
 		});
 	}, false));
 

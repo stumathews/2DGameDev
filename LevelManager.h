@@ -79,6 +79,9 @@ private:
     gamelib::EventFactory* eventFactory = nullptr;
     gamelib::EventManager* eventManager = nullptr;
     gamelib::ProcessManager processManager;
+    int sendRateMs; // how fast we ping messages
+    int increaseSendingRateEveryMs; // after how long to wait until upping the ping rate
+    int increaseSendingRateIncrementMs; // how much to increase the ping rate by
     static size_t GetRandomIndex(const int min, const int max) { return rand() % (max - min + 1) + min; }     // NOLINT(concurrency-mt-unsafe)
     static std::shared_ptr<Room> GetRandomRoom(const std::vector<std::shared_ptr<Room>>& rooms);
     std::shared_ptr<Enemy> enemy1;
@@ -111,7 +114,8 @@ private:
     void OnReliableUdpAckPacketEvent(const std::shared_ptr<gamelib::Event>& evt);
     gamelib::PeriodicTimer statisticsIntervalTimer;
 
-    gamelib::PeriodicTimer periodicTimer;
+    gamelib::PeriodicTimer pingRateTimer;
+    gamelib::PeriodicTimer increasePingRateTimer;
     std::shared_ptr<gamelib::TextFile> statisticsFile;
     gamelib::NetworkingStatistics networkingStatistics;
 };
