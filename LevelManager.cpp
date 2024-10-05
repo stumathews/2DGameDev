@@ -609,7 +609,8 @@ void LevelManager::OnReliableUdpPacketRttCalculatedEvent(const std::shared_ptr<g
 	const auto rttEvent = To<ReliableUdpPacketRttCalculatedEvent>(evt);
 
 	// The last latency recorded is a smooth moving average considering last 3 packets
-	networkingStatistics.AverageLatency = rttEvent->Rtt.Sma3;
+	networkingStatistics.AverageLatencySMA3 = rttEvent->Rtt.Sma3;
+	networkingStatistics.RttMs = rttEvent->Rtt.Rtt;
 }
 
 
@@ -627,7 +628,8 @@ void LevelManager::InitializeStatisticsCapturing()
 	       << "VerificationFailedCount" << "\t" 
 	       << "CountAggregateMessagesReceived" << "\t"
 	       << "SendingRateMs"  << "\t"
-	       << "SendingRatePs"
+	       << "SendingRatePs"  << "\t"
+		   << "RttMs"
 	       << std::endl;
 
 	statisticsFile->Append(header.str(), false);
@@ -649,12 +651,13 @@ void LevelManager::InitializeStatisticsCapturing()
 				<< networkingStatistics.BytesReceived  << "\t"
 				<< networkingStatistics.CountPacketsLost  << "\t"
 				<< networkingStatistics.CountPacketsReceived  << "\t"
-				<< networkingStatistics.AverageLatency  << "\t"
+				<< networkingStatistics.AverageLatencySMA3  << "\t"
 				<< networkingStatistics.CountAcks  << "\t"
 				<< networkingStatistics.VerificationFailedCount  << "\t"
 				<< networkingStatistics.CountAggregateMessagesReceived << "\t"
 				<< networkingStatistics.SendRateMs << "\t"
-				<< networkingStatistics.SendRatePs
+				<< networkingStatistics.SendRatePs << "\t"
+				<< networkingStatistics.RttMs
 				<< std::endl;
 
 			// Write to file
@@ -709,7 +712,8 @@ void LevelManager::InitializeClientGameStatePusher()
 		// ping
 		pingRateTimer.DoIfReady([=]()
 		{
-			GameCommands::PingGameServer(GameDataManager::Get()->GameWorldData.ElapsedGameTime);
+			auto elapsedTime = GameDataManager::Get()->GameWorldData.ElapsedGameTime;
+			GameCommands::PingGameServer(elapsedTime);
 		});
 	}, false));
 
