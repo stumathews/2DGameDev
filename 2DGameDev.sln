@@ -34,6 +34,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibCausalityTests", "..\lib
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcausality", "..\libcausality\libcausality.vcxproj", "{EA98BB93-A71F-4BA6-AC63-F30D7D48B417}"
+	ProjectSection(ProjectDependencies) = postProject
+		{478A3EF4-5780-4567-BE58-56BECCD9D215} = {478A3EF4-5780-4567-BE58-56BECCD9D215}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmonadTests", "..\libmonad\Tests\LibMonadTests.vcxproj", "{CDB1EF51-1996-4362-8DA3-54575EFC516C}"
 EndProject
@@ -41,8 +44,8 @@ Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "Installer", "Installer\Inst
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{F0AF3FEA-49B8-47F4-8325-5A894AE27D19}"
 	ProjectSection(SolutionItems) = preProject
-		Build\common.props = Build\common.props
 		Build\build.proj = Build\build.proj
+		Build\common.props = Build\common.props
 		Build\common.targets = Build\common.targets
 		Build\common.tasks = Build\common.tasks
 	EndProjectSection
