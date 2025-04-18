@@ -17,7 +17,8 @@
 #include "Pickup.h"
 #include "file/TextFile.h"
 #include "graphic/DrawableText.h"
-#include "net/NetworkingStatistics.h"
+#include "net/GameStatePusher.h"
+#include "net/NetworkingActivityMonitor.h"
 
 typedef std::vector<std::weak_ptr<gamelib::GameObject>> ListOfGameObjects;
 
@@ -33,14 +34,11 @@ public:
     LevelManager() = default;
     ~LevelManager() override;
 
-    void InitializeStatisticsCapturing();
     void InitializeClientGameStatePusher();
+    void ScheduleProcess(std::shared_ptr<gamelib::Process> process);
     bool Initialize();
-    void OnNetworkPlayerJoinedEvent(const std::shared_ptr<gamelib::Event>& evt) const;
-    void OnNetworkTrafficReceivedEvent(const std::shared_ptr<gamelib::Event>& evt);
-    void OnReliableUdpPacketReceivedEvent(const std::shared_ptr<gamelib::Event>& evt);
+    static void SendGameState();
     [[nodiscard]] bool ChangeLevel(int levelNum) const; // Raises change level event
-
     
     gamelib::ListOfEvents HandleEvent(const std::shared_ptr<gamelib::Event>& evt, const unsigned long inDeltaMs) override;
     static bool GetBoolSetting(const std::string& section, const std::string& settingName);
@@ -79,9 +77,6 @@ private:
     gamelib::EventFactory* eventFactory = nullptr;
     gamelib::EventManager* eventManager = nullptr;
     gamelib::ProcessManager processManager;
-    int sendRateMs; // how fast we ping messages
-    int increaseSendingRateEveryMs; // after how long to wait until upping the ping rate
-    int increaseSendingRateIncrementMs; // how much to increase the ping rate by
     static size_t GetRandomIndex(const int min, const int max) { return rand() % (max - min + 1) + min; }     // NOLINT(concurrency-mt-unsafe)
     static std::shared_ptr<Room> GetRandomRoom(const std::vector<std::shared_ptr<Room>>& rooms);
     std::shared_ptr<Enemy> enemy1;
@@ -101,23 +96,16 @@ private:
     void CreateAutoPickups(const std::vector<std::shared_ptr<Room>>& rooms);
     void CreatePlayer(const std::vector<std::shared_ptr<Room>>& rooms, int resourceId);
     void OnGameWon();
-    void OnReliableUdpCheckSumFailedEvent(const std::shared_ptr<gamelib::Event>& evt);
+   
     void OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt);
     void OnFetchedPickup(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnLevelChanged(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnNetworkPlayerJoined(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
-    void OnStartNetworkLevel(const std::shared_ptr<gamelib::Event>& evt);    
-    void OnReliableUdpPacketLossDetectedEvent(const std::shared_ptr<gamelib::Event>& evt);
-    void OnReliableUdpPacketRttCalculatedEvent(const std::shared_ptr<gamelib::Event>& evt);
-    
-    void OnReliableUdpAckPacketEvent(const std::shared_ptr<gamelib::Event>& evt);
-    gamelib::PeriodicTimer statisticsIntervalTimer;
+    void OnStartNetworkLevel(const std::shared_ptr<gamelib::Event>& evt);
 
-    gamelib::PeriodicTimer pingRateTimer;
-    gamelib::PeriodicTimer increasePingRateTimer;
-    std::shared_ptr<gamelib::TextFile> statisticsFile;
-    gamelib::NetworkingStatistics networkingStatistics;
+    std::shared_ptr<gamelib::NetworkingActivityMonitor> networkingActivityMonitor;
+    std::shared_ptr<gamelib::GameStatePusher> gameStatePusher;
 };
 
 
