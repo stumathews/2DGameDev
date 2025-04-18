@@ -110,15 +110,18 @@ void InitializeGameSubSystems(GameStructure& gameStructure)
 	constexpr auto gameSettingsFilePath = "data/settings.xml";
 	constexpr auto sceneFolderPath = "data\\";
 
-	
-	const auto initialized1 = gameStructure.Initialize(screenWidth, screenHeight, windowTitle, resourcesFilePath,
+	// Initialize game structure
+	const auto isGameStructureInitialized = gameStructure.Initialize(screenWidth, screenHeight, windowTitle, resourcesFilePath,
 	                                                   gameSettingsFilePath, sceneFolderPath);
-	const auto initialized2 = LevelManager::Get()->Initialize();
 
-	const auto someInitFailed = !IsSuccess(initialized1, "Successfully initialized game structure.") || 
-								     !IsSuccess(initialized2, "Successfully initialized Level Manager...");
+	// Initialize level manager
+	const auto isLevelManagerInitialized = LevelManager::Get()->Initialize();
 
-	if (someInitFailed)
+	const auto anyInitFailures = !IsSuccess(isGameStructureInitialized, "Successfully initialized game structure.") || 
+								!IsSuccess(isLevelManagerInitialized, "Successfully initialized Level Manager...");
+
+	// Check for any initialization failures
+	if (anyInitFailures)
 	{
 		const auto verboseLoggingEnabled = Settings::Bool("global", "verbose");
 
@@ -130,8 +133,13 @@ void InitializeGameSubSystems(GameStructure& gameStructure)
 
 void Update(const unsigned long deltaMs)
 {	
+	// Process all pending events
 	EventManager::Get()->ProcessAllEvents(deltaMs);
+
+	// Send update event - will dispatch events to subscribers who have subscribed to game object 'update' event 
 	EventManager::Get()->DispatchEventToSubscriber(EventFactory::Get()->CreateUpdateAllGameObjectsEvent(), deltaMs);
+
+	// Send update processes event - will dispatch event to processes
 	EventManager::Get()->DispatchEventToSubscriber(EventFactory::Get()->CreateUpdateProcessesEvent(), deltaMs);
 }
 
