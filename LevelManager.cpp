@@ -143,7 +143,7 @@ void LevelManager::OnEnemyCollision(const std::shared_ptr<Event>& evt)
 	Logger::Get()->LogThis(message.str());
 
 	// Update the player's health (this will be reflected on the HUD)
-	playerHealth->Text = message.str();
+	playerHealth->Text = to_string(collisionEvent->Player->GetHealth());
 
 	// Check if the player is dead
 	if(collisionEvent->Player->GetHealth() <= 0)
@@ -168,7 +168,7 @@ void LevelManager::OnPickupCollision(const std::shared_ptr<Event>& evt) const
 	stringstream message;
 	message << "Player gain " << to_string(collisionEvent->Player->GetPoints()) << " points";
 
-	playerPoints->Text = message.str();
+	playerPoints->Text = to_string(collisionEvent->Player->GetPoints());
 
 	Logger::Get()->LogThis(playerPoints->Text);
 }
