@@ -10,12 +10,10 @@
 #include "graphic/DrawableFrameRate.h"
 #include <processes/ProcessManager.h>
 #include <character/StaticSprite.h>
-
 #include "Enemy.h"
 #include "InputManager.h"
 #include "Observer.h"
 #include "Pickup.h"
-#include "file/TextFile.h"
 #include "graphic/DrawableText.h"
 #include "net/GameStatePusher.h"
 #include "net/NetworkingActivityMonitor.h"
@@ -34,7 +32,6 @@ public:
     LevelManager() = default;
     ~LevelManager() override;
 
-    void InitializeClientGameStatePusher();
     void ScheduleProcess(std::shared_ptr<gamelib::Process> process);
     bool Initialize();
     static void SendGameState();
@@ -62,7 +59,7 @@ public:
     [[nodiscard]] std::shared_ptr<gamelib::DrawableText> CreateDrawablePlayerPoints() const;
     void GetKeyboardInput(const unsigned long deltaMs) const;
     void InitializeAutoPickups(const std::vector<std::shared_ptr<gamelib::Pickup>>& inPickups);
-    void InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<gamelib::SpriteAsset>& spriteAsset) const;
+    static void InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<gamelib::SpriteAsset>& spriteAsset);
     void InitializeRooms(const std::vector<std::shared_ptr<Room>>& rooms);
 
     void RemoveAllGameObjects();
@@ -77,6 +74,8 @@ private:
     gamelib::EventFactory* eventFactory = nullptr;
     gamelib::EventManager* eventManager = nullptr;
     gamelib::ProcessManager processManager;
+    bool isGameServer;
+    int sendRateMs;
     static size_t GetRandomIndex(const int min, const int max) { return rand() % (max - min + 1) + min; }     // NOLINT(concurrency-mt-unsafe)
     static std::shared_ptr<Room> GetRandomRoom(const std::vector<std::shared_ptr<Room>>& rooms);
     std::shared_ptr<Enemy> enemy1;

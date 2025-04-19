@@ -33,13 +33,14 @@ using namespace gamelib;
 using namespace std;
 using namespace ExpectationLib;
 
-
 bool LevelManager::Initialize()
 {
 	if(initialized) { return true; }
 
 	verbose =  GetBoolSetting("global", "verbose");
 	disableCharacters = GetBoolSetting("global", "disableCharacters");
+	isGameServer = SettingsManager::Get()->GetBool("networking", "isGameServer");
+	sendRateMs = SettingsManager::Get()->GetInt("gameStatePusher", "sendRateMs");
 
 	GameData::Get()->IsNetworkGame = GetBoolSetting("global", "isNetworkGame");
 	GameData::Get()->IsGameDone = false;
@@ -65,29 +66,16 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(PlayerCollidedWithPickupEventId, this);	
 
 	// Set up the network activity monitor
-	networkingActivityMonitor = std::make_shared<NetworkingActivityMonitor>(processManager, *eventManager);
+	networkingActivityMonitor = std::make_shared<NetworkingActivityMonitor>(processManager, *eventManager);	
+	networkingActivityMonitor->SetSendRateMs(sendRateMs);
 	networkingActivityMonitor->Initialise();
 
 	// Arrange for game state to be periodically sent to game server
-
-	const int sendRateMs = SettingsManager::Get()->GetInt("gameStatePusher", "sendRateMs");
-	
-	// Set the send rate that is being used, this will show up in the statistics being saved
-    networkingActivityMonitor->SetSendRateMs(sendRateMs);
-
-	const bool isGameServer = SettingsManager::Get()->GetBool("networking", "isGameServer");
 	gameStatePusher = std::make_shared<GameStatePusher>(LevelManager::SendGameState, sendRateMs, isGameServer, processManager);
 	gameStatePusher->Initialise();
 	gameStatePusher->Run();	
 
 	return initialized = true;
-}
-
-
-void LevelManager::SendGameState()
-{
-	// We'll broadcast our state as pings to the server
-	GameCommands::PingGameServer(GameDataManager::Get()->GameWorldData.ElapsedGameTime);
 }
 
 ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event>& evt, const unsigned long inDeltaMs)
@@ -429,7 +417,7 @@ void LevelManager::CreateAutoLevel()
 	AddScreenWidgets(level->Rooms);
 }
 
-void LevelManager::InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<SpriteAsset>&spriteAsset) const
+void LevelManager::InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<SpriteAsset>&spriteAsset)
 {
 	inPlayer->SetMoveStrategy(std::make_shared<GameObjectMoveStrategy>(inPlayer, inPlayer->CurrentRoom));
 	inPlayer->SetTag(gamelib::PlayerTag);
@@ -500,10 +488,10 @@ inline std::string LevelManager::GetSubscriberName()
 	return "level_manager";
 }
 
-void LevelManager::InitializeClientGameStatePusher()
+void LevelManager::SendGameState()
 {
-
-	
+	// We'll broadcast our state as pings to the server
+	GameCommands::PingGameServer(GameDataManager::Get()->GameWorldData.ElapsedGameTime);
 }
 
 void LevelManager::ScheduleProcess(std::shared_ptr<Process> process)  // NOLINT(performance-unnecessary-value-param)
