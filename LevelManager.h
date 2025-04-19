@@ -35,7 +35,7 @@ public:
     void ScheduleProcess(std::shared_ptr<gamelib::Process> process);
     bool Initialize();
     static void SendGameState();
-    [[nodiscard]] bool ChangeLevel(int levelNum) const; // Raises change level event
+    [[nodiscard]] bool ChangeLevel(int levelNum) const;
     
     gamelib::ListOfEvents HandleEvent(const std::shared_ptr<gamelib::Event>& evt, const unsigned long inDeltaMs) override;
     static bool GetBoolSetting(const std::string& section, const std::string& settingName);
@@ -98,7 +98,7 @@ private:
    
     void OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt);
     void OnFetchedPickup(const std::shared_ptr<gamelib::Event>& evt) const;
-    void OnLevelChanged(const std::shared_ptr<gamelib::Event>& evt) const;
+    static void OnLevelChanged(const std::shared_ptr<gamelib::Event>& evt);
     void OnNetworkPlayerJoined(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnStartNetworkLevel(const std::shared_ptr<gamelib::Event>& evt);
