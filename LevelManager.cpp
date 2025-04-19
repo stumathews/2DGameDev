@@ -33,6 +33,7 @@ using namespace gamelib;
 using namespace std;
 using namespace ExpectationLib;
 
+
 bool LevelManager::Initialize()
 {
 	if(initialized) { return true; }
@@ -75,14 +76,13 @@ bool LevelManager::Initialize()
     networkingActivityMonitor->SetSendRateMs(sendRateMs);
 
 	const bool isGameServer = SettingsManager::Get()->GetBool("networking", "isGameServer");
-	auto sendGameStateFunc = [&]() { SendGameState(); };
-
-	gameStatePusher = std::make_shared<GameStatePusher>(sendRateMs, isGameServer, processManager);
-	//gameStatePusher->Initialise(sendGameStateFunc);
-	//gameStatePusher->Run();	
+	gameStatePusher = std::make_shared<GameStatePusher>(LevelManager::SendGameState, sendRateMs, isGameServer, processManager);
+	gameStatePusher->Initialise();
+	gameStatePusher->Run();	
 
 	return initialized = true;
 }
+
 
 void LevelManager::SendGameState()
 {
