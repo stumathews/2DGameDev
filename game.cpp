@@ -131,18 +131,19 @@ namespace
 
 		// Tap into the fetchPickupEvent to track relationships between player and pickups
 		EventManager::Get()->SetEventTap([](const shared_ptr<Event>& event, const IEventSubscriber* subscriber)
-			{
-				if (event->Id == PlayerMovedEventTypeEventId) return;
-				if (event->Id == AddGameObjectToCurrentSceneEventId) return;
-				if (event->Id == EnemyMovedEventId) return;
-				if (event->Id == DrawCurrentSceneEventId) return;
-				if (event->Id == UpdateAllGameObjectsEventTypeEventId) return;
-				if (event->Id == UpdateProcessesEventId) return;
-				if (event->Id == ControllerMoveEventId) return;
+		{
+			// Ignore tapping some events:
+			if (event->Id == PlayerMovedEventTypeEventId) return;
+			if (event->Id == AddGameObjectToCurrentSceneEventId) return;
+			if (event->Id == EnemyMovedEventId) return;
+			if (event->Id == DrawCurrentSceneEventId) return;
+			if (event->Id == UpdateAllGameObjectsEventTypeEventId) return;
+			if (event->Id == UpdateProcessesEventId) return;
+			if (event->Id == ControllerMoveEventId) return;
 
-				// Generate causality data
-				// libcausality::EventTap::Get()->Tap(event, const_cast<IEventSubscriber*>(subscriber)->GetSubscriberName(), GameDataManager::Get()->GameWorldData.ElapsedGameTime);
-			});
+			// Generate causality data
+			// libcausality::EventTap::Get()->Tap(event, const_cast<IEventSubscriber*>(subscriber)->GetSubscriberName(), GameDataManager::Get()->GameWorldData.ElapsedGameTime);
+		});
 	}
 }
 
@@ -169,7 +170,7 @@ int main(int, char* [])
 
 		return IsSuccess(infrastructure.Unload(), "Unloading game subsystems successful.");
 	}
-	catch (EngineException& e)
+	catch (const EngineException& e)
 	{
 		MessageBoxA(nullptr, e.what(), "Game Error!", MB_OK);
 
