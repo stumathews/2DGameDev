@@ -28,7 +28,7 @@ namespace
 		##   ##  ###  ##  # ####   ### ###  #### ##           ######   ### ##
 	*/
 
-	static void InitializeGameSubSystems(GameStructure& gameStructure);
+	static void InitializeGameSubSystems(GameStructure& gameStructure, const bool isNetworkGame);
 	static void PrepareFirstLevel();
 	static shared_ptr<FixedStepGameLoop> CreateGameLoopStrategy();
 	static void GetInput(unsigned long deltaMs);
@@ -62,18 +62,21 @@ namespace
 			: "Creating Single player level...");
 	}
 
-	void InitializeGameSubSystems(GameStructure& gameStructure)
+	void InitializeGameSubSystems(GameStructure& gameStructure, const bool isNetworkGame)
 	{
 		constexpr auto screenWidth = 0; // 0 will mean it will get read from the settings file
 		constexpr auto screenHeight = 0; // 0 will mean it will get read from the settings file
 		constexpr auto windowTitle = "Mazer2D!";
 		constexpr auto resourcesFilePath = "data\\Resources.xml";
-		constexpr auto gameSettingsFilePath = "data/settings.xml";
 		constexpr auto sceneFolderPath = "data\\";
 
+		GameDataManager::Get()->Initialize(isNetworkGame);
+		ErrorLogManager::GetErrorLogManager()->Create("GameErrors.txt");
+
 		// Initialize game structure
-		const auto isGameStructureInitialized = gameStructure.Initialize(screenWidth, screenHeight, windowTitle, resourcesFilePath,
-			gameSettingsFilePath, sceneFolderPath);
+		const auto isGameStructureInitialized = gameStructure.Initialize(
+			screenWidth, screenHeight, windowTitle, resourcesFilePath,
+			sceneFolderPath);
 
 		// Initialize level manager
 		const auto isLevelManagerInitialized = LevelManager::Get()->Initialize();
@@ -145,15 +148,15 @@ namespace
 
 int main(int, char* [])
 {
-
 	try
 	{
-		GameDataManager::Get()->Initialize(false);
-		ErrorLogManager::GetErrorLogManager()->Create("GameErrors.txt");
+		// Load settings
+		const auto settingsInitialized = SettingsManager::Get()->Load("data/settings.xml");
+		const auto isNetworkGame = SettingsManager::Get()->GetBool("global", "isNetworkGame");
 
 		GameStructure infrastructure(CreateGameLoopStrategy());
 
-		InitializeGameSubSystems(infrastructure);
+		InitializeGameSubSystems(infrastructure, isNetworkGame);
 
 		// Allow tapping into all events diagnostic purposes
 		SetupEventTap();
