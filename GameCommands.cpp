@@ -23,7 +23,7 @@ GameCommands::GameCommands()
 	verbose = SettingsManager::Bool("global", "verbose");
 	logCommands = SettingsManager::Bool("global", "verbose");
 	
-	EventManager::Get()->SubscribeToEvent(PlayerMovedEventTypeEventId, this);
+	//EventManager::Get()->SubscribeToEvent(PlayerMovedEventTypeEventId, this);
 }
 
 std::string GameCommands::GetSubscriberName()

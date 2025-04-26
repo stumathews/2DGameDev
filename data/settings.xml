@@ -41,6 +41,7 @@
     <setting name="useReliableUdp" type="bool">true</setting>
     <setting name="useEncryption" type="bool">true</setting>
     <setting name="encoding" type="int">3</setting> <!-- 1=Json, 2=Xml, 3=BitPacked -->
+		<setting name="sendClientEventsToServer" type="bool">false</setting>
 	</networking>
 
   <gameStatePusher>
@@ -48,6 +49,7 @@
 	  <setting name="sendRateMs" type="int">1000</setting>
     <setting name="increaseSendingRateEveryMs" type="int">5000</setting>
     <setting name="increaseSendingRateIncrementMs" type="int">10</setting>
+		<setting name="enabled" type="bool">false</setting>
   </gameStatePusher>
       
   <!-- Maze Settings -->

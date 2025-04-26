@@ -131,7 +131,7 @@ void InitializeGameSubSystems(GameStructure& gameStructure)
 	}
 }
 
-void Update(const unsigned long deltaMs)
+static void Update(const unsigned long deltaMs)
 {	
 	// Process all pending events
 	EventManager::Get()->ProcessAllEvents(deltaMs);

@@ -35,12 +35,13 @@ using namespace ExpectationLib;
 
 bool LevelManager::Initialize()
 {
-	if(initialized) { return true; }
+	if (initialized) { return true; }
 
-	verbose =  GetBoolSetting("global", "verbose");
+	verbose = GetBoolSetting("global", "verbose");
 	disableCharacters = GetBoolSetting("global", "disableCharacters");
 	isGameServer = SettingsManager::Get()->GetBool("networking", "isGameServer");
 	sendRateMs = SettingsManager::Get()->GetInt("gameStatePusher", "sendRateMs");
+	auto gameStatePusherEnabled = SettingsManager::Get()->GetBool("gameStatePusher", "enabled");
 
 	GameData::Get()->IsNetworkGame = GetBoolSetting("global", "isNetworkGame");
 	GameData::Get()->IsGameDone = false;
@@ -67,17 +68,20 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(GameWonEventId, this);
 	eventManager->SubscribeToEvent(PlayerCollidedWithEnemyEventId, this);
 	eventManager->SubscribeToEvent(PlayerDiedEventId, this);
-	eventManager->SubscribeToEvent(PlayerCollidedWithPickupEventId, this);	
+	eventManager->SubscribeToEvent(PlayerCollidedWithPickupEventId, this);
 
 	// Set up the network activity monitor to listen for network events
-	networkingActivityMonitor = std::make_shared<NetworkingActivityMonitor>(processManager, *eventManager, verbose);	
+	networkingActivityMonitor = std::make_shared<NetworkingActivityMonitor>(processManager, *eventManager, verbose);
 	networkingActivityMonitor->SetSendRateMs(sendRateMs);
 	networkingActivityMonitor->Initialise();
 
-	// Arrange for game state to be periodically sent to game server
-	gameStatePusher = std::make_shared<GameStatePusher>(LevelManager::SendGameState, sendRateMs, isGameServer, processManager);
-	gameStatePusher->Initialise();
-	gameStatePusher->Run();	
+	if (gameStatePusherEnabled) 
+	{
+		// Arrange for game state to be periodically sent to game server
+		gameStatePusher = std::make_shared<GameStatePusher>(LevelManager::SendGameState, sendRateMs, isGameServer, processManager);
+		gameStatePusher->Initialise();
+		gameStatePusher->Run();
+	}
 
 	// Mark initialisation as done
 	return initialized = true;
