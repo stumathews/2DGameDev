@@ -18,11 +18,6 @@
 #include "file/SettingsManager.h"
 #include "objects/GameObjectFactory.h"
 
-namespace gamelib
-{
-	class ControllerMoveEvent;
-}
-
 Enemy::Enemy(const std::string& name,
              const std::string& type,
              const gamelib::Coordinate<int> position,
@@ -42,50 +37,151 @@ Enemy::Enemy(const std::string& name,
 	ConfigureEnemyBehavior();
 }
 
-std::function<bool()> Enemy::IfMovedIn(const gamelib::Direction direction) const
+void Enemy::ConfigureEnemyBehavior()
+{
+	// Set up possible states enemy can be in
+	upState = gamelib::FSMState("Up", DoLookForPlayer());
+	downState = gamelib::FSMState("Down", DoLookForPlayer());
+	leftState = gamelib::FSMState("Left", DoLookForPlayer());
+	rightState = gamelib::FSMState("Right", DoLookForPlayer());
+	hitWallState = gamelib::FSMState("Invalid", gamelib::FSMState::NoUpdate,
+		[&] { SwapCurrentDirection(); });
+
+	// Set the state machine states
+	invalidMoveTransition = gamelib::FSMTransition([&]()-> bool { return !isValidMove; },
+		[&]()-> gamelib::FSMState* { return &hitWallState; });
+
+	// Set up conditions for state transitions
+	onUpDirection = gamelib::FSMTransition(IfMovedInDirection(gamelib::Direction::Up),
+		[&]()-> gamelib::FSMState* { return &upState; });
+	onDownDirection = gamelib::FSMTransition(IfMovedInDirection(gamelib::Direction::Down),
+		[&]()-> gamelib::FSMState* { return &downState; });
+	onLeftDirection = gamelib::FSMTransition(IfMovedInDirection(gamelib::Direction::Left),
+		[&]()-> gamelib::FSMState* { return &leftState; });
+	onRightDirection = gamelib::FSMTransition(IfMovedInDirection(gamelib::Direction::Right),
+		[&]()-> gamelib::FSMState* { return &rightState; });
+
+	// Configure valid transitions
+	upState.Transitions = { onDownDirection, onLeftDirection, onRightDirection, invalidMoveTransition };
+	downState.Transitions = { onUpDirection, onLeftDirection, onRightDirection, invalidMoveTransition };
+	leftState.Transitions = { onUpDirection, onDownDirection, onRightDirection, invalidMoveTransition };
+	rightState.Transitions = { onUpDirection, onDownDirection, onLeftDirection, invalidMoveTransition };
+	hitWallState.Transitions = { onUpDirection, onDownDirection, onLeftDirection, onRightDirection };
+
+	// Set state machine to states it can be in
+	stateMachine.States = { upState, downState, leftState, rightState, hitWallState };
+
+	// Set the initial state to down
+	stateMachine.InitialState = &downState;
+}
+
+void Enemy::Initialize()
+{
+	LoadSettings();
+	SubscribeToEvent(gamelib::PlayerMovedEventTypeEventId);
+	SubscribeToEvent(SettingsReloadedEventId);
+
+	// save some frames: don't move every frame. E.g., move every 10ms
+	moveTimer.SetFrequency(moveRateMs);
+
+	// Use or create a move strategy
+	gameObjectMoveStrategy = gameObjectMoveStrategy == nullptr
+		? std::make_shared<GameObjectMoveStrategy>(shared_from_this(), CurrentRoom)
+		: gameObjectMoveStrategy;
+}
+
+void Enemy::LoadSettings()
+{
+	emitMoveEvents = gamelib::SettingsManager::Bool("enemy", "emitMoveEvents");
+	moveAtSpeed = gamelib::SettingsManager::Bool("enemy", "moveAtSpeed");
+	speed = gamelib::SettingsManager::Int("enemy", "speed");
+	moveRateMs = gamelib::SettingsManager::Int("enemy", "moveRateMs");
+	animate = gamelib::SettingsManager::Bool("enemy", "animate");
+	drawState = gamelib::SettingsManager::Bool("enemy", "drawState");
+}
+
+std::vector<std::shared_ptr<gamelib::Event>> Enemy::HandleEvent(const std::shared_ptr<gamelib::Event>& event,
+	const unsigned long deltaMs)
+{
+	// Only if the player moves...
+	if (event->Id == gamelib::PlayerMovedEventTypeEventId)
+	{
+		CheckForPlayerCollision();
+	}
+
+	// Only if settings event occurs
+	if (event->Id.PrimaryId == SettingsReloadedEventId.PrimaryId)
+	{
+		LoadSettings();
+	}
+
+	return {};
+}
+
+void Enemy::Update(const unsigned long deltaMs)
+{
+	if (GameData::Get()->IsGameWon()) return;
+
+	// we only want to move and emit move events periodically
+	moveTimer.Update(deltaMs);
+
+	if (moveTimer.IsReady())
+	{
+		// Automatically keep moving our position in configured direction
+		Move(deltaMs);
+
+		moveTimer.Reset();
+	}
+
+	// Do common/normal NPC activities also
+	Npc::Update(deltaMs);
+
+	// Plus some special Enemy stuff
+	auto constexpr emptyString = "";
+	auto stateText = drawState
+		? stateMachine.ActiveState->GetName().substr(0, 1)
+		: emptyString;
+
+	// Set the enemy state text
+	Status->Text = stateMachine.ActiveState != nullptr
+		? stateText
+		: emptyString;
+}
+
+bool Enemy::Move(const unsigned long deltaMs)
+{
+	const std::shared_ptr<gamelib::IMovement> movementAtSpeed = std::make_shared<gamelib::MovementAtSpeed>(speed, currentFacingDirection, deltaMs);
+	const std::shared_ptr<gamelib::IMovement> constantPixelMovement = std::make_shared<gamelib::Movement>(currentFacingDirection);
+
+	// Move the game object
+	isValidMove = gameObjectMoveStrategy->MoveGameObject(moveAtSpeed
+		? movementAtSpeed
+		: constantPixelMovement);
+
+	if (isValidMove)
+	{
+		// Tell the world I moved
+
+		if (!emitMoveEvents) { return true; }
+
+		RaiseEvent(std::make_shared<EnemyMovedEvent>(shared_from_this()));
+
+		return true;
+	}
+
+	return false;
+}
+
+std::function<bool()> Enemy::IfMovedInDirection(const gamelib::Direction direction) const
 {
 	// note: returns a func
-	return [=] { return IfMoved(direction); };
+	return [this, direction] { return IfMoved(direction); };
 }
 
 std::function<void(unsigned long deltaMs)> Enemy::DoLookForPlayer()
 {
 	// note: returns a func
-	return [=](const unsigned long) { LookForPlayer(); };
-}
-
-void Enemy::ConfigureEnemyBehavior()
-{
-	upState = gamelib::FSMState("Up", DoLookForPlayer());
-	downState = gamelib::FSMState("Down", DoLookForPlayer());
-	leftState = gamelib::FSMState("Left", DoLookForPlayer());
-	rightState = gamelib::FSMState("Right", DoLookForPlayer());
-	invalidMoveTransition = gamelib::FSMTransition([&]()-> bool { return !isValidMove; },
-	                                               [&]()-> gamelib::FSMState* { return &hitWallState; });
-	hitWallState = gamelib::FSMState("Invalid", gamelib::FSMState::NoUpdate, [&] { SwapCurrentDirection(); });
-
-	// Set the state depending on which direction the enemy is facing
-	onUpDirection = gamelib::FSMTransition(IfMovedIn(gamelib::Direction::Up),
-	                                       [&]()-> gamelib::FSMState* { return &upState; });
-	onDownDirection = gamelib::FSMTransition(IfMovedIn(gamelib::Direction::Down),
-	                                         [&]()-> gamelib::FSMState* { return &downState; });
-	onLeftDirection = gamelib::FSMTransition(IfMovedIn(gamelib::Direction::Left),
-	                                         [&]()-> gamelib::FSMState* { return &leftState; });
-	onRightDirection = gamelib::FSMTransition(IfMovedIn(gamelib::Direction::Right),
-	                                          [&]()-> gamelib::FSMState* { return &rightState; });
-
-	// Configure valid transitions
-	upState.Transitions = {onDownDirection, onLeftDirection, onRightDirection, invalidMoveTransition};
-	downState.Transitions = {onUpDirection, onLeftDirection, onRightDirection, invalidMoveTransition};
-	leftState.Transitions = {onUpDirection, onDownDirection, onRightDirection, invalidMoveTransition};
-	rightState.Transitions = {onUpDirection, onDownDirection, onLeftDirection, invalidMoveTransition};
-	hitWallState.Transitions = {onUpDirection, onDownDirection, onLeftDirection, onRightDirection};
-
-	// Set state machine to states it can be in
-	stateMachine.States = {upState, downState, leftState, rightState, hitWallState};
-
-	// Set the initial state to down
-	stateMachine.InitialState = &downState;
+	return [this](const unsigned long) { LookForPlayer(); };
 }
 
 bool Enemy::IfMoved(const gamelib::Direction direction) const
@@ -220,21 +316,6 @@ bool Enemy::IsPlayerInLineOfSight(const gamelib::Direction lookDirection) const
 	return false; // player not found
 }
 
-void Enemy::Initialize()
-{
-	LoadSettings();
-	SubscribeToEvent(FireEventId);
-	SubscribeToEvent(gamelib::PlayerMovedEventTypeEventId);
-	SubscribeToEvent(SettingsReloadedEventId);
-
-	// save some frames: don't move every frame
-	moveTimer.SetFrequency(moveRateMs);
-
-	moveStrategy = moveStrategy == nullptr
-		               ? std::make_shared<GameObjectMoveStrategy>(shared_from_this(), CurrentRoom)
-		               : moveStrategy;
-}
-
 void Enemy::CheckForPlayerCollision()
 {
 	const auto player = GameDataManager::Get()->GameData()->GetPlayer();
@@ -247,82 +328,3 @@ void Enemy::CheckForPlayerCollision()
 	}
 }
 
-std::vector<std::shared_ptr<gamelib::Event>> Enemy::HandleEvent(const std::shared_ptr<gamelib::Event>& event,
-                                                                const unsigned long deltaMs)
-{
-	if (event->Id == gamelib::PlayerMovedEventTypeEventId)
-	{
-		CheckForPlayerCollision();
-	}
-	if(event->Id.PrimaryId == SettingsReloadedEventId.PrimaryId)
-	{
-		LoadSettings();
-	}
-
-	return {};
-}
-
-bool Enemy::Move(const unsigned long deltaMs)
-{
-	const std::shared_ptr<gamelib::IMovement> movementAtSpeed = std::make_shared<gamelib::MovementAtSpeed>(speed, currentFacingDirection, deltaMs);
-	const std::shared_ptr<gamelib::IMovement> constantPixelMovement = std::make_shared<gamelib::Movement>(currentFacingDirection);
-
-	isValidMove = moveStrategy->MoveGameObject(moveAtSpeed ? movementAtSpeed : constantPixelMovement);
-
-	// Update our bounds too
-	UpdateBounds(Dimensions);
-
-	// Tell the world I moved
-	if(isValidMove)
-	{
-		if(!emitMoveEvents) { return true; }		
-
-		RaiseEvent(std::make_shared<EnemyMovedEvent>(shared_from_this()));
-		
-		return true;
-	}
-
-	return false;
-}
-
-void Enemy::Update(const unsigned long deltaMs)
-{
-	if (GameData::Get()->IsGameWon()) return;
-
-	// Automatically move enemy in configured direction
-	moveTimer.DoIfReady([&]() { 	Move(deltaMs); });
-
-	// Update everything 
-	Npc::Update(deltaMs);
-	Hotspot->Update(Position);
-	Sprite->MoveSprite(Position);
-
-	if(animate)
-	{
-		Sprite->Update(deltaMs, gamelib::AnimatedSprite::GetStdDirectionAnimationFrameGroup(currentFacingDirection));
-	}
-		
-	// Update our bounds too
-	UpdateBounds(Dimensions);
-
-	// Set the enemy state text
-	Status->Text = stateMachine.ActiveState != nullptr
-		? drawState ? stateMachine.ActiveState->GetName().substr(0, 1) : ""
-			: "";
-	
-	// Do Behavior/React 
-	stateMachine.Update(deltaMs);
-
-	// we only want to move and emit move events periodically
-	moveTimer.Update(deltaMs);	
-}
-
-void Enemy::LoadSettings()
-{
-	emitMoveEvents = gamelib::SettingsManager::Bool("enemy", "emitMoveEvents");
-	moveAtSpeed = gamelib::SettingsManager::Bool("enemy", "moveAtSpeed");
-	speed = gamelib::SettingsManager::Int("enemy", "speed");
-	moveRateMs = gamelib::SettingsManager::Int("enemy", "moveRateMs");
-	animate = gamelib::SettingsManager::Bool("enemy", "animate");
-	drawState = gamelib::SettingsManager::Bool("enemy", "drawState");
-}
