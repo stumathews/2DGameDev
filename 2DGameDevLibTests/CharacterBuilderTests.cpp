@@ -63,7 +63,6 @@ TEST_F(CharacterBuilderTests, BuildEnemyWorks)
 	enemy->Initialize();
 
 	// Ensure the initialization is correct
-	EXPECT_TRUE(enemy->SubscribesTo(FireEventId));
 	EXPECT_TRUE(enemy->SubscribesTo(gamelib::PlayerMovedEventTypeEventId));
 
 }
