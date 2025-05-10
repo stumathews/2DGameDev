@@ -28,7 +28,7 @@ namespace
 		##   ##  ###  ##  # ####   ### ###  #### ##           ######   ### ##
 	*/
 
-	static void InitializeGameSubSystems(GameStructure& gameStructure, const bool isNetworkGame);
+	static void InitializeGameSubSystems(GameStructure& gameStructure);
 	static void PrepareFirstLevel();
 	static shared_ptr<FixedStepGameLoop> CreateGameLoopStrategy();
 	static void GetInput(unsigned long deltaMs);
@@ -62,7 +62,7 @@ namespace
 			: "Creating Single player level...");
 	}
 
-	void InitializeGameSubSystems(GameStructure& gameStructure, const bool isNetworkGame)
+	void InitializeGameSubSystems(GameStructure& gameStructure)
 	{
 		constexpr auto screenWidth = 0; // 0 will mean it will get read from the settings file
 		constexpr auto screenHeight = 0; // 0 will mean it will get read from the settings file
@@ -70,7 +70,11 @@ namespace
 		constexpr auto resourcesFilePath = "data\\Resources.xml";
 		constexpr auto sceneFolderPath = "data\\";
 
+		// Initialize network subsystem
+		const auto isNetworkGame = SettingsManager::Get()->GetBool("global", "isNetworkGame");
 		GameDataManager::Get()->Initialize(isNetworkGame);
+
+		// Initialize the logging system
 		ErrorLogManager::GetErrorLogManager()->Create("GameErrors.txt");
 
 		// Initialize game structure
@@ -151,13 +155,14 @@ int main(int, char* [])
 {
 	try
 	{
-		// Load settings
-		const auto settingsInitialized = SettingsManager::Get()->Load("data/settings.xml");
-		const auto isNetworkGame = SettingsManager::Get()->GetBool("global", "isNetworkGame");
+		// Load settings file
+		SettingsManager::Get()->Load("data/settings.xml");
 
+		// Initialize the game structure
 		GameStructure infrastructure(CreateGameLoopStrategy());
 
-		InitializeGameSubSystems(infrastructure, isNetworkGame);
+		// Initialize all game subsystems
+		InitializeGameSubSystems(infrastructure);
 
 		// Allow tapping into all events diagnostic purposes
 		SetupEventTap();
@@ -165,10 +170,15 @@ int main(int, char* [])
 		// Load level and create/add game objects
 		PrepareFirstLevel();
 
-		// Start the game loop which will pump update/draw events onto the event system, which level objects subscribe to
+		// Start the game loop.
+		// This will pump update/draw events onto the event system, which level objects subscribe to
 		infrastructure.DoGameLoop(&GameDataManager::Get()->GameWorldData);
 
-		return IsSuccess(infrastructure.Unload(), "Unloading game subsystems successful.");
+		// Game is finished, unload subsystems
+
+		auto isUnloaded = infrastructure.Unload();
+
+		return IsSuccess(isUnloaded, "Unloading game subsystems successful.");
 	}
 	catch (const EngineException& e)
 	{
