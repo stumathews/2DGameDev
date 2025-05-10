@@ -41,19 +41,19 @@ bool GameObjectMoveStrategy::MoveGameObject(const std::shared_ptr<gamelib::IMove
 gamelib::Coordinate<int> GameObjectMoveStrategy::CalculateGameObjectMove(
 	const std::shared_ptr<gamelib::IMovement>& movement, const int pixelsToMove) const
 {
-	int resultingY = gameObject->Position.GetY();
-	int resultingX = gameObject->Position.GetX();
+	int y = gameObject->Position.GetY();
+	int x = gameObject->Position.GetX();
 
 	switch (movement->GetDirection())
 	{
-		case gamelib::Direction::Down: resultingY += pixelsToMove;	break;
-		case gamelib::Direction::Up: resultingY -= pixelsToMove; 	break;
-		case gamelib::Direction::Left: resultingX -= pixelsToMove;  break;
-		case gamelib::Direction::Right: resultingX += pixelsToMove; break;
+		case gamelib::Direction::Down: y += pixelsToMove;	break;
+		case gamelib::Direction::Up: y -= pixelsToMove; 	break;
+		case gamelib::Direction::Left: x -= pixelsToMove;  break;
+		case gamelib::Direction::Right: x += pixelsToMove; break;
 		case gamelib::Direction::None: THROW(0, "Direction is NOne", "PlayerMoveStrategy");
 	}
 
-	return {resultingX, resultingY};
+	return {x, y};
 }
 
 void GameObjectMoveStrategy::SetGameObjectPosition(const gamelib::Coordinate<int> resultingMove) const

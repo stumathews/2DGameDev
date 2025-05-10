@@ -8,7 +8,7 @@ class Player;
 class Room;
 
 // Moves a Game Object in some way
-class GameObjectMoveStrategy final : public gamelib::IGameObjectMoveStrategy
+class GameObjectMoveStrategy : public gamelib::IGameObjectMoveStrategy
 {
 public:
 	GameObjectMoveStrategy(const std::shared_ptr<gamelib::GameObject>& gameObject,
