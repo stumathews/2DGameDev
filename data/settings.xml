@@ -145,9 +145,9 @@
 		<setting name="emitMoveEvents" type="bool" description="Should emit EnemyMovedEvent or not">true</setting>
 		<setting name="moveAtSpeed" type="bool" description="Use Speed to move">true</setting>
 		<setting name="speed" type="int" description="move speed">2</setting>
-	  <setting name="moveRateMs" type="int" description="Move every n ms">1</setting>
+	  <setting name="moveRateMs" type="int" description="Move every n ms">10</setting>
 	  <setting name="animate" type="bool" description="animate character by changing key frames">true</setting>
-	  <setting name="drawState" type="bool" description="draw enemy state">false</setting>
+	  <setting name="drawState" type="bool" description="draw enemy state">true</setting>
   </enemy>
 
 </settings>
