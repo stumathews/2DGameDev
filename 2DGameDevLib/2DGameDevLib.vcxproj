@@ -205,9 +205,7 @@
   <ItemGroup>
     <ClCompile Include="CharacterBuilder.cpp" />
     <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="EnemyMovedEvent.cpp" />
     <ClCompile Include="GameDataManager.cpp" />
-    <ClCompile Include="PlayerCollidedWithPickupEvent.cpp" />
     <ClCompile Include="RoomInfo.cpp" />
     <ClCompile Include="GameObjectMoveStrategy.cpp" />
     <ClCompile Include="GameData.cpp" />

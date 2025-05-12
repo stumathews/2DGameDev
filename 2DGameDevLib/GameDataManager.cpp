@@ -1,11 +1,9 @@
-#include "pch.h"
 #include "GameDataManager.h"
 #include <events/Event.h>
 #include <objects/GameObject.h>
 #include "Room.h"
 #include <events/AddGameObjectToCurrentSceneEvent.h>
 #include <events/GameObjectEvent.h>
-
 #include "EventNumber.h"
 #include "pickup.h"
 #include "utils/Utils.h"

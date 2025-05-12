@@ -71,27 +71,25 @@ public:
 private:
 	void CommonInit(int playerWidth, int playerHeight, const std::string& identifier);
 	void CenterPlayerInRoom(const std::shared_ptr<Room>& targetRoom);
-	void BaseProcessEvent(const std::shared_ptr<gamelib::Event>& event, gamelib::ListOfEvents& createdEvents,
-	                      unsigned long deltaMs);
 	const gamelib::ListOfEvents& OnControllerMove(const std::shared_ptr<gamelib::Event>& event,
 	                                              gamelib::ListOfEvents& createdEvents, unsigned long deltaMs);
 	void Move(unsigned long deltaMs);
 	void CancelInvalidDirectionKeyPresses(std::map<gamelib::Direction, gamelib::ControllerMoveEvent::KeyState>& currentKeyStates);
 	int speed{};
 	int pixelsToMove = 0;
-	std::shared_ptr<gamelib::AnimatedSprite> sprite;
-	int width{};
-	int height{};
+	std::shared_ptr<gamelib::AnimatedSprite> Sprite;
+	int Width{};
+	int Height{};
 	bool drawBounds = false;
 	bool hideSprite = false;
 	bool drawHotSpot = false;
 	int hotspotSize = 0;
-	gamelib::Direction currentMovingDirection;
-	gamelib::Direction currentFacingDirection;
+	gamelib::Direction CurrentMovingDirection;
+	gamelib::Direction CurrentFacingDirection;
 	std::shared_ptr<gamelib::IGameObjectMoveStrategy> moveStrategy;
 	bool verbose{};
 	bool gameWon = false;
 	gamelib::PeriodicTimer moveTimer;
 	int moveRateMs{};
-	std::map<gamelib::Direction, gamelib::ControllerMoveEvent::KeyState> directionKeyStates {};
+	std::map<gamelib::Direction, gamelib::ControllerMoveEvent::KeyState> DirectionKeyStates {};
 };

@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "PlayerComponent.h"
 
 PlayerComponent::PlayerComponent(const std::string& componentName, Player* player)

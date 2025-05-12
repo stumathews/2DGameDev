@@ -241,7 +241,7 @@ void Room::LoadSettings()
 	fill = SettingsManager::Bool("room_fill", "enable");
 	innerBoundsOffset = SettingsManager::Int("room", "innerBoundsOffset");
 	logWallRemovals = SettingsManager::Bool("room", "logWallRemovals");
-	drawInnerBounds = SettingsManager::Bool("room", "drawinnerBounds");
+	drawInnerBounds = SettingsManager::Bool("room", "drawInnerBounds");
 	drawHotSpot = SettingsManager::Bool("room", "drawHotSpot");
 	printDebuggingTextNeighborsOnly = SettingsManager::Bool("global", "print_debugging_text_neighbours_only");
 	printDebuggingText = SettingsManager::Bool("global", "print_debugging_text");

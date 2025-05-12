@@ -63,9 +63,9 @@
   
   <room>
     <setting name="drawHotSpot" type="bool">false</setting>
-    <setting name="drawinnerBounds" type="bool">false</setting>	
+    <setting name="drawInnerBounds" type="bool">false</setting>	
     <setting name="innerBoundsOffset" type="int">2</setting>	
-    <setting name="logWallRemovals" type="bool">true</setting>
+    <setting name="logWallRemovals" type="bool">false</setting>
     <setting name="trackEnemies" type="bool">true</setting>
   </room>
   
