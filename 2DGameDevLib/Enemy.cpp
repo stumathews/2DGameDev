@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Enemy.h"
 #include <memory>
 #include <utility>
@@ -30,13 +29,11 @@ Enemy::Enemy(const std::string& name,
 	: Npc(name, type, position, visible, std::move(sprite), std::move(enemyMoveStrategy)),
 	  CurrentLevel(std::move(level))
 {
-	// NPCs do not have a direction, but Enemies do. Inidcate which way its facing
-	SetNpcDirection(startingDirection);
+	Npc::SetDirection(startingDirection);
 
-	// The enemy will be placed in this room initially. This will change as the enemy moves around
 	CurrentRoom = std::make_shared<RoomInfo>(startRoom);
 
-	// Setup the state machine
+	// Set up the state machine
 	ConfigureEnemyBehavior();
 }
 
@@ -239,14 +236,14 @@ void Enemy::LookForPlayer()
 		// Search for player up.
 		if (IsPlayerInLineOfSight(gamelib::Direction::Up))
 		{
-			SetNpcDirection(gamelib::Direction::Up); // chase in direction found
+			SetDirection(gamelib::Direction::Up); // chase in direction found
 			return;
 		}
 
 		// Search for player down.
 		if (IsPlayerInLineOfSight(gamelib::Direction::Down))
 		{
-			SetNpcDirection(gamelib::Direction::Down); //chase in direction found
+			SetDirection(gamelib::Direction::Down); //chase in direction found
 			return;
 		}
 	}
@@ -263,14 +260,14 @@ void Enemy::LookForPlayer()
 		// Search for player Left.
 		if (IsPlayerInLineOfSight(gamelib::Direction::Left))
 		{
-			SetNpcDirection(gamelib::Direction::Left); //chase in direction found
+			SetDirection(gamelib::Direction::Left); //chase in direction found
 			return;
 		}
 
 		// Search for player right.
 		if (IsPlayerInLineOfSight(gamelib::Direction::Right))
 		{
-			SetNpcDirection(gamelib::Direction::Right); //chase in direction found
+			SetDirection(gamelib::Direction::Right); //chase in direction found
 		}
 	}
 }
@@ -341,13 +338,12 @@ bool Enemy::IsPlayerInLineOfSight(const gamelib::Direction lookDirection) const
 	return false; // player not found
 }
 
-// ReSharper disable once CppPassValueParameterByConstReference
-bool Enemy::InSameRoomAsPlayer(const std::shared_ptr<Player> player,
-                               // ReSharper disable once CppPassValueParameterByConstReference
-                               const std::shared_ptr<Room> currentRoom)
+// ReSharper disable CppPassValueParameterByConstReference
+bool Enemy::InSameRoomAsPlayer(const std::shared_ptr<Player> player, const std::shared_ptr<Room> currentRoom)  // NOLINT
 {
 	return currentRoom->GetRoomNumber() == player->CurrentRoom->RoomIndex;
 }
+// ReSharper restore CppPassValueParameterByConstReference
 
 void Enemy::CheckForPlayerCollision()
 {
