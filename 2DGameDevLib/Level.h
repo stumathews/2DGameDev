@@ -36,8 +36,8 @@ public:
 	void InitializePickups(const std::vector<std::shared_ptr<gamelib::Pickup>>& inPickups);
 	void AddGameObjectToScene(const std::shared_ptr<gamelib::GameObject>& object);
 	std::shared_ptr<gamelib::GameObject> ParseObject(tinyxml2::XMLNode* pObject, const std::shared_ptr<Room>& room) const;
-	void InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<gamelib::SpriteAsset>& spriteAsset) const;
-	static void ParseProperty(tinyxml2::XMLNode* pObjectChild, const std::shared_ptr<gamelib::GameObject>& gameObject);	
+	static void InitializePlayer(const std::shared_ptr<Player>& inPlayer, const std::shared_ptr<gamelib::SpriteAsset>& spriteAsset);
+	static std::tuple<std::string, std::string> ParseProperty(tinyxml2::XMLNode* pObjectChild, const std::shared_ptr<gamelib::GameObject>& gameObject);
 	std::shared_ptr<Room> GetRoom(int row, int col);	
 	[[nodiscard]] bool IsAutoLevel() const { return isAutoLevel || FileName.empty(); }
 	[[nodiscard]] bool IsAutoPopulatePickups() const { return isAutoPopulatePickups; }

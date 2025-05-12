@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Level.h"
 #include "file/tinyxml2.h"
 #include "Room.h"
@@ -72,7 +71,7 @@ void Level::Load()
 		if (auto autoPopulatePickups = scene->ToElement()->Attribute("autoPopulatePickups"))
 		{
 			auto strToTransform = string(autoPopulatePickups);
-			std::transform(strToTransform.begin(), strToTransform.end(), strToTransform.begin(), ::toupper);
+			ranges::transform(strToTransform, strToTransform.begin(), ::toupper);
 			isAutoPopulatePickups = strToTransform == "TRUE";
 		}
 
@@ -166,7 +165,7 @@ ListOfEvents Level::HandleEvent(const std::shared_ptr<Event>& evt, const unsigne
 	return {};
 }
 
-map<string, string> GetNodeAttributes(XMLNode* pAssetNode)
+static map<string, string> GetNodeAttributes(XMLNode* pAssetNode)
 {
 	map<string, string> attributes;
 	if (pAssetNode)
@@ -240,14 +239,19 @@ shared_ptr<GameObject> Level::ParseObject(XMLNode* pObject, const std::shared_pt
 
 		if (objectChildName == "property")
 		{
-			ParseProperty(pObjectChild, gameObject); // hmm, this object has a property attached
+			auto keyValuePair = ParseProperty(pObjectChild, gameObject); // hmm, this object has a property attached
+
+			auto key = std::get<0>(keyValuePair);
+			const auto value = std::get<1>(keyValuePair);
+
+			gameObject->StringProperties[key] = value;
 		}
 	}
 	return gameObject;
 }
 
 void Level::InitializePlayer(const std::shared_ptr<Player>& inPlayer,
-                             const std::shared_ptr<SpriteAsset>& spriteAsset) const
+                             const std::shared_ptr<SpriteAsset>& spriteAsset)
 {
 	inPlayer->SetMoveStrategy(std::make_shared<GameObjectMoveStrategy>(inPlayer, inPlayer->CurrentRoom));
 	inPlayer->SetTag(gamelib::PlayerTag);
@@ -258,13 +262,13 @@ void Level::InitializePlayer(const std::shared_ptr<Player>& inPlayer,
 	GameData::Get()->player = inPlayer;
 }
 
-void Level::ParseProperty(XMLNode* pObjectChild, const shared_ptr<GameObject>& gameObject)
+std::tuple<std::string, std::string> Level::ParseProperty(XMLNode* pObjectChild, const shared_ptr<GameObject>& gameObject)
 {
 	const auto& attributes = GetNodeAttributes(pObjectChild);
 	const auto& name = attributes.at("name");
 	const auto& value = attributes.at("value");
 
-	gameObject->StringProperties[name] = value;
+	return { name, value };
 }
 
 std::shared_ptr<Room> Level::GetRoom(const int row, const int col)
