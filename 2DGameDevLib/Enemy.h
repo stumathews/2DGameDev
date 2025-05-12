@@ -39,6 +39,7 @@ private:
 	void LookForPlayer();
 	bool IsPlayerInLineOfSight(gamelib::Direction lookDirection) const;
 	std::function<void(unsigned long deltaMs)> DoLookForPlayer(); // returns a function taking a delta time
+	static bool InSameRoomAsPlayer(std::shared_ptr<Player> player, std::shared_ptr<Room> currentRoom);
 	void ConfigureEnemyBehavior();
 	std::function<bool()> IfMovedInDirection(gamelib::Direction direction) const; // returns a function returning a bool	
 	bool emitMoveEvents{};
