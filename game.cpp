@@ -156,7 +156,7 @@ int main(int, char* [])
 	try
 	{
 		// Load settings file
-		SettingsManager::Get()->Load("data/settings.xml");
+		SettingsManager::Get()->ReadSettingsFile("data/settings.xml");
 
 		// Initialize the game structure
 		GameStructure infrastructure(CreateGameLoopStrategy());
