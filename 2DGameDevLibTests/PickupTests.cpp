@@ -39,7 +39,7 @@ class PickupTests : public testing::Test
 
 TEST_F(PickupTests, Construction)
 {
-	EXPECT_EQ(pickup->GetGameObjectType(), gamelib::GameObjectType::Pickup);
+	EXPECT_EQ(pickup->GetGameObjectType(), gamelib::GameObjectType::pickup);
 	EXPECT_EQ(pickup->GetSubscriberName(), pickupName);
 	EXPECT_EQ(pickup->GetName(), pickupName);
 	EXPECT_EQ(pickup->RoomNumber, room->GetRoomNumber());

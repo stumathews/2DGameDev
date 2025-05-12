@@ -61,7 +61,7 @@ namespace gamelib
 
 	GameObjectType Pickup::GetGameObjectType()
 	{
-		return GameObjectType::Pickup;
+		return GameObjectType::pickup;
 	}
 
 	std::string Pickup::GetSubscriberName()

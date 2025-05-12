@@ -66,7 +66,7 @@ void GameDataManager::AddToGameData(const shared_ptr<AddGameObjectToCurrentScene
 {
 	const auto gameObject = To<AddGameObjectToCurrentSceneEvent>(event)->GetGameObject();
 
-	if (gameObject->GetGameObjectType() == GameObjectType::GameDefined)
+	if (gameObject->GetGameObjectType() == GameObjectType::game_defined)
 	{
 		if (gameObject->Type == "Room")
 		{
@@ -79,7 +79,7 @@ void GameDataManager::AddToGameData(const shared_ptr<AddGameObjectToCurrentScene
 	}
 	else
 	{
-		if (gameObject->GetGameObjectType() == GameObjectType::Pickup)
+		if (gameObject->GetGameObjectType() == GameObjectType::pickup)
 		{
 			GameData()->AddPickup(To<Pickup>(gameObject));
 		}

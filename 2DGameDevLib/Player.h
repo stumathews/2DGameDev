@@ -60,7 +60,7 @@ public:
 	[[nodiscard]] int GetHotSpotLength() const;
 	[[nodiscard]] int GetWidth() const;
 	[[nodiscard]] int GetHeight() const;
-	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::GameDefined; }
+	gamelib::GameObjectType GetGameObjectType() override { return gamelib::GameObjectType::game_defined; }
 	int GetHealth();
 	int GetPoints();
 

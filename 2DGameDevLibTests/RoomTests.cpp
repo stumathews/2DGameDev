@@ -23,7 +23,7 @@ TEST(RoomTests, Basic)
 	EXPECT_EQ(room.GetX(), x);
 	EXPECT_EQ(room.GetY(), y);
 	EXPECT_FALSE(room.HasGraphic());
-	EXPECT_EQ(room.GetGameObjectType(), gamelib::GameObjectType::GameDefined);
+	EXPECT_EQ(room.GetGameObjectType(), gamelib::GameObjectType::game_defined);
 	EXPECT_EQ(room.GetGraphic(), nullptr);
 	EXPECT_FALSE(room.HasColourKey());
 	EXPECT_EQ(room.GetColourKey().r, 0);

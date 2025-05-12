@@ -118,7 +118,7 @@ TEST_F(GameDataManagerTests, Adds_GameObject)
 {
 	// Put expectations in place that dependencies will be called...
 	EXPECT_CALL(*player, GetGameObjectType()).Times(testing::AtLeast(1)).WillRepeatedly(
-		testing::Return(gamelib::GameObjectType::GameDefined));
+		testing::Return(gamelib::GameObjectType::game_defined));
 
 	// When receiving an event to add game object to scene
 	subject->HandleEvent(std::dynamic_pointer_cast<gamelib::Event>(gamelib::EventFactory::CreateAddToSceneEvent(player)), 0);
