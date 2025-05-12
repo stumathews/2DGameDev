@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "CharacterBuilder.h"
 #include "Enemy.h"
 #include "GameData.h"
@@ -11,25 +10,28 @@
 
 using namespace gamelib;
 
-std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, const std::shared_ptr<Room>& room,
-                                                      const int resourceId, const std::string& nickName)
+std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& playerName,
+                                                      const std::shared_ptr<Room>& playerRoom,
+                                                      const int playerResourceId, const std::string& nickName)
 {
-	// Get resource/asset from resource manager
-	const auto spriteAsset = To<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(resourceId));
+	// The player's sprite sheet
+	const auto spriteAsset = To<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(playerResourceId));
 
-	// Build sprite
+	const auto positionInRoom = playerRoom->GetCenter(spriteAsset->Dimensions);
+
+	// Build player's sprite
 	const auto animatedSprite = GameObjectFactory::BuildSprite(
-		name,
+		playerName,
 		"Player",
 		spriteAsset,
-		room->GetCenter(spriteAsset->Dimensions),
+		positionInRoom,
 		true);
 
 	// Build player
 	auto player = std::make_shared<Player>(
-		name,
+		playerName,
 		"Player", 
-		room,
+		playerRoom,
 		spriteAsset->Dimensions, 
 		nickName);
 
@@ -46,28 +48,29 @@ std::shared_ptr<Player> CharacterBuilder::BuildPlayer(const std::string& name, c
 	return player;
 }
 
-std::shared_ptr<Enemy> CharacterBuilder::BuildEnemy(const std::string& name, const std::shared_ptr<Room>& room,
-                                                    const int spriteResourceId, Direction startingDirection,
+std::shared_ptr<Enemy> CharacterBuilder::BuildEnemy(const std::string& enemyName, const std::shared_ptr<Room>& enemyRoom,
+                                                    const int enemySpriteResourceId, Direction startingDirection,
                                                     const std::shared_ptr<const Level>& level)
 {
-	const auto spriteAsset = To<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(spriteResourceId));
+	// A enemy's sprite asset
+	const auto spriteAsset = To<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(enemySpriteResourceId));
 
-	const auto positionInRoom = room->GetCenter(spriteAsset->Dimensions);
+	const auto positionInRoom = enemyRoom->GetCenter(spriteAsset->Dimensions);
 
 	// Build sprite
-	const auto animatedSprite = GameObjectFactory::BuildSprite(
-		name, 
+	const auto enemyAnimatedSprite = GameObjectFactory::BuildSprite(
+		enemyName, 
 	"Enemy", 
 		spriteAsset, 
 		positionInRoom, 
 		true);
 
-	auto enemy = std::make_shared<Enemy>(name,
+	auto enemy = std::make_shared<Enemy>(enemyName,
 		"Enemy",
 		positionInRoom,
 		true,
-		room,
-		animatedSprite,
+		enemyRoom,
+		enemyAnimatedSprite,
 		startingDirection,
 		level);
 
@@ -75,16 +78,19 @@ std::shared_ptr<Enemy> CharacterBuilder::BuildEnemy(const std::string& name, con
 }
 
 
-std::shared_ptr<Pickup> CharacterBuilder::BuildPickup(const std::string& name,
-                                                      const std::shared_ptr<Room>& room, const int resourceId)
-{
-	const auto spriteAsset = To<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(resourceId));
+std::shared_ptr<Pickup> CharacterBuilder::BuildPickup(const std::string& pickupName,
+                                                      const std::shared_ptr<Room>& pickupRoom,
+                                                      const int pickupResourceId)
+{	
+	const auto pickupSpriteSheet = To<SpriteAsset>(ResourceManager::Get()->GetAssetInfo(pickupResourceId));
 
-	auto pickup = std::make_shared<Pickup>(name, "Pickup", 
-		room->GetCenter(spriteAsset->Dimensions),
+	const auto positionInRoom = pickupRoom->GetCenter(pickupSpriteSheet->Dimensions);
+
+	auto pickup = std::make_shared<Pickup>(pickupName, "Pickup", 
+		positionInRoom,
 		true,
-		room->GetRoomNumber(), 
-		spriteAsset);
+		pickupRoom->GetRoomNumber(), 
+		pickupSpriteSheet);
 
 	pickup->Initialize();
 	pickup->LoadSettings();

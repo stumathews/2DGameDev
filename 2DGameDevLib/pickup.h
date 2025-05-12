@@ -12,10 +12,10 @@ namespace gamelib
 	class Pickup final : public DrawableGameObject, public std::enable_shared_from_this<Pickup>
 	{
 	public:
-		Pickup(const std::string name, const std::string type, const int x, const int y, const int width,
+		Pickup(const std::string& name, const std::string& type, const int x, const int y, const int width,
 		       const int height, const bool visible, const int inRoomNumber);
 
-		Pickup(const std::string name, const std::string type, const Coordinate<int> startingPoint, const bool visible,
+		Pickup(const std::string& name, const std::string type, const Coordinate<int> startingPoint, const bool visible,
 		       const int inRoomNumber, const std::shared_ptr<SpriteAsset> asset);
 
 		explicit Pickup(const bool visible);
@@ -24,6 +24,7 @@ namespace gamelib
 
 		std::string GetSubscriberName() override;
 		std::string GetName() override;
+		bool IsInSameRoomAsPlayer(std::shared_ptr<Player> player) const;
 		ListOfEvents HandleEvent(const std::shared_ptr<Event>& event, const unsigned long deltaMs) override;
 
 		void Initialize();
