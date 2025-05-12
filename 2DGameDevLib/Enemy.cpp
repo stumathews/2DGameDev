@@ -45,7 +45,7 @@ void Enemy::ConfigureEnemyBehavior()
 	leftState = gamelib::FSMState("Left", DoLookForPlayer());
 	rightState = gamelib::FSMState("Right", DoLookForPlayer());
 	hitWallState = gamelib::FSMState("Invalid", gamelib::FSMState::NoUpdate,
-		[&] { SwapCurrentDirection(); });
+		[&] { InvertCurrentDirection(); });
 
 	// Set how the states can transition
 	invalidMoveTransition = gamelib::FSMTransition([&]()-> bool { return !isValidMove; },
