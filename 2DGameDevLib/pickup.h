@@ -15,7 +15,7 @@ namespace gamelib
 		Pickup(const std::string& name, const std::string& type, const int x, const int y, const int width,
 		       const int height, const bool visible, const int inRoomNumber);
 
-		Pickup(const std::string& name, const std::string type, const Coordinate<int> startingPoint, const bool visible,
+		Pickup(const std::string& name, const std::string& type, const Coordinate<int> startingPoint, const bool visible,
 		       const int inRoomNumber, const std::shared_ptr<SpriteAsset> asset);
 
 		explicit Pickup(const bool visible);

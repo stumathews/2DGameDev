@@ -37,17 +37,20 @@ bool LevelManager::Initialize()
 {
 	if (initialized) { return true; }
 
+	// Obtain game settings
 	verbose = GetBoolSetting("global", "verbose");
 	disableCharacters = GetBoolSetting("global", "disableCharacters");
 	isGameServer = SettingsManager::Get()->GetBool("networking", "isGameServer");
 	sendRateMs = SettingsManager::Get()->GetInt("gameStatePusher", "sendRateMs");
-	auto gameStatePusherEnabled = SettingsManager::Get()->GetBool("gameStatePusher", "enabled");
+	const auto gameStatePusherEnabled = SettingsManager::Get()->GetBool("gameStatePusher", "enabled");
 
+	// Set game data
 	GameData::Get()->IsNetworkGame = GetBoolSetting("global", "isNetworkGame");
 	GameData::Get()->IsGameDone = false;
 	GameData::Get()->IsNetworkGame = false;
 	GameData::Get()->CanDraw = true;
 
+	// Construct key components
 	eventManager = EventManager::Get();
 	eventFactory = EventFactory::Get();
 	gameCommands = std::make_shared<GameCommands>();
@@ -107,6 +110,9 @@ ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event>& evt, const 
 	// Respond to player picking up an item
 	if(evt->Id.PrimaryId == FetchedPickupEventId.PrimaryId) { OnFetchedPickup(evt); }
 
+	// Respond to player colliding with a pickup
+	if (evt->Id.PrimaryId == PlayerCollidedWithPickupEventId.PrimaryId) { OnPickupCollision(evt); }
+
 	// Respond to game won event
 	if(evt->Id.PrimaryId == GameWonEventId.PrimaryId) { OnGameWon();}
 
@@ -115,9 +121,6 @@ ListOfEvents LevelManager::HandleEvent(const std::shared_ptr<Event>& evt, const 
 
 	// Respond to player dying
 	if(evt->Id.PrimaryId == PlayerDiedEventId.PrimaryId) { OnPlayerDied(); }
-
-	// Respond to player colliding with a pickup
-	if(evt->Id.PrimaryId == PlayerCollidedWithPickupEventId.PrimaryId) { OnPickupCollision(evt); }
 		
 	return {};
 }
@@ -165,7 +168,7 @@ void LevelManager::OnPickupCollision(const std::shared_ptr<Event>& evt) const
 	// Extract the pickup value from the pickup's properties
 	const auto& pickupValue = collisionEvent->Pickup->StringProperties["value"];
 		
-	// Update the player's points
+	// Update the player's points (Increase them on collision with the pickup)
 	collisionEvent->Player->IntProperties["Points"] += strtol(pickupValue.c_str(), nullptr, 0);
 
 	// Print the player's points to the console
@@ -269,9 +272,11 @@ void LevelManager::PlayLevelMusic(const std::string& levelMusicAssetName)
 
 void LevelManager::OnGameWon()
 {
-	const auto turnOfMusic = std::static_pointer_cast<Process>(std::make_shared<Action>([&](unsigned long deltaMs) { gameCommands->ToggleMusic(verbose); }));
+	// Prepare some actions to run as processes in the process manger when the game is won
+	const auto turnOffMusic = std::static_pointer_cast<Process>(std::make_shared<Action>([&](unsigned long deltaMs) { gameCommands->ToggleMusic(verbose); }));
 	const auto playWinMusic = std::static_pointer_cast<Process>(std::make_shared<Action>([&](unsigned long deltaMs)
 	{
+		// Play win music asset
 		AudioManager::Play(ResourceManager::Get()->GetAssetInfo(SettingsManager::String("audio", "win_music")));
 	}));
 	
@@ -279,17 +284,17 @@ void LevelManager::OnGameWon()
 
 	const auto loadNextLevel = std::static_pointer_cast<Process>(std::make_shared<Action>([&](unsigned long deltaMs)
 	{
+		// Load the next level
 		gameCommands->LoadNewLevel(static_cast<int>(++currentLevel));
 	}));
 
 	// Chain the game win sequence as a list of processes
-	turnOfMusic->AttachChild(playWinMusic)->AttachChild(wait)->AttachChild(loadNextLevel);
+	turnOffMusic->AttachChild(playWinMusic)->AttachChild(wait)->AttachChild(loadNextLevel);
 
-	// Run the initial process
-	processManager.AttachProcess(turnOfMusic);
+	// Put it on the process manager so that it will be run
+	processManager.AttachProcess(turnOffMusic);
 
-	const auto msg = "All Pickups Collected Well Done!";
-	Logger::Get()->LogThis(msg);	
+	Logger::Get()->LogThis("All Pickups Collected Well Done!");
 }
 
 void LevelManager::GetKeyboardInput(const unsigned long deltaMs) const
@@ -547,7 +552,7 @@ bool LevelManager::ChangeLevel(const int levelNum) const
 	return changedLevel;
 }
 
-void LevelManager::OnNetworkPlayerJoined(const std::shared_ptr<Event>& evt) const
+void LevelManager::OnNetworkPlayerJoined(const std::shared_ptr<Event>& evt)
 {
 	// We know a player has joined the game server.
 	const auto networkPlayerJoinedEvent = To<NetworkPlayerJoinedEvent>(evt);
