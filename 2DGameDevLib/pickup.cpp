@@ -27,9 +27,9 @@ namespace gamelib
 		this->RoomNumber = inRoomNumber;
 	}
 
-	Pickup::Pickup(const std::string& name, const std::string type, const Coordinate<int> startingPoint,
+	Pickup::Pickup(const std::string& name, const std::string& type, const Coordinate<int> startingPoint,
 	               // ReSharper disable once CppPassValueParameterByConstReference
-	               const bool visible, const int inRoomNumber, const std::shared_ptr<SpriteAsset> asset)
+	               const bool visible, const int inRoomNumber, const std::shared_ptr<SpriteAsset> asset)  // NOLINT(performance-unnecessary-value-param)
 		: DrawableGameObject(name, type, Coordinate(startingPoint.GetX(), startingPoint.GetY()), visible)
 	{
 		this->IsVisible = visible;
@@ -60,16 +60,21 @@ namespace gamelib
 	{
 		ListOfEvents generatedEvents;
 
+		// Player moved?
 		if (event->Id.PrimaryId == PlayerMovedEventTypeEventId.PrimaryId)
 		{
 			const auto player = GameData::Get()->GetPlayer();
 
+			// Check if the player collided with us...
 			if (IsInSameRoomAsPlayer(player))
 			{
 				if (SdlCollisionDetection::IsColliding(&player->Bounds, &Bounds))
 				{
+					// Yes
 					generatedEvents.push_back(EventFactory::Get()->CreateGenericEvent(FetchedPickupEventId, GetSubscriberName()));
 					generatedEvents.push_back(make_shared<PlayerCollidedWithPickupEvent>(player, shared_from_this()));
+
+					// Schedule ourselves to be removed from the game
 					generatedEvents.push_back(GameObjectEventFactory::MakeRemoveObjectEvent(shared_from_this()));
 				}
 			}
@@ -108,17 +113,13 @@ namespace gamelib
 	}
 
 	// ReSharper disable once CppPassValueParameterByConstReference
-	bool Pickup::IsInSameRoomAsPlayer(const std::shared_ptr<Player> player) const
+	bool Pickup::IsInSameRoomAsPlayer(const std::shared_ptr<Player> player) const  // NOLINT(performance-unnecessary-value-param)
 	{
 		return player->CurrentRoom->GetCurrentRoom()->GetRoomNumber() == RoomNumber;
 	}
-
-
 
 	void Pickup::SetBounds()
 	{
 		Bounds = CalculateBounds(Position, width, height);
 	}
-
-
 }
