@@ -99,7 +99,7 @@ private:
     void OnEnemyCollision(const std::shared_ptr<gamelib::Event>& evt);
     void OnFetchedPickup(const std::shared_ptr<gamelib::Event>& evt) const;
     static void OnLevelChanged(const std::shared_ptr<gamelib::Event>& evt);
-    void OnNetworkPlayerJoined(const std::shared_ptr<gamelib::Event>& evt) const;
+    static void OnNetworkPlayerJoined(const std::shared_ptr<gamelib::Event>& evt);
     void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnStartNetworkLevel(const std::shared_ptr<gamelib::Event>& evt);
 
