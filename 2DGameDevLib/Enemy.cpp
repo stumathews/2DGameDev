@@ -14,6 +14,8 @@
 #include "geometry/SideUtils.h"
 #include "Room.h"
 #include "SDLCollisionDetection.h"
+#include "ai/BehaviorTreeBuilder.h"
+#include "ai/InlineBehavioralAction.h"
 #include "file/SettingsManager.h"
 #include "objects/GameObjectFactory.h"
 
@@ -33,46 +35,83 @@ Enemy::Enemy(const std::string& name,
 
 	CurrentRoom = std::make_shared<RoomInfo>(startRoom);
 
-	// Set up the state machine
-	ConfigureEnemyBehavior();
 }
 
 void Enemy::ConfigureEnemyBehavior()
 {
-	// Set up possible states enemy can be in
-	upState = gamelib::FSMState("Up", DoLookForPlayer());
-	downState = gamelib::FSMState("Down", DoLookForPlayer());
-	leftState = gamelib::FSMState("Left", DoLookForPlayer());
-	rightState = gamelib::FSMState("Right", DoLookForPlayer());
-	hitWallState = gamelib::FSMState("Invalid", gamelib::FSMState::NoUpdate,
-		[&] { InvertCurrentDirection(); });
+	if (!useBehaviorTree)
+	{
+		// Setup Enemy behavior via Finite State Machine
+		// Set up possible states enemy can be in
+		upState = gamelib::FSMState("Up", DoLookForPlayer());
+		downState = gamelib::FSMState("Down", DoLookForPlayer());
+		leftState = gamelib::FSMState("Left", DoLookForPlayer());
+		rightState = gamelib::FSMState("Right", DoLookForPlayer());
 
-	// Set how the states can transition
-	invalidMoveTransition = gamelib::FSMTransition([&]()-> bool { return !isValidMove; },
-		[&]()-> gamelib::FSMState* { return &hitWallState; });
+		// State when enemy has hit a wall
+		hitWallState = gamelib::FSMState("Invalid", gamelib::FSMState::NoUpdate,
+			[&] { InvertCurrentDirection(); });
 
-	// Set up conditions for state transitions
-	onUpDirection = gamelib::FSMTransition(IfMovedInDirection(gamelib::Direction::Up),
-		[&]()-> gamelib::FSMState* { return &upState; });
-	onDownDirection = gamelib::FSMTransition(IfMovedInDirection(gamelib::Direction::Down),
-		[&]()-> gamelib::FSMState* { return &downState; });
-	onLeftDirection = gamelib::FSMTransition(IfMovedInDirection(gamelib::Direction::Left),
-		[&]()-> gamelib::FSMState* { return &leftState; });
-	onRightDirection = gamelib::FSMTransition(IfMovedInDirection(gamelib::Direction::Right),
-		[&]()-> gamelib::FSMState* { return &rightState; });
+		// Set how the states can transition
+		invalidMoveTransition = gamelib::FSMTransition([&]()-> bool { return !isValidMove; },
+			[&]()-> gamelib::FSMState* { return &hitWallState; });
 
-	// Configure valid transitions
-	upState.Transitions = { onDownDirection, onLeftDirection, onRightDirection, invalidMoveTransition };
-	downState.Transitions = { onUpDirection, onLeftDirection, onRightDirection, invalidMoveTransition };
-	leftState.Transitions = { onUpDirection, onDownDirection, onRightDirection, invalidMoveTransition };
-	rightState.Transitions = { onUpDirection, onDownDirection, onLeftDirection, invalidMoveTransition };
-	hitWallState.Transitions = { onUpDirection, onDownDirection, onLeftDirection, onRightDirection };
+		// Set up conditions for state transitions
+		onUpDirection = gamelib::FSMTransition(IfMovedInDirection(gamelib::Direction::Up),
+			[&]()-> gamelib::FSMState* { return &upState; });
+		onDownDirection = gamelib::FSMTransition(IfMovedInDirection(gamelib::Direction::Down),
+			[&]()-> gamelib::FSMState* { return &downState; });
+		onLeftDirection = gamelib::FSMTransition(IfMovedInDirection(gamelib::Direction::Left),
+			[&]()-> gamelib::FSMState* { return &leftState; });
+		onRightDirection = gamelib::FSMTransition(IfMovedInDirection(gamelib::Direction::Right),
+			[&]()-> gamelib::FSMState* { return &rightState; });
 
-	// Set state machine to states it can be in
-	stateMachine.States = { upState, downState, leftState, rightState, hitWallState };
+		// Configure valid transitions
+		upState.Transitions = { onDownDirection, onLeftDirection, onRightDirection, invalidMoveTransition };
+		downState.Transitions = { onUpDirection, onLeftDirection, onRightDirection, invalidMoveTransition };
+		leftState.Transitions = { onUpDirection, onDownDirection, onRightDirection, invalidMoveTransition };
+		rightState.Transitions = { onUpDirection, onDownDirection, onLeftDirection, invalidMoveTransition };
+		hitWallState.Transitions = { onUpDirection, onDownDirection, onLeftDirection, onRightDirection };
 
-	// Set the initial state to down
-	stateMachine.InitialState = &downState;
+		// Set state machine to states it can be in
+		stateMachine.States = { upState, downState, leftState, rightState, hitWallState };
+
+		// Set the initial state to down
+		stateMachine.InitialState = &downState;
+	}
+	else
+	{
+		// Setup Enemy Behavior fir Behavior Tree
+		auto* lookForPlayer = new gamelib::InlineBehavioralAction([&]
+			{
+				LookForPlayer();
+				return gamelib::BehaviorResult::Success;
+			});
+
+		auto* checkIsInvalidMove = new gamelib::InlineBehavioralAction([&]
+			{
+				return !isValidMove
+					? gamelib::BehaviorResult::Success
+					: gamelib::BehaviorResult::Failure;
+			});
+
+		auto* hitWallBehavior = new gamelib::InlineBehavioralAction([&]
+			{
+				InvertCurrentDirection();
+				return gamelib::BehaviorResult::Success;
+			});
+
+		// Use behavior tree
+		behaviorTree = BehaviorTreeBuilder()
+			.ActiveNodeSelector()
+				.Sequence()
+					.Condition(checkIsInvalidMove)
+					.Action(hitWallBehavior)
+				.Finish()
+				.Action(lookForPlayer)
+			.Finish()
+		.End();
+	}
 }
 
 void Enemy::Initialize()
@@ -88,6 +127,9 @@ void Enemy::Initialize()
 	gameObjectMoveStrategy = gameObjectMoveStrategy == nullptr
 		? std::make_shared<GameObjectMoveStrategy>(shared_from_this(), CurrentRoom)
 		: gameObjectMoveStrategy;
+
+	// Configure enemy behavior after we've initialised the Enemy
+	ConfigureEnemyBehavior();
 }
 
 void Enemy::LoadSettings()
@@ -100,6 +142,9 @@ void Enemy::LoadSettings()
 
 	// This draw's the enemies state-machine state near/over the enemy itself
 	drawState = gamelib::SettingsManager::Bool("enemy", "drawState");
+
+	// Use behavior tree or use Finite state machine
+	useBehaviorTree = gamelib::SettingsManager::Bool("enemy", "useBehaviorTree");
 }
 
 std::vector<std::shared_ptr<gamelib::Event>> Enemy::HandleEvent(const std::shared_ptr<gamelib::Event>& event,
@@ -141,16 +186,33 @@ void Enemy::Update(const unsigned long deltaMs)
 	// Do common/normal NPC activities also
 	Npc::Update(deltaMs);
 
-	// Plus some special Enemy stuff
-	auto constexpr emptyString = "";
-	auto stateText = drawState
-		? stateMachine.ActiveState->GetName().substr(0, 1)
-		: emptyString;
+	// Do enemy behavior
+	if (useBehaviorTree)
+	{
+		// Use Behavior Tree for controlling NPC behavior
+		if (behaviorTree != nullptr)
+		{
+			behaviorTree->Tick();
+		}		
+	}	
+	else
+	{
+		// Use State Machine for controlling NPC behavior
 
-	// Set the enemy state text
-	Status->Text = stateMachine.ActiveState != nullptr
-		? stateText
-		: emptyString;
+		// Do Behavior/react 
+		stateMachine.Update(deltaMs);
+
+		// Plus some special Enemy stuff
+		auto constexpr emptyString = "";
+		auto stateText = drawState
+			? stateMachine.ActiveState->GetName().substr(0, 1)
+			: emptyString;
+
+		// Set the enemy state text
+		Status->Text = stateMachine.ActiveState != nullptr
+			? stateText
+			: emptyString;
+	}
 }
 
 bool Enemy::Move(const unsigned long deltaMs)

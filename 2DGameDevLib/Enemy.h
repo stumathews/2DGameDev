@@ -2,6 +2,7 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 #include "Level.h"
+#include "ai/BehaviorTree.h"
 #include "character/Npc.h"
 #include "time/PeriodicTimer.h"
 
@@ -49,6 +50,25 @@ private:
 	int moveRateMs{};
 	bool animate = true;
 	bool drawState = false;
+	bool useBehaviorTree = false;
+
+	gamelib::BehaviorTree* behaviorTree = nullptr;
+	// NPCs have a state machine which they can configure statically
+	gamelib::FSM stateMachine;
+
+	// NPC static states (shared by all NPCs in the Mazer game)
+	gamelib::FSMState hitWallState;
+	gamelib::FSMState upState;
+	gamelib::FSMState downState;
+	gamelib::FSMState leftState;
+	gamelib::FSMState rightState;
+
+	// NPC state transitions
+	gamelib::FSMTransition invalidMoveTransition;
+	gamelib::FSMTransition onUpDirection;
+	gamelib::FSMTransition onDownDirection;
+	gamelib::FSMTransition onLeftDirection;
+	gamelib::FSMTransition onRightDirection;
 };
 
 #endif
