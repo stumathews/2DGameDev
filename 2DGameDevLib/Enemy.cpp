@@ -34,12 +34,16 @@ Enemy::Enemy(const std::string& name,
 	Npc::SetDirection(startingDirection);
 
 	CurrentRoom = std::make_shared<RoomInfo>(startRoom);
-
 }
 
 void Enemy::ConfigureEnemyBehavior()
 {
-	if (!useBehaviorTree)
+	// Check which technology to use to control Enemy Behavior
+
+	// ReSharper disable once CppTooWideScope
+	const auto useFsm = !useBehaviorTree;
+
+	if (useFsm)
 	{
 		// Setup Enemy behavior via Finite State Machine
 		// Set up possible states enemy can be in
@@ -49,7 +53,7 @@ void Enemy::ConfigureEnemyBehavior()
 		rightState = gamelib::FSMState("Right", LookForPlayerAndMove());
 
 		// State when enemy has hit a wall
-		hitWallState = gamelib::FSMState("Invalid", [&](unsigned long deltaMs) { InvertCurrentDirection(); Move(deltaMs); });
+		hitWallState = gamelib::FSMState("Invalid", [&](const unsigned long deltaMs) { InvertCurrentDirection(); Move(deltaMs); });
 
 		// Set how the states can transition
 		invalidMoveTransition = gamelib::FSMTransition([&]()-> bool { return !isValidMove; }, 
@@ -77,30 +81,33 @@ void Enemy::ConfigureEnemyBehavior()
 
 		// Set the initial state to down
 		stateMachine.InitialState = &downState;
+				
+		return; // We only use one technology or another 
 	}
-	else
+	
+	if (useBehaviorTree)
 	{
 		// Setup Enemy Behavior via Behavior Tree
 
 		// Behaviors
 		auto* lookForPlayer = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
-			{
-				LookForPlayer();
-				return gamelib::BehaviorResult::Success;
-			});
+		{
+			LookForPlayer();
+			return gamelib::BehaviorResult::Success;
+		});
 
 		auto* isInvalidMove = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
-			{
-				return !isValidMove
-					? gamelib::BehaviorResult::Success
-					: gamelib::BehaviorResult::Failure;
-			});
+		{
+			return !isValidMove
+				? gamelib::BehaviorResult::Success
+				: gamelib::BehaviorResult::Failure;
+		});
 
 		auto* invertNpcDirection = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
-			{
-				InvertCurrentDirection();
-				return gamelib::BehaviorResult::Success;
-			});
+		{
+			InvertCurrentDirection();
+			return gamelib::BehaviorResult::Success;
+		});
 
 		auto* moveInFacingDirection = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
 			{
@@ -115,7 +122,7 @@ void Enemy::ConfigureEnemyBehavior()
 				return gamelib::BehaviorResult::Success;
 			});
 
-		// Use behaviors in behavior tree
+		// Configure behavior tree
 		behaviorTree = BehaviorTreeBuilder()
 			.ActiveNodeSelector()
 				.Sequence()
@@ -126,6 +133,8 @@ void Enemy::ConfigureEnemyBehavior()
 				.Action(lookForPlayer)
 			.Finish()
 		.End();
+
+		return; // We only use one technology or another 
 	}
 }
 
