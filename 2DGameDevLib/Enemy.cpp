@@ -77,34 +77,32 @@ void Enemy::ConfigureEnemyBehavior()
 
 		// Set the initial state to down
 		stateMachine.InitialState = &downState;
-
-		currentFacingDirection = gamelib::Direction::Down;
-		currentMovingDirection = gamelib::Direction::Down;
-		isValidMove = true;
 	}
 	else
 	{
-		// Setup Enemy Behavior fir Behavior Tree
+		// Setup Enemy Behavior via Behavior Tree
+
+		// Behaviors
 		auto* lookForPlayer = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
 			{
 				LookForPlayer();
 				return gamelib::BehaviorResult::Success;
 			});
 
-		auto* checkIsInvalidMove = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
+		auto* isInvalidMove = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
 			{
 				return !isValidMove
 					? gamelib::BehaviorResult::Success
 					: gamelib::BehaviorResult::Failure;
 			});
 
-		auto* hitWallBehavior = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
+		auto* invertNpcDirection = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
 			{
 				InvertCurrentDirection();
 				return gamelib::BehaviorResult::Success;
 			});
 
-		auto* moveBehaviorBehavior = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
+		auto* moveNpc = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
 			{
 				if (moveTimer.IsReady())
 				{
@@ -117,13 +115,13 @@ void Enemy::ConfigureEnemyBehavior()
 				return gamelib::BehaviorResult::Success;
 			});
 
-		// Use behavior tree
+		// Use behaviors in behavior tree
 		behaviorTree = BehaviorTreeBuilder()
 			.ActiveNodeSelector()
 				.Sequence()
-				.Action(moveBehaviorBehavior)
-					.Condition(checkIsInvalidMove)
-					.Action(hitWallBehavior)
+				.Action(moveNpc)
+					.Condition(isInvalidMove)
+					.Action(invertNpcDirection)
 				.Finish()
 				.Action(lookForPlayer)
 			.Finish()
@@ -196,22 +194,31 @@ void Enemy::Update(const unsigned long deltaMs)
 	Npc::Update(deltaMs);
 
 	// Do enemy behavior
+	DoEnemyBehaviors(deltaMs);
+}
+
+void Enemy::DoEnemyBehaviors(const unsigned long deltaMs)
+{
+	// Select which technology will be used to handle Enemy NPC behavior 
+	const auto useFsm = !useBehaviorTree;
+
 	if (useBehaviorTree)
 	{
 		// Use Behavior Tree for controlling NPC behavior
 		if (behaviorTree != nullptr)
 		{
-			behaviorTree->Tick(deltaMs);
-		}		
-	}	
-	else
+			behaviorTree->Update(deltaMs);
+		}
+
+		return;
+	}
+	
+	if (useFsm)
 	{
 		// Use State Machine for controlling NPC behavior
-
-		// Do Behavior/react 
 		stateMachine.Update(deltaMs);
 
-		// Plus some special Enemy stuff
+		// Show the current state of the FSM on the enemy
 		auto constexpr emptyString = "";
 		auto stateText = drawState
 			? stateMachine.ActiveState->GetName().substr(0, 1)
