@@ -102,7 +102,7 @@ void Enemy::ConfigureEnemyBehavior()
 				return gamelib::BehaviorResult::Success;
 			});
 
-		auto* moveNpc = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
+		auto* moveInFacingDirection = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
 			{
 				if (moveTimer.IsReady())
 				{
@@ -119,7 +119,7 @@ void Enemy::ConfigureEnemyBehavior()
 		behaviorTree = BehaviorTreeBuilder()
 			.ActiveNodeSelector()
 				.Sequence()
-				.Action(moveNpc)
+					.Action(moveInFacingDirection)
 					.Condition(isInvalidMove)
 					.Action(invertNpcDirection)
 				.Finish()
