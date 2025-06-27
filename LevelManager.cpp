@@ -17,6 +17,7 @@
 #include <random>
 #include <events/UpdateProcessesEvent.h>
 #include "CharacterBuilder.h"
+#include "ElapsedGameTimeProvider.h"
 #include "EventNumber.h"
 #include "GameObjectMoveStrategy.h"
 #include "PlayerCollidedWithEnemyEvent.h"
@@ -74,7 +75,8 @@ bool LevelManager::Initialize()
 	eventManager->SubscribeToEvent(PlayerCollidedWithPickupEventId, this);
 
 	// Set up the network activity monitor to listen for network events
-	networkingActivityMonitor = std::make_shared<NetworkingActivityMonitor>(processManager, *eventManager, verbose);
+	elapsedTimeProvider = std::make_shared<ElapsedGameTimeProvider>();
+	networkingActivityMonitor = std::make_shared<NetworkingActivityMonitor>(processManager, *eventManager, elapsedTimeProvider, verbose);
 	networkingActivityMonitor->SetSendRateMs(sendRateMs);
 	networkingActivityMonitor->Initialise();
 

@@ -103,6 +103,7 @@ private:
     void OnPickupCollision(const std::shared_ptr<gamelib::Event>& evt) const;
     void OnStartNetworkLevel(const std::shared_ptr<gamelib::Event>& evt);
 
+    std::shared_ptr<gamelib::IElapsedTimeProvider> elapsedTimeProvider;
     std::shared_ptr<gamelib::NetworkingActivityMonitor> networkingActivityMonitor;
     std::shared_ptr<gamelib::GameStatePusher> gameStatePusher;
 };
