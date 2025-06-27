@@ -20,6 +20,7 @@ public:
 	      std::shared_ptr<const Level> level,
 	      std::shared_ptr<gamelib::IGameObjectMoveStrategy> enemyMoveStrategy = nullptr);
 
+	
 	void Initialize();
 
 	std::shared_ptr<RoomInfo> CurrentRoom;
@@ -38,8 +39,9 @@ private:
 	bool IfMoved(gamelib::Direction direction) const;
 	bool IsPlayerInSameAxis(const std::shared_ptr<Player>& player, bool verticalView) const;
 	void LookForPlayer();
+	std::function<void(unsigned long deltaMs)> LookForPlayerAndMove();
 	bool IsPlayerInLineOfSight(gamelib::Direction lookDirection) const;
-	std::function<void(unsigned long deltaMs)> DoLookForPlayer(); // returns a function taking a delta time
+	std::function<void(unsigned long deltaMs)> DoMovingBehavior();
 	static bool InSameRoomAsPlayer(std::shared_ptr<Player> player, std::shared_ptr<Room> currentRoom);
 	void ConfigureEnemyBehavior();
 	std::function<bool()> IfMovedInDirection(gamelib::Direction direction) const; // returns a function returning a bool	
@@ -69,6 +71,7 @@ private:
 	gamelib::FSMTransition onDownDirection;
 	gamelib::FSMTransition onLeftDirection;
 	gamelib::FSMTransition onRightDirection;
+	gamelib::FSMTransition onMovingTransition;
 };
 
 #endif

@@ -43,17 +43,16 @@ void Enemy::ConfigureEnemyBehavior()
 	{
 		// Setup Enemy behavior via Finite State Machine
 		// Set up possible states enemy can be in
-		upState = gamelib::FSMState("Up", DoLookForPlayer());
-		downState = gamelib::FSMState("Down", DoLookForPlayer());
-		leftState = gamelib::FSMState("Left", DoLookForPlayer());
-		rightState = gamelib::FSMState("Right", DoLookForPlayer());
+		upState = gamelib::FSMState("Up", LookForPlayerAndMove());
+		downState = gamelib::FSMState("Down", LookForPlayerAndMove());
+		leftState = gamelib::FSMState("Left", LookForPlayerAndMove());
+		rightState = gamelib::FSMState("Right", LookForPlayerAndMove());
 
 		// State when enemy has hit a wall
-		hitWallState = gamelib::FSMState("Invalid", gamelib::FSMState::NoUpdate,
-			[&] { InvertCurrentDirection(); });
+		hitWallState = gamelib::FSMState("Invalid", [&](unsigned long deltaMs) { InvertCurrentDirection(); Move(deltaMs); });
 
 		// Set how the states can transition
-		invalidMoveTransition = gamelib::FSMTransition([&]()-> bool { return !isValidMove; },
+		invalidMoveTransition = gamelib::FSMTransition([&]()-> bool { return !isValidMove; }, 
 			[&]()-> gamelib::FSMState* { return &hitWallState; });
 
 		// Set up conditions for state transitions
@@ -78,26 +77,43 @@ void Enemy::ConfigureEnemyBehavior()
 
 		// Set the initial state to down
 		stateMachine.InitialState = &downState;
+
+		currentFacingDirection = gamelib::Direction::Down;
+		currentMovingDirection = gamelib::Direction::Down;
+		isValidMove = true;
 	}
 	else
 	{
 		// Setup Enemy Behavior fir Behavior Tree
-		auto* lookForPlayer = new gamelib::InlineBehavioralAction([&]
+		auto* lookForPlayer = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
 			{
 				LookForPlayer();
 				return gamelib::BehaviorResult::Success;
 			});
 
-		auto* checkIsInvalidMove = new gamelib::InlineBehavioralAction([&]
+		auto* checkIsInvalidMove = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
 			{
 				return !isValidMove
 					? gamelib::BehaviorResult::Success
 					: gamelib::BehaviorResult::Failure;
 			});
 
-		auto* hitWallBehavior = new gamelib::InlineBehavioralAction([&]
+		auto* hitWallBehavior = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
 			{
 				InvertCurrentDirection();
+				return gamelib::BehaviorResult::Success;
+			});
+
+		auto* moveBehaviorBehavior = new gamelib::InlineBehavioralAction([&](const unsigned long deltaMs)
+			{
+				if (moveTimer.IsReady())
+				{
+					// Automatically keep moving our position in configured direction
+					Move(deltaMs);
+
+					moveTimer.Reset();
+				}
+
 				return gamelib::BehaviorResult::Success;
 			});
 
@@ -105,6 +121,7 @@ void Enemy::ConfigureEnemyBehavior()
 		behaviorTree = BehaviorTreeBuilder()
 			.ActiveNodeSelector()
 				.Sequence()
+				.Action(moveBehaviorBehavior)
 					.Condition(checkIsInvalidMove)
 					.Action(hitWallBehavior)
 				.Finish()
@@ -175,14 +192,6 @@ void Enemy::Update(const unsigned long deltaMs)
 	// We only want to move and emit move events periodically. Update the periodic timer
 	moveTimer.Update(deltaMs);
 
-	if (moveTimer.IsReady())
-	{
-		// Automatically keep moving our position in configured direction
-		Move(deltaMs);
-
-		moveTimer.Reset();
-	}
-
 	// Do common/normal NPC activities also
 	Npc::Update(deltaMs);
 
@@ -192,7 +201,7 @@ void Enemy::Update(const unsigned long deltaMs)
 		// Use Behavior Tree for controlling NPC behavior
 		if (behaviorTree != nullptr)
 		{
-			behaviorTree->Tick();
+			behaviorTree->Tick(deltaMs);
 		}		
 	}	
 	else
@@ -253,10 +262,28 @@ bool Enemy::IfMoved(const gamelib::Direction direction) const
 	return isValidMove && currentFacingDirection == direction;
 }
 
-std::function<void(unsigned long deltaMs)> Enemy::DoLookForPlayer()
+std::function<void(unsigned long deltaMs)> Enemy::LookForPlayerAndMove()
+{
+	return [&](const unsigned long deltaMs)
+		{
+			LookForPlayer();
+			DoMovingBehavior()(deltaMs);
+		};
+}
+
+std::function<void(unsigned long deltaMs)> Enemy::DoMovingBehavior()
 {
 	// note: returns a func
-	return [this](const unsigned long) { LookForPlayer(); };
+	return [this](const unsigned long deltaMs)
+	{
+		if (moveTimer.IsReady())
+		{
+			// Automatically keep moving our position in configured direction
+			Move(deltaMs);
+
+			moveTimer.Reset();
+		}
+	};
 }
 
 void Enemy::LookForPlayer()
