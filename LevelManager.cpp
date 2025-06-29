@@ -57,9 +57,6 @@ bool LevelManager::Initialize()
 	gameCommands = std::make_shared<GameCommands>();
 	inputManager = std::make_shared<InputManager>(gameCommands, verbose);
 
-	// Load the resource file
-	ResourceManager::Get()->IndexResourceFile();
-
 	// Subscribe to events we are interested in...
 	eventManager->SubscribeToEvent(GenerateNewLevelEventId, this);
 	eventManager->SubscribeToEvent(InvalidMoveEventId, this);
